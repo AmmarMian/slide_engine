@@ -1,0 +1,880 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Scientific deck — Swiss Technical</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<!-- ──────────────────────────────────────────────────────────────────
+     This deck is intentionally hybrid:
+
+       • Content slides — plain HTML <section>. Edit text, headings,
+         tables, bullets, references directly in the markup.
+
+       • The fancy 20% — opaque custom HTML tags:
+           <section-divider num label kicker slide-num total-slides>
+           <interactive-arch slide-num total-slides>
+           <filmstrip-slide  slide-num total-slides>
+           <end-slide        slide-num total-slides>
+           <progress-bar>           (overlay; outside deck-stage)
+           <masked-reveal word>     (inline, in the title)
+           <diffusion-strip steps>  (inline, in the background slide)
+           <nll-chart> <dist-chart> <arch-diagram>
+
+       • Math — write TeX as text content:
+           <span class="math">x_0</span>
+           <div  class="math-display">\mathcal{L}_{vlb} = \dots</div>
+
+     All implementation for the custom tags lives in slide-elements.jsx.
+     ────────────────────────────────────────────────────────────────── -->
+
+<!-- KaTeX -->
+<link id="katex-css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous" />
+<script defer id="katex-js" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+
+<!-- Fonts: load all candidate families up front so font-swap is instant -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
+
+<style>
+/* ============================================================
+   Swiss Technical — single-theme template, with CSS-var hooks
+   exposed so Tweaks can rewrite colors / fonts / density live.
+   ============================================================ */
+:root {
+  /* palette: paper (default) */
+  --bg: #f4f3ef;
+  --bg-2: #ffffff;
+  --ink: #0a0a0a;
+  --ink-2: #2a2a2a;
+  --ink-3: #6e6e6e;
+  --ink-4: #a8a8a8;
+  --rule: #0a0a0a;
+  --rule-soft: rgba(10, 10, 10, 0.14);
+  --accent: #d23b1c;
+  --tint: #ebe9e0;
+
+  --sans: 'Inter Tight', -apple-system, sans-serif;
+  --serif: 'Newsreader', Georgia, serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --d-pad-x: 100px;
+  --d-pad-y-top: 100px;
+  --d-pad-y-bot: 80px;
+}
+
+html, body { margin: 0; padding: 0; background: #1a1a1a; }
+body { font-family: var(--sans); }
+
+/* ── Slide frame ────────────────────────────────────────────────────────
+   These rules style every slide regardless of whether it's a plain
+   <section> or one of our custom slide tags. New custom slide tags
+   should be added to this selector list. */
+deck-stage > section,
+deck-stage > section-divider,
+deck-stage > interactive-arch,
+deck-stage > filmstrip-slide,
+deck-stage > end-slide {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-feature-settings: "kern", "ss01", "cv11";
+  padding: var(--d-pad-y-top) var(--d-pad-x) var(--d-pad-y-bot);
+  display: flex; flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Type scale */
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 24px; font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.title {
+  font-family: var(--sans);
+  font-size: 112px; font-weight: 600;
+  line-height: 0.95; letter-spacing: -0.045em;
+  color: var(--ink);
+  margin: 0; text-wrap: balance;
+}
+.h1 {
+  font-family: var(--sans);
+  font-size: 80px; font-weight: 600;
+  line-height: 1.0; letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0; text-wrap: balance;
+}
+.h2 {
+  font-family: var(--sans);
+  font-size: 60px; font-weight: 500;
+  line-height: 1.05; letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0; text-wrap: balance;
+}
+.lede {
+  font-size: 38px; font-weight: 400;
+  line-height: 1.35; letter-spacing: -0.015em;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+.body { font-size: 30px; line-height: 1.4; color: var(--ink-2); text-wrap: pretty; }
+.small { font-size: 24px; color: var(--ink-3); }
+.label {
+  font-family: var(--mono);
+  font-size: 24px; font-weight: 500;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--ink-3);
+}
+.mono { font-family: var(--mono); font-size: 26px; }
+
+/* Page chrome */
+.page-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 64px; padding-bottom: 14px;
+  border-bottom: 2px solid var(--ink);
+}
+.page-footer {
+  position: absolute; left: var(--d-pad-x); right: var(--d-pad-x); bottom: 36px;
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-family: var(--mono); font-size: 24px;
+  color: var(--ink-3); letter-spacing: 0.04em;
+  padding-top: 14px; border-top: 1px solid var(--rule-soft);
+}
+
+/* Theorem block */
+.theorem { padding: 28px 0; border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); }
+.theorem-tag {
+  font-family: var(--mono);
+  font-size: 24px; font-weight: 600;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 18px;
+  display: flex; gap: 18px; align-items: center;
+}
+.theorem-tag::before { content: ''; display: inline-block; width: 18px; height: 18px; background: var(--accent); }
+.theorem-name { font-weight: 500; color: var(--ink); }
+.theorem-body { font-family: var(--serif); font-size: 34px; line-height: 1.4; color: var(--ink); }
+
+/* Display math container (the framed equation block; not the math itself) */
+.display-math { background: var(--bg-2); border: 1px solid var(--rule); padding: 36px 48px; position: relative; }
+.eq-label {
+  position: absolute; right: 32px; top: 50%; transform: translateY(-50%);
+  font-family: var(--mono); font-size: 24px; color: var(--accent); letter-spacing: 0.04em;
+}
+
+/* Math elements — pre-render look (TeX source visible until KaTeX takes over) */
+.math, .math-display { font-family: var(--mono); color: var(--ink); }
+.math-display { display: block; text-align: center; font-size: 28px; }
+
+/* Algorithm */
+.algorithm { background: var(--bg-2); border: 1px solid var(--rule); }
+.algorithm-header {
+  padding: 16px 24px; border-bottom: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 24px; font-weight: 600;
+  letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.algorithm-header::before { content: '▸'; color: var(--accent); margin-right: 12px; }
+.algorithm-body { padding: 28px 32px; font-family: var(--mono); font-size: 24px; line-height: 1.6; color: var(--ink); }
+.algorithm-body .ln { color: var(--ink-3); display: inline-block; width: 26px; }
+
+/* Tables */
+table.results { width: 100%; border-collapse: collapse; font-family: var(--sans); font-feature-settings: "tnum"; }
+table.results th {
+  font-family: var(--mono); font-size: 24px; font-weight: 500;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--ink-3); text-align: right;
+  padding: 14px 18px; border-bottom: 2px solid var(--ink);
+}
+table.results th:first-child { text-align: left; }
+table.results td {
+  font-size: 28px; padding: 16px 18px; text-align: right;
+  border-bottom: 1px solid var(--rule-soft);
+  color: var(--ink); font-variant-numeric: tabular-nums;
+}
+table.results td:first-child { text-align: left; color: var(--ink-2); font-weight: 500; }
+table.results tr.best td { color: var(--accent); font-weight: 600; }
+
+.figcaption { font-family: var(--mono); font-size: 24px; color: var(--ink-3); letter-spacing: 0.02em; margin-top: 18px; display: flex; gap: 14px; }
+.figcaption .num { font-weight: 600; color: var(--accent); }
+
+.pullquote {
+  font-family: var(--sans); font-size: 72px; font-weight: 500;
+  line-height: 1.05; letter-spacing: -0.035em;
+  color: var(--ink); text-wrap: balance;
+}
+.pullquote::before { content: ''; display: block; width: 100px; height: 6px; background: var(--accent); margin-bottom: 36px; }
+
+.ref {
+  display: grid; grid-template-columns: 70px 1fr;
+  gap: 28px; padding: 18px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-family: var(--sans); font-size: 24px; line-height: 1.4; color: var(--ink);
+}
+.ref-num { font-family: var(--mono); font-size: 24px; font-weight: 500; color: var(--accent); }
+.ref-authors { font-weight: 500; color: var(--ink); }
+.ref-venue { font-family: var(--mono); font-size: 24px; color: var(--ink-3); }
+
+/* Motivation-style 3-up rail (used in motivation, filmstrip side panel, etc.) */
+.bullet-rail { display: flex; flex-direction: column; gap: 36px; }
+.bullet-rail > div { border-top: 1px solid var(--rule-soft); padding-top: 22px; }
+.bullet-rail .label { margin-bottom: 12px; }
+.bullet-rail .body { font-size: 26px; }
+
+/* TOC entry */
+.toc-entry {
+  display: grid; grid-template-columns: 120px 1fr 80px;
+  align-items: baseline; gap: 24px;
+  padding-bottom: 22px; border-bottom: 1px solid var(--rule-soft);
+}
+.toc-num { font-family: var(--mono); color: var(--accent); font-size: 32px; font-weight: 600; }
+.toc-label { font-size: 36px; font-weight: 600; line-height: 1.1; color: var(--ink); letter-spacing: -0.02em; }
+.toc-blurb { margin-top: 8px; color: var(--ink-3); font-size: 22px; }
+.toc-pages { text-align: right; color: var(--ink-3); font-family: var(--mono); font-size: 24px; }
+
+.katex { color: var(--ink); }
+
+/* Diffusion strip caption row used in background slide */
+.diff-axis { display: flex; justify-content: space-between; align-items: center; padding: 0 8px; }
+.diff-axis .mono { color: var(--ink); }
+
+/* ───────── Inverted (dark) section dividers + end slide ───────── */
+section.section-divider,
+section-divider,
+end-slide {
+  --inv-bg: #0e0d0b;
+  --inv-ink: #f3eee0;
+  --inv-ink-2: #cabf9f;
+  --inv-ink-3: #8a8170;
+  --inv-rule: rgba(243,238,224,0.18);
+  --inv-noise: rgba(243,238,224,0.30);
+  background: var(--inv-bg) !important;
+  color: var(--inv-ink) !important;
+  position: relative;
+}
+section.section-divider::before,
+section-divider::before,
+end-slide::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0, transparent 3px,
+    rgba(243,238,224,0.025) 3px, rgba(243,238,224,0.025) 4px
+  );
+  mix-blend-mode: screen;
+}
+
+/* ───────── Progress bar (fixed overlay, top of viewport) ───────── */
+.progress-bar {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 2147483640;
+  padding: 8px 22px 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.20), transparent);
+}
+.progress-track { display: flex; gap: 3px; align-items: stretch; }
+.progress-seg { position: relative; height: 3px; min-width: 0; }
+.progress-seg-bg { position: absolute; inset: 0; background: rgba(255,255,255,0.20); }
+.progress-seg-fg { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); transition: width 360ms cubic-bezier(.2,.8,.2,1); }
+.progress-seg-label {
+  position: absolute; top: 7px; left: 0;
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+@keyframes zoomIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+</style>
+
+<!-- React + Babel -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script src="deck-stage.js"></script>
+<script type="text/babel" src="charts.jsx"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="slide-elements.jsx"></script>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       01 · Title
+       ═══════════════════════════════════════════════════════════════ -->
+  <section data-label="01 Title">
+    <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div class="label">Paper presentation · 12 min</div>
+        <masked-reveal word="DISCRETE" cell="20" duration="1600"></masked-reveal>
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-bottom: 32px;">Discrete Diffusion · Tabular</div>
+        <h1 class="title">Discrete Diffusion for Tabular Data</h1>
+        <div class="lede" style="margin-top: 36px; max-width: 1300px;">A categorical framework for high-fidelity synthetic tables</div>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: baseline;">
+        <div class="body" style="font-size: 28px;">A. Researcher · B. Collaborator · C. Advisor</div>
+        <div class="small">NeurIPS 2026 · Generative Models Workshop</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       02 · Contents
+       ═══════════════════════════════════════════════════════════════ -->
+  <section data-label="02 Contents">
+    <div class="page-header">
+      <div class="label">Contents</div>
+      <div class="label">02 / 19</div>
+    </div>
+    <h2 class="h1" style="margin-bottom: 56px;">What we will cover.</h2>
+    <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 32px 96px; align-content: start;">
+
+      <div class="toc-entry">
+        <div class="toc-num">01</div>
+        <div>
+          <div class="toc-label">Title</div>
+          <div class="toc-blurb">Cover & contents.</div>
+        </div>
+        <div class="toc-pages">01–02</div>
+      </div>
+
+      <div class="toc-entry">
+        <div class="toc-num">02</div>
+        <div>
+          <div class="toc-label">Motivation</div>
+          <div class="toc-blurb">Why tabular generation is hard.</div>
+        </div>
+        <div class="toc-pages">03–04</div>
+      </div>
+
+      <div class="toc-entry">
+        <div class="toc-num">03</div>
+        <div>
+          <div class="toc-label">Method</div>
+          <div class="toc-blurb">Discrete diffusion: definitions, objective, sampling.</div>
+        </div>
+        <div class="toc-pages">05–09</div>
+      </div>
+
+      <div class="toc-entry">
+        <div class="toc-num">04</div>
+        <div>
+          <div class="toc-label">Architecture</div>
+          <div class="toc-blurb">Token-level encoder, per-column heads.</div>
+        </div>
+        <div class="toc-pages">10–11</div>
+      </div>
+
+      <div class="toc-entry">
+        <div class="toc-num">05</div>
+        <div>
+          <div class="toc-label">Results</div>
+          <div class="toc-blurb">Benchmarks, scaling, filmstrip, marginals.</div>
+        </div>
+        <div class="toc-pages">12–16</div>
+      </div>
+
+      <div class="toc-entry">
+        <div class="toc-num">06</div>
+        <div>
+          <div class="toc-label">Discussion</div>
+          <div class="toc-blurb">Closing remark, references, end.</div>
+        </div>
+        <div class="toc-pages">17–19</div>
+      </div>
+
+    </div>
+    <div class="page-footer">
+      <div>Discrete Diffusion · Tabular</div>
+      <div>NeurIPS 2026 · Generative Models Workshop</div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       03 · Section divider — Motivation
+       ═══════════════════════════════════════════════════════════════ -->
+  <section-divider num="1" label="Motivation." kicker="Part 01 · Why now" slide-num="3" total-slides="19" data-label="03 Section Motivation"></section-divider>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       04 · Motivation
+       ═══════════════════════════════════════════════════════════════ -->
+  <section data-label="04 Motivation">
+    <div class="page-header">
+      <div class="label">01 · Motivation</div>
+      <div class="label">04 / 19</div>
+    </div>
+    <div style="flex: 1; display: grid; grid-template-columns: 1.1fr 1fr; gap: 88px; align-items: start;">
+      <div>
+        <h2 class="h1">Tabular generation resists the tools that work elsewhere.</h2>
+        <div class="lede" style="margin-top: 36px;">
+          Mixed continuous and categorical columns, heavy-tailed marginals, and brittle inter-column constraints break GAN- and VAE-based generators.
+        </div>
+      </div>
+      <div class="bullet-rail">
+        <div>
+          <div class="label">Mixed types</div>
+          <div class="body">Continuous, ordinal, and categorical columns coexist; common likelihoods do not.</div>
+        </div>
+        <div>
+          <div class="label">Multi-modal marginals</div>
+          <div class="body">Real columns concentrate around discrete modes that smooth densities under-fit.</div>
+        </div>
+        <div>
+          <div class="label">Privacy &amp; utility</div>
+          <div class="body">Synthetic tables are deployed when raw data cannot be shared — fidelity matters.</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div>Discrete Diffusion · Tabular</div>
+      <div>NeurIPS 2026 · Generative Models Workshop</div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       05 · Section divider — Method
+       ═══════════════════════════════════════════════════════════════ -->
+  <section-divider num="2" label="Method." kicker="Part 02 · Formulation" slide-num="5" total-slides="19" data-label="05 Section Method"></section-divider>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       06 · Background
+       ═══════════════════════════════════════════════════════════════ -->
+  <section data-label="06 Background">
+    <div class="page-header">
+      <div class="label">02 · Background</div>
+      <div class="label">06 / 19</div>
+    </div>
+    <h2 class="h1" style="margin-bottom: 56px;">Continuous diffusion in one diagram.</h2>
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 40px; justify-content: center;">
+      <diffusion-strip steps="6"></diffusion-strip>
+      <div class="diff-axis">
+        <div class="mono">data&nbsp;&nbsp;<span class="math">x_0</span></div>
+        <div class="small" style="flex: 1; text-align: center;">
+          forward process &nbsp; <span class="math">q(x_t \mid x_{t-1})</span> &nbsp; gradually destroys structure &nbsp; ⟶
+        </div>
+        <div class="mono"><span class="math">x_T \sim \mathcal{N}(0,I)</span>&nbsp;&nbsp;noise</div>
+      </div>
+      <div class="body" style="max-width: 1500px; margin-top: 12px;">
+        The continuous case assumes a <em>Gaussian</em> noising kernel — convenient analytically, but a poor fit when columns are <em>categorical</em> by nature.
+      </div>
+    </div>
+    <div class="page-footer">
+      <div>Discrete Diffusion · Tabular</div>
+      <div>NeurIPS 2026 · Generative Models Workshop</div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       07 · Definition
+       ═══════════════════════════════════════════════════════════════ -->
+  <section data-label="07 Definition">
+    <div class="page-header">
+      <div class="label">03 · Definition</div>
+      <div class="label">07 / 19</div>
+    </div>
+    <h2 class="h1" style="margin-bottom: 64px;">Discrete diffusion process.</h2>
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 56px;">
+      <div class="theorem">
+        <div class="theorem-tag">Definition 3.1 <span class="theorem-name">— Categorical forward kernel</span></div>
+        <div class="theorem-body" style="font-size: 32px;">
+          For a categorical variable <span class="math">x_0 \in \{1,\dots,K\}</span>, the forward process is the Markov chain
+          <div style="margin: 24px 0;">
+            <span class="math-display">q(x_t \mid x_{t-1}) = \mathrm{Cat}\big(x_t;\ \boldsymbol{Q}_t\, \mathbf{e}_{x_{t-1}}\big),</span>
+          </div>
+          with row-stochastic transition matrix <span class="math">\boldsymbol{Q}_t \in [0,1]^{K\times K}</span> and absorbing state <span class="math">[\mathsf{mask}]</span>.
+        </div>
+      </div>
+      <div class="body" style="font-size: 28px; max-width: 1500px;">
+        Marginals at any timestep close in form: <span class="math">q(x_t \mid x_0) = \mathrm{Cat}(x_t;\ \overline{\boldsymbol{Q}}_t\, \mathbf{e}_{x_0})</span>, where <span class="math">\overline{\boldsymbol{Q}}_t = \boldsymbol{Q}_t \boldsymbol{Q}_{t-1} \cdots \boldsymbol{Q}_1</span>. This makes training tractable: we sample <span class="math">x_t</span> in one step from <span class="math">x_0</span>, no rollout needed.
+      </div>
+    </div>
+    <div class="page-footer">
+      <div>Discrete Diffusion · Tabular</div>
+      <div>NeurIPS 2026 · Generative Models Workshop</div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       08 · Objective
+       ═══════════════════════════════════════════════════════════════ -->
+  <section data-label="08 Objective">
+    <div class="page-header">
+      <div class="label">04 · Objective</div>
+      <div class="label">08 / 19</div>
+    </div>
+    <h2 class="h1" style="margin-bottom: 32px;">Variational bound, simplified.</h2>
+    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 28px; min-height: 0; padding-bottom: 40px;">
+      <div class="display-math">
+        <span class="math-display">\mathcal{L}_{\text{vlb}} \;=\; \underbrace{\mathbb{E}_q\!\left[ -\log p_\theta(x_0 \mid x_1) \right]}_{\text{reconstruction}} \;+\; \sum_{t=2}^{T}\, \underbrace{\mathbb{E}_q\!\left[ D_{\mathrm{KL}}\!\big(q(x_{t-1} \mid x_t, x_0)\,\|\, p_\theta(x_{t-1} \mid x_t)\big) \right]}_{\text{denoising terms}}</span>
+        <div class="eq-label">(1)</div>
+      </div>
+      <div class="body" style="max-width: 1500px; font-size: 26px; align-self: center; text-align: center;">
+        We follow the <em>simplified</em> objective of Austin et al. (2021)&nbsp;— a per-timestep cross-entropy on the predicted clean token, weighted by <span class="math">\boldsymbol{w}_t</span>.
+      </div>
+      <div class="display-math">
+        <span class="math-display">\mathcal{L}_{\text{simple}} \;=\; \mathbb{E}_{t,\,x_0,\,x_t}\!\left[\, \boldsymbol{w}_t \cdot \mathrm{CE}\!\big(\hat x_0(x_t, t),\; x_0\big) \,\right]</span>
+        <div class="eq-label">(2)</div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div>Discrete Diffusion · Tabular</div>
+      <div>NeurIPS 2026 · Generative Models Workshop</div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       09 · Algorithm
+       ═══════════════════════════════════════════════════════════════ -->
+  <section data-label="09 Algorithm">
+    <div class="page-header">
+      <div class="label">05 · Algorithm</div>
+      <div class="label">09 / 19</div>
+    </div>
+    <h2 class="h1" style="margin-bottom: 48px;">Reverse process, sampling.</h2>
+    <div style="flex: 1; display: grid; grid-template-columns: 1.3fr 1fr; gap: 64px; align-items: start;">
+      <div class="algorithm">
+        <div class="algorithm-header">
+          <span>Algorithm 1 &nbsp;·&nbsp; Ancestral sampling</span>
+          <span style="opacity: 0.6;">O(T·d)</span>
+        </div>
+        <div class="algorithm-body">
+          <div><span class="ln">1:</span><b>input:</b> trained <span class="math">\hat x_0</span>, schedule <span class="math">\{Q_t\}</span>, length <span class="math">d</span></div>
+          <div><span class="ln">2:</span><span class="math">x_T \leftarrow [\mathsf{mask}]^d</span></div>
+          <div><span class="ln">3:</span><b>for</b>&nbsp; <span class="math">t = T, T{-}1, \dots, 1</span> &nbsp;<b>do</b></div>
+          <div><span class="ln">4:</span>&nbsp;&nbsp;&nbsp;&nbsp; <span class="math">\tilde x_0 \sim p_\theta(\,\cdot \mid x_t, t\,)</span></div>
+          <div><span class="ln">5:</span>&nbsp;&nbsp;&nbsp;&nbsp; <span class="math">x_{t-1} \sim q(x_{t-1} \mid x_t,\, \tilde x_0)</span></div>
+          <div><span class="ln">6:</span><b>end for</b></div>
+          <div><span class="ln">7:</span><b>return</b>&nbsp; <span class="math">x_0</span></div>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 28px;">
+        <div>
+          <div class="label" style="margin-bottom: 10px;">Why it works</div>
+          <div class="body" style="font-size: 26px;">
+            Conditioning on the predicted clean sample <span class="math">\tilde x_0</span> reduces variance: the posterior <span class="math">q(x_{t-1}\mid x_t, x_0)</span> is closed-form, so each step inherits the model's accuracy.
+          </div>
+        </div>
+        <div>
+          <div class="label" style="margin-bottom: 10px;">Compute</div>
+          <div class="body" style="font-size: 26px;">
+            For <span class="math">T = 200</span>, <span class="math">d = 64</span>, generation runs in 38 ms / row on a single A100.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div>Discrete Diffusion · Tabular</div>
+      <div>NeurIPS 2026 · Generative Models Workshop</div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       10 · Section divider — Architecture
+       ═══════════════════════════════════════════════════════════════ -->
+  <section-divider num="3" label="Architecture." kicker="Part 03 · The model" slide-num="10" total-slides="19" data-label="10 Section Architecture"></section-divider>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       11 · Interactive architecture
+       ═══════════════════════════════════════════════════════════════ -->
+  <interactive-arch slide-num="11" total-slides="19" data-label="11 Architecture"></interactive-arch>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       12 · Section divider — Results
+       ═══════════════════════════════════════════════════════════════ -->
+  <section-divider num="4" label="Results." kicker="Part 04 · Evidence" slide-num="12" total-slides="19" data-label="12 Section Results"></section-divider>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       13 · Benchmark table
+       ═══════════════════════════════════════════════════════════════ -->
+  <section data-label="13 Benchmark">
+    <div class="page-header">
+      <div class="label">07 · Results</div>
+      <div class="label">13 / 19</div>
+    </div>
+    <h2 class="h1" style="margin-bottom: 48px;">Benchmark — synthetic table fidelity.</h2>
+    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+      <table class="results">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Adult ↓</th>
+            <th>Covertype ↓</th>
+            <th>News ↓</th>
+            <th>Diabetes ↓</th>
+            <th>Mean rank</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>CTGAN</td>           <td>0.142</td><td>0.218</td><td>0.196</td><td>0.171</td><td>4.0</td></tr>
+          <tr><td>TVAE</td>            <td>0.118</td><td>0.184</td><td>0.162</td><td>0.149</td><td>3.0</td></tr>
+          <tr><td>STaSy</td>           <td>0.097</td><td>0.156</td><td>0.141</td><td>0.128</td><td>2.0</td></tr>
+          <tr class="best"><td>TabDDPM (ours)</td><td>0.071</td><td>0.124</td><td>0.118</td><td>0.094</td><td>1.0</td></tr>
+        </tbody>
+      </table>
+      <div class="figcaption" style="margin-top: 26px;">
+        <span class="num">Table 1</span>
+        <span>Wasserstein distance between real and synthetic marginals (lower is better). Our method ranks first on every benchmark.</span>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div>Discrete Diffusion · Tabular</div>
+      <div>NeurIPS 2026 · Generative Models Workshop</div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       14 · NLL chart
+       ═══════════════════════════════════════════════════════════════ -->
+  <section data-label="14 Sample quality">
+    <div class="page-header">
+      <div class="label">08 · Results</div>
+      <div class="label">14 / 19</div>
+    </div>
+    <h2 class="h1" style="margin-bottom: 24px;">Sample quality scales with diffusion steps.</h2>
+    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 20px; min-height: 0;">
+      <div style="width: 100%; height: 560px;"><nll-chart></nll-chart></div>
+      <div class="figcaption">
+        <span class="num">Figure 2</span>
+        <span>Test NLL on Adult across diffusion-step budgets <span class="math">T</span>. Our method overtakes baselines past <span class="math">T = 200</span> and converges by <span class="math">T = 800</span>.</span>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div>Discrete Diffusion · Tabular</div>
+      <div>NeurIPS 2026 · Generative Models Workshop</div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       15 · Filmstrip
+       ═══════════════════════════════════════════════════════════════ -->
+  <filmstrip-slide slide-num="15" total-slides="19" data-label="15 Filmstrip"></filmstrip-slide>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       16 · Marginals
+       ═══════════════════════════════════════════════════════════════ -->
+  <section data-label="16 Marginals">
+    <div class="page-header">
+      <div class="label">09 · Results</div>
+      <div class="label">16 / 19</div>
+    </div>
+    <h2 class="h1" style="margin-bottom: 32px;">Marginal distributions match.</h2>
+    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 24px;">
+      <div style="width: 100%;"><dist-chart></dist-chart></div>
+      <div class="figcaption">
+        <span class="num">Figure 3</span>
+        <span>Per-column marginals for three representative features on the Adult dataset. Generated samples (outline) overlay the empirical distribution (filled).</span>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div>Discrete Diffusion · Tabular</div>
+      <div>NeurIPS 2026 · Generative Models Workshop</div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       17 · Discussion pull-quote
+       ═══════════════════════════════════════════════════════════════ -->
+  <section data-label="17 Discussion">
+    <div class="page-header">
+      <div class="label">10 · Discussion</div>
+      <div class="label">17 / 19</div>
+    </div>
+    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 48px; max-width: 1500px; align-self: center;">
+      <div class="pullquote">
+        The right inductive bias for tabular data is not smoothness — it is the discrete structure of the columns themselves.
+      </div>
+      <div class="small" style="margin-left: 8px; font-size: 26px;">
+        — closing remark, after Hoogeboom et al. (2021)
+      </div>
+    </div>
+    <div class="page-footer">
+      <div>Discrete Diffusion · Tabular</div>
+      <div>NeurIPS 2026 · Generative Models Workshop</div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       18 · References
+       ═══════════════════════════════════════════════════════════════ -->
+  <section data-label="18 References">
+    <div class="page-header">
+      <div class="label">References</div>
+      <div class="label">18 / 19</div>
+    </div>
+    <h2 class="h1" style="margin-bottom: 36px;">References.</h2>
+    <div style="flex: 1; display: flex; flex-direction: column;">
+      <div class="ref">
+        <div class="ref-num">1</div>
+        <div>
+          <span class="ref-authors">Austin, J., Johnson, D., Ho, J., Tarlow, D., van den Berg, R.</span>
+          <span>Structured Denoising Diffusion Models in Discrete State-Spaces.</span>
+          <span class="ref-venue">NeurIPS 2021.</span>
+        </div>
+      </div>
+      <div class="ref">
+        <div class="ref-num">2</div>
+        <div>
+          <span class="ref-authors">Hoogeboom, E., Nielsen, D., Jaini, P., Forré, P., Welling, M.</span>
+          <span>Argmax flows and multinomial diffusion.</span>
+          <span class="ref-venue">NeurIPS 2021.</span>
+        </div>
+      </div>
+      <div class="ref">
+        <div class="ref-num">3</div>
+        <div>
+          <span class="ref-authors">Kotelnikov, A., Baranchuk, D., Rubachev, I., Babenko, A.</span>
+          <span>TabDDPM: Modelling Tabular Data with Diffusion Models.</span>
+          <span class="ref-venue">ICML 2023.</span>
+        </div>
+      </div>
+      <div class="ref">
+        <div class="ref-num">4</div>
+        <div>
+          <span class="ref-authors">Xu, L., Skoularidou, M., Cuesta-Infante, A., Veeramachaneni, K.</span>
+          <span>Modeling Tabular Data using Conditional GAN.</span>
+          <span class="ref-venue">NeurIPS 2019.</span>
+        </div>
+      </div>
+      <div class="ref">
+        <div class="ref-num">5</div>
+        <div>
+          <span class="ref-authors">Kim, J., Lee, C., Park, N.</span>
+          <span>STaSy: Score-based Tabular data Synthesis.</span>
+          <span class="ref-venue">ICLR 2023.</span>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div>Discrete Diffusion · Tabular</div>
+      <div>NeurIPS 2026 · Generative Models Workshop</div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       19 · End
+       ═══════════════════════════════════════════════════════════════ -->
+  <end-slide slide-num="19" total-slides="19" data-label="19 End"></end-slide>
+
+</deck-stage>
+
+<!-- Progress bar overlay, outside deck-stage (it's a fixed-position overlay) -->
+<progress-bar></progress-bar>
+
+<div id="tweaks-root"></div>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "fontStyle": "swiss-sans",
+  "palette": "cool",
+  "accent": "#ff2600",
+  "density": "compact",
+  "mathEngine": "katex"
+}/*EDITMODE-END*/;
+
+const FONT_PRESETS = {
+  'swiss-sans':   { sans: "'Inter Tight', -apple-system, sans-serif",  serif: "'Newsreader', Georgia, serif",                              mono: "'JetBrains Mono', ui-monospace, monospace" },
+  'modern-mixed': { sans: "'Inter', -apple-system, sans-serif",         serif: "'Source Serif 4', Georgia, serif",                          mono: "'JetBrains Mono', ui-monospace, monospace" },
+  'editorial':    { sans: "'Inter', -apple-system, sans-serif",         serif: "'Source Serif 4', Georgia, serif",                          mono: "'IBM Plex Mono', ui-monospace, monospace" },
+  'classic':      { sans: "'IBM Plex Sans', -apple-system, sans-serif", serif: "'EB Garamond', 'Source Serif 4', Georgia, serif",            mono: "'IBM Plex Mono', ui-monospace, monospace" },
+};
+const PALETTE_PRESETS = {
+  paper:  { bg: '#f4f3ef', bg2: '#ffffff', ink: '#0a0a0a', ink2: '#2a2a2a', ink3: '#6e6e6e', rule: '#0a0a0a', ruleSoft: 'rgba(10,10,10,0.14)', tint: '#ebe9e0' },
+  warm:   { bg: '#f7f1e6', bg2: '#fdf8eb', ink: '#1a1410', ink2: '#3a3328', ink3: '#7a6b54', rule: '#1a1410', ruleSoft: 'rgba(26,20,16,0.18)', tint: '#ede2c9' },
+  cool:   { bg: '#f1f3f6', bg2: '#ffffff', ink: '#0c1422', ink2: '#2a3550', ink3: '#5a6680', rule: '#0c1422', ruleSoft: 'rgba(12,20,34,0.14)', tint: '#dbe0eb' },
+  dark:   { bg: '#0e0d0b', bg2: '#1a1815', ink: '#f3eee0', ink2: '#cabf9f', ink3: '#8a8170', rule: '#f3eee0', ruleSoft: 'rgba(243,238,224,0.18)', tint: '#26211a' },
+};
+const DENSITY_PRESETS = {
+  compact:      { padX: 80,  padTop: 72,  padBot: 60 },
+  comfortable:  { padX: 100, padTop: 100, padBot: 80 },
+  airy:         { padX: 140, padTop: 130, padBot: 110 },
+};
+
+function applyTweaks(t) {
+  const root = document.documentElement.style;
+  const fp = FONT_PRESETS[t.fontStyle] || FONT_PRESETS['swiss-sans'];
+  root.setProperty('--sans',  fp.sans);
+  root.setProperty('--serif', fp.serif);
+  root.setProperty('--mono',  fp.mono);
+
+  const p = PALETTE_PRESETS[t.palette] || PALETTE_PRESETS.paper;
+  root.setProperty('--bg',        p.bg);
+  root.setProperty('--bg-2',      p.bg2);
+  root.setProperty('--ink',       p.ink);
+  root.setProperty('--ink-2',     p.ink2);
+  root.setProperty('--ink-3',     p.ink3);
+  root.setProperty('--rule',      p.rule);
+  root.setProperty('--rule-soft', p.ruleSoft);
+  root.setProperty('--tint',      p.tint);
+
+  root.setProperty('--accent', t.accent || '#d23b1c');
+
+  const d = DENSITY_PRESETS[t.density] || DENSITY_PRESETS.comfortable;
+  root.setProperty('--d-pad-x',     d.padX  + 'px');
+  root.setProperty('--d-pad-y-top', d.padTop + 'px');
+  root.setProperty('--d-pad-y-bot', d.padBot + 'px');
+}
+
+function TweaksRoot() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+  useEffect(() => { applyTweaks(t); }, [t]);
+  useEffect(() => { if (window.renderMath) window.renderMath(t.mathEngine); }, [t.mathEngine]);
+
+  return (
+    <TweaksPanel title="Tweaks">
+      <TweakSection label="Typography" />
+      <TweakSelect label="Font system" value={t.fontStyle}
+        options={[
+          { value: 'swiss-sans',   label: 'Swiss · Inter Tight + Newsreader' },
+          { value: 'modern-mixed', label: 'Modern · Inter + Source Serif' },
+          { value: 'editorial',    label: 'Editorial · Inter + Source Serif' },
+          { value: 'classic',      label: 'Classic · IBM Plex + EB Garamond' },
+        ]}
+        onChange={(v) => setTweak('fontStyle', v)} />
+
+      <TweakSection label="Palette" />
+      <TweakRadio label="Background" value={t.palette}
+        options={['paper', 'warm', 'cool', 'dark']}
+        onChange={(v) => setTweak('palette', v)} />
+      <TweakColor label="Accent" value={t.accent}
+        onChange={(v) => setTweak('accent', v)} />
+
+      <TweakSection label="Layout" />
+      <TweakRadio label="Density" value={t.density}
+        options={['compact', 'comfortable', 'airy']}
+        onChange={(v) => setTweak('density', v)} />
+
+      <TweakSection label="Math" />
+      <TweakRadio label="Engine" value={t.mathEngine}
+        options={['katex', 'mathjax']}
+        onChange={(v) => setTweak('mathEngine', v)} />
+    </TweaksPanel>
+  );
+}
+
+function boot() {
+  if (!window.useTweaks || !window.TweaksPanel || !window.renderMath) {
+    return setTimeout(boot, 60);
+  }
+  // Initial math render (KaTeX by default). Tweak changes re-render via the effect above.
+  window.renderMath(TWEAK_DEFAULTS.mathEngine || 'katex');
+  ReactDOM.createRoot(document.getElementById('tweaks-root')).render(<TweaksRoot />);
+}
+boot();
+</script>
+</body>
+</html>

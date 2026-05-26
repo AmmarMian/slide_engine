@@ -1,0 +1,289 @@
+/* ───────── Direction 2 · Swiss Technical ─────────
+   Bauhaus / NeurIPS-poster vibe: Inter Tight + JetBrains Mono labels, strict grid, ink + signal red on bright paper.
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap');
+
+.theme-swiss {
+  --bg: #f4f3ef;
+  --bg-2: #ffffff;
+  --ink: #0a0a0a;
+  --ink-2: #2a2a2a;
+  --ink-3: #6e6e6e;
+  --ink-4: #a8a8a8;
+  --rule: #0a0a0a;
+  --rule-soft: rgba(10, 10, 10, 0.14);
+  --accent: #d23b1c;        /* signal red */
+  --accent-2: #d23b1c;
+  --tint: #ebe9e0;
+  --sans: 'Inter Tight', -apple-system, sans-serif;
+  --serif: 'Newsreader', Georgia, serif;  /* used only for math/theorem statements */
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-feature-settings: "kern", "ss01", "cv11";
+  position: absolute; inset: 0;
+  padding: 100px 100px 80px;
+  display: flex; flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.theme-swiss .eyebrow {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.theme-swiss .title {
+  font-family: var(--sans);
+  font-size: 112px;
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+.theme-swiss .h1 {
+  font-family: var(--sans);
+  font-size: 80px;
+  font-weight: 600;
+  line-height: 1.0;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+.theme-swiss .h2 {
+  font-family: var(--sans);
+  font-size: 60px;
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+.theme-swiss .lede {
+  font-family: var(--sans);
+  font-size: 38px;
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+.theme-swiss .body {
+  font-family: var(--sans);
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.005em;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+.theme-swiss .small {
+  font-family: var(--sans);
+  font-size: 22px;
+  color: var(--ink-3);
+}
+.theme-swiss .label {
+  font-family: var(--mono);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.theme-swiss .mono {
+  font-family: var(--mono);
+  font-size: 26px;
+}
+
+.theme-swiss .page-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 64px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--ink);
+}
+.theme-swiss .page-footer {
+  position: absolute; left: 100px; right: 100px; bottom: 36px;
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-family: var(--mono);
+  font-size: 18px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule-soft);
+}
+
+/* Theorem block: rules above & below, mono tag */
+.theme-swiss .theorem {
+  padding: 28px 0;
+  border-top: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+}
+.theme-swiss .theorem-tag {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 18px;
+  display: flex; gap: 18px; align-items: center;
+}
+.theme-swiss .theorem-tag::before {
+  content: '';
+  display: inline-block;
+  width: 18px; height: 18px;
+  background: var(--accent);
+}
+.theme-swiss .theorem-name { font-weight: 500; color: var(--ink); }
+.theme-swiss .theorem-body {
+  font-family: var(--serif);
+  font-size: 34px;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+/* Display math */
+.theme-swiss .display-math {
+  background: var(--bg-2);
+  border: 1px solid var(--rule);
+  padding: 64px 72px;
+  position: relative;
+}
+.theme-swiss .eq-label {
+  position: absolute;
+  right: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--mono);
+  font-size: 22px;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+
+/* Algorithm */
+.theme-swiss .algorithm {
+  background: var(--bg-2);
+  border: 1px solid var(--rule);
+}
+.theme-swiss .algorithm-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.theme-swiss .algorithm-header::before {
+  content: '▸';
+  color: var(--accent);
+  margin-right: 12px;
+}
+.theme-swiss .algorithm-body {
+  padding: 28px 32px;
+  font-family: var(--mono);
+  font-size: 24px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+/* Tables */
+.theme-swiss table.results {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-feature-settings: "tnum";
+}
+.theme-swiss table.results th {
+  font-family: var(--mono);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  text-align: right;
+  padding: 14px 18px;
+  border-bottom: 2px solid var(--ink);
+}
+.theme-swiss table.results th:first-child { text-align: left; }
+.theme-swiss table.results td {
+  font-size: 28px;
+  padding: 16px 18px;
+  text-align: right;
+  border-bottom: 1px solid var(--rule-soft);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.theme-swiss table.results td:first-child {
+  text-align: left;
+  color: var(--ink-2);
+  font-weight: 500;
+}
+.theme-swiss table.results tr.best td {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.theme-swiss .figcaption {
+  font-family: var(--mono);
+  font-size: 20px;
+  color: var(--ink-3);
+  letter-spacing: 0.02em;
+  margin-top: 18px;
+  display: flex; gap: 14px;
+}
+.theme-swiss .figcaption .num {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.theme-swiss .pullquote {
+  font-family: var(--sans);
+  font-size: 72px;
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.theme-swiss .pullquote::before {
+  content: '';
+  display: block;
+  width: 100px; height: 6px;
+  background: var(--accent);
+  margin-bottom: 36px;
+}
+
+.theme-swiss .ref {
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  gap: 28px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-family: var(--sans);
+  font-size: 24px;
+  line-height: 1.4;
+  color: var(--ink);
+}
+.theme-swiss .ref-num {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--accent);
+}
+.theme-swiss .ref-authors { font-weight: 500; color: var(--ink); }
+.theme-swiss .ref-venue { font-family: var(--mono); font-size: 22px; color: var(--ink-3); }
+
+.theme-swiss .katex { color: var(--ink); }

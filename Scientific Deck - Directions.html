@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Scientific deck — three directions</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<!-- KaTeX for math -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+
+<!-- Theme CSS -->
+<link rel="stylesheet" href="themes/editorial.css" />
+<link rel="stylesheet" href="themes/swiss.css" />
+<link rel="stylesheet" href="themes/classic.css" />
+
+<style>
+  html, body { margin: 0; padding: 0; background: #f0eee9; height: 100%; }
+  body { overflow: hidden; }
+  /* Each artboard is a 1920x1080 region; design canvas scales it to fit */
+  .deck-artboard {
+    width: 1920px; height: 1080px;
+    position: relative;
+    background: #fff;
+    overflow: hidden;
+  }
+  .deck-artboard > section {
+    position: absolute; inset: 0;
+    display: none;
+  }
+  .deck-artboard > section.active { display: flex; flex-direction: column; }
+
+  /* Slide-strip thumbnails inside an artboard column would be too dense — instead
+     each artboard shows ONE slide at a time; nav buttons live below the card. */
+  .nav-row {
+    position: absolute;
+    top: 100%;
+    left: 0; right: 0;
+    margin-top: 8px;
+    display: flex; gap: 4px;
+    align-items: center;
+    z-index: 4;
+    pointer-events: none;
+  }
+  .nav-row > * { pointer-events: auto; }
+  .nav-btn {
+    border: 1px solid rgba(40,30,20,0.18);
+    background: rgba(255,255,255,0.85);
+    color: rgba(40,30,20,0.7);
+    width: 26px; height: 26px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: ui-monospace, monospace;
+    font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: background .12s, color .12s;
+  }
+  .nav-btn:hover { background: #fff; color: #2a201a; }
+  .slide-pip {
+    width: 12px; height: 4px;
+    background: rgba(40,30,20,0.2);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background .12s, transform .12s;
+  }
+  .slide-pip.active { background: rgba(40,30,20,0.85); transform: scaleY(1.6); }
+  .slide-pip:hover { background: rgba(40,30,20,0.5); }
+  .slide-counter {
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    color: rgba(40,30,20,0.55);
+    margin-left: 6px;
+    font-variant-numeric: tabular-nums;
+  }
+</style>
+
+<!-- React + Babel -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="charts.jsx"></script>
+<script type="text/babel" src="slides.jsx"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+// One artboard = a single themed deck. Internal state controls which slide is shown.
+// Math is rendered after KaTeX loads.
+function ThemedArtboard({ theme }) {
+  const [idx, setIdx] = useState(0);
+  const [katexReady, setKatexReady] = useState(typeof window !== 'undefined' && !!window.katex);
+  const total = 12;
+
+  useEffect(() => {
+    if (window.katex) { setKatexReady(true); return; }
+    const i = setInterval(() => { if (window.katex) { setKatexReady(true); clearInterval(i); } }, 80);
+    return () => clearInterval(i);
+  }, []);
+
+  const slides = window.ThemedDeck ? null : null;
+
+  // Render all slides; show only `idx`. KaTeX renderToString runs on every render.
+  const slideFns = [
+    window.S_Title, window.S_Motivation, window.S_Background, window.S_Definition,
+    window.S_Equation, window.S_Algorithm, window.S_Architecture, window.S_Table,
+    window.S_Chart, window.S_Distributions, window.S_Quote, window.S_References,
+  ];
+
+  return (
+    <div className="deck-artboard" key={katexReady ? 't' : 'f'}>
+      {/* Render single active slide only — keeps DOM light when 3 decks are mounted */}
+      <section className={`theme-${theme} active`} data-slide-index={idx}>
+        {(() => {
+          const Cmp = slideFns[idx];
+          return Cmp ? <Cmp theme={theme} /> : null;
+        })()}
+      </section>
+      <div className="nav-row" onPointerDown={(e) => e.stopPropagation()}>
+        <button className="nav-btn" onClick={() => setIdx((i) => (i - 1 + total) % total)} title="Previous slide">‹</button>
+        <button className="nav-btn" onClick={() => setIdx((i) => (i + 1) % total)} title="Next slide">›</button>
+        {Array.from({ length: total }).map((_, i) => (
+          <div key={i} className={`slide-pip ${i === idx ? 'active' : ''}`} onClick={() => setIdx(i)} title={`Slide ${i + 1}`} />
+        ))}
+        <span className="slide-counter">{String(idx + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}</span>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <DesignCanvas>
+      <DCSection id="directions" title="Three directions for a scientific deck"
+        subtitle="Same content (discrete diffusion for tabular data) — three aesthetic systems. Use ‹ › or click pips to step through slides; click any artboard to focus.">
+        <DCArtboard id="editorial" label="A · Editorial Modern  ·  Stripe Press / Distill" width={1920} height={1080}>
+          <ThemedArtboard theme="editorial" />
+        </DCArtboard>
+        <DCArtboard id="swiss" label="B · Swiss Technical  ·  Bauhaus / NeurIPS poster" width={1920} height={1080}>
+          <ThemedArtboard theme="swiss" />
+        </DCArtboard>
+        <DCArtboard id="classic" label="C · Classic Academic  ·  LaTeX / book typography" width={1920} height={1080}>
+          <ThemedArtboard theme="classic" />
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+// Wait for KaTeX + slide modules to be defined.
+function boot() {
+  if (!window.katex || !window.S_Title || !window.DesignCanvas) {
+    return setTimeout(boot, 60);
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+}
+boot();
+</script>
+</body>
+</html>
