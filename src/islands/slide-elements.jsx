@@ -848,8 +848,8 @@ export function TocSlideContent() {
 
       const dividers = [...stage.querySelectorAll('section-divider')];
       const parsed = dividers
-        .map(d => ({
-          num: parseInt(d.getAttribute('num'), 10) || 0,
+        .map((d, i) => ({
+          num: parseInt(d.getAttribute('num'), 10) || (i + 1),
           label: d.getAttribute('label') || '',
           blurb: d.getAttribute('blurb') || '',
           slideNum: [...stage.children].indexOf(d) + 1,
