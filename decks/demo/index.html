@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Slide Deck — Capabilities Demo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<!--
+  DECK THEME — change any value to switch the look instantly.
+  palette  : paper | warm | cool | dark | slate | forest
+  font     : swiss-sans | modern-mixed | editorial | classic
+  accent   : any CSS color hex
+  density  : compact | comfortable | airy
+  titleFx  : off | flow | constellation | dust | aurora | halftone
+-->
+<meta name="deck-theme" content="palette=slate;font=swiss-sans;accent=#d23b1c;density=compact;titleFx=constellation">
+
+<script type="module" src="/src/main.js"></script>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <!-- ═══════════════════════════════════════════════════
+       01 · Title — masked-reveal animation
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="01 Title">
+    <title-fx></title-fx>
+    <div class="particle-scrim"></div>
+    <div style="position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:space-between;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div class="label">Capabilities Demo · 19 slides</div>
+        <masked-reveal word="ISLANDS" cell="20" duration="1600"></masked-reveal>
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-bottom:32px;">HTML Islands · React · d3</div>
+        <h1 class="title">The Slide Deck<br>Engine.</h1>
+        <div class="lede" style="margin-top:36px;max-width:1300px;">
+          Static HTML for content. React + d3 for the complex 20%.<br>
+          One file to edit per deck. Instant HMR. Print-ready PDF.
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;">
+        <div class="body" style="font-size:28px;">Your Name · Your Institution</div>
+        <div class="small">Venue · Year</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       02 · Contents
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="02 Contents">
+    <div class="page-header">
+      <div class="label">Contents</div>
+      <div class="label">02 / 19</div>
+    </div>
+    <h2 class="h1" style="margin-bottom:56px;">What's in this demo.</h2>
+    <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:32px 96px;align-content:start;">
+      <div class="toc-entry">
+        <div class="toc-num">01</div>
+        <div><div class="toc-label">Static content</div><div class="toc-blurb">Prose, bullet rails, tables, theorems.</div></div>
+        <div class="toc-pages">03–05</div>
+      </div>
+      <div class="toc-entry">
+        <div class="toc-num">02</div>
+        <div><div class="toc-label">Math (KaTeX)</div><div class="toc-blurb">Inline + display equations.</div></div>
+        <div class="toc-pages">06–07</div>
+      </div>
+      <div class="toc-entry">
+        <div class="toc-num">03</div>
+        <div><div class="toc-label">React islands</div><div class="toc-blurb">Algorithm stepper, diffusion scrubber, architecture diagram.</div></div>
+        <div class="toc-pages">08–11</div>
+      </div>
+      <div class="toc-entry">
+        <div class="toc-num">04</div>
+        <div><div class="toc-label">Charts</div><div class="toc-blurb">SVG charts + d3 animated scatter.</div></div>
+        <div class="toc-pages">12–14</div>
+      </div>
+      <div class="toc-entry">
+        <div class="toc-num">05</div>
+        <div><div class="toc-label">Theme gallery</div><div class="toc-blurb">Type scale, color swatches, component classes.</div></div>
+        <div class="toc-pages">15</div>
+      </div>
+      <div class="toc-entry">
+        <div class="toc-num">06</div>
+        <div><div class="toc-label">Closing</div><div class="toc-blurb">Pull-quote, references, end.</div></div>
+        <div class="toc-pages">16–18</div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Slide Deck — Demo</div><div>github.com/anon/slide-deck</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       03 · Section divider
+       ═══════════════════════════════════════════════════ -->
+  <section-divider num="1" label="Static content." kicker="Part 01 · HTML slides" slide-num="3" total-slides="19" data-label="03 Section Static"></section-divider>
+
+  <!-- ═══════════════════════════════════════════════════
+       04 · Prose + bullet rail (pure HTML)
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="04 Prose">
+    <div class="page-header">
+      <div class="label">01 · Static HTML</div>
+      <div class="label">04 / 19</div>
+    </div>
+    <div style="flex:1;display:grid;grid-template-columns:1.1fr 1fr;gap:88px;align-items:start;">
+      <div>
+        <h2 class="h1">Standard slides are just HTML.</h2>
+        <div class="lede" style="margin-top:36px;">
+          You edit <code>&lt;section&gt;</code> elements directly. No JSX, no abstraction — just the markup you know.
+        </div>
+      </div>
+      <div class="bullet-rail">
+        <div>
+          <div class="label">No build wait</div>
+          <div class="body">Vite's HMR reflects changes to this file in under 50 ms.</div>
+        </div>
+        <div>
+          <div class="label">Portable</div>
+          <div class="body"><code>npm run build:single</code> produces one self-contained .html — email it, present it offline, print to PDF.</div>
+        </div>
+        <div>
+          <div class="label">Readable</div>
+          <div class="body">The 80% of slides with text, tables, and bullets stay in plain HTML. Only the complex 20% needs a component.</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Slide Deck — Demo</div><div>github.com/anon/slide-deck</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       05 · Results table
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="05 Table">
+    <div class="page-header">
+      <div class="label">01 · Tables</div>
+      <div class="label">05 / 19</div>
+    </div>
+    <h2 class="h1" style="margin-bottom:48px;">Benchmark results.</h2>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;">
+      <table class="results">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Dataset A ↓</th>
+            <th>Dataset B ↓</th>
+            <th>Dataset C ↓</th>
+            <th>Mean rank</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Baseline 1</td> <td>0.142</td><td>0.218</td><td>0.196</td><td>4.0</td></tr>
+          <tr><td>Baseline 2</td> <td>0.118</td><td>0.184</td><td>0.162</td><td>3.0</td></tr>
+          <tr><td>Baseline 3</td> <td>0.097</td><td>0.156</td><td>0.141</td><td>2.0</td></tr>
+          <tr class="best"><td>Ours</td>       <td>0.071</td><td>0.124</td><td>0.118</td><td>1.0</td></tr>
+        </tbody>
+      </table>
+      <div class="figcaption" style="margin-top:26px;">
+        <span class="num">Table 1</span>
+        <span>Lower is better. The <code>.best</code> class on a <code>&lt;tr&gt;</code> highlights in accent color.</span>
+      </div>
+    </div>
+    <div class="page-footer"><div>Slide Deck — Demo</div><div>github.com/anon/slide-deck</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       06 · Section divider — Math
+       ═══════════════════════════════════════════════════ -->
+  <section-divider num="2" label="Math." kicker="Part 02 · KaTeX" slide-num="6" total-slides="19" data-label="06 Section Math"></section-divider>
+
+  <!-- ═══════════════════════════════════════════════════
+       07 · Theorem + inline math
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="07 Theorem">
+    <div class="page-header">
+      <div class="label">02 · Math</div>
+      <div class="label">07 / 19</div>
+    </div>
+    <h2 class="h1" style="margin-bottom:40px;">Theorem — inline math.</h2>
+    <div style="flex:1;display:flex;flex-direction:column;gap:36px;justify-content:center;">
+      <div class="theorem">
+        <div class="theorem-tag">Definition 2.1 <span class="theorem-name">— Categorical forward kernel</span></div>
+        <div class="theorem-body">
+          For a categorical variable <span class="math">x_0 \in \{1,\dots,K\}</span>, the Markov chain
+          <div style="margin:20px 0;">
+            <span class="math-display">q(x_t \mid x_{t-1}) = \mathrm{Cat}\!\left(x_t;\ \boldsymbol{Q}_t\, \mathbf{e}_{x_{t-1}}\right)</span>
+          </div>
+          where <span class="math">\boldsymbol{Q}_t \in [0,1]^{K\times K}</span> is the row-stochastic transition matrix,
+          introduced by <cite-ref key="austin2021"></cite-ref>.
+        </div>
+      </div>
+      <div class="body" style="color:var(--ink-3);">
+        The matrix <span class="math">\boldsymbol{Q}_t</span> absorbs probability mass into a <span class="math">[\mathsf{mask}]</span>
+        token at rate <span class="math">\beta_t</span>, giving a tractable posterior
+        <span class="math">q(x_{t-1}\mid x_t, x_0)</span> in closed form.
+      </div>
+    </div>
+    <div class="page-footer"><div>Slide Deck — Demo</div><div>github.com/anon/slide-deck</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       08 · Display equations
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="08 Equations">
+    <div class="page-header">
+      <div class="label">02 · Math</div>
+      <div class="label">08 / 19</div>
+    </div>
+    <h2 class="h1" style="margin-bottom:48px;">Display equations.</h2>
+    <div style="flex:1;display:flex;flex-direction:column;gap:40px;justify-content:center;">
+      <div class="display-math">
+        <span class="math-display">\mathcal{L}_{\text{vlb}} \;=\; \mathbb{E}_q\!\left[ -\log p_\theta(x_0 \mid x_1) \right] \;+\; \sum_{t=2}^{T}\, \mathbb{E}_q\!\left[ D_{\mathrm{KL}}\!\big(q(x_{t-1} \mid x_t, x_0)\,\|\, p_\theta(x_{t-1} \mid x_t)\big) \right]</span>
+        <div class="eq-label">(1)</div>
+      </div>
+      <div class="display-math">
+        <span class="math-display">\mathcal{L}_{\text{simple}} \;=\; \mathbb{E}_{t,\,x_0,\,x_t}\!\left[\, \boldsymbol{w}_t \cdot \mathrm{CE}\!\big(\hat x_0(x_t, t),\; x_0\big) \,\right]</span>
+        <div class="eq-label">(2)</div>
+      </div>
+      <div class="body" style="color:var(--ink-3);max-width:1400px;">
+        <cite-ref key="ho2020"></cite-ref> showed that a simplified objective <span class="math">\mathcal{L}_{\text{simple}}</span>
+        with uniform weights <span class="math">\boldsymbol{w}_t = 1</span> outperforms the full VLB in practice.
+      </div>
+    </div>
+    <div class="page-footer"><div>Slide Deck — Demo</div><div>github.com/anon/slide-deck</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       09 · Section divider — React islands
+       ═══════════════════════════════════════════════════ -->
+  <section-divider num="3" label="React islands." kicker="Part 03 · Interactive" slide-num="9" total-slides="19" data-label="09 Section React"></section-divider>
+
+  <!-- ═══════════════════════════════════════════════════
+       09 · Algorithm stepper (React island)
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="10 Algorithm">
+    <div class="page-header">
+      <div class="label">03 · Islands</div>
+      <div class="label">10 / 19</div>
+    </div>
+    <h2 class="h1" style="margin-bottom:28px;">Algorithm stepper — <span class="mono" style="font-size:inherit;color:var(--accent);">&lt;algorithm-stepper&gt;</span></h2>
+    <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;overflow:hidden;">
+      <algorithm-stepper></algorithm-stepper>
+      <div style="display:flex;flex-direction:column;gap:28px;padding-top:8px;">
+        <div>
+          <div class="label" style="margin-bottom:10px;">How to use this island</div>
+          <div class="body" style="font-size:26px;">Drop <code>&lt;algorithm-stepper&gt;</code> anywhere in a slide. Click Step / Auto to trace the algorithm live. The active pseudocode line highlights; the hero row resolves column by column.</div>
+        </div>
+        <div>
+          <div class="label" style="margin-bottom:10px;">Add your own</div>
+          <div class="body" style="font-size:26px;">Create a component in <code>src/islands/</code>, register it in <code>register.jsx</code>, then use the tag in any deck's HTML.</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Slide Deck — Demo</div><div>github.com/anon/slide-deck</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       10 · Diffusion scrubber (React island)
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="11 Scrubber">
+    <div class="page-header">
+      <div class="label">03 · Islands</div>
+      <div class="label">11 / 19</div>
+    </div>
+    <h2 class="h1" style="margin-bottom:40px;">Diffusion scrubber — <span class="mono" style="font-size:inherit;color:var(--accent);">&lt;diffusion-scrubber&gt;</span></h2>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;">
+      <diffusion-scrubber></diffusion-scrubber>
+    </div>
+    <div class="page-footer"><div>Slide Deck — Demo</div><div>github.com/anon/slide-deck</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       11 · Interactive architecture diagram
+       ═══════════════════════════════════════════════════ -->
+  <interactive-arch slide-num="12" total-slides="19" data-label="12 Arch"></interactive-arch>
+
+  <!-- ═══════════════════════════════════════════════════
+       12 · Section divider — Charts
+       ═══════════════════════════════════════════════════ -->
+  <section-divider num="4" label="Charts." kicker="Part 04 · SVG + d3" slide-num="13" total-slides="19" data-label="13 Section Charts"></section-divider>
+
+  <!-- ═══════════════════════════════════════════════════
+       13 · SVG charts (NLL + marginals)
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="14 Charts">
+    <div class="page-header">
+      <div class="label">04 · SVG Charts</div>
+      <div class="label">14 / 19</div>
+    </div>
+    <h2 class="h1" style="margin-bottom:24px;">Hand-crafted SVG charts.</h2>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:20px;">
+      <div style="width:100%;height:480px;"><nll-chart></nll-chart></div>
+      <div class="figcaption">
+        <span class="num">Figure 1</span>
+        <span>Test NLL vs diffusion steps. <code>&lt;nll-chart&gt;</code> — theme-aware SVG island. Use <code>&lt;dist-chart&gt;</code> for marginals.</span>
+      </div>
+    </div>
+    <div class="page-footer"><div>Slide Deck — Demo</div><div>github.com/anon/slide-deck</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       14 · d3 animated scatter-flow
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="15 d3 Scatter">
+    <div class="page-header">
+      <div class="label">04 · d3 island</div>
+      <div class="label">15 / 19</div>
+    </div>
+    <h2 class="h1" style="margin-bottom:24px;">d3 island — <span class="mono" style="font-size:inherit;color:var(--accent);">&lt;scatter-flow&gt;</span></h2>
+    <div style="flex:1;display:grid;grid-template-columns:2fr 1fr;gap:64px;align-items:center;">
+      <div style="width:100%;height:100%;min-height:0;">
+        <scatter-flow n="140" seed="7"></scatter-flow>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:28px;">
+        <div>
+          <div class="label" style="margin-bottom:12px;">Reveal-triggered</div>
+          <div class="body" style="font-size:26px;">The animation fires only when this slide becomes active, via the <code>slidechange</code> event. Navigate away → points reset.</div>
+        </div>
+        <div>
+          <div class="label" style="margin-bottom:12px;">Theme-aware</div>
+          <div class="body" style="font-size:26px;">d3 reads <code>--ink</code> / <code>--accent</code> CSS vars, so the viz follows palette and accent switches in the panel.</div>
+        </div>
+        <div>
+          <div class="label" style="margin-bottom:12px;">Pattern</div>
+          <div class="body" style="font-size:26px;"><code>useEffect</code> + d3 selection + <code>deck-stage</code> <code>slidechange</code> listener. See <code>src/islands/d3/scatter-flow.jsx</code>.</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Slide Deck — Demo</div><div>github.com/anon/slide-deck</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       15 · Component gallery / kitchen-sink
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="16 Gallery">
+    <div class="page-header">
+      <div class="label">05 · Type scale &amp; components</div>
+      <div class="label">16 / 19</div>
+    </div>
+    <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-content:start;padding-bottom:60px;">
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="eyebrow">eyebrow · accent mono</div>
+        <div class="title" style="font-size:64px;">title class</div>
+        <div class="h1" style="font-size:52px;">h1 class</div>
+        <div class="h2" style="font-size:42px;">h2 class</div>
+        <div class="lede">lede — 38px sans, ink-2</div>
+        <div class="body">body — 30px, ink-2</div>
+        <div class="small">small — 24px, ink-3</div>
+        <div class="label">label · mono · uppercase</div>
+        <div class="mono">mono · var(--mono)</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <div class="theorem" style="padding:16px 0;">
+          <div class="theorem-tag">Theorem <span class="theorem-name">— name</span></div>
+          <div class="theorem-body" style="font-size:26px;">Statement in <code>.theorem-body</code> (serif, 34px).</div>
+        </div>
+        <div class="display-math" style="padding:16px 24px;">
+          <span style="font-family:var(--mono);font-size:22px;">display-math block (framed equation)</span>
+          <div class="eq-label">(n)</div>
+        </div>
+        <div class="figcaption"><span class="num">Fig n</span><span>figcaption with .num accent label</span></div>
+        <div class="pullquote" style="font-size:40px;margin-top:8px;">
+          A great idea — pull-quote.
+        </div>
+        <div>
+          <div style="display:flex;gap:20px;align-items:center;margin-top:8px;">
+            <div style="width:40px;height:40px;background:var(--ink);border-radius:4px;"></div>
+            <div style="width:40px;height:40px;background:var(--ink-2);border-radius:4px;"></div>
+            <div style="width:40px;height:40px;background:var(--ink-3);border-radius:4px;"></div>
+            <div style="width:40px;height:40px;background:var(--ink-4);border-radius:4px;"></div>
+            <div style="width:40px;height:40px;background:var(--accent);border-radius:4px;"></div>
+            <div style="width:40px;height:40px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;"></div>
+            <div style="width:40px;height:40px;background:var(--tint);border-radius:4px;"></div>
+            <div class="small" style="margin-left:4px;">–ink → –accent → –bg2 → –tint</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Slide Deck — Demo</div><div>github.com/anon/slide-deck</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       16 · Pull-quote
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="17 Quote">
+    <div class="page-header">
+      <div class="label">06 · Discussion</div>
+      <div class="label">17 / 19</div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:48px;max-width:1500px;align-self:center;">
+      <div class="pullquote">
+        The best slides show ideas — not the tools that made them.
+      </div>
+      <div class="small" style="margin-left:8px;font-size:26px;">
+        — probably someone, somewhere
+      </div>
+    </div>
+    <div class="page-footer"><div>Slide Deck — Demo</div><div>github.com/anon/slide-deck</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       17 · References
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="18 References">
+    <div class="page-header">
+      <div class="label">References</div>
+      <div class="label">18 / 19</div>
+    </div>
+    <h2 class="h1" style="margin-bottom:36px;">References.</h2>
+    <div style="flex:1;display:flex;flex-direction:column;">
+      <div class="ref">
+        <div class="ref-num">1</div>
+        <div>
+          <span class="ref-authors">Author, A., Author, B.</span>
+          <span> Paper title goes here.</span>
+          <span class="ref-venue"> Venue 2024.</span>
+        </div>
+      </div>
+      <div class="ref">
+        <div class="ref-num">2</div>
+        <div>
+          <span class="ref-authors">Author, C., Author, D.</span>
+          <span> Another important paper.</span>
+          <span class="ref-venue"> Venue 2023.</span>
+        </div>
+      </div>
+      <div class="ref">
+        <div class="ref-num">3</div>
+        <div>
+          <span class="ref-authors">Author, E.</span>
+          <span> The foundational work.</span>
+          <span class="ref-venue"> Venue 2022.</span>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Slide Deck — Demo</div><div>github.com/anon/slide-deck</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       18 · End
+       ═══════════════════════════════════════════════════ -->
+  <end-slide slide-num="19" total-slides="19" data-label="19 End"></end-slide>
+
+</deck-stage>
+
+<!--
+  Citation reference database.
+  Keys match <cite-ref key="..."> used in slides.
+  Values may include simple HTML like <em>Venue</em>.
+-->
+<script type="application/json" id="deck-refs">
+{
+  "austin2021": "Austin, J., Johnson, D. D., Ho, J., Tarlow, D., &amp; van den Berg, R. (2021). Structured denoising diffusion models in discrete state-spaces. <em>NeurIPS</em>.",
+  "ho2020": "Ho, J., Jain, A., &amp; Abbeel, P. (2020). Denoising diffusion probabilistic models. <em>NeurIPS</em>."
+}
+</script>
+
+<!-- Progress bar: configure sections to match your deck structure -->
+<progress-bar sections='[
+  {"label":"Intro",    "start":0,  "end":1 },
+  {"label":"Static",  "start":2,  "end":4 },
+  {"label":"Math",    "start":5,  "end":7 },
+  {"label":"React",   "start":8,  "end":11},
+  {"label":"Charts",  "start":12, "end":14},
+  {"label":"Gallery", "start":15, "end":15},
+  {"label":"End",     "start":16, "end":18}
+]'></progress-bar>
+
+<div id="tweaks-root"></div>
+
+<!-- Speaker notes: array indexed by 0-based slide position -->
+<script type="application/json" id="speaker-notes">
+[
+  "Slide 1 — Title. Walk through the engine briefly: HTML islands + React + d3.",
+  "Slide 2 — Contents. Quick overview of what we'll see.",
+  "Slide 3 — Section divider. The TokenGrid number animation.",
+  "Slide 4 — Pure HTML slide. Emphasise HMR speed.",
+  "Slide 5 — Table. .best row highlights in accent color.",
+  "Slide 6 — Math divider.",
+  "Slide 7 — Theorem + inline math. Uses <cite-ref> for footnote citation demo.",
+  "Slide 8 — Display equations (1) and (2). Another cite-ref demo.",
+  "Slide 9 — React islands divider.",
+  "Slide 10 — Algorithm stepper. Click Step or Auto to trace.",
+  "Slide 11 — Diffusion scrubber. Drag the slider.",
+  "Slide 12 — Interactive architecture. Click blocks.",
+  "Slide 13 — Charts divider.",
+  "Slide 14 — SVG charts. Hand-crafted, CSS-var themed.",
+  "Slide 15 — d3 scatter. Fires on reveal, resets on leave.",
+  "Slide 16 — Component gallery. Reference for new slide authors.",
+  "Slide 17 — Pull-quote.",
+  "Slide 18 — References.",
+  "Slide 19 — End."
+]
+</script>
+</body>
+</html>

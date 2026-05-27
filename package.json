@@ -1,0 +1,31 @@
+{
+  "name": "slide-deck",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:single": "SINGLEFILE=1 vite build",
+    "preview": "vite preview",
+    "new": "node scripts/new-deck.mjs"
+  },
+  "dependencies": {
+    "d3": "^7.9.0",
+    "katex": "^0.16.11",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "@fontsource/inter": "^5.1.1",
+    "@fontsource/inter-tight": "^5.1.1",
+    "@fontsource/jetbrains-mono": "^5.1.1",
+    "@fontsource/newsreader": "^5.1.1",
+    "@fontsource/ibm-plex-sans": "^5.1.1",
+    "@fontsource/ibm-plex-mono": "^5.1.1",
+    "@fontsource/eb-garamond": "^5.1.1",
+    "@fontsource/source-serif-4": "^5.1.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^5.4.11",
+    "vite-plugin-singlefile": "^2.0.1"
+  }
+}

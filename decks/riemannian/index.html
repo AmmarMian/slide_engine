@@ -1,0 +1,830 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Riemannian Optimization</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="deck-theme" content="palette=paper;font=swiss-sans;accent=#4f46e5;density=compact;titleFx=constellation">
+<script type="module" src="/src/main.js"></script>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <!-- ═══════════════════════════════════════════════════
+       01 · Title
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="01 Title">
+    <title-fx></title-fx>
+    <div class="particle-scrim"></div>
+    <div style="position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:space-between;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div class="label">Riemannian Optimization</div>
+        <masked-reveal word="MANIFOLDS" cell="20" duration="1600"></masked-reveal>
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-bottom:32px;">Optimization · Differential Geometry · Machine Learning</div>
+        <h1 class="title">Gradient Descent<br>on Curved Spaces.</h1>
+        <div class="lede" style="margin-top:36px;max-width:1300px;">
+          Riemannian geometry provides the tools to optimize smoothly over spheres,
+          rotation matrices, Grassmannians, and beyond — exploiting the manifold's
+          intrinsic structure for faster, more principled algorithms.
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;">
+        <div class="body" style="font-size:28px;">A. Mian · Research</div>
+        <div class="small">Lecture Notes · 2025</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       02 · Outline — auto-populated from section-divider tags
+       ═══════════════════════════════════════════════════ -->
+  <toc-slide data-label="02 Outline"></toc-slide>
+
+  <!-- ═══════════════════════════════════════════════════
+       03 · §Geometry
+       ═══════════════════════════════════════════════════ -->
+  <section-divider num="1" label="Riemannian geometry." kicker="Part 01 · Background"
+    blurb="Manifolds, tangent spaces, metrics — and a live gradient decomposition."
+    data-label="03 §Geometry"></section-divider>
+
+  <!-- ═══════════════════════════════════════════════════
+       04 · Smooth Manifolds
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="04 Manifolds">
+    <slide-header title="Smooth manifolds."></slide-header>
+    <div style="flex:1;display:grid;grid-template-columns:1.1fr 1fr;gap:80px;align-items:start;">
+      <div style="display:flex;flex-direction:column;gap:28px;">
+        <div class="theorem">
+          <div class="theorem-tag">Definition 1.1 <span class="theorem-name">— Smooth manifold</span></div>
+          <div class="theorem-body">
+            A <em>smooth n-manifold</em> is a Hausdorff topological space
+            <span class="math">\mathcal{M}</span> equipped with a smooth atlas
+            <span class="math">\{(U_\alpha, \varphi_\alpha)\}</span>: open charts
+            <span class="math">\varphi_\alpha: U_\alpha \to \mathbb{R}^n</span>
+            whose transition maps are <span class="math">C^\infty</span>.
+          </div>
+        </div>
+        <div class="body" style="font-size:28px;color:var(--ink-2);">
+          Intuitively: locally looks like <span class="math">\mathbb{R}^n</span>, but may
+          curve globally.
+        </div>
+        <div class="body" style="font-size:26px;color:var(--ink-3);">
+          When <span class="math">\mathcal{M} \subset \mathbb{R}^m</span> is a smooth
+          embedded submanifold we can work in ambient coordinates and restrict as needed.
+        </div>
+      </div>
+      <div class="bullet-rail" style="gap:28px;">
+        <div>
+          <div class="label">Sphere</div>
+          <div class="body"><span class="math">S^n = \{x \in \mathbb{R}^{n+1} : \|x\| = 1\}</span>, dim <span class="math">n</span>.</div>
+        </div>
+        <div>
+          <div class="label">Rotation group</div>
+          <div class="body"><span class="math">\mathrm{SO}(n) = \{Q : Q^\top Q = I,\, \det Q = 1\}</span>, dim <span class="math">\tfrac{n(n-1)}{2}</span>.</div>
+        </div>
+        <div>
+          <div class="label">Stiefel manifold</div>
+          <div class="body"><span class="math">\mathrm{St}(n,p) = \{X \in \mathbb{R}^{n\times p} : X^\top X = I_p\}</span>, dim <span class="math">np - \tfrac{p(p+1)}{2}</span>.</div>
+        </div>
+        <div>
+          <div class="label">SPD cone</div>
+          <div class="body"><span class="math">\mathcal{S}_{++}^n = \{A \in \mathbb{R}^{n\times n} : A \succ 0\}</span>, dim <span class="math">\tfrac{n(n+1)}{2}</span>.</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Riemannian Optimization</div><div>Lecture Notes · 2025</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       05 · Tangent Space & Metric
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="05 Tangent &amp; Metric">
+    <slide-header title="Tangent space &amp; Riemannian metric."></slide-header>
+    <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start;">
+      <div style="display:flex;flex-direction:column;gap:28px;">
+        <div class="theorem">
+          <div class="theorem-tag">Definition 1.2 <span class="theorem-name">— Tangent space</span></div>
+          <div class="theorem-body">
+            The <em>tangent space</em> at <span class="math">x \in \mathcal{M}</span> is
+            <div style="margin:18px 0;">
+              <span class="math-display">T_x\mathcal{M} = \bigl\{\, \dot\gamma(0) : \gamma\text{ smooth curve},\, \gamma(0)=x \,\bigr\}</span>
+            </div>
+            For embedded <span class="math">\mathcal{M}\subset\mathbb{R}^m</span> this is a linear subspace of <span class="math">\mathbb{R}^m</span>.
+          </div>
+        </div>
+        <div class="body" style="font-size:26px;color:var(--ink-3);">
+          <strong>Sphere:</strong>
+          <span class="math">T_x S^n = \{v \in \mathbb{R}^{n+1} : x^\top v = 0\}</span>.
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:28px;">
+        <div class="theorem">
+          <div class="theorem-tag">Definition 1.3 <span class="theorem-name">— Riemannian metric</span></div>
+          <div class="theorem-body">
+            A smooth family of inner products
+            <span class="math">g_x : T_x\mathcal{M} \times T_x\mathcal{M} \to \mathbb{R}</span>,
+            symmetric and positive-definite for all <span class="math">x</span>.
+          </div>
+        </div>
+        <div class="bullet-rail" style="gap:20px;">
+          <div>
+            <div class="label">Sphere <span class="math">S^n</span></div>
+            <div class="body" style="font-size:26px;"><span class="math">g_x(u,v) = u^\top v</span>.</div>
+          </div>
+          <div>
+            <div class="label">SPD <span class="math">\mathcal{S}^n_{++}</span></div>
+            <div class="body" style="font-size:26px;"><span class="math">g_A(U,V) = \mathrm{tr}(A^{-1}UA^{-1}V)</span>.</div>
+          </div>
+          <div>
+            <div class="label">Stiefel <span class="math">\mathrm{St}(n,p)</span></div>
+            <div class="body" style="font-size:26px;"><span class="math">g_X(\Delta_1,\Delta_2) = \mathrm{tr}(\Delta_1^\top(I - \tfrac{1}{2}XX^\top)\Delta_2)</span>.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Riemannian Optimization</div><div>Lecture Notes · 2025</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       06 · Riemannian Gradient
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="06 Riemannian Gradient">
+    <slide-header title="The Riemannian gradient."></slide-header>
+    <div style="flex:1;display:grid;grid-template-columns:1.15fr 1fr;gap:80px;align-items:start;">
+      <div style="display:flex;flex-direction:column;gap:28px;">
+        <div class="theorem">
+          <div class="theorem-tag">Theorem 1.4 <span class="theorem-name">— Riemannian gradient (Riesz)</span></div>
+          <div class="theorem-body">
+            There exists a unique vector field <span class="math">\mathrm{grad}\,f</span> satisfying
+            <div style="margin:18px 0;">
+              <span class="math-display">\bigl\langle\, \mathrm{grad}\,f(x),\, v \,\bigr\rangle_x = Df(x)[v] \qquad \forall\, v \in T_x\mathcal{M}.</span>
+            </div>
+            For embedded manifolds,
+            <span class="math">\mathrm{grad}\,f(x) = \mathrm{Proj}_{T_x\mathcal{M}}\!\left(\nabla f(x)\right)</span>.
+          </div>
+        </div>
+        <div class="display-math">
+          <span class="math-display">\mathrm{grad}\,f(x)\big|_{S^n} = \nabla f(x) - \bigl(x^\top \nabla f(x)\bigr)\,x</span>
+          <div class="eq-label">(1.1)</div>
+        </div>
+        <div class="body" style="font-size:26px;color:var(--ink-3);">
+          Project the Euclidean gradient onto the tangent plane
+          <span class="math">T_x S^n = x^\perp</span> by subtracting the normal component.
+        </div>
+      </div>
+      <div class="bullet-rail" style="gap:24px;">
+        <div>
+          <div class="label">Stiefel manifold</div>
+          <div class="body" style="font-size:26px;">
+            <span class="math-display" style="font-size:26px;">\mathrm{grad}\,f(X) = \nabla f(X) - X\,\mathrm{sym}\!\bigl(X^\top\nabla f(X)\bigr)</span>
+          </div>
+        </div>
+        <div>
+          <div class="label">SPD cone</div>
+          <div class="body" style="font-size:26px;">
+            <span class="math">\mathrm{grad}\,f(A) = A\,\nabla f(A)\,A</span>.
+          </div>
+        </div>
+        <div>
+          <div class="label">Key property</div>
+          <div class="body" style="font-size:26px;">Always in
+            <span class="math">T_x\mathcal{M}</span> — a valid descent direction for moving <em>along</em> the manifold.</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Riemannian Optimization</div><div>Lecture Notes · 2025</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       07 · Tangent Projection — D3
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="07 D3 Tangent Projection">
+    <slide-header title="Gradient decomposition — &lt;tangent-projection&gt;"></slide-header>
+    <div style="flex:1;display:grid;grid-template-columns:1fr 260px;gap:40px;align-items:start;min-height:0;">
+      <div style="width:100%;height:100%;min-height:0;">
+        <tangent-projection></tangent-projection>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <div><div class="label" style="margin-bottom:8px;">Stage 1</div>
+          <div class="body" style="font-size:22px;">Point <span class="math">p \in S^2</span>. Cost <span class="math">f(p)=1-p_z</span>; min at north pole.</div></div>
+        <div><div class="label" style="margin-bottom:8px;">Stage 2</div>
+          <div class="body" style="font-size:22px;">Tangent plane <span class="math">T_p S^2 = p^\perp</span>.</div></div>
+        <div><div class="label" style="margin-bottom:8px;">Stage 3</div>
+          <div class="body" style="font-size:22px;">Euclidean <span class="math">\nabla f=(0,0,-1)</span> — leaves the manifold.</div></div>
+        <div><div class="label" style="margin-bottom:8px;">Stage 4</div>
+          <div class="body" style="font-size:22px;">Normal component <span class="math">(\nabla f\cdot p)p</span> removed; residual <span class="math">\mathrm{grad}\,f(p) \in T_pS^2</span>.</div></div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Riemannian Optimization</div><div>Lecture Notes · 2025</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       08 · §Optimization
+       ═══════════════════════════════════════════════════ -->
+  <section-divider num="2" label="Riemannian optimization." kicker="Part 02 · Algorithms"
+    blurb="Retractions, RGD algorithm, convergence theory, and algorithm comparison."
+    data-label="08 §Optimization"></section-divider>
+
+  <!-- ═══════════════════════════════════════════════════
+       09 · Problem Formulation
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="09 Problem">
+    <slide-header title="Problem formulation."></slide-header>
+    <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;">
+      <div style="display:flex;flex-direction:column;gap:24px;">
+        <div class="display-math" style="padding:24px 32px;">
+          <span class="math-display">\min_{x\,\in\,\mathcal{M}}\; f(x)</span>
+          <div class="eq-label">(P)</div>
+        </div>
+        <div class="body" style="font-size:26px;">
+          <span class="math">f:\mathcal{M}\to\mathbb{R}</span> is smooth.
+          The constraint is structural — not a penalty or Lagrange multiplier.
+        </div>
+        <div class="body" style="font-size:24px;color:var(--ink-3);">
+          <strong>Why not lift to <span class="math">\mathbb{R}^m</span>?</strong>
+          Projected gradient descent loses curvature information; lifted problems are non-convex
+          even when <span class="math">f</span> is geodesically convex on <span class="math">\mathcal{M}</span>.
+        </div>
+        <div class="theorem">
+          <div class="theorem-tag">Definition 2.1 <span class="theorem-name">— Geodesic convexity</span></div>
+          <div class="theorem-body">
+            <span class="math">f</span> is <em>geodesically convex</em> if for every geodesic <span class="math">\gamma:[0,1]\to\mathcal{M}</span>,
+            <span class="math-display">f(\gamma(t)) \;\leq\; (1-t)\,f(\gamma(0)) + t\,f(\gamma(1)).</span>
+          </div>
+        </div>
+      </div>
+      <div class="bullet-rail" style="gap:24px;">
+        <div>
+          <div class="label">Examples in ML</div>
+          <div class="body" style="font-size:26px;">
+            PCA on a Grassmannian, orthogonally-constrained networks
+            <span class="math">(WW^\top = I)</span>, covariance estimation on
+            <span class="math">\mathcal{S}^n_{++}</span>, Fréchet mean on hyperbolic space.
+          </div>
+        </div>
+        <div>
+          <div class="label">Fundamental difficulty</div>
+          <div class="body" style="font-size:26px;">
+            The update <span class="math">x + \alpha v</span> leaves <span class="math">\mathcal{M}</span>.
+            A <em>retraction</em> <span class="math">R_x</span> maps tangent vectors back onto the manifold.
+          </div>
+        </div>
+        <div>
+          <div class="label">Stationarity condition</div>
+          <div class="body" style="font-size:26px;">
+            <span class="math">x^\star</span> is critical iff
+            <span class="math">\mathrm{grad}\,f(x^\star) = 0</span>.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Riemannian Optimization</div><div>Lecture Notes · 2025</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       10 · Exponential Map & Retraction
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="10 Exp &amp; Retraction">
+    <slide-header title="Exponential map &amp; retraction."></slide-header>
+    <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start;">
+      <div style="display:flex;flex-direction:column;gap:24px;">
+        <div class="theorem">
+          <div class="theorem-tag">Definition 2.2 <span class="theorem-name">— Exponential map</span></div>
+          <div class="theorem-body">
+            For <span class="math">v \in T_x\mathcal{M}</span>, let <span class="math">\gamma_v</span> be the unique geodesic with
+            <span class="math">\gamma_v(0)=x,\; \dot\gamma_v(0)=v</span>. Then
+            <span class="math-display">\mathrm{Exp}_x(v) := \gamma_v(1) \;\in\; \mathcal{M}.</span>
+          </div>
+        </div>
+        <div class="body" style="font-size:26px;color:var(--ink-2);">
+          <strong>Sphere:</strong>
+          <span class="math-display">\mathrm{Exp}_x(v) = x\cos\|v\| + \frac{v}{\|v\|}\sin\|v\|.</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:24px;">
+        <div class="theorem">
+          <div class="theorem-tag">Definition 2.3 <span class="theorem-name">— Retraction</span></div>
+          <div class="theorem-body">
+            A smooth map <span class="math">R_x : T_x\mathcal{M} \to \mathcal{M}</span> with
+            <span class="math-display">R_x(0_x) = x \quad\text{and}\quad DR_x(0_x) = \mathrm{id}_{T_x\mathcal{M}}.</span>
+            First-order approximation to <span class="math">\mathrm{Exp}_x</span>.
+          </div>
+        </div>
+        <div class="bullet-rail" style="gap:18px;">
+          <div>
+            <div class="label">Sphere</div>
+            <div class="body" style="font-size:26px;"><span class="math">R_x(v) = (x+v)/\|x+v\|</span>. Cheap, exact.</div>
+          </div>
+          <div>
+            <div class="label">Stiefel (QR)</div>
+            <div class="body" style="font-size:26px;"><span class="math">R_X(\Delta) = \mathrm{qf}(X + \Delta)</span>, <span class="math">O(np^2)</span>.</div>
+          </div>
+          <div>
+            <div class="label">Stiefel (Cayley)</div>
+            <div class="body" style="font-size:26px;"><span class="math">R_X(\Delta) = (I - \tfrac{1}{2}W)^{-1}(I + \tfrac{1}{2}W)\,X</span>.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Riemannian Optimization</div><div>Lecture Notes · 2025</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       11 · RGD Algorithm
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="11 RGD Algorithm">
+    <slide-header title="Riemannian gradient descent."></slide-header>
+    <div style="flex:1;display:grid;grid-template-columns:1.1fr 1fr;gap:80px;align-items:start;">
+      <div style="display:flex;flex-direction:column;gap:28px;">
+        <div class="theorem">
+          <div class="theorem-tag">Algorithm 1 <span class="theorem-name">— RGD with retraction</span></div>
+          <div class="theorem-body" style="font-family:var(--mono);font-size:26px;line-height:1.9;">
+            <strong>Input:</strong> <span class="math">f,\;\mathcal{M},\; x_0 \in \mathcal{M},\;\{\alpha_k\}</span><br>
+            <strong>For</strong> <span class="math">k = 0, 1, 2, \ldots</span><br>
+            &nbsp;&nbsp;Compute <span class="math">g_k = \mathrm{grad}\,f(x_k) \in T_{x_k}\mathcal{M}</span><br>
+            &nbsp;&nbsp;If <span class="math">\|g_k\| \leq \varepsilon</span>: <strong>return</strong> <span class="math">x_k</span><br>
+            &nbsp;&nbsp;Set <span class="math">x_{k+1} = R_{x_k}(-\alpha_k\, g_k)</span><br>
+            <strong>EndFor</strong>
+          </div>
+        </div>
+        <div class="display-math" data-step>
+          <span class="math-display">x_{k+1} = R_{x_k}\!\bigl(-\alpha_k\,\mathrm{grad}\,f(x_k)\bigr)</span>
+          <div class="eq-label">(2.1)</div>
+        </div>
+      </div>
+      <div class="bullet-rail" style="gap:26px;padding-top:8px;">
+        <div data-step>
+          <div class="label">Step-size rules</div>
+          <div class="body" style="font-size:26px;">Constant <span class="math">\alpha</span>, backtracking Armijo,
+            Barzilai–Borwein — all port from Euclidean GD.</div>
+        </div>
+        <div data-step>
+          <div class="label">Vs. projected gradient</div>
+          <div class="body" style="font-size:26px;">PGD uses the ambient gradient.
+            RGD uses the <em>intrinsic</em> gradient — cheaper and more accurate.</div>
+        </div>
+        <div data-step>
+          <div class="label">Parallel transport</div>
+          <div class="body" style="font-size:26px;">For momentum methods (CG, L-BFGS), past gradients must be
+            transported to <span class="math">T_{x_k}\mathcal{M}</span> via <span class="math">\mathcal{T}_{x_{k-1}\to x_k}</span>.</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Riemannian Optimization</div><div>Lecture Notes · 2025</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       12 · Convergence Theory
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="12 Convergence">
+    <slide-header title="Convergence theory."></slide-header>
+    <div style="flex:1;display:flex;flex-direction:column;gap:28px;justify-content:center;">
+      <div class="theorem">
+        <div class="theorem-tag">Theorem 2.4 <span class="theorem-name">— Convergence of RGD (Zhang &amp; Sra, 2016)</span></div>
+        <div class="theorem-body">
+          Let <span class="math">f</span> be geodesically convex and <span class="math">L</span>-smooth, <span class="math">\alpha \leq 1/L</span>. Then
+          <div style="margin:16px 0;">
+            <span class="math-display">\frac{1}{K}\sum_{k=0}^{K-1}\|\mathrm{grad}\,f(x_k)\|^2 \;\leq\; \frac{2\bigl(f(x_0)-f^\star\bigr)}{\alpha K}.</span>
+          </div>
+          Under <em>geodesic strong convexity</em> (parameter <span class="math">\mu &gt; 0</span>):
+          <div style="margin:16px 0;">
+            <span class="math-display">d(x_k, x^\star)^2 \;\leq\; \left(1 - \alpha\mu\right)^k d(x_0,x^\star)^2.</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:48px;">
+        <div data-step>
+          <div class="label" style="margin-bottom:10px;">Geodesic convex</div>
+          <div class="body" style="font-size:26px;"><span class="math">O(1/K)</span> rate. Same as Euclidean convex case.</div>
+        </div>
+        <div data-step>
+          <div class="label" style="margin-bottom:10px;">Strongly convex</div>
+          <div class="body" style="font-size:26px;">Linear rate <span class="math">(1-\alpha\mu)^k</span>. Condition number <span class="math">\kappa = L/\mu</span>.</div>
+        </div>
+        <div data-step>
+          <div class="label" style="margin-bottom:10px;">Nonconvex</div>
+          <div class="body" style="font-size:26px;"><span class="math">O(1/K)</span> to first-order critical point.</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Riemannian Optimization</div><div>Lecture Notes · 2025</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       13 · Beyond First Order
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="13 CG &amp; RTR">
+    <slide-header title="Beyond first order."></slide-header>
+    <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;">
+      <div style="display:flex;flex-direction:column;gap:24px;">
+        <div class="theorem">
+          <div class="theorem-tag">Algorithm 2 <span class="theorem-name">— Riemannian CG (Polak–Ribière)</span></div>
+          <div class="theorem-body" style="font-family:var(--mono);font-size:24px;line-height:1.85;">
+            <span class="math">x_{k+1} = R_{x_k}(\alpha_k d_k)</span><br>
+            <span class="math">\beta_k^{\mathrm{PR}} = \tfrac{\langle g_{k+1},\, g_{k+1} - \mathcal{T}g_k \rangle}{\|g_k\|^2}</span><br>
+            <span class="math">d_{k+1} = -g_{k+1} + \beta_k^{\mathrm{PR}}\,\mathcal{T}d_k</span>
+          </div>
+        </div>
+        <div class="body" style="font-size:24px;color:var(--ink-3);">
+          <span class="math">\mathcal{T}</span> = parallel transport from <span class="math">T_{x_k}\mathcal{M}</span> to
+          <span class="math">T_{x_{k+1}}\mathcal{M}</span>.
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:24px;">
+        <div class="theorem">
+          <div class="theorem-tag">Algorithm 3 <span class="theorem-name">— Riemannian Trust Region</span></div>
+          <div class="theorem-body" style="font-size:26px;line-height:1.65;">
+            Sub-problem in the tangent space:
+            <span class="math-display">\min_{v \in T_{x_k}\mathcal{M},\; \|v\| \leq \Delta_k} m_k(v)</span>
+            where <span class="math">m_k(v) = f(x_k) + \langle g_k, v\rangle + \tfrac{1}{2}\langle H_k v, v\rangle</span>.
+            Update: <span class="math">x_{k+1} = R_{x_k}(v_k^\star)</span>.
+          </div>
+        </div>
+        <div class="body" style="font-size:24px;color:var(--ink-3);">
+          RTR achieves <strong>quadratic local convergence</strong>. Implemented in Manopt and Pymanopt.
+        </div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Riemannian Optimization</div><div>Lecture Notes · 2025</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       14 · Algorithm Comparison — D3
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="14 D3 Algorithm Comparison">
+    <slide-header title="RGD vs RCG on S² — &lt;algorithm-comparison&gt;"></slide-header>
+    <div style="flex:1;display:grid;grid-template-columns:1fr 220px;gap:36px;align-items:start;min-height:0;">
+      <div style="width:100%;height:100%;min-height:0;">
+        <algorithm-comparison></algorithm-comparison>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <div><div class="label" style="margin-bottom:8px;">Cost</div>
+          <div class="body" style="font-size:22px;"><span class="math">f(p) = p_1^2 + 2p_2^2 + 8p_3^2</span>. Min at <span class="math">\pm e_1</span>.</div></div>
+        <div><div class="label" style="margin-bottom:8px;">RGD slow</div>
+          <div class="body" style="font-size:22px;"><span class="math">\alpha=0.06</span> — crawls along flat directions.</div></div>
+        <div><div class="label" style="margin-bottom:8px;">RGD tuned</div>
+          <div class="body" style="font-size:22px;"><span class="math">\alpha=0.22</span> — near-optimal; direct path.</div></div>
+        <div><div class="label" style="margin-bottom:8px;">RCG P-R</div>
+          <div class="body" style="font-size:22px;"><span class="math">\alpha=0.4</span> — fewest iterations; exploits curvature.</div></div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Riemannian Optimization</div><div>Lecture Notes · 2025</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       15 · §Demo
+       ═══════════════════════════════════════════════════ -->
+  <section-divider num="3" label="Live visualization." kicker="Part 03 · D3 Animation"
+    blurb="D3 animations of RGD and algorithm comparison on the 2-sphere."
+    data-label="15 §Demo"></section-divider>
+
+  <!-- ═══════════════════════════════════════════════════
+       16 · RGD on S²
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="16 D3 RGD on S²">
+    <slide-header title="RGD on S² — &lt;riemannian-descent&gt;"></slide-header>
+    <div style="flex:1;display:grid;grid-template-columns:1fr 240px;gap:40px;align-items:start;min-height:0;">
+      <div style="width:100%;height:100%;min-height:0;">
+        <riemannian-descent></riemannian-descent>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:22px;">
+        <div><div class="label" style="margin-bottom:8px;">Cost</div>
+          <div class="body" style="font-size:23px;"><span class="math">f(p) = 1 - p \cdot x^\star</span>. Min <span class="math">0</span> at <span class="math">x^\star</span>.</div></div>
+        <div><div class="label" style="margin-bottom:8px;">Gradient</div>
+          <div class="body" style="font-size:23px;">Arrow shows <span class="math">-\mathrm{grad}\,f</span> in <span class="math">T_{x_k}S^2</span>.</div></div>
+        <div><div class="label" style="margin-bottom:8px;">Retraction</div>
+          <div class="body" style="font-size:23px;"><span class="math">R_x(v)=(x+v)/\|x+v\|</span>.</div></div>
+        <div><div class="label" style="margin-bottom:8px;">Level curves</div>
+          <div class="body" style="font-size:23px;">Latitude lines around <span class="math">x^\star</span>, <span class="math">\alpha=0.5</span>.</div></div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Riemannian Optimization</div><div>Lecture Notes · 2025</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       17 · §Manifolds
+       ═══════════════════════════════════════════════════ -->
+  <section-divider num="4" label="Key manifolds." kicker="Part 04 · Examples"
+    blurb="Stiefel, Grassmann, SPD matrices — with SPD geodesic and Poincaré disk animations."
+    data-label="17 §Manifolds"></section-divider>
+
+  <!-- ═══════════════════════════════════════════════════
+       18 · Stiefel & Grassmann
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="18 Stiefel &amp; Grassmann">
+    <slide-header title="Stiefel &amp; Grassmann manifolds."></slide-header>
+    <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start;">
+      <div style="display:flex;flex-direction:column;gap:24px;">
+        <div class="theorem">
+          <div class="theorem-tag">Definition 3.1 <span class="theorem-name">— Stiefel manifold</span></div>
+          <div class="theorem-body">
+            <span class="math-display">\mathrm{St}(n,p) = \bigl\{ X \in \mathbb{R}^{n\times p} : X^\top X = I_p \bigr\}</span>
+            <span class="math-display">T_X\mathrm{St}(n,p) = \bigl\{ \Delta : X^\top\Delta + \Delta^\top X = 0 \bigr\}</span>
+          </div>
+        </div>
+        <div class="theorem">
+          <div class="theorem-tag">Definition 3.2 <span class="theorem-name">— Grassmann manifold</span></div>
+          <div class="theorem-body">
+            <span class="math-display">\mathrm{Gr}(p,n) = \mathrm{St}(n,p)\,/\,\mathrm{O}(p)</span>
+            Quotient by right <span class="math">\mathrm{O}(p)</span>-action. Dimension <span class="math">p(n-p)</span>.
+          </div>
+        </div>
+      </div>
+      <div class="bullet-rail" style="gap:26px;">
+        <div>
+          <div class="label">PCA on Grassmann</div>
+          <div class="body" style="font-size:26px;">Minimize <span class="math">\|X - UU^\top X\|_F^2</span> over <span class="math">[U] \in \mathrm{Gr}(p,n)</span>.</div>
+        </div>
+        <div>
+          <div class="label">Orthogonal RNNs</div>
+          <div class="body" style="font-size:26px;"><span class="math">W \in \mathrm{SO}(n)</span> prevents vanishing/exploding gradients. Train via Cayley retraction.</div>
+        </div>
+        <div>
+          <div class="label">Low-rank factorization</div>
+          <div class="body" style="font-size:26px;">Matrix completion on <span class="math">\mathrm{St}(n,r) \times \mathrm{St}(m,r)</span>. Avoids nuclear-norm relaxation.</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Riemannian Optimization</div><div>Lecture Notes · 2025</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       19 · SPD Matrices
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="19 SPD Matrices">
+    <slide-header title="Symmetric positive-definite matrices."></slide-header>
+    <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start;">
+      <div style="display:flex;flex-direction:column;gap:24px;">
+        <div class="theorem">
+          <div class="theorem-tag">Definition 3.3 <span class="theorem-name">— SPD manifold</span></div>
+          <div class="theorem-body">
+            <span class="math-display">\mathcal{S}^n_{++} = \bigl\{A \in \mathbb{R}^{n\times n} : A = A^\top,\; A \succ 0\bigr\}</span>
+            Open cone; <span class="math">T_A\mathcal{S}^n_{++} = \mathbb{S}^n</span>.
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div class="label">Affine-invariant metric &amp; geodesic</div>
+          <div class="display-math">
+            <span class="math-display">g_A(U,V) = \mathrm{tr}(A^{-1}U\,A^{-1}V)</span>
+            <div class="eq-label">(3.1)</div>
+          </div>
+          <div class="display-math">
+            <span class="math-display">\gamma(t) = A^{1/2}\!\left(A^{-1/2}BA^{-1/2}\right)^{\!t}\!A^{1/2}</span>
+            <div class="eq-label">(3.2)</div>
+          </div>
+        </div>
+      </div>
+      <div class="bullet-rail" style="gap:26px;">
+        <div>
+          <div class="label">Log-Euclidean metric</div>
+          <div class="body" style="font-size:26px;"><span class="math">d(A,B) = \|\log A - \log B\|_F</span>. Flat space via matrix log.</div>
+        </div>
+        <div>
+          <div class="label">Fréchet mean</div>
+          <div class="body" style="font-size:26px;"><span class="math">\bar A = \arg\min_A \sum_i d(A, A_i)^2</span>. Arises in BCI, DTI-MRI, radar.</div>
+        </div>
+        <div>
+          <div class="label">Bures–Wasserstein</div>
+          <div class="body" style="font-size:26px;">Optimal-transport metric on Gaussians. Used in GAN training and domain adaptation.</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Riemannian Optimization</div><div>Lecture Notes · 2025</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       20 · SPD Geodesic — D3
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="20 D3 SPD Geodesic">
+    <slide-header title="SPD geodesic animation — &lt;spd-geodesic&gt;"></slide-header>
+    <div style="flex:1;display:grid;grid-template-columns:1fr 230px;gap:36px;align-items:start;min-height:0;">
+      <div style="width:100%;height:100%;min-height:0;">
+        <spd-geodesic></spd-geodesic>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <div><div class="label" style="margin-bottom:8px;">Ellipse ↔ SPD</div>
+          <div class="body" style="font-size:22px;"><span class="math">\{x : x^\top A^{-1} x = 1\}</span>. Semi-axes <span class="math">= \sqrt{\lambda_i}</span>.</div></div>
+        <div><div class="label" style="margin-bottom:8px;">Geodesic</div>
+          <div class="body" style="font-size:22px;"><span class="math">A_0=\mathrm{diag}(4,1)</span> → <span class="math">A_1=[[1,1.2],[1.2,2]]</span>. Eigenvalues and orientation interpolated together.</div></div>
+        <div><div class="label" style="margin-bottom:8px;">Top row</div>
+          <div class="body" style="font-size:22px;">Seven snapshots at <span class="math">t \in \{0,\tfrac{1}{6},\ldots,1\}</span>.</div></div>
+        <div><div class="label" style="margin-bottom:8px;">Live ellipse</div>
+          <div class="body" style="font-size:22px;">Continuous oscillation. Eigenvalues update in real time.</div></div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Riemannian Optimization</div><div>Lecture Notes · 2025</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       21 · ML Applications
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="21 ML Applications">
+    <slide-header title="Applications in machine learning."></slide-header>
+    <div style="flex:1;display:grid;grid-template-columns:1fr 1fr 1fr;gap:48px;align-content:start;">
+      <div>
+        <div class="label" style="margin-bottom:14px;">Hyperbolic embeddings</div>
+        <div class="body" style="font-size:25px;">Model hierarchies in Poincaré ball <span class="math">\mathbb{B}^n</span> (curvature <span class="math">-1</span>). Exponentially more capacity than Euclidean. <cite-ref key="nickel2017"></cite-ref></div>
+      </div>
+      <div>
+        <div class="label" style="margin-bottom:14px;">Normalizing flows</div>
+        <div class="body" style="font-size:25px;">Learn densities on <span class="math">S^n</span> or <span class="math">\mathrm{SO}(3)</span> (protein structure, molecular orientation). <cite-ref key="rezende2020"></cite-ref></div>
+      </div>
+      <div>
+        <div class="label" style="margin-bottom:14px;">Riemannian BN</div>
+        <div class="body" style="font-size:25px;">Normalize SPD activations via Fréchet mean on <span class="math">\mathcal{S}^n_{++}</span>. Better texture-recognition CNNs. <cite-ref key="brooks2019"></cite-ref></div>
+      </div>
+      <div>
+        <div class="label" style="margin-bottom:14px;">Geodesic interpolation</div>
+        <div class="body" style="font-size:25px;">Interpolate GAN latent codes along geodesics for semantically consistent images.</div>
+      </div>
+      <div>
+        <div class="label" style="margin-bottom:14px;">Stiefel networks</div>
+        <div class="body" style="font-size:25px;">Semi-orthogonal projections <span class="math">WW^\top=I</span> for stable transformer fine-tuning.</div>
+      </div>
+      <div>
+        <div class="label" style="margin-bottom:14px;">Principal geodesic analysis</div>
+        <div class="body" style="font-size:25px;">Generalize PCA to shape spaces (SRVF curves, diffeomorphisms). <cite-ref key="fletcher2004"></cite-ref></div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Riemannian Optimization</div><div>Lecture Notes · 2025</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       22 · Poincaré Disk — D3
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="22 D3 Poincaré Disk">
+    <slide-header title="Hyperbolic space — &lt;poincare-disk&gt;"></slide-header>
+    <div style="flex:1;display:grid;grid-template-columns:1fr 220px;gap:36px;align-items:start;min-height:0;">
+      <div style="width:100%;height:100%;min-height:0;">
+        <poincare-disk></poincare-disk>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <div><div class="label" style="margin-bottom:8px;">Poincaré disk</div>
+          <div class="body" style="font-size:22px;">Model of <span class="math">\mathbb{H}^2</span> (curvature <span class="math">-1</span>). Geodesics = circular arcs ⊥ to boundary.</div></div>
+        <div><div class="label" style="margin-bottom:8px;">Parallel lines</div>
+          <div class="body" style="font-size:22px;">Two geodesics can share an ideal boundary point without ever meeting inside <span class="math">\mathbb{H}^2</span>.</div></div>
+        <div><div class="label" style="margin-bottom:8px;">Tree embedding</div>
+          <div class="body" style="font-size:22px;">Binary tree grown level-by-level via hyperbolic exp map. Infinite capacity in finite radius.</div></div>
+        <div><div class="label" style="margin-bottom:8px;">Nickel &amp; Kiela</div>
+          <div class="body" style="font-size:22px;"><span class="math">\approx 3\times</span> lower distortion than Euclidean on WordNet hierarchies at same dimension.</div></div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Riemannian Optimization</div><div>Lecture Notes · 2025</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       23 · §Closing
+       ═══════════════════════════════════════════════════ -->
+  <section-divider num="5" label="Benchmarks &amp; closing." kicker="Part 05 · Wrap-up"
+    blurb="Algorithm comparison table, key takeaways, and references."
+    data-label="23 §Closing"></section-divider>
+
+  <!-- ═══════════════════════════════════════════════════
+       24 · Benchmark Table
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="24 Benchmarks">
+    <slide-header title="Algorithm comparison."></slide-header>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:20px;">
+      <table class="results">
+        <thead>
+          <tr>
+            <th>Method</th><th>Convergence rate</th><th>Per-iter cost</th><th>Retraction</th><th>Momentum / memory</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Projected GD</td><td><span class="math">O(1/K)</span></td><td><span class="math">O(n^3)</span> (proj.)</td><td>Euclidean proj.</td><td>—</td>
+          </tr>
+          <tr>
+            <td>Riemannian GD</td><td><span class="math">O(1/K)</span></td><td><span class="math">O(np^2)</span></td><td>QR / Cayley / norm.</td><td>—</td>
+          </tr>
+          <tr>
+            <td>Riemannian CG</td><td>superlinear</td><td><span class="math">O(np^2)</span></td><td>same</td><td>transport <span class="math">\mathcal{T}</span></td>
+          </tr>
+          <tr>
+            <td>Riemannian L-BFGS</td><td>superlinear</td><td><span class="math">O(mnp)</span></td><td>same</td><td><span class="math">m</span>-step Hessian approx.</td>
+          </tr>
+          <tr class="best">
+            <td>Riemannian Trust Region</td><td>quadratic (locally)</td><td><span class="math">O(n^3)</span></td><td>same</td><td>full Hessian approx.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="figcaption">
+        <span class="num">Table 1</span>
+        <span>Rates under geodesic strong convexity + Lipschitz Hessian. <span class="math">X \in \mathrm{St}(n,p)</span>, <span class="math">p \ll n</span>. RTR is highlighted.</span>
+      </div>
+    </div>
+    <div class="page-footer"><div>Riemannian Optimization</div><div>Lecture Notes · 2025</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       25 · Conclusion
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="25 Conclusion">
+    <slide-header title="Key takeaways."></slide-header>
+    <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:96px;align-items:center;">
+      <div class="bullet-rail" style="gap:22px;">
+        <div>
+          <div class="label">Intrinsic vs. extrinsic</div>
+          <div class="body" style="font-size:26px;">Riemannian methods respect the manifold's geometry — no projections, no constraint violations, faster convergence.</div>
+        </div>
+        <div data-step>
+          <div class="label">Retraction = the key tool</div>
+          <div class="body" style="font-size:26px;">Cheap retractions (normalization, QR, Cayley) make RGD competitive with Euclidean GD per-iteration.</div>
+        </div>
+        <div data-step>
+          <div class="label">Same convergence theory</div>
+          <div class="body" style="font-size:26px;"><span class="math">O(1/K)</span> convex, linear strongly-convex — Euclidean rates port with <span class="math">d(\cdot,\cdot)</span> replacing <span class="math">\|\cdot\|</span>.</div>
+        </div>
+        <div data-step>
+          <div class="label">Geometry opens new doors</div>
+          <div class="body" style="font-size:26px;">Hyperbolic embeddings, SPD networks, and Grassmann PCA are naturally Riemannian.</div>
+        </div>
+      </div>
+      <div data-step style="display:flex;flex-direction:column;justify-content:center;gap:40px;">
+        <div class="pullquote" style="font-size:38px;">
+          Manifolds are not obstacles.<br>They are the right domain.
+        </div>
+        <div class="small" style="font-size:24px;margin-left:8px;">
+          — paraphrasing Absil, Mahony &amp; Sepulchre (2008)
+        </div>
+      </div>
+    </div>
+    <div class="page-footer"><div>Riemannian Optimization</div><div>Lecture Notes · 2025</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       26 · References
+       ═══════════════════════════════════════════════════ -->
+  <section data-label="26 References">
+    <slide-header title="References."></slide-header>
+    <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+      <div class="ref"><div class="ref-num">1</div><div>
+        <span class="ref-authors">Absil, P.-A., Mahony, R., &amp; Sepulchre, R.</span>
+        <span> Optimization Algorithms on Matrix Manifolds.</span>
+        <span class="ref-venue"> Princeton University Press, 2008.</span>
+      </div></div>
+      <div class="ref"><div class="ref-num">2</div><div>
+        <span class="ref-authors">Boumal, N.</span>
+        <span> An Introduction to Optimization on Smooth Manifolds.</span>
+        <span class="ref-venue"> Cambridge University Press, 2023.</span>
+      </div></div>
+      <div class="ref"><div class="ref-num">3</div><div>
+        <span class="ref-authors">Zhang, H., &amp; Sra, S.</span>
+        <span> First-order methods for geodesically convex optimization.</span>
+        <span class="ref-venue"> COLT, 2016.</span>
+      </div></div>
+      <div class="ref" id="ref-nickel2017"><div class="ref-num">4</div><div>
+        <span class="ref-authors">Nickel, M., &amp; Kiela, D.</span>
+        <span> Poincaré embeddings for learning hierarchical representations.</span>
+        <span class="ref-venue"> NeurIPS, 2017.</span>
+      </div></div>
+      <div class="ref" id="ref-rezende2020"><div class="ref-num">5</div><div>
+        <span class="ref-authors">Rezende, D. J., et al.</span>
+        <span> Normalizing flows on tori and spheres.</span>
+        <span class="ref-venue"> ICML, 2020.</span>
+      </div></div>
+      <div class="ref" id="ref-brooks2019"><div class="ref-num">6</div><div>
+        <span class="ref-authors">Brooks, D., et al.</span>
+        <span> Riemannian batch normalization for SPD neural networks.</span>
+        <span class="ref-venue"> NeurIPS, 2019.</span>
+      </div></div>
+      <div class="ref" id="ref-fletcher2004"><div class="ref-num">7</div><div>
+        <span class="ref-authors">Fletcher, P. T., et al.</span>
+        <span> Principal geodesic analysis for the study of nonlinear statistics of shape.</span>
+        <span class="ref-venue"> IEEE TMI, 2004.</span>
+      </div></div>
+    </div>
+    <div class="page-footer"><div>Riemannian Optimization</div><div>Lecture Notes · 2025</div></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       27 · End
+       ═══════════════════════════════════════════════════ -->
+  <end-slide data-label="27 End"></end-slide>
+
+</deck-stage>
+
+<script type="application/json" id="deck-refs">
+{
+  "nickel2017": "Nickel, M., &amp; Kiela, D. (2017). Poincaré embeddings for learning hierarchical representations. <em>NeurIPS</em>.",
+  "rezende2020": "Rezende, D. J., et al. (2020). Normalizing flows on tori and spheres. <em>ICML</em>.",
+  "brooks2019": "Brooks, D., et al. (2019). Riemannian batch normalization for SPD neural networks. <em>NeurIPS</em>.",
+  "fletcher2004": "Fletcher, P. T., et al. (2004). Principal geodesic analysis for the study of nonlinear statistics of shape. <em>IEEE TMI</em>."
+}
+</script>
+
+<progress-bar sections='[
+  {"label":"Intro",   "start":0,  "end":1 },
+  {"label":"Geom.",   "start":2,  "end":6 },
+  {"label":"Optim.",  "start":7,  "end":13},
+  {"label":"Demo",    "start":14, "end":15},
+  {"label":"Mflds.",  "start":16, "end":21},
+  {"label":"Close",   "start":22, "end":26}
+]'></progress-bar>
+
+<div id="tweaks-root"></div>
+</body>
+</html>

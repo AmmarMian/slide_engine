@@ -1,0 +1,383 @@
+/* ============================================================
+   Slide Deck — Swiss Technical design system
+   CSS vars defined here; values written by apply-theme.js.
+   ============================================================ */
+
+/* ── Font imports (self-hosted via @fontsource) ──────────────
+   Each family is imported in main.js so Vite bundles them.
+   The CDN fallback is kept in comments for quick switching.
+   ─────────────────────────────────────────────────────────── */
+
+:root {
+  /* palette: paper (default — overwritten by apply-theme.js) */
+  --bg: #f4f3ef;
+  --bg-2: #ffffff;
+  --ink: #0a0a0a;
+  --ink-2: #2a2a2a;
+  --ink-3: #6e6e6e;
+  --ink-4: #a8a8a8;
+  --rule: #0a0a0a;
+  --rule-soft: rgba(10, 10, 10, 0.14);
+  --accent: #d23b1c;
+  --tint: #ebe9e0;
+
+  --sans: 'Inter Tight', -apple-system, sans-serif;
+  --serif: 'Newsreader', Georgia, serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --d-pad-x: 100px;
+  --d-pad-y-top: 100px;
+  --d-pad-y-bot: 80px;
+
+  --type-scale: 1;
+}
+
+html, body { margin: 0; padding: 0; background: #1a1a1a; }
+body { font-family: var(--sans); }
+
+/* ── Slide frame ─────────────────────────────────────────────
+   Styles every direct child of <deck-stage> regardless of tag.
+   Add new custom slide tags to this selector list.           */
+/* slide-header lives inside <section> — needs block display so it stretches full width */
+slide-header { display: block; }
+
+deck-stage > section,
+deck-stage > section-divider,
+deck-stage > interactive-arch,
+deck-stage > filmstrip-slide,
+deck-stage > toc-slide,
+deck-stage > end-slide {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-feature-settings: "kern", "ss01", "cv11";
+  padding: var(--d-pad-y-top) var(--d-pad-x) var(--d-pad-y-bot);
+  display: flex; flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* ── Particle-flow island ────────────────────────────────────
+   Sits at z-index 0, behind all slide content.
+   The containing section is already position:absolute inset:0
+   (from deck-stage ::slotted), so this fills it exactly.    */
+title-fx {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  display: block;
+}
+title-fx canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Gradient veil sitting between the canvas and the title text.
+   Fades from a solid slab of --bg on the left (title area) to
+   transparent on the right so particles show through there.
+   Modern browsers interpolate gradient-to-transparent through the
+   source color (not through black), giving a clean fade.       */
+.particle-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    var(--bg) 0%,
+    var(--bg) 18%,
+    transparent 58%
+  );
+  opacity: 0.72;
+}
+
+/* ── Type scale ──────────────────────────────────────────────
+   All sizes use calc(Xpx * var(--type-scale, 1)) so the entire
+   deck scales uniformly when --type-scale is changed via the
+   tweaks panel or a per-deck <meta name="deck-theme" content="...;scale=0.85">.
+   Per-slide override: add style="--type-scale:0.9" to a <section>. */
+.eyebrow {
+  font-family: var(--mono);
+  font-size: calc(24px * var(--type-scale, 1)); font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.title {
+  font-family: var(--sans);
+  font-size: calc(112px * var(--type-scale, 1)); font-weight: 600;
+  line-height: 0.95; letter-spacing: -0.045em;
+  color: var(--ink);
+  margin: 0; text-wrap: balance;
+}
+.h1 {
+  font-family: var(--sans);
+  font-size: calc(80px * var(--type-scale, 1)); font-weight: 600;
+  line-height: 1.0; letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0; text-wrap: balance;
+}
+.h2 {
+  font-family: var(--sans);
+  font-size: calc(60px * var(--type-scale, 1)); font-weight: 500;
+  line-height: 1.05; letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0; text-wrap: balance;
+}
+.lede {
+  font-size: calc(38px * var(--type-scale, 1)); font-weight: 400;
+  line-height: 1.35; letter-spacing: -0.015em;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+.body { font-size: calc(30px * var(--type-scale, 1)); line-height: 1.4; color: var(--ink-2); text-wrap: pretty; }
+.small { font-size: calc(24px * var(--type-scale, 1)); color: var(--ink-3); }
+.label {
+  font-family: var(--mono);
+  font-size: calc(24px * var(--type-scale, 1)); font-weight: 500;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--ink-3);
+}
+.mono { font-family: var(--mono); font-size: calc(26px * var(--type-scale, 1)); }
+
+/* ── Page chrome ─────────────────────────────────────────────*/
+.page-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 64px; padding-bottom: 14px;
+  border-bottom: 2px solid var(--ink);
+}
+.page-footer {
+  position: absolute; left: var(--d-pad-x); right: var(--d-pad-x); bottom: 36px;
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-family: var(--mono); font-size: calc(24px * var(--type-scale, 1));
+  color: var(--ink-3); letter-spacing: 0.04em;
+  padding-top: 14px; border-top: 1px solid var(--rule-soft);
+}
+
+/* ── Theorem block ───────────────────────────────────────────*/
+.theorem { padding: 28px 0; border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); }
+.theorem-tag {
+  font-family: var(--mono);
+  font-size: calc(24px * var(--type-scale, 1)); font-weight: 600;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 18px;
+  display: flex; gap: 18px; align-items: center;
+}
+.theorem-tag::before { content: ''; display: inline-block; width: 18px; height: 18px; background: var(--accent); }
+.theorem-name { font-weight: 500; color: var(--ink); }
+.theorem-body { font-family: var(--serif); font-size: calc(34px * var(--type-scale, 1)); line-height: 1.4; color: var(--ink); }
+
+/* ── Display math container ──────────────────────────────────*/
+.display-math { background: var(--bg-2); border: 1px solid var(--rule); padding: 36px 48px; position: relative; }
+.eq-label {
+  position: absolute; right: 32px; top: 50%; transform: translateY(-50%);
+  font-family: var(--mono); font-size: 24px; color: var(--accent); letter-spacing: 0.04em;
+}
+
+/* Math elements — pre-render look */
+.math, .math-display { font-family: var(--mono); color: var(--ink); }
+.math-display { display: block; text-align: center; font-size: calc(28px * var(--type-scale, 1)); }
+
+/* ── Algorithm ───────────────────────────────────────────────*/
+.algorithm { background: var(--bg-2); border: 1px solid var(--rule); }
+.algorithm-header {
+  padding: 16px 24px; border-bottom: 1px solid var(--rule);
+  font-family: var(--mono); font-size: calc(24px * var(--type-scale, 1)); font-weight: 600;
+  letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.algorithm-header::before { content: '▸'; color: var(--accent); margin-right: 12px; }
+.algorithm-body { padding: 28px 32px; font-family: var(--mono); font-size: calc(24px * var(--type-scale, 1)); line-height: 1.6; color: var(--ink); }
+.algorithm-body .ln { color: var(--ink-3); display: inline-block; width: 26px; }
+
+/* ── Tables ──────────────────────────────────────────────────*/
+table.results { width: 100%; border-collapse: collapse; font-family: var(--sans); font-feature-settings: "tnum"; }
+table.results th {
+  font-family: var(--mono); font-size: calc(24px * var(--type-scale, 1)); font-weight: 500;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--ink-3); text-align: right;
+  padding: 14px 18px; border-bottom: 2px solid var(--ink);
+}
+table.results th:first-child { text-align: left; }
+table.results td {
+  font-size: calc(28px * var(--type-scale, 1)); padding: 16px 18px; text-align: right;
+  border-bottom: 1px solid var(--rule-soft);
+  color: var(--ink); font-variant-numeric: tabular-nums;
+}
+table.results td:first-child { text-align: left; color: var(--ink-2); font-weight: 500; }
+table.results tr.best td { color: var(--accent); font-weight: 600; }
+
+/* ── Misc content components ─────────────────────────────────*/
+.figcaption { font-family: var(--mono); font-size: calc(24px * var(--type-scale, 1)); color: var(--ink-3); letter-spacing: 0.02em; margin-top: 18px; display: flex; gap: 14px; }
+.figcaption .num { font-weight: 600; color: var(--accent); }
+
+.pullquote {
+  font-family: var(--sans); font-size: calc(72px * var(--type-scale, 1)); font-weight: 500;
+  line-height: 1.05; letter-spacing: -0.035em;
+  color: var(--ink); text-wrap: balance;
+}
+.pullquote::before { content: ''; display: block; width: 100px; height: 6px; background: var(--accent); margin-bottom: 36px; }
+
+.ref {
+  display: grid; grid-template-columns: 70px 1fr;
+  gap: 28px; padding: 18px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-family: var(--sans); font-size: calc(24px * var(--type-scale, 1)); line-height: 1.4; color: var(--ink);
+}
+.ref-num { font-family: var(--mono); font-size: calc(24px * var(--type-scale, 1)); font-weight: 500; color: var(--accent); }
+.ref-authors { font-weight: 500; color: var(--ink); }
+.ref-venue { font-family: var(--mono); font-size: calc(24px * var(--type-scale, 1)); color: var(--ink-3); }
+
+.bullet-rail { display: flex; flex-direction: column; gap: 36px; }
+.bullet-rail > div { border-top: 1px solid var(--rule-soft); padding-top: 22px; }
+.bullet-rail .label { margin-bottom: 12px; }
+.bullet-rail .body { font-size: 26px; }
+
+.toc-entry {
+  display: grid; grid-template-columns: 120px 1fr 80px;
+  align-items: baseline; gap: 24px;
+  padding-bottom: 22px; border-bottom: 1px solid var(--rule-soft);
+}
+.toc-num { font-family: var(--mono); color: var(--accent); font-size: calc(32px * var(--type-scale, 1)); font-weight: 600; }
+.toc-label { font-size: calc(36px * var(--type-scale, 1)); font-weight: 600; line-height: 1.1; color: var(--ink); letter-spacing: -0.02em; }
+.toc-blurb { margin-top: 8px; color: var(--ink-3); font-size: calc(22px * var(--type-scale, 1)); }
+.toc-pages { text-align: right; color: var(--ink-3); font-family: var(--mono); font-size: calc(24px * var(--type-scale, 1)); }
+
+.katex { color: var(--ink); }
+
+.diff-axis { display: flex; justify-content: space-between; align-items: center; padding: 0 8px; }
+.diff-axis .mono { color: var(--ink); }
+
+/* ── Inverted section dividers + end slide ───────────────────*/
+section.section-divider,
+section-divider,
+end-slide {
+  --inv-bg: #0e0d0b;
+  --inv-ink: #f3eee0;
+  --inv-ink-2: #cabf9f;
+  --inv-ink-3: #8a8170;
+  --inv-rule: rgba(243,238,224,0.18);
+  background: var(--inv-bg) !important;
+  color: var(--inv-ink) !important;
+  position: relative;
+}
+section.section-divider::before,
+section-divider::before,
+end-slide::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0, transparent 3px,
+    rgba(243,238,224,0.025) 3px, rgba(243,238,224,0.025) 4px
+  );
+  mix-blend-mode: screen;
+}
+
+/* ── Progress bar (fixed overlay, top of viewport) ───────────*/
+.progress-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  z-index: 2147483640;
+  padding: 0 22px 8px;
+  pointer-events: none;
+}
+.progress-track { display: flex; gap: 3px; align-items: stretch; }
+.progress-seg { position: relative; height: 3px; min-width: 0; }
+.progress-seg-bg { position: absolute; inset: 0; background: var(--rule-soft); }
+.progress-seg-fg { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); transition: width 360ms cubic-bezier(.2,.8,.2,1); }
+.progress-seg-label {
+  position: absolute; bottom: 7px; left: 0;
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--ink-3);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+@keyframes zoomIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Inline citations ────────────────────────────────────────
+   Usage: <cite-ref key="smith2024"></cite-ref>
+   References defined once in: <script id="deck-refs" type="application/json">{"smith2024":"..."}</script>
+   Numbers are auto-assigned per slide. Full reference appears as footnote above page-footer. */
+cite-ref {
+  display: inline;
+  font-family: var(--mono);
+  font-size: 0.62em;
+  vertical-align: super;
+  line-height: 0;
+  color: var(--accent);
+  font-weight: 600;
+  cursor: default;
+  letter-spacing: 0;
+}
+.slide-citations {
+  position: absolute;
+  left: var(--d-pad-x);
+  right: var(--d-pad-x);
+  bottom: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule-soft);
+}
+.cite-item {
+  font-family: var(--sans);
+  font-size: calc(19px * var(--type-scale, 1));
+  color: var(--ink-3);
+  line-height: 1.4;
+}
+.cite-item-num {
+  font-family: var(--mono);
+  color: var(--accent);
+  font-size: calc(18px * var(--type-scale, 1));
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+/* ── Step reveals (Beamer-style pause) ───────────────────────────────────────
+   Mark any element with data-step to hide it until navigation reveals it.
+   Elements stay in flow (opacity, not display:none) so layout doesn't shift.
+   Print always shows all steps so Save-as-PDF captures the final state.      */
+[data-step] {
+  transition: opacity 200ms ease;
+}
+[data-step]:not([data-step-visible]) {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  user-select: none !important;
+}
+@media print {
+  [data-step] { opacity: 1 !important; }
+}
+
+/* ── Layout helpers ──────────────────────────────────────────────────────────
+   slide-body   : the flex-grow content wrapper replacing inline style="flex:1"
+   cols-*       : grid column layouts; gap/alignment match design system        */
+.slide-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  gap: 36px;
+}
+.cols {
+  display: grid;
+  gap: 60px;
+  align-items: start;
+  flex: 1;
+  min-height: 0;
+}
+.cols-2   { grid-template-columns: 1fr 1fr; }
+.cols-3   { grid-template-columns: 1fr 1fr 1fr; }
+.cols-1-2 { grid-template-columns: 1fr 2fr; }
+.cols-2-1 { grid-template-columns: 2fr 1fr; }
+.cols-1-3 { grid-template-columns: 1fr 3fr; }
+.cols-3-1 { grid-template-columns: 3fr 1fr; }
