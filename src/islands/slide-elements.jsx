@@ -168,6 +168,9 @@ export function SectionDividerContent({ num, label, kicker }) {
     return () => stage.removeEventListener('slidechange', onSlideChange);
   }, []);
 
+  const title = document.title || '';
+  const date  = document.querySelector('meta[name="deck-date"]')?.getAttribute('content') || '';
+
   return (
     <>
       <div ref={elRef} className="page-header" style={{ borderBottomColor: 'var(--inv-rule)' }}>
@@ -194,8 +197,8 @@ export function SectionDividerContent({ num, label, kicker }) {
         </div>
       </div>
       <div className="page-footer" style={{ color: 'var(--inv-ink-3)', borderTopColor: 'var(--inv-rule)' }}>
-        <div>Slide Deck</div>
-        <div>Venue · Year</div>
+        {title && <div>{title}</div>}
+        {date  && <div>{date}</div>}
       </div>
     </>
   );
@@ -451,10 +454,13 @@ export function FilmstripContent({ slideNum, totalSlides }) {
 }
 
 // ─── EndSlide ─────────────────────────────────────────────────────────────────
-export function EndSlideContent() {
+export function EndSlideContent({ heading = 'THANK YOU', kicker = 'the deck returns to noise', contact = '' }) {
   const ref = useRef(null);
   const [pos, setPos] = useState({ idx: 0, total: 0 });
   useEffect(() => { setPos(getSlidePosition(ref.current, 'end-slide')); }, []);
+
+  const title = document.title || '';
+  const date  = document.querySelector('meta[name="deck-date"]')?.getAttribute('content') || '';
 
   return (
     <>
@@ -465,22 +471,24 @@ export function EndSlideContent() {
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 64 }}>
         <div>
           <div className="label" style={{ color: 'var(--inv-ink-3)', marginBottom: 22, fontSize: 28 }}>
-            the deck returns to noise
+            {kicker}
           </div>
           <TokenGrid
-            pattern={['THANK YOU'.split('').map(c => c === ' ' ? null : c)]}
+            pattern={[heading.split('').map(c => c === ' ' ? null : c)]}
             cell={140} gap={14} duration={2400} flickerHz={16}
             reverse={true} loop={true}
             ink="var(--inv-ink)" noiseInk="var(--inv-noise)"
           />
         </div>
-        <div style={{ fontFamily: 'var(--sans)', fontSize: 36, color: 'var(--inv-ink-2)', maxWidth: 1300, lineHeight: 1.3 }}>
-          Slides made with <span style={{ color: 'var(--accent)', fontFamily: 'var(--mono)', fontSize: 32 }}>github.com/anon/slide-deck</span>.
-        </div>
+        {contact && (
+          <div style={{ fontFamily: 'var(--sans)', fontSize: 36, color: 'var(--inv-ink-2)', maxWidth: 1300, lineHeight: 1.3 }}>
+            {contact}
+          </div>
+        )}
       </div>
       <div className="page-footer" style={{ color: 'var(--inv-ink-3)', borderTopColor: 'var(--inv-rule)' }}>
-        <div>Slide Deck</div>
-        <div>Venue · Year</div>
+        {title && <div>{title}</div>}
+        {date  && <div>{date}</div>}
       </div>
     </>
   );

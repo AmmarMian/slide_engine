@@ -58,6 +58,16 @@ deck-stage > end-slide {
   overflow: hidden;
 }
 
+/* ── SPDNet arch island ──────────────────────────────────────
+   Fills the slide-body div; padding:0 on the parent is set inline. */
+spdnet-arch {
+  display: block;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
 /* ── Particle-flow island ────────────────────────────────────
    Sits at z-index 0, behind all slide content.
    The containing section is already position:absolute inset:0

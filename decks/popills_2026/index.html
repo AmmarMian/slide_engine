@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>Popills_2026</title>
+<title>Popills · 2026</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <!--
@@ -59,13 +59,43 @@
   <section-divider
     label="Introduction"
     kicker="Overview"
-    blurb="Les matrices de covariance dans la nature">
+    blurb="Les matrices de covariance dans la nature et la géométrie associée">
     <slide-note>Transition vers la première partie.</slide-note>
   </section-divider>
 
   <!-- ═══════════════════════════════════════
        §1.1 · Content slide
        ═══════════════════════════════════════ -->
+  <section>
+    <slide-header title="Matrices de covariances"></slide-header>
+    <div class="slide-body">
+      <div style="margin-top:3%;margin-left:10%;display:flex;" data-step>
+        <div style="margin-bottom:50px">
+          <img src="./assets/covmatrix.svg" height=400px></img>
+        </div>
+        <div style="margin-top:5%" >
+        <div class="pullquote">
+              covariances matrices are ubiqutuous
+        </div>
+        <div class="small" style="margin-top:20px;margin-left:8px;font-size:40px;">
+          — probably someone, somewhere </br>
+            (possibly Arnaud Mian)
+        </div>
+        </div>
+      </div>
+
+      <div class="theorem" data-step>
+        <div class="theorem-tag">Definition <span class="theorem-name">Matrice symmétrique définie positive</span></div>
+        <div class="theorem-body">
+              Une matrice <span class="math">\boldsymbol{\Sigma}</span> est dite SPD (Symmétric Positive Definite) si  <span class="math">\boldsymbol{\Sigma}=\boldsymbol{\Sigma}^\mathrm{T}</span> et <span class="math">\operatorname{det}(\boldsymbol{\Sigma}) > 0</span>
+        </div>
+      </div>
+
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+
   <section>
     <slide-note>Point clé de cette diapo. Les étapes révèlent les arguments progressivement.</slide-note>
     <slide-header title="Your Slide Title"></slide-header>
@@ -88,18 +118,56 @@
     <slide-footer></slide-footer>
   </section>
 
+  <section>
+    <slide-header title="Test another slide"></slide-header>
+    <div class="slide-body">
+      <div class="cols cols-2">
+        <div>
+          <h3 class="h3" style="margin-bottom:24px;">Left column</h3>
+          <p>Lorem Ipsum dolor amet</p>
+        </div>
+        <div>
+          <h3 class="h3" style="margin-bottom:24px;">Right column</h3>
+          <p class="body">Your content here.</p>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+
   <!-- ═══════════════════════════════════════
        §2 · Second section divider
        ═══════════════════════════════════════ -->
   <section-divider
-    label="Second Section"
-    kicker="Details"
-    blurb="Another sentence describing the next block.">
-    <slide-note>Transition vers la deuxième partie.</slide-note>
+    label="SPDnet"
+    kicker="SPDnet architecture"
+    blurb="L'architeture originale sur matrices de covariances">
   </section-divider>
 
   <!-- ═══════════════════════════════════════
-       §2.1 · Another content slide
+       §2.1 · SPDNet interactive architecture
+       ═══════════════════════════════════════ -->
+  <section>
+    <slide-note>Architecture de SPDNet : vue globale puis zoom sur chaque couche avec les flèches. BiMap = projection bilinéaire WXWᵀ sur la variété de Stiefel. BatchNorm riemannienne de Brooks et al. (NeurIPS 2019) : moyenne de Fréchet + transport parallèle. ReEig = rectification des valeurs propres max(ε,λ), analogue du ReLU. LogEig = logarithme matriciel, passage vers l'espace tangent en I.</slide-note>
+    <slide-header title="SPDNet — Architecture"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <spdnet-arch></spdnet-arch>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       §3 · Third section divider
+       ═══════════════════════════════════════ -->
+  <section-divider
+    label="BatchNorm"
+    kicker="SPDnet architecture Batchnorm"
+    blurb="Améliorer le calcul de la moyenne pour la BatchNormalization">
+  </section-divider>
+
+  <!-- ═══════════════════════════════════════
+       §3.1 · Another content slide
        ═══════════════════════════════════════ -->
   <section>
     <slide-note>Conclure sur le message principal à retenir.</slide-note>
@@ -110,11 +178,60 @@
     <slide-footer></slide-footer>
   </section>
 
+
+    <!-- ═══════════════════════════════════════
+       §4 · Fourth section divider
+       ═══════════════════════════════════════ -->
+  <section-divider
+    label="Federated learning"
+    kicker="SPDnet architecture in a federated context"
+    blurb="Apprentissage fédéré sur matrices de covariances">
+  </section-divider>
+
+  <!-- ═══════════════════════════════════════
+       §4.1 · Another content slide
+       ═══════════════════════════════════════ -->
+  <section>
+    <slide-note>Conclure sur le message principal à retenir.</slide-note>
+    <slide-header title="Another Slide"></slide-header>
+    <div class="slide-body">
+      <p class="lede" style="max-width:1400px;">Your content here.</p>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════
+       §5 · Final section divider
+       ═══════════════════════════════════════ -->
+  <section-divider
+    label="Conclusion"
+    kicker=""
+    blurb="">
+  </section-divider>
+
+  <!-- ═══════════════════════════════════════
+       §5.1 · Another content slide
+       ═══════════════════════════════════════ -->
+  <section>
+    <slide-note>Conclure sur le message principal à retenir.</slide-note>
+    <slide-header title="Key takeaways"></slide-header>
+    <div class="slide-body">
+      <p class="lede" style="max-width:1400px;">Your content here.</p>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+
+
   <!-- ═══════════════════════════════════════
        End
        ═══════════════════════════════════════ -->
-  <end-slide>
-    <slide-note>Questions ?</slide-note>
+
+  <end-slide
+    heading="MERCI"
+    kicker="questions bienvenues"
+    contact="ammar.mian at univ-smb.fr">
   </end-slide>
 
 </deck-stage>

@@ -18,6 +18,7 @@ import { AlgorithmComparison } from './d3/algorithm-comparison.jsx';
 import { SPDGeodesic } from './d3/spd-geodesic.jsx';
 import { PoincareDisk } from './d3/poincare-disk.jsx';
 import { TitleFx } from './title-fx.jsx';
+import { SpdNetArch } from './spdnet-arch.jsx';
 
 // ── Bridge ─────────────────────────────────────────────────────────────────
 // opts.observed : attribute names that trigger a re-render on change
@@ -87,6 +88,12 @@ defineReactElement('filmstrip-slide', FilmstripContent, {
 
 defineReactElement('end-slide', EndSlideContent, {
   classes: ['section-divider'],
+  observed: ['heading', 'kicker', 'contact'],
+  props: el => ({
+    heading: readStr(el, 'heading', 'THANK YOU'),
+    kicker:  readStr(el, 'kicker',  'the deck returns to noise'),
+    contact: readStr(el, 'contact', ''),
+  }),
 });
 
 defineReactElement('diffusion-strip', DiffusionStripContent, {
@@ -136,3 +143,4 @@ defineReactElement('spd-geodesic', SPDGeodesic);
 defineReactElement('poincare-disk', PoincareDisk);
 defineReactElement('title-fx', TitleFx);
 defineReactElement('slide-footer', SlideFooterContent);
+defineReactElement('spdnet-arch', SpdNetArch);
