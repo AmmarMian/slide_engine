@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Riemannian S² — Visualizations</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="styles/common.css" />
+
+<style>
+  body { overflow: auto; padding: 0; }
+  .landing {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 64px 56px 36px;
+    max-width: 1240px;
+    margin: 0 auto;
+    gap: 56px;
+  }
+
+  .toprule {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 12px;
+  }
+  .toprule .mark {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .toprule .mark::before {
+    content: '';
+    display: inline-block;
+    width: 9px; height: 9px;
+    background: var(--accent);
+    margin-right: 10px;
+    vertical-align: 0;
+  }
+  .toprule .meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .lead {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 80px;
+    align-items: end;
+  }
+  .lead h1 {
+    font-family: var(--sans);
+    font-size: 96px;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    font-weight: 600;
+    margin: 0;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .lead h1 .alt { color: var(--accent); }
+  .lead p {
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    margin: 0;
+    text-wrap: pretty;
+  }
+  .lead .eyebrow { display: block; margin-bottom: 14px; }
+
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .card {
+    padding: 30px 32px 28px 32px;
+    background: var(--bg-2);
+    border: 1px solid var(--rule);
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: border-color 200ms, background 200ms;
+    position: relative;
+    overflow: hidden;
+    min-height: 330px;
+  }
+  .card:hover { border-color: var(--accent); }
+  .card:hover .arrow { transform: translateX(6px); }
+  .card .num {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .card h2 {
+    font-family: var(--sans);
+    font-size: 36px;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    font-weight: 600;
+    margin: 0;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .card p {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    margin: 0;
+  }
+  .card .meta {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule-soft);
+  }
+  .card .chapters {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .card .arrow {
+    font-family: var(--mono);
+    font-size: 18px;
+    color: var(--accent);
+    transition: transform 220ms;
+  }
+  .card .ill {
+    position: absolute;
+    right: -50px;
+    top: -28px;
+    opacity: 0.42;
+    pointer-events: none;
+  }
+
+  /* concept list */
+  .concept-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--rule-soft);
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .concept-list .concept {
+    padding: 16px 12px 16px 0;
+    border-right: 1px solid var(--rule-soft);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--ink-2);
+  }
+  .concept-list .concept:last-child { border-right: 0; }
+  .concept-list .concept .num {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  footer.bottom-fade {
+    color: var(--ink-3);
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule-soft);
+  }
+
+  @media (max-width: 880px) {
+    .lead, .cards, .concept-list { grid-template-columns: 1fr; }
+    .lead h1 { font-size: 56px; }
+  }
+</style>
+</head>
+<body>
+
+<main class="landing">
+
+  <div class="toprule">
+    <span class="mark">Riemannian S²</span>
+    <span class="meta">Three.js · Interactive · 2026</span>
+  </div>
+
+  <div class="lead">
+    <h1>Riemannian<br/>optimization,<br/>on the <span class="alt">sphere.</span></h1>
+    <div>
+      <span class="eyebrow">A two-part visual primer · S²</span>
+      <p>
+        Two interactive scenes covering the foundations of optimization on
+        smooth manifolds, built around the simplest non-trivial example —
+        the unit 2-sphere. Click into either to explore the geometry, then
+        watch Riemannian gradient descent unfold step by step.
+      </p>
+    </div>
+  </div>
+
+  <div class="concept-list">
+    <div class="concept"><span class="num">01</span>Tangent space</div>
+    <div class="concept"><span class="num">02</span>Geodesics</div>
+    <div class="concept"><span class="num">03</span>Exp / Log</div>
+    <div class="concept"><span class="num">04</span>Parallel transport</div>
+  </div>
+
+  <div class="cards">
+
+    <a class="card" href="Geometry Primer.html">
+      <svg class="ill" width="240" height="240" viewBox="0 0 240 240" fill="none">
+        <circle cx="120" cy="120" r="86" stroke="currentColor" stroke-opacity="0.30" />
+        <ellipse cx="120" cy="120" rx="86" ry="24" stroke="currentColor" stroke-opacity="0.16" />
+        <ellipse cx="120" cy="120" rx="24" ry="86" stroke="currentColor" stroke-opacity="0.16" />
+        <path d="M 168 70 L 222 36" stroke="var(--viz-tangent)" stroke-width="1.5" />
+        <path d="M 168 70 L 162 80" stroke="var(--viz-geodesic)" stroke-width="1.5" />
+        <circle cx="168" cy="70" r="4" fill="var(--accent)" />
+      </svg>
+
+      <span class="num">01 — Geometry</span>
+      <h2>A primer on Riemannian geometry of S²</h2>
+      <p>
+        Eight chapters: the manifold, the tangent space, the inherited metric,
+        geodesics, the exponential and logarithm maps, retraction, and
+        Levi-Civita parallel transport — each with a live, scrubable diagram.
+      </p>
+      <div class="meta">
+        <span class="chapters">8 chapters · interactive</span>
+        <span class="arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="Gradient Descent.html">
+      <svg class="ill" width="240" height="240" viewBox="0 0 240 240" fill="none">
+        <defs>
+          <radialGradient id="hg" cx="40%" cy="40%" r="50%">
+            <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.85" />
+            <stop offset="60%" stop-color="var(--accent)" stop-opacity="0.20" />
+            <stop offset="100%" stop-color="var(--accent)" stop-opacity="0.0" />
+          </radialGradient>
+        </defs>
+        <circle cx="120" cy="120" r="86" fill="url(#hg)" />
+        <circle cx="120" cy="120" r="86" stroke="currentColor" stroke-opacity="0.30" />
+        <path d="M 168 168 Q 140 140 120 120 T 78 78" stroke="var(--accent)" stroke-width="1.6" fill="none" />
+        <circle cx="168" cy="168" r="4" fill="currentColor" />
+        <circle cx="142" cy="142" r="2"   fill="var(--accent)" />
+        <circle cx="120" cy="120" r="2"   fill="var(--accent)" />
+        <circle cx="98"  cy="98"  r="2"   fill="var(--accent)" />
+        <circle cx="78"  cy="78"  r="3.5" fill="var(--accent)" />
+      </svg>
+
+      <span class="num">02 — Descent</span>
+      <h2>Riemannian gradient descent, step by step</h2>
+      <p>
+        Pick a cost function — Rayleigh quotient, distance², or Fréchet mean —
+        and watch iterates trace a geodesic trajectory while the right rail
+        plots f(xₖ) and the update
+        <span class="mono">xₖ₊₁ = R(xₖ, −α∇ʀf)</span>
+        is computed live.
+      </p>
+      <div class="meta">
+        <span class="chapters">3 cost functions · live plot</span>
+        <span class="arrow">→</span>
+      </div>
+    </a>
+
+  </div>
+
+  <footer class="bottom-fade">
+    <span>Three.js + KaTeX · all math closed-form on S²</span>
+    <span>Built for graduate exposition</span>
+  </footer>
+
+</main>
+
+<script type="module">
+  import { applyTheme } from './scripts/apply-theme.js';
+  applyTheme({ palette: 'slate', accent: '#d23b1c' });
+</script>
+
+</body>
+</html>

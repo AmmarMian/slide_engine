@@ -148,7 +148,7 @@ function buildConstellationRenderer(ctx, getDims, getColors) {
 }
 
 function buildDustRenderer(ctx, getDims, getColors) {
-  const COUNT = 120;
+  const COUNT = 380;
   const px = new Float32Array(COUNT), py = new Float32Array(COUNT);
   const sz = new Float32Array(COUNT), spd = new Float32Array(COUNT);
   const phase = new Float32Array(COUNT);
@@ -159,8 +159,8 @@ function buildDustRenderer(ctx, getDims, getColors) {
     const r = seededRng(13);
     for (let i = 0; i < COUNT; i++) {
       px[i] = r() * W; py[i] = r() * H;
-      sz[i] = 1.5 + r() * 2.5;
-      spd[i] = 0.12 + r() * 0.22;
+      sz[i] = 1.0 + r() * 2.8;
+      spd[i] = 0.10 + r() * 0.28;
       phase[i] = r() * Math.PI * 2;
     }
   }
@@ -178,12 +178,12 @@ function buildDustRenderer(ctx, getDims, getColors) {
         px[i] += Math.sin(t * 0.008 + phase[i]) * 0.28;
         if (py[i] < -10) { py[i] = H + 5; px[i] = Math.random() * W; }
         const useAccent = i % 5 === 0;
-        const alpha = 0.10 + 0.07 * Math.sin(t * 0.018 + phase[i]);
+        const alpha = 0.18 + 0.12 * Math.sin(t * 0.018 + phase[i]);
         ctx.beginPath();
         ctx.arc(px[i], py[i], sz[i], 0, Math.PI * 2);
         ctx.fillStyle = useAccent
           ? `rgba(${ar},${ag},${ab},${alpha})`
-          : `rgba(${ir},${ig},${ib},${alpha * 1.5})`;
+          : `rgba(${ir},${ig},${ib},${alpha * 1.4})`;
         ctx.fill();
       }
       ctx.restore();

@@ -262,6 +262,12 @@ export function TweaksPanel() {
           <div className="twk-sect">Layout</div>
           <TweakRadio label="Density" value={t.density} options={densityOptions} onChange={v => setTweak('density', v)} />
           <TweakRadio
+            label="Footer"
+            value={t.hideFooter ? 'hidden' : 'visible'}
+            options={[{ value: 'visible', label: 'Visible' }, { value: 'hidden', label: 'Hidden' }]}
+            onChange={v => setTweak('hideFooter', v === 'hidden')}
+          />
+          <TweakRadio
             label="Type scale"
             value={String(t.typeScale ?? 1)}
             options={[

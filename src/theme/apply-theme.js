@@ -18,7 +18,7 @@ function readDeckMeta() {
 }
 
 // Apply a theme object to :root CSS vars immediately.
-export function applyTheme({ palette, font, accent, density, typeScale, titleFx, foxProgress } = {}) {
+export function applyTheme({ palette, font, accent, density, typeScale, titleFx, foxProgress, hideFooter } = {}) {
   const root = document.documentElement.style;
 
   const p = PALETTES[palette] || PALETTES[DEFAULT_PRESET.palette];
@@ -46,6 +46,7 @@ export function applyTheme({ palette, font, accent, density, typeScale, titleFx,
 
   root.setProperty('--fx-title', titleFx || DEFAULT_PRESET.titleFx);
   root.setProperty('--fx-fox', foxProgress ? '1' : '0');
+  document.documentElement.classList.toggle('hide-footer', !!hideFooter);
 }
 
 // Load the active preset. Priority: localStorage > deck <meta> > global default.

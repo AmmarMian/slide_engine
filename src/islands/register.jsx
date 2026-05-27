@@ -19,6 +19,9 @@ import { SPDGeodesic } from './d3/spd-geodesic.jsx';
 import { PoincareDisk } from './d3/poincare-disk.jsx';
 import { TitleFx } from './title-fx.jsx';
 import { SpdNetArch } from './spdnet-arch.jsx';
+import { RiemannPrimer } from './riemann-primer.jsx';
+import { RiemannDescent } from './riemann-descent.jsx';
+import { FederatedLearning } from './federated-learning.jsx';
 
 // ── Bridge ─────────────────────────────────────────────────────────────────
 // opts.observed : attribute names that trigger a re-render on change
@@ -144,3 +147,6 @@ defineReactElement('poincare-disk', PoincareDisk);
 defineReactElement('title-fx', TitleFx);
 defineReactElement('slide-footer', SlideFooterContent);
 defineReactElement('spdnet-arch', SpdNetArch);
+defineReactElement('riemann-primer', RiemannPrimer);
+defineReactElement('riemann-descent', RiemannDescent);
+defineReactElement('federated-learning', FederatedLearning);

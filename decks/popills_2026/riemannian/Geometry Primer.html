@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Geometry Primer · Riemannian S²</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="styles/common.css" />
+</head>
+<body>
+
+<canvas id="stage"></canvas>
+<div id="label-layer"></div>
+
+<header class="top">
+  <div class="brand">
+    <span class="mark">Riemannian S²</span>
+    <span class="sub">a visual primer</span>
+  </div>
+  <nav class="nav-links">
+    <a href="index.html">Index</a>
+    <a href="Geometry Primer.html" class="active">Geometry</a>
+    <a href="Gradient Descent.html">Gradient descent</a>
+  </nav>
+</header>
+
+<!-- Tweaks panel -->
+<aside class="tweaks">
+  <div class="title">
+    <span>Tweaks</span>
+  </div>
+
+  <div class="toggle-row">
+    <div class="lbl">Palette</div>
+    <div id="palette-grid" class="palette-grid"></div>
+  </div>
+
+  <div class="toggle-row">
+    <div class="lbl">Sphere</div>
+    <div class="seg">
+      <button data-tw-style="translucent" class="active">Translucent</button>
+      <button data-tw-style="matte">Matte</button>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="legend">
+    <div class="item"><span class="swatch" style="background:var(--accent)"></span> base point p</div>
+    <div class="item"><span class="swatch" style="background:var(--viz-q)"></span> target q</div>
+    <div class="item"><span class="swatch line" style="background:var(--viz-tangent)"></span> tangent vector</div>
+    <div class="item"><span class="swatch line" style="background:var(--viz-geodesic)"></span> geodesic</div>
+    <div class="item"><span class="swatch line" style="background:var(--viz-transport)"></span> parallel transport</div>
+    <div class="item"><span class="swatch" style="background:var(--viz-retract)"></span> retraction</div>
+  </div>
+</aside>
+
+<!-- chapter side panel -->
+<aside class="side">
+  <div class="chap-eyebrow">
+    <span id="chap-eyebrow" class="eyebrow">Manifold</span>
+    <span><span id="chap-num" class="num">01</span><span class="total"> / <span id="chap-total">08</span></span></span>
+  </div>
+  <h1 id="chap-title" class="chap-title">The 2-sphere</h1>
+  <hr class="rule" />
+  <div id="chap-body" class="chap-body"></div>
+  <div id="chap-formula" class="formula"></div>
+  <div id="chap-controls" class="controls"></div>
+</aside>
+
+<!-- bottom nav -->
+<div class="bottom">
+  <button id="btn-prev" class="nav-btn">
+    <span class="arrow">←</span>
+    <span class="lbl">·</span>
+  </button>
+  <div id="dots" class="dots"></div>
+  <button id="btn-next" class="nav-btn">
+    <span class="lbl">Tangent</span>
+    <span class="arrow">→</span>
+  </button>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module" src="scripts/primer.js"></script>
+
+</body>
+</html>

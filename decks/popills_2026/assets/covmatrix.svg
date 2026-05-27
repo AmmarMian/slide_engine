@@ -1,0 +1,112 @@
+<svg width="520" height="520" viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .bg {
+        fill: #0b1020;
+      }
+
+      .cell-text {
+        fill: #ffffff;
+        font-family: "Inter", "Segoe UI", sans-serif;
+        font-size: 15px;
+        font-weight: 500;
+        dominant-baseline: middle;
+        text-anchor: middle;
+      }
+
+      .title {
+        fill: #ffffff;
+        font-family: "Inter", "Segoe UI", sans-serif;
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+    </style>
+  </defs>
+
+
+
+  <!-- Matrix -->
+  <!-- Parameters -->
+  <!-- cell size = 70, gap = 10 -->
+
+  <!-- Row 1 -->
+  <rect x="60" y="80" width="70" height="70" rx="5" fill="#ff5c8a"/>
+  <text x="95" y="115" class="cell-text">1.00</text>
+
+  <rect x="140" y="80" width="70" height="70" rx="5" fill="#8b5cf6"/>
+  <text x="175" y="115" class="cell-text">0.71</text>
+
+  <rect x="220" y="80" width="70" height="70" rx="5" fill="#4f7cff"/>
+  <text x="255" y="115" class="cell-text">0.42</text>
+
+  <rect x="300" y="80" width="70" height="70" rx="5" fill="#315b96"/>
+  <text x="335" y="115" class="cell-text">0.19</text>
+
+  <rect x="380" y="80" width="70" height="70" rx="5" fill="#1b2838"/>
+  <text x="415" y="115" class="cell-text">-0.08</text>
+
+  <!-- Row 2 -->
+  <rect x="60" y="160" width="70" height="70" rx="5" fill="#8b5cf6"/>
+  <text x="95" y="195" class="cell-text">0.71</text>
+
+  <rect x="140" y="160" width="70" height="70" rx="5" fill="#ff7b72"/>
+  <text x="175" y="195" class="cell-text">1.00</text>
+
+  <rect x="220" y="160" width="70" height="70" rx="5" fill="#6d5efc"/>
+  <text x="255" y="195" class="cell-text">0.63</text>
+
+  <rect x="300" y="160" width="70" height="70" rx="5" fill="#355070"/>
+  <text x="335" y="195" class="cell-text">0.27</text>
+
+  <rect x="380" y="160" width="70" height="70" rx="5" fill="#243447"/>
+  <text x="415" y="195" class="cell-text">0.03</text>
+
+  <!-- Row 3 -->
+  <rect x="60" y="240" width="70" height="70" rx="5" fill="#4f7cff"/>
+  <text x="95" y="275" class="cell-text">0.42</text>
+
+  <rect x="140" y="240" width="70" height="70" rx="5" fill="#6d5efc"/>
+  <text x="175" y="275" class="cell-text">0.63</text>
+
+  <rect x="220" y="240" width="70" height="70" rx="5" fill="#ff5470"/>
+  <text x="255" y="275" class="cell-text">1.00</text>
+
+  <rect x="300" y="240" width="70" height="70" rx="5" fill="#7c5cff"/>
+  <text x="335" y="275" class="cell-text">0.58</text>
+
+  <rect x="380" y="240" width="70" height="70" rx="5" fill="#264653"/>
+  <text x="415" y="275" class="cell-text">0.14</text>
+
+  <!-- Row 4 -->
+  <rect x="60" y="320" width="70" height="70" rx="5" fill="#315b96"/>
+  <text x="95" y="355" class="cell-text">0.19</text>
+
+  <rect x="140" y="320" width="70" height="70" rx="5" fill="#355070"/>
+  <text x="175" y="355" class="cell-text">0.27</text>
+
+  <rect x="220" y="320" width="70" height="70" rx="5" fill="#7c5cff"/>
+  <text x="255" y="355" class="cell-text">0.58</text>
+
+  <rect x="300" y="320" width="70" height="70" rx="5" fill="#ff8fab"/>
+  <text x="335" y="355" class="cell-text">1.00</text>
+
+  <rect x="380" y="320" width="70" height="70" rx="5" fill="#355070"/>
+  <text x="415" y="355" class="cell-text">0.36</text>
+
+  <!-- Row 5 -->
+  <rect x="60" y="400" width="70" height="70" rx="5" fill="#1b2838"/>
+  <text x="95" y="435" class="cell-text">-0.08</text>
+
+  <rect x="140" y="400" width="70" height="70" rx="5" fill="#243447"/>
+  <text x="175" y="435" class="cell-text">0.03</text>
+
+  <rect x="220" y="400" width="70" height="70" rx="5" fill="#264653"/>
+  <text x="255" y="435" class="cell-text">0.14</text>
+
+  <rect x="300" y="400" width="70" height="70" rx="5" fill="#355070"/>
+  <text x="335" y="435" class="cell-text">0.36</text>
+
+  <rect x="380" y="400" width="70" height="70" rx="5" fill="#c77dff"/>
+  <text x="415" y="435" class="cell-text">1.00</text>
+</svg>

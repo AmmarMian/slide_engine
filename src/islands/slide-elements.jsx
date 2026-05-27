@@ -683,7 +683,9 @@ function FoxMascot({ trackRef, idx, sections }) {
   const [facingLeft, setFacingLeft] = useState(false);
   const [frame, setFrame] = useState(0);
   const [walking, setWalking] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const stateRef = useRef({ pos: null, target: null, walking: false, frame: 0, lastFrameT: 0 });
+  const dragRef  = useRef({ active: false, startClientX: 0, startPos: 0 });
   const rafRef = useRef(null);
 
   // Compute target x: right edge of the current section's progress fill.
@@ -765,13 +767,60 @@ function FoxMascot({ trackRef, idx, sections }) {
     return () => clearTimeout(timer);
   }, [idx, computeTarget]);
 
+  const sprW = FOX_W * FOX_SCALE;
+  const maxPos = () => window.innerWidth - sprW;
+
+  const onPointerDown = (e) => {
+    e.preventDefault();
+    dragRef.current = { active: true, startClientX: e.clientX, startPos: stateRef.current.pos ?? 0 };
+    e.currentTarget.setPointerCapture(e.pointerId);
+    stateRef.current.walking = false;
+    setDragging(true);
+    setWalking(false);
+  };
+
+  const onPointerMove = (e) => {
+    if (!dragRef.current.active) return;
+    const dx = e.clientX - dragRef.current.startClientX;
+    const newPos = Math.max(0, Math.min(maxPos(), dragRef.current.startPos + dx));
+    stateRef.current.pos    = newPos;
+    stateRef.current.target = newPos; // prevent auto-walk from kicking in
+    setFacingLeft(dx < 0);
+    setPos(newPos);
+  };
+
+  const onPointerUp = () => {
+    if (!dragRef.current.active) return;
+    dragRef.current.active = false;
+    setDragging(false);
+
+    // Navigate to the slide under the drop point.
+    const foxCenterX = (stateRef.current.pos ?? 0) + sprW / 2;
+    const track = trackRef.current;
+    const stage = document.querySelector('deck-stage');
+    if (track && stage) {
+      const segs = [...track.querySelectorAll('.progress-seg')];
+      for (let si = 0; si < sections.length; si++) {
+        const seg = segs[si];
+        if (!seg) continue;
+        const rect = seg.getBoundingClientRect();
+        if (foxCenterX >= rect.left && foxCenterX <= rect.right) {
+          const sec = sections[si];
+          const t = (foxCenterX - rect.left) / rect.width;
+          const slideIdx = sec.start + Math.round(t * (sec.end - sec.start));
+          stage.goTo(Math.max(sec.start, Math.min(sec.end, slideIdx)));
+          break;
+        }
+      }
+    }
+  };
+
   if (pos === null) return null;
 
-  const frames = walking ? WALK_FRAMES : IDLE_FRAMES;
+  const frames = dragging ? IDLE_FRAMES : walking ? WALK_FRAMES : IDLE_FRAMES;
   const { col, row } = frames[frame] || frames[0];
   const bpX = -(col * FOX_W * FOX_SCALE);
   const bpY = -(row * FOX_H * FOX_SCALE);
-  const sprW = FOX_W * FOX_SCALE;
   const sprH = FOX_H * FOX_SCALE;
 
   // Bar sits 8–11px from viewport bottom (8px padding + 3px track).
@@ -779,14 +828,20 @@ function FoxMascot({ trackRef, idx, sections }) {
   const barBottom = 1;
 
   return (
-    <div style={{
+    <div
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+      style={{
       position: 'fixed',
       bottom: barBottom,
       left: pos,
       width: sprW,
       height: sprH,
       zIndex: 2147483641,
-      pointerEvents: 'none',
+      pointerEvents: 'auto',
+      cursor: dragging ? 'grabbing' : 'grab',
       imageRendering: 'pixelated',
       filter: 'grayscale(1)',
       transform: facingLeft ? 'scaleX(-1)' : 'none',
@@ -817,10 +872,25 @@ export function SlideFooterContent() {
 // Reads its own slide index from the DOM so no slide-num attribute is needed.
 export function SlideHeaderContent({ title }) {
   const ref = useRef(null);
-  const [pos, setPos] = useState({ idx: 0, total: 0 });
+  const [pos,   setPos]   = useState({ idx: 0, total: 0 });
+  const [steps, setSteps] = useState({ visible: 0, total: 0 });
 
   useEffect(() => {
     setPos(getSlidePosition(ref.current, 'slide-header'));
+
+    const section = ref.current?.closest('section');
+    if (!section) return;
+
+    const readSteps = () => {
+      const all     = section.querySelectorAll('[data-step]');
+      const visible = [...all].filter(el => el.hasAttribute('data-step-visible')).length;
+      setSteps({ visible, total: all.length });
+    };
+
+    readSteps();
+    const obs = new MutationObserver(readSteps);
+    obs.observe(section, { subtree: true, attributes: true, attributeFilter: ['data-step-visible'] });
+    return () => obs.disconnect();
   }, []);
 
   return (
@@ -833,7 +903,15 @@ export function SlideHeaderContent({ title }) {
         letterSpacing: '-0.03em',
         color: 'var(--ink)',
       }}>{title}</div>
-      <div className="label">{fmt(pos.idx)} / {fmt(pos.total)}</div>
+      <div className="label">
+        {fmt(pos.idx)}
+        {steps.total > 0 && (
+          <span style={{ color: 'var(--ink-3)', fontWeight: 400 }}>
+            {' · '}{steps.visible}/{steps.total}
+          </span>
+        )}
+        {' / '}{fmt(pos.total)}
+      </div>
     </div>
   );
 }
@@ -883,7 +961,8 @@ export function TocSlideContent() {
       <h2 className="h1" style={{ marginBottom: 52 }}>What we cover.</h2>
       <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '28px 96px', alignContent: 'start' }}>
         {entries.map(e => (
-          <div key={e.num} className="toc-entry">
+          <div key={e.num} className="toc-entry" style={{ cursor: 'pointer' }}
+            onClick={() => document.querySelector('deck-stage')?.goTo(e.slideNum - 1)}>
             <div className="toc-num">{String(e.num).padStart(2, '0')}</div>
             <div>
               <div className="toc-label">{e.label.replace(/\.$/, '')}</div>
@@ -943,6 +1022,10 @@ export function ProgressBarContent({ sections }) {
     return () => document.documentElement.removeEventListener('deck-theme-change', handler);
   }, []);
 
+  const jumpTo = (start) => {
+    document.querySelector('deck-stage')?.goTo(start);
+  };
+
   return (
     <>
     <div className="progress-bar" data-progress="true">
@@ -951,7 +1034,8 @@ export function ProgressBarContent({ sections }) {
           const span = s.end - s.start + 1;
           const fill = idx > s.end ? 1 : idx >= s.start ? (idx - s.start + 1) / span : 0;
           return (
-            <div key={i} className="progress-seg" style={{ flex: span }}>
+            <div key={i} className="progress-seg" style={{ flex: span, cursor: 'pointer', pointerEvents: 'auto' }}
+              onClick={() => jumpTo(s.start)}>
               <div className="progress-seg-bg" />
               <div className="progress-seg-fg" style={{ width: `${fill * 100}%` }} />
             </div>
@@ -964,7 +1048,8 @@ export function ProgressBarContent({ sections }) {
     <div className="progress-labels" data-progress="true">
       <div className="progress-track">
         {SECTIONS.map((s, i) => (
-          <div key={i} className="progress-seg" style={{ flex: s.end - s.start + 1 }}>
+          <div key={i} className="progress-seg" style={{ flex: s.end - s.start + 1, cursor: 'pointer', pointerEvents: 'auto' }}
+            onClick={() => jumpTo(s.start)}>
             <div className="progress-seg-label">{String(i + 1).padStart(2, '0')} {s.label}</div>
           </div>
         ))}

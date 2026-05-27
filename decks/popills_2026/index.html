@@ -16,7 +16,7 @@
   ──────────────────────────────────────────────────────────────
 -->
 <meta name="deck-theme" content="palette=paper;font=swiss-sans;accent=#d23b1c;density=comfortable;titleFx=dust">
-<meta name="deck-date"  content="POPILLS · 2026">
+<meta name="deck-date"  content="10 Juin 2026">
 
 <script type="module" src="/src/main.js"></script>
 </head>
@@ -41,7 +41,6 @@
       </div>
       <div style="display:flex;justify-content:space-between;align-items:baseline;">
         <div class="body" style="font-size:28px;">Ammar Mian</div>
-        <div class="small">POPILLS · 2026</div>
       </div>
     </div>
   </section>
@@ -96,41 +95,22 @@
   </section>
 
 
+  <!-- §1.2 · Riemannian geometry primer (stepped 3D) -->
   <section>
-    <slide-note>Point clé de cette diapo. Les étapes révèlent les arguments progressivement.</slide-note>
-    <slide-header title="Your Slide Title"></slide-header>
-    <div class="slide-body">
-      <div class="cols cols-2">
-        <div>
-          <h3 class="h3" style="margin-bottom:24px;">Left column</h3>
-          <ul class="body" style="line-height:2;list-style:disc;padding-left:1.4em;">
-            <li>Point one</li>
-            <li data-step>Point two (revealed on step 1)</li>
-            <li data-step>Point three (revealed on step 2)</li>
-          </ul>
-        </div>
-        <div>
-          <h3 class="h3" style="margin-bottom:24px;">Right column</h3>
-          <p class="body">Your content here.</p>
-        </div>
-      </div>
+    <slide-note>La sphère S² comme variété : espace tangent, géodésiques, exp/log, transport parallèle, métrique, rétraction. Les flèches déplacent la caméra de chapitre en chapitre.</slide-note>
+    <slide-header title="Géométrie riemannienne — la sphère S²"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <riemann-primer></riemann-primer>
     </div>
     <slide-footer></slide-footer>
   </section>
 
+  <!-- §1.3 · Riemannian gradient descent (interactive) -->
   <section>
-    <slide-header title="Test another slide"></slide-header>
-    <div class="slide-body">
-      <div class="cols cols-2">
-        <div>
-          <h3 class="h3" style="margin-bottom:24px;">Left column</h3>
-          <p>Lorem Ipsum dolor amet</p>
-        </div>
-        <div>
-          <h3 class="h3" style="margin-bottom:24px;">Right column</h3>
-          <p class="body">Your content here.</p>
-        </div>
-      </div>
+    <slide-note>Descente de gradient riemannienne : gradient euclidien → projection tangente → pas → rétraction/exp. Coûts : Rayleigh, distance², moyenne de Fréchet.</slide-note>
+    <slide-header title="Optimisation riemannienne"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <riemann-descent></riemann-descent>
     </div>
     <slide-footer></slide-footer>
   </section>
@@ -188,14 +168,12 @@
     blurb="Apprentissage fédéré sur matrices de covariances">
   </section-divider>
 
-  <!-- ═══════════════════════════════════════
-       §4.1 · Another content slide
-       ═══════════════════════════════════════ -->
+  <!-- §4.1 · Federated learning animation (stepped) -->
   <section>
-    <slide-note>Conclure sur le message principal à retenir.</slide-note>
-    <slide-header title="Another Slide"></slide-header>
-    <div class="slide-body">
-      <p class="lede" style="max-width:1400px;">Your content here.</p>
+    <slide-note>Apprentissage fédéré : sélection des clients, diffusion du modèle global, entraînement local, remontée des mises à jour, agrégation FedAvg. Les flèches avancent pas à pas.</slide-note>
+    <slide-header title="Apprentissage fédéré"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <federated-learning></federated-learning>
     </div>
     <slide-footer></slide-footer>
   </section>

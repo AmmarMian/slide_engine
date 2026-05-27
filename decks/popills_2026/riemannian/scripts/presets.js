@@ -98,5 +98,4 @@ export const DEFAULT_PRESET = {
   typeScale: 1,
   titleFx: 'constellation',
   foxProgress: false,
-  hideFooter: true,
 };

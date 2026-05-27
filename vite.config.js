@@ -15,8 +15,16 @@ async function getDeckInputs() {
 }
 
 export default defineConfig(async () => {
-  const input = await getDeckInputs();
+  const allInputs  = await getDeckInputs();
   const singleFile = !!process.env.SINGLEFILE;
+
+  // Single-file mode requires exactly one Rollup entry; pick the requested deck or the first one.
+  let input = allInputs;
+  if (singleFile) {
+    const deckName = process.env.DECK || Object.keys(allInputs)[0];
+    if (!allInputs[deckName]) throw new Error(`build:single — deck "${deckName}" not found. Available: ${Object.keys(allInputs).join(', ')}`);
+    input = { [deckName]: allInputs[deckName] };
+  }
 
   return {
     server: { port: 5174 },
@@ -26,7 +34,6 @@ export default defineConfig(async () => {
     ],
     build: {
       rollupOptions: { input },
-      // For singlefile mode, inline everything; otherwise allow chunks for multi-deck sharing.
       ...(singleFile
         ? { assetsInlineLimit: 100_000_000, cssCodeSplit: false }
         : {}),
