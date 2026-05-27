@@ -936,6 +936,7 @@ export function ProgressBarContent({ sections }) {
   }, []);
 
   return (
+    <>
     <div className="progress-bar" data-progress="true">
       <div ref={trackRef} className="progress-track">
         {SECTIONS.map((s, i) => {
@@ -945,12 +946,22 @@ export function ProgressBarContent({ sections }) {
             <div key={i} className="progress-seg" style={{ flex: span }}>
               <div className="progress-seg-bg" />
               <div className="progress-seg-fg" style={{ width: `${fill * 100}%` }} />
-              <div className="progress-seg-label">{String(i + 1).padStart(2, '0')} {s.label}</div>
             </div>
           );
         })}
       </div>
       {foxEnabled && <FoxMascot trackRef={trackRef} idx={idx} sections={SECTIONS} />}
     </div>
+    {/* Labels in a separate stacking context above the fox */}
+    <div className="progress-labels" data-progress="true">
+      <div className="progress-track">
+        {SECTIONS.map((s, i) => (
+          <div key={i} className="progress-seg" style={{ flex: s.end - s.start + 1 }}>
+            <div className="progress-seg-label">{String(i + 1).padStart(2, '0')} {s.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+    </>
   );
 }

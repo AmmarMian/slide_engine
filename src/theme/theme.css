@@ -297,6 +297,13 @@ end-slide::before {
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   max-width: 100%;
 }
+/* Labels layer — sits above the fox (z 2147483642 > fox z 2147483641 > bar z 2147483640) */
+.progress-labels {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  z-index: 2147483642;
+  padding: 0 22px 8px;
+  pointer-events: none;
+}
 
 @keyframes zoomIn {
   from { opacity: 0; transform: scale(0.92); }
