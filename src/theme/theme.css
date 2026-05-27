@@ -40,6 +40,7 @@ body { font-family: var(--sans); }
    Add new custom slide tags to this selector list.           */
 /* slide-header/footer live inside <section> — need block display */
 slide-header, slide-footer { display: block; }
+slide-note { display: none; }
 
 deck-stage > section,
 deck-stage > section-divider,
@@ -284,7 +285,7 @@ end-slide::before {
   padding: 0 22px 8px;
   pointer-events: none;
 }
-.progress-track { display: flex; gap: 3px; align-items: stretch; }
+.progress-track { display: flex; gap: 3px; align-items: stretch; margin: 0 auto; }
 .progress-seg { position: relative; height: 3px; min-width: 0; }
 .progress-seg-bg { position: absolute; inset: 0; background: var(--rule-soft); }
 .progress-seg-fg { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); transition: width 360ms cubic-bezier(.2,.8,.2,1); }

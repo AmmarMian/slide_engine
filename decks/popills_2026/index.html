@@ -1,29 +1,8 @@
-#!/usr/bin/env node
-// Usage: npm run new <deck-name>
-// Creates decks/<deck-name>/index.html from the starter template.
-
-import { mkdir, writeFile, access } from 'node:fs/promises';
-import { join } from 'node:path';
-
-const name = process.argv[2];
-if (!name || !/^[a-z0-9_-]+$/.test(name)) {
-  console.error('Usage: npm run new <deck-name>   (lowercase, hyphens/underscores ok)');
-  process.exit(1);
-}
-
-const dir = join(process.cwd(), 'decks', name);
-try { await access(dir); console.error(`decks/${name} already exists.`); process.exit(1); }
-catch {}
-
-await mkdir(dir, { recursive: true });
-
-const title = name.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-
-const html = `<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>${title}</title>
+<title>Popills_2026</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <!--
@@ -37,7 +16,7 @@ const html = `<!doctype html>
   ──────────────────────────────────────────────────────────────
 -->
 <meta name="deck-theme" content="palette=paper;font=swiss-sans;accent=#d23b1c;density=comfortable;titleFx=dust">
-<meta name="deck-date"  content="Venue · Year">
+<meta name="deck-date"  content="POPILLS · 2026">
 
 <script type="module" src="/src/main.js"></script>
 </head>
@@ -48,19 +27,19 @@ const html = `<!doctype html>
        01 · Title
        ═══════════════════════════════════════ -->
   <section data-label="Title">
-    <slide-note>Introduce yourself and the problem.</slide-note>
+    <slide-note>Introduire le contexte : apprentissage sur des données matricielles (covariance), pourquoi Riemannien ?</slide-note>
     <title-fx></title-fx>
     <div class="particle-scrim"></div>
     <div style="position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:space-between;">
-      <div class="label">Your talk · Date</div>
+      <div class="label">10 Juin 2026</div>
       <div>
         <div class="eyebrow" style="margin-bottom:32px;">Topic · Subtitle</div>
-        <h1 class="title">${title}</h1>
-        <div class="lede" style="margin-top:36px;max-width:1300px;">One-sentence summary of your talk.</div>
+        <h1 class="title">Apprentissage profond sur matrices de covariance </h1>
+        <div class="lede" style="margin-top:36px;max-width:1300px;">Optimisation Riemannienne</div>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:baseline;">
-        <div class="body" style="font-size:28px;">Author Name</div>
-        <div class="small">Venue · Year</div>
+        <div class="body" style="font-size:28px;">Ammar Mian</div>
+        <div class="small">POPILLS · 2026</div>
       </div>
     </div>
   </section>
@@ -69,7 +48,7 @@ const html = `<!doctype html>
        02 · Table of contents (auto-built)
        ═══════════════════════════════════════ -->
   <toc-slide>
-    <slide-note>Walk through the agenda briefly.</slide-note>
+    <slide-note>Présenter le plan de l'exposé.</slide-note>
   </toc-slide>
 
   <!-- ═══════════════════════════════════════
@@ -79,14 +58,14 @@ const html = `<!doctype html>
     label="First Section"
     kicker="Overview"
     blurb="One sentence describing what this section covers.">
-    <slide-note>Transition into the first section.</slide-note>
+    <slide-note>Transition vers la première partie.</slide-note>
   </section-divider>
 
   <!-- ═══════════════════════════════════════
        §1.1 · Content slide
        ═══════════════════════════════════════ -->
   <section>
-    <slide-note>Point one is the key idea. Steps reveal supporting evidence.</slide-note>
+    <slide-note>Point clé de cette diapo. Les étapes révèlent les arguments progressivement.</slide-note>
     <slide-header title="Your Slide Title"></slide-header>
     <div class="slide-body">
       <div class="cols cols-2">
@@ -114,14 +93,14 @@ const html = `<!doctype html>
     label="Second Section"
     kicker="Details"
     blurb="Another sentence describing the next block.">
-    <slide-note>Transition into the second section.</slide-note>
+    <slide-note>Transition vers la deuxième partie.</slide-note>
   </section-divider>
 
   <!-- ═══════════════════════════════════════
        §2.1 · Another content slide
        ═══════════════════════════════════════ -->
   <section>
-    <slide-note>Wrap up with the main takeaway.</slide-note>
+    <slide-note>Conclure sur le message principal à retenir.</slide-note>
     <slide-header title="Another Slide"></slide-header>
     <div class="slide-body">
       <p class="lede" style="max-width:1400px;">Your content here.</p>
@@ -133,7 +112,7 @@ const html = `<!doctype html>
        End
        ═══════════════════════════════════════ -->
   <end-slide>
-    <slide-note>Questions?</slide-note>
+    <slide-note>Questions ?</slide-note>
   </end-slide>
 
 </deck-stage>
@@ -141,11 +120,6 @@ const html = `<!doctype html>
 <div id="tweaks-root"></div>
 
 <progress-bar></progress-bar>
+
 </body>
 </html>
-`;
-
-await writeFile(join(dir, 'index.html'), html);
-console.log(`✓ Created decks/${name}/index.html`);
-console.log(`  Open: npm run dev  →  http://localhost:5173/decks/${name}/`);
-console.log(`  Notes: open notes.html in a second window, then press N in the deck to sync.`);

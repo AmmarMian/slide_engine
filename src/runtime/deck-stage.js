@@ -302,7 +302,15 @@
 
     connectedCallback() {
       this._render();
-      this._loadNotes();
+      // Capture slide-note text NOW — this is the only safe moment before register.jsx
+      // runs and React islands (toc-slide, section-divider, end-slide) mount and wipe
+      // their light DOM children. Store on the element so _loadNotes() can read it later.
+      [...this.children].forEach(el => {
+        if (!el.hasAttribute('data-note')) {
+          const noteEl = el.querySelector('slide-note');
+          if (noteEl) el.setAttribute('data-note', noteEl.textContent.trim());
+        }
+      });
       this._syncPrintPageRule();
       window.addEventListener('keydown', this._onKey);
       window.addEventListener('resize', this._onResize);
@@ -464,9 +472,18 @@
 
       if (this._totalEl) this._totalEl.textContent = String(this._slides.length || 1);
       if (this._index >= this._slides.length) this._index = Math.max(0, this._slides.length - 1);
+      this._loadNotes();
     }
 
     _loadNotes() {
+      // Prefer inline <slide-note> text, captured early in _collectSlides() as data-note
+      // (before React islands can overwrite their light DOM children).
+      const inlineNotes = this._slides.map(slide => slide.getAttribute('data-note'));
+      if (inlineNotes.some(n => n !== null)) {
+        this._notes = inlineNotes.map(n => n ?? '');
+        return;
+      }
+      // Fall back to legacy #speaker-notes JSON block.
       const tag = document.getElementById('speaker-notes');
       if (!tag) { this._notes = []; return; }
       try {

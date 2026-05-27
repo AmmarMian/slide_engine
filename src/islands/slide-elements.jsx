@@ -892,13 +892,26 @@ export function TocSlideContent() {
 // ─── theme.css needs toc-slide in the slide-frame selector ───────────────────
 
 // ─── ProgressBar ─────────────────────────────────────────────────────────────
-// Sections passed as a data attribute on <progress-bar sections="json">
-// or falls back to a default. JSON format: [{ label, start, end }] (0-indexed).
+// Sections are auto-derived from <section-divider> elements in the DOM.
+// Pass a `sections` JSON attribute to override (0-based indices).
+function computeSectionsFromDOM() {
+  const stage = document.querySelector('deck-stage');
+  if (!stage) return null;
+  const children = [...stage.children];
+  const dividers = children
+    .map((el, i) => ({ el, i }))
+    .filter(({ el }) => el.tagName.toLowerCase() === 'section-divider');
+  if (!dividers.length) return null;
+  return dividers.map(({ el, i }, d) => ({
+    label: el.getAttribute('label') || `Section ${d + 1}`,
+    start: i,
+    end: d + 1 < dividers.length ? dividers[d + 1].i - 1 : children.length - 1,
+  }));
+}
+
 export function ProgressBarContent({ sections }) {
-  const SECTIONS = sections || [
-    { label: 'Title', start: 0, end: 1 },
-    { label: 'Content', start: 2, end: 14 },
-    { label: 'End', start: 15, end: 17 },
+  const SECTIONS = sections || computeSectionsFromDOM() || [
+    { label: 'Content', start: 0, end: 10 },
   ];
   const [idx, setIdx] = useState(0);
   const [foxEnabled, setFoxEnabled] = useState(
