@@ -216,6 +216,9 @@
     }
     .count .sep { color: var(--ink-3, rgba(255,255,255,0.45)); margin: 0 3px; font-weight: 400; }
     .count .total { color: var(--ink-3, rgba(255,255,255,0.55)); }
+    .step-hint { font-size: 10px; color: var(--bg-2, rgba(255,255,255,0.38)); margin-left: 5px; letter-spacing: 0.02em; }
+    .step-hint:empty { display: none; }
+    .btn.notes { font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 0 10px 0 12px; gap: 6px; color: var(--bg-2, rgba(255,255,255,0.72)); }
 
     .divider {
       width: 1px;
@@ -371,24 +374,28 @@
         <button class="btn prev" type="button" aria-label="Previous slide" title="Previous (←)">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg>
         </button>
-        <span class="count" aria-live="polite"><span class="current">1</span><span class="sep">/</span><span class="total">1</span></span>
+        <span class="count" aria-live="polite"><span class="current">1</span><span class="sep">/</span><span class="total">1</span><span class="step-hint"></span></span>
         <button class="btn next" type="button" aria-label="Next slide" title="Next (→)">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
         </button>
         <span class="divider"></span>
         <button class="btn reset" type="button" aria-label="Reset to first slide" title="Reset (R)">Reset<span class="kbd">R</span></button>
+        <span class="divider"></span>
+        <button class="btn notes" type="button" aria-label="Open speaker notes" title="Notes (N)">Notes<span class="kbd">N</span></button>
       `;
 
       overlay.querySelector('.prev').addEventListener('click', () => this._go(this._index - 1, 'click'));
       overlay.querySelector('.next').addEventListener('click', () => this._go(this._index + 1, 'click'));
       overlay.querySelector('.reset').addEventListener('click', () => this._jump(0, 'click'));
+      overlay.querySelector('.notes').addEventListener('click', () => this._openNotes());
 
       this._root.append(style, stage, tapzones, overlay);
       this._canvas = canvas;
       this._slot = slot;
       this._overlay = overlay;
-      this._countEl = overlay.querySelector('.current');
-      this._totalEl = overlay.querySelector('.total');
+      this._countEl  = overlay.querySelector('.current');
+      this._totalEl  = overlay.querySelector('.total');
+      this._stepHint = overlay.querySelector('.step-hint');
     }
 
     /** @page must live in the document stylesheet — it's a no-op inside
@@ -532,6 +539,8 @@
 
       this._prevIndex = curr;
       this._applyStep(this._slides[curr]);
+      this._updateStepHint(this._slides[curr]);
+      this._writeLiveState(curr);
       if (showOverlay) this._flashOverlay();
     }
 
@@ -562,8 +571,35 @@
     _onResize() { this._fit(); }
 
     _onMouseMove() {
-      // Keep overlay visible while mouse moves; hide after idle.
       this._flashOverlay();
+    }
+
+    _openNotes() {
+      const url = new URL('/notes.html', window.location.href).href;
+      window.open(url, 'deck-notes', 'width=840,height=620,resizable=yes');
+    }
+
+    _updateStepHint(slideEl) {
+      if (!this._stepHint) return;
+      const total = this._getSteps(slideEl).length;
+      this._stepHint.textContent = total > 0 ? `· ${this._step}/${total}` : '';
+    }
+
+    _writeLiveState(curr) {
+      try {
+        const slide = this._slides[curr];
+        const next  = this._slides[curr + 1];
+        localStorage.setItem('deck-stage:live', JSON.stringify({
+          index:     curr,
+          total:     this._slides.length,
+          step:      this._step,
+          maxStep:   this._getSteps(slide).length,
+          label:     slide?.getAttribute('data-screen-label') || '',
+          nextLabel: next?.getAttribute('data-screen-label')  || '',
+          note:      this._notes[curr]     || '',
+          nextNote:  this._notes[curr + 1] || '',
+        }));
+      } catch (e) {}
     }
 
     _onTapBack(e) {
@@ -605,6 +641,8 @@
         this._jump(this._slides.length - 1, 'keyboard');
       } else if (key === 'r' || key === 'R') {
         this._jump(0, 'keyboard');
+      } else if (key === 'n' || key === 'N') {
+        this._openNotes();
       } else if (key === 'f' || key === 'F') {
         if (!document.fullscreenElement) {
           document.documentElement.requestFullscreen().catch(() => {});
@@ -636,6 +674,8 @@
         if (this._step < steps.length) {
           this._step++;
           this._applyStep(this._slides[curr]);
+          this._updateStepHint(this._slides[curr]);
+          this._writeLiveState(curr);
           this._flashOverlay();
           return;
         }
@@ -649,6 +689,8 @@
         if (this._step > 0) {
           this._step--;
           this._applyStep(this._slides[curr]);
+          this._updateStepHint(this._slides[curr]);
+          this._writeLiveState(curr);
           this._flashOverlay();
           return;
         }

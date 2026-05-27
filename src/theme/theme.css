@@ -38,8 +38,8 @@ body { font-family: var(--sans); }
 /* ── Slide frame ─────────────────────────────────────────────
    Styles every direct child of <deck-stage> regardless of tag.
    Add new custom slide tags to this selector list.           */
-/* slide-header lives inside <section> — needs block display so it stretches full width */
-slide-header { display: block; }
+/* slide-header/footer live inside <section> — need block display */
+slide-header, slide-footer { display: block; }
 
 deck-stage > section,
 deck-stage > section-divider,
