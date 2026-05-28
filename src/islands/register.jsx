@@ -183,6 +183,11 @@ defineReactElement('spdnet-backprop', null, {
   lazy: () => import('./spdnet-backprop.jsx').then(m => m.SpdNetBackprop),
 });
 
+// Federated aggregation on a manifold (Three.js — heavy chunk, lazy).
+defineReactElement('fed-aggregation', null, {
+  lazy: () => import('./fed-aggregation.jsx').then(m => m.FedAggregation),
+});
+
 // Three.js islands — lazy loaded (~32MB chunk, only fetched when the tag appears)
 defineReactElement('riemann-primer', null, {
   lazy: () => import('./riemann-primer.jsx').then(m => m.RiemannPrimer),

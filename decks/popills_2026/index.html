@@ -659,6 +659,16 @@
     <slide-footer></slide-footer>
   </section>
 
+  <!-- §5.2b · 3D federated aggregation visualisation -->
+  <section>
+    <slide-note>Animation 3D : 5 clients partent du même modèle global sur S² (proxy visualisable de Stiefel), dérivent localement, on calcule leur moyenne arithmétique (qui tombe à l'intérieur de la sphère — hors variété), puis on projette de retour sur la sphère = RFedProj. Le round suivant repart de ce nouveau modèle.</slide-note>
+    <slide-header title="Visualisation — RFedProj sur S²"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <fed-aggregation></fed-aggregation>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
   <!-- §5.3 · RFedProj / RFedRL — the two rules -->
   <section>
     <slide-note>Nos deux règles d'agrégation : RFedProj projette la moyenne euclidienne des itérés clients sur la variété ; RFedRL projette les déplacements clients sur le tangent, les moyenne, puis rétracte. Théoriquement équivalents en termes de taux ; en pratique différence de F1 &lt; 0,2%.</slide-note>
