@@ -173,9 +173,14 @@ defineReactElement('spd-domains', null, {
   lazy: () => import('./spd-domains.jsx').then(m => m.SpdDomains),
 });
 
-// Stiefel update animation (intercepts arrow keys when slide is active).
+// Stiefel update animation (kept for reference; not currently used).
 defineReactElement('stiefel-update', null, {
   lazy: () => import('./stiefel-update.jsx').then(m => m.StiefelUpdate),
+});
+
+// SPDNet forward + backward propagation animation.
+defineReactElement('spdnet-backprop', null, {
+  lazy: () => import('./spdnet-backprop.jsx').then(m => m.SpdNetBackprop),
 });
 
 // Three.js islands — lazy loaded (~32MB chunk, only fetched when the tag appears)

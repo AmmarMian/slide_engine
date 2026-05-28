@@ -247,12 +247,12 @@
     <slide-footer></slide-footer>
   </section>
 
-  <!-- §2.4 · Riemannian update on Stiefel — animated -->
+  <!-- §2.4 · Forward + backward propagation through SPDNet -->
   <section>
-    <slide-note>Une fois le gradient euclidien de la perte par rapport à W obtenu via la rétropropagation matricielle, il reste à le rendre compatible avec la contrainte de Stiefel. Trois opérations : projection sur le tangent, pas dans l'ambiant, rétraction. Les flèches font avancer l'animation.</slide-note>
-    <slide-header title="Mise à jour sur Stiefel"></slide-header>
+    <slide-note>Animation pas-à-pas : (1) architecture, (2) passe avant — particule orange traverse le réseau, (3) perte calculée, (4) rétropropagation — flèches rouges remontent à travers chaque couche, (5) on a un gradient euclidien à chaque BiMap (hors variété), (6) projection + rétraction pour retomber sur Stiefel.</slide-note>
+    <slide-header title="Passe avant &amp; rétropropagation"></slide-header>
     <div class="slide-body" style="padding:0;overflow:hidden;">
-      <stiefel-update></stiefel-update>
+      <spdnet-backprop></spdnet-backprop>
     </div>
     <slide-footer></slide-footer>
   </section>
