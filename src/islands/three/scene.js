@@ -336,10 +336,10 @@ export function buildDot({ position, color = 0xffffff, radius = 0.025 } = {}) {
   return m;
 }
 
-/** A 3D arrow with thicker shaft built from a cylinder + cone. */
+/** A 3D arrow — minimalist shaft + cone. */
 export function buildArrow({
   origin, direction, length = null, color = 0xffffff,
-  shaft = 0.012, head = 0.06, headLen = 0.10,
+  shaft = 0.007, head = 0.038, headLen = 0.075,
 } = {}) {
   const group = new THREE.Group();
   group.name = 'arrow';
@@ -352,8 +352,8 @@ export function buildArrow({
   const shaftGeom = new THREE.CylinderGeometry(shaft, shaft, safeShaftLen, 16);
   shaftGeom.translate(0, safeShaftLen / 2, 0);
   const mat = new THREE.MeshStandardMaterial({
-    color, roughness: 0.4, metalness: 0.1,
-    emissive: color, emissiveIntensity: 0.35,
+    color, roughness: 0.5, metalness: 0.0,
+    emissive: color, emissiveIntensity: 0.15,
   });
   const shaftMesh = new THREE.Mesh(shaftGeom, mat);
   group.add(shaftMesh);

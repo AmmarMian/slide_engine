@@ -5,6 +5,8 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import katex from 'katex';
 import { NLLChart, DistChart, ArchDiagram } from './charts.jsx';
 import foxSpriteUrl from '../assets/fox-sprite.png';
+import foxJumpUrl from '../assets/fox-jump.png';
+import foxDangleUrl from '../assets/fox-dangling.png';
 
 // Inline KaTeX renderer for React islands that re-render frequently.
 // Uses katex.render() (DOM API) so KaTeX manages the DOM directly — no innerHTML
@@ -169,7 +171,7 @@ export function SectionDividerContent({ num, label, kicker }) {
   }, []);
 
   const title = document.title || '';
-  const date  = document.querySelector('meta[name="deck-date"]')?.getAttribute('content') || '';
+  const date = document.querySelector('meta[name="deck-date"]')?.getAttribute('content') || '';
 
   return (
     <>
@@ -198,7 +200,7 @@ export function SectionDividerContent({ num, label, kicker }) {
       </div>
       <div className="page-footer" style={{ color: 'var(--inv-ink-3)', borderTopColor: 'var(--inv-rule)' }}>
         {title && <div>{title}</div>}
-        {date  && <div>{date}</div>}
+        {date && <div>{date}</div>}
       </div>
     </>
   );
@@ -460,7 +462,7 @@ export function EndSlideContent({ heading = 'THANK YOU', kicker = 'the deck retu
   useEffect(() => { setPos(getSlidePosition(ref.current, 'end-slide')); }, []);
 
   const title = document.title || '';
-  const date  = document.querySelector('meta[name="deck-date"]')?.getAttribute('content') || '';
+  const date = document.querySelector('meta[name="deck-date"]')?.getAttribute('content') || '';
 
   return (
     <>
@@ -488,7 +490,7 @@ export function EndSlideContent({ heading = 'THANK YOU', kicker = 'the deck retu
       </div>
       <div className="page-footer" style={{ color: 'var(--inv-ink-3)', borderTopColor: 'var(--inv-rule)' }}>
         {title && <div>{title}</div>}
-        {date  && <div>{date}</div>}
+        {date && <div>{date}</div>}
       </div>
     </>
   );
@@ -678,27 +680,56 @@ const WALK_INTERVAL = 80;   // ms per walk frame
 const IDLE_INTERVAL = 200;  // ms per idle frame
 const WALK_SPEED = 2.5;     // px per animation tick (~60fps)
 
+// fox-jump.png: 5 cols × 2 rows. Row 0 = take-off + in-air, row 1 = landing.
+const JUMP_FOX_COLS = 5, JUMP_FOX_ROWS = 2;
+const JUMP_FRAMES = Array.from({ length: 5 }, (_, i) => ({ col: i, row: 0 }));
+const LAND_FRAMES = Array.from({ length: 5 }, (_, i) => ({ col: i, row: 1 }));
+const JUMP_INTERVAL = 75;  // ms per jump frame
+const JUMP_PEAK = 40;      // px upward at apex
+
+// fox-dangling.png: 192×47px, 5 cols × 1 row (fox being held by scruff).
+const DANGLE_COLS = 5;
+const DANGLE_SCALE = FOX_SCALE * 0.67;                   // half the normal sprite scale
+const DANGLE_FRAME_W = 192 * DANGLE_SCALE / DANGLE_COLS; // ~28.8px displayed
+const DANGLE_FRAME_H = 47 * DANGLE_SCALE;                // ~35.25px displayed
+const DANGLE_FRAMES = Array.from({ length: 5 }, (_, i) => ({ col: i, row: 0 }));
+const DANGLE_INTERVAL = 130; // ms per dangle frame
+
+function getSectionIdx(idx, sections) {
+  for (let i = 0; i < sections.length; i++) {
+    if (idx <= sections[i].end) return i;
+  }
+  return sections.length - 1;
+}
+
 function FoxMascot({ trackRef, idx, sections }) {
-  const [pos, setPos] = useState(null);   // current rendered x (left edge of sprite)
+  const [pos, setPos] = useState(null);   // left edge of sprite (px from left)
+  const [dangleY, setDangleY] = useState(0); // top edge while held (cursor Y)
   const [facingLeft, setFacingLeft] = useState(false);
   const [frame, setFrame] = useState(0);
   const [walking, setWalking] = useState(false);
   const [dragging, setDragging] = useState(false);
-  const stateRef = useRef({ pos: null, target: null, walking: false, frame: 0, lastFrameT: 0 });
-  const dragRef  = useRef({ active: false, startClientX: 0, startPos: 0 });
+  // jumpPhase: null | 'prejump' | 'jumping' | 'landing'
+  const [jumpPhase, setJumpPhase] = useState(null);
+  const [jumpFr, setJumpFr] = useState(0);
+  const [jumpY, setJumpY] = useState(0);
+  const stateRef = useRef({
+    pos: null, target: null, walking: false, frame: 0, lastFrameT: 0,
+    jumpPhase: null, jumpFr: 0, jumpLastFrameT: 0, jumpY: 0,
+    jumpStartX: 0, jumpEndX: 0, jumpAnimStartT: 0, prejumpTarget: 0,
+    dragging: false,
+  });
+  // dragRef holds live cursor coords (updated on every pointermove, no React overhead)
+  const dragRef = useRef({ active: false, cursorX: 0, cursorY: 0 });
+  const prevSecIdxRef = useRef(null);
   const rafRef = useRef(null);
 
-  // Compute target x: right edge of the current section's progress fill.
   const computeTarget = useCallback(() => {
     const track = trackRef.current;
     if (!track) return null;
     const segs = track.querySelectorAll('.progress-seg');
     if (!segs.length) return null;
-    // Find which section contains idx.
-    let secIdx = sections.length - 1;
-    for (let i = 0; i < sections.length; i++) {
-      if (idx <= sections[i].end) { secIdx = i; break; }
-    }
+    const secIdx = getSectionIdx(idx, sections);
     const sec = sections[secIdx];
     const seg = segs[secIdx];
     if (!seg) return null;
@@ -706,16 +737,99 @@ function FoxMascot({ trackRef, idx, sections }) {
     const segRect = seg.getBoundingClientRect();
     const fillRight = segRect.left + segRect.width * fill;
     const sprW = FOX_W * FOX_SCALE;
-    // Place left edge 8px to the right of the fill end (fox as a "you are here" marker).
     return Math.min(fillRight - 40, window.innerWidth - sprW - 30);
   }, [trackRef, idx, sections]);
 
-  // Kick off animation loop once we have an initial position.
+  // Single animation loop for all modes.
   useEffect(() => {
     const s = stateRef.current;
+    const TOTAL_JUMP_MS = (JUMP_FRAMES.length + LAND_FRAMES.length) * JUMP_INTERVAL;
 
     const tick = (t) => {
       rafRef.current = requestAnimationFrame(tick);
+
+      // ── Dangling (held by user) ──────────────────────────────────────────
+      if (s.dragging) {
+        if (t - s.lastFrameT >= DANGLE_INTERVAL) {
+          s.frame = (s.frame + 1) % DANGLE_FRAMES.length;
+          s.lastFrameT = t;
+          setFrame(s.frame);
+        }
+        return;
+      }
+
+      // ── Pre-jump: walk backward before a leftward jump ──────────────────
+      if (s.jumpPhase === 'prejump') {
+        if (t - s.lastFrameT >= WALK_INTERVAL) {
+          s.frame = (s.frame + 1) % WALK_FRAMES.length;
+          s.lastFrameT = t;
+          setFrame(s.frame);
+        }
+        const diff = s.prejumpTarget - s.pos;
+        if (Math.abs(diff) < 1) {
+          s.pos = s.prejumpTarget;
+          s.jumpStartX = s.pos;
+          s.jumpPhase = 'jumping';
+          s.jumpFr = 0;
+          s.jumpLastFrameT = t;
+          s.jumpAnimStartT = t;
+          s.jumpY = 0;
+          setJumpPhase('jumping');
+          setJumpFr(0);
+          setJumpY(0);
+          setPos(s.pos);
+        } else {
+          s.pos += Math.sign(diff) * Math.min(WALK_SPEED, Math.abs(diff));
+          setFacingLeft(diff < 0);
+          setPos(s.pos);
+        }
+        return;
+      }
+
+      // ── Jump arc + landing ───────────────────────────────────────────────
+      if (s.jumpPhase === 'jumping' || s.jumpPhase === 'landing') {
+        if (t - s.jumpLastFrameT >= JUMP_INTERVAL) {
+          s.jumpLastFrameT = t;
+          const jFrames = s.jumpPhase === 'jumping' ? JUMP_FRAMES : LAND_FRAMES;
+          s.jumpFr++;
+          if (s.jumpFr >= jFrames.length) {
+            if (s.jumpPhase === 'jumping') {
+              s.jumpPhase = 'landing';
+              s.jumpFr = 0;
+            } else {
+              s.jumpPhase = null;
+              s.jumpFr = 0;
+              s.jumpY = 0;
+              s.pos = s.jumpEndX;
+              s.target = s.jumpEndX;
+              setJumpPhase(null);
+              setJumpFr(0);
+              setJumpY(0);
+              setPos(s.pos);
+              return;
+            }
+          }
+          if (s.jumpPhase === 'jumping') {
+            const p = s.jumpFr / Math.max(1, JUMP_FRAMES.length - 1);
+            s.jumpY = -Math.sin(p * Math.PI) * JUMP_PEAK;
+          } else if (s.jumpPhase === 'landing') {
+            const p = s.jumpFr / Math.max(1, LAND_FRAMES.length - 1);
+            s.jumpY = Math.sin(p * Math.PI) * JUMP_PEAK * 0.15;
+          } else {
+            s.jumpY = 0;
+          }
+          setJumpPhase(s.jumpPhase);
+          setJumpFr(s.jumpFr);
+          setJumpY(s.jumpY);
+        }
+        const xProgress = Math.min(1, (t - s.jumpAnimStartT) / TOTAL_JUMP_MS);
+        s.pos = s.jumpStartX + xProgress * (s.jumpEndX - s.jumpStartX);
+        setPos(s.pos);
+        setFacingLeft(s.jumpEndX < s.jumpStartX);
+        return;
+      }
+
+      // ── Normal walk / idle ────────────────────────────────────────────────
       const frames = s.walking ? WALK_FRAMES : IDLE_FRAMES;
       const interval = s.walking ? WALK_INTERVAL : IDLE_INTERVAL;
       if (t - s.lastFrameT >= interval) {
@@ -741,23 +855,62 @@ function FoxMascot({ trackRef, idx, sections }) {
     return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
   }, []);
 
-  // On slide change: compute new target and start walking.
+  // On slide change: trigger jump on section boundary, otherwise walk.
   useEffect(() => {
-    // Small delay so the DOM progress-seg-fg has updated its width.
+    const secIdx = getSectionIdx(idx, sections);
+    const prevSec = prevSecIdxRef.current;
+    prevSecIdxRef.current = secIdx;
+
     const timer = setTimeout(() => {
       const target = computeTarget();
       if (target === null) return;
       const s = stateRef.current;
       if (s.pos === null) {
-        // First render: jump immediately.
-        s.pos = target;
-        s.target = target;
-        s.walking = false;
+        s.pos = target; s.target = target; s.walking = false;
         setPos(target);
         return;
       }
+      // Don't interrupt a drag.
+      if (s.dragging) { s.target = target; return; }
       s.target = target;
-      if (Math.abs(target - s.pos) > 2) {
+      const sectionChanged = prevSec !== null && prevSec !== secIdx;
+      if (sectionChanged && !s.jumpPhase) {
+        const goingRight = target >= s.pos;
+        s.walking = false;
+        setWalking(false);
+        if (goingRight) {
+          s.jumpPhase = 'jumping';
+          s.jumpFr = 0;
+          s.jumpLastFrameT = 0;
+          s.jumpAnimStartT = performance.now();
+          s.jumpY = 0;
+          s.jumpStartX = s.pos;
+          s.jumpEndX = target;
+          setFacingLeft(false);
+          setJumpPhase('jumping');
+          setJumpFr(0);
+          setJumpY(0);
+        } else {
+          const track = trackRef.current;
+          let walkBack = 30;
+          if (track && prevSec != null) {
+            const segs = track.querySelectorAll('.progress-seg');
+            const prevSegEl = segs[prevSec];
+            if (prevSegEl) {
+              const sec = sections[prevSec];
+              const span = Math.max(1, sec.end - sec.start + 1);
+              walkBack = prevSegEl.getBoundingClientRect().width / span;
+            }
+          }
+          s.jumpPhase = 'prejump';
+          s.prejumpTarget = Math.max(0, s.pos - walkBack);
+          s.jumpEndX = target;
+          s.frame = 0;
+          s.lastFrameT = 0;
+          setFacingLeft(true);
+          setJumpPhase('prejump');
+        }
+      } else if (!s.jumpPhase && Math.abs(target - s.pos) > 2) {
         s.walking = true;
         s.frame = 0;
         s.lastFrameT = 0;
@@ -765,37 +918,59 @@ function FoxMascot({ trackRef, idx, sections }) {
       }
     }, 50);
     return () => clearTimeout(timer);
-  }, [idx, computeTarget]);
+  }, [idx, computeTarget, sections]);
 
   const sprW = FOX_W * FOX_SCALE;
-  const maxPos = () => window.innerWidth - sprW;
+  const sprH = FOX_H * FOX_SCALE;
 
   const onPointerDown = (e) => {
     e.preventDefault();
-    dragRef.current = { active: true, startClientX: e.clientX, startPos: stateRef.current.pos ?? 0 };
     e.currentTarget.setPointerCapture(e.pointerId);
-    stateRef.current.walking = false;
-    setDragging(true);
+    const s = stateRef.current;
+    // Cancel any in-progress jump so the fox can be grabbed mid-air.
+    s.jumpPhase = null;
+    s.jumpY = 0;
+    s.walking = false;
+    s.dragging = true;
+    s.frame = 0;
+    s.lastFrameT = 0;
+    // Reposition: left edge centered on cursor X, top at cursor Y.
+    const initPosX = Math.max(0, Math.min(window.innerWidth - DANGLE_FRAME_W, e.clientX - DANGLE_FRAME_W / 2));
+    s.pos = initPosX;
+    s.target = initPosX;
+    dragRef.current = { active: true, cursorX: e.clientX, cursorY: e.clientY };
+    setJumpPhase(null);
+    setJumpY(0);
     setWalking(false);
+    setDragging(true);
+    setPos(initPosX);
+    setDangleY(e.clientY);
   };
 
   const onPointerMove = (e) => {
     if (!dragRef.current.active) return;
-    const dx = e.clientX - dragRef.current.startClientX;
-    const newPos = Math.max(0, Math.min(maxPos(), dragRef.current.startPos + dx));
-    stateRef.current.pos    = newPos;
-    stateRef.current.target = newPos; // prevent auto-walk from kicking in
-    setFacingLeft(dx < 0);
-    setPos(newPos);
+    const prevX = dragRef.current.cursorX;
+    dragRef.current.cursorX = e.clientX;
+    dragRef.current.cursorY = e.clientY;
+    const newPosX = Math.max(0, Math.min(window.innerWidth - DANGLE_FRAME_W, e.clientX - DANGLE_FRAME_W / 2));
+    stateRef.current.pos = newPosX;
+    stateRef.current.target = newPosX;
+    if (Math.abs(e.clientX - prevX) > 0) setFacingLeft(e.clientX < prevX);
+    setPos(newPosX);
+    setDangleY(e.clientY);
   };
 
   const onPointerUp = () => {
     if (!dragRef.current.active) return;
     dragRef.current.active = false;
+    stateRef.current.dragging = false;
+    // Snap pos back to bar-level (same X, bottom of screen).
+    stateRef.current.walking = false;
     setDragging(false);
+    setWalking(false);
 
-    // Navigate to the slide under the drop point.
-    const foxCenterX = (stateRef.current.pos ?? 0) + sprW / 2;
+    // Navigate to slide under cursor X.
+    const cursorX = dragRef.current.cursorX;
     const track = trackRef.current;
     const stage = document.querySelector('deck-stage');
     if (track && stage) {
@@ -804,28 +979,65 @@ function FoxMascot({ trackRef, idx, sections }) {
         const seg = segs[si];
         if (!seg) continue;
         const rect = seg.getBoundingClientRect();
-        if (foxCenterX >= rect.left && foxCenterX <= rect.right) {
+        if (cursorX >= rect.left && cursorX <= rect.right) {
           const sec = sections[si];
-          const t = (foxCenterX - rect.left) / rect.width;
+          const t = (cursorX - rect.left) / rect.width;
           const slideIdx = sec.start + Math.round(t * (sec.end - sec.start));
           stage.goTo(Math.max(sec.start, Math.min(sec.end, slideIdx)));
           break;
         }
       }
     }
+    // Recompute bar position so the fox snaps to bar level at the right X.
+    setTimeout(() => {
+      const target = computeTarget();
+      if (target === null) return;
+      const s = stateRef.current;
+      s.pos = target;
+      s.target = target;
+      setPos(target);
+    }, 80);
   };
 
   if (pos === null) return null;
 
-  const frames = dragging ? IDLE_FRAMES : walking ? WALK_FRAMES : IDLE_FRAMES;
-  const { col, row } = frames[frame] || frames[0];
-  const bpX = -(col * FOX_W * FOX_SCALE);
-  const bpY = -(row * FOX_H * FOX_SCALE);
-  const sprH = FOX_H * FOX_SCALE;
+  // ── Sprite selection ────────────────────────────────────────────────────
+  const isAirborne = jumpPhase === 'jumping' || jumpPhase === 'landing';
+  let bgUrl, bgSize, bpX, bpY, elW, elH;
 
-  // Bar sits 8–11px from viewport bottom (8px padding + 3px track).
-  // Position fox 3px above bar top so it hovers just over the line with no viewport clipping.
-  const barBottom = 1;
+  if (dragging) {
+    const fr = DANGLE_FRAMES[frame % DANGLE_FRAMES.length];
+    bgUrl = foxDangleUrl;
+    bgSize = `${192 * DANGLE_SCALE}px ${47 * DANGLE_SCALE}px`;
+    bpX = -(fr.col * DANGLE_FRAME_W);
+    bpY = 0;
+    elW = DANGLE_FRAME_W;
+    elH = DANGLE_FRAME_H;
+  } else if (isAirborne) {
+    const jFrames = jumpPhase === 'jumping' ? JUMP_FRAMES : LAND_FRAMES;
+    const fr = jFrames[Math.min(jumpFr, jFrames.length - 1)] || jFrames[0];
+    bgUrl = foxJumpUrl;
+    bgSize = `${JUMP_FOX_COLS * sprW}px ${JUMP_FOX_ROWS * sprH}px`;
+    bpX = -(fr.col * sprW);
+    bpY = -(fr.row * sprH);
+    elW = sprW;
+    elH = sprH;
+  } else {
+    const frames = (walking || jumpPhase === 'prejump') ? WALK_FRAMES : IDLE_FRAMES;
+    const fr = frames[frame] || frames[0];
+    bgUrl = foxSpriteUrl;
+    bgSize = `${FOX_W * FOX_SCALE * 4}px ${FOX_H * FOX_SCALE * 4}px`;
+    bpX = -(fr.col * FOX_W * FOX_SCALE);
+    bpY = -(fr.row * FOX_H * FOX_SCALE);
+    elW = sprW;
+    elH = sprH;
+  }
+
+  // When dangling: cursor is the grip point at top-center of sprite.
+  // When normal: sprite sits on the progress bar at the bottom.
+  const posStyle = dragging
+    ? { top: dangleY, bottom: 'auto', left: pos }
+    : { top: 'auto', bottom: 1, left: pos };
 
   return (
     <div
@@ -834,22 +1046,23 @@ function FoxMascot({ trackRef, idx, sections }) {
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
       style={{
-      position: 'fixed',
-      bottom: barBottom,
-      left: pos,
-      width: sprW,
-      height: sprH,
-      zIndex: 2147483641,
-      pointerEvents: 'auto',
-      cursor: dragging ? 'grabbing' : 'grab',
-      imageRendering: 'pixelated',
-      filter: 'grayscale(1)',
-      transform: facingLeft ? 'scaleX(-1)' : 'none',
-      backgroundImage: `url(${foxSpriteUrl})`,
-      backgroundSize: `${FOX_W * FOX_SCALE * 4}px ${FOX_H * FOX_SCALE * 4}px`,
-      backgroundPosition: `${bpX}px ${bpY}px`,
-      backgroundRepeat: 'no-repeat',
-    }} />
+        position: 'fixed',
+        ...posStyle,
+        width: elW,
+        height: elH,
+        zIndex: 2147483641,
+        pointerEvents: 'auto',
+        cursor: dragging ? 'grabbing' : 'grab',
+        imageRendering: 'pixelated',
+        filter: 'grayscale(1)',
+        transform: dragging
+          ? (facingLeft ? 'scaleX(-1)' : 'none')
+          : `${facingLeft ? 'scaleX(-1) ' : ''}translateY(${jumpY}px)`,
+        backgroundImage: `url(${bgUrl})`,
+        backgroundSize: bgSize,
+        backgroundPosition: `${bpX}px ${bpY}px`,
+        backgroundRepeat: 'no-repeat',
+      }} />
   );
 }
 
@@ -858,7 +1071,7 @@ function FoxMascot({ trackRef, idx, sections }) {
 // Reads deck title from <title> and date from <meta name="deck-date">.
 export function SlideFooterContent() {
   const title = document.title || '';
-  const date  = document.querySelector('meta[name="deck-date"]')?.getAttribute('content') || '';
+  const date = document.querySelector('meta[name="deck-date"]')?.getAttribute('content') || '';
   return (
     <div className="page-footer">
       <span className="label">{title}</span>
@@ -872,7 +1085,7 @@ export function SlideFooterContent() {
 // Reads its own slide index from the DOM so no slide-num attribute is needed.
 export function SlideHeaderContent({ title }) {
   const ref = useRef(null);
-  const [pos,   setPos]   = useState({ idx: 0, total: 0 });
+  const [pos, setPos] = useState({ idx: 0, total: 0 });
   const [steps, setSteps] = useState({ visible: 0, total: 0 });
 
   useEffect(() => {
@@ -882,7 +1095,7 @@ export function SlideHeaderContent({ title }) {
     if (!section) return;
 
     const readSteps = () => {
-      const all     = section.querySelectorAll('[data-step]');
+      const all = section.querySelectorAll('[data-step]');
       const visible = [...all].filter(el => el.hasAttribute('data-step-visible')).length;
       setSteps({ visible, total: all.length });
     };
@@ -1028,33 +1241,33 @@ export function ProgressBarContent({ sections }) {
 
   return (
     <>
-    <div className="progress-bar" data-progress="true">
-      <div ref={trackRef} className="progress-track">
-        {SECTIONS.map((s, i) => {
-          const span = s.end - s.start + 1;
-          const fill = idx > s.end ? 1 : idx >= s.start ? (idx - s.start + 1) / span : 0;
-          return (
-            <div key={i} className="progress-seg" style={{ flex: span, cursor: 'pointer', pointerEvents: 'auto' }}
+      <div className="progress-bar" data-progress="true">
+        <div ref={trackRef} className="progress-track">
+          {SECTIONS.map((s, i) => {
+            const span = s.end - s.start + 1;
+            const fill = idx > s.end ? 1 : idx >= s.start ? (idx - s.start + 1) / span : 0;
+            return (
+              <div key={i} className="progress-seg" style={{ flex: span, cursor: 'pointer', pointerEvents: 'auto' }}
+                onClick={() => jumpTo(s.start)}>
+                <div className="progress-seg-bg" />
+                <div className="progress-seg-fg" style={{ width: `${fill * 100}%` }} />
+              </div>
+            );
+          })}
+        </div>
+        {foxEnabled && <FoxMascot trackRef={trackRef} idx={idx} sections={SECTIONS} />}
+      </div>
+      {/* Labels in a separate stacking context above the fox */}
+      <div className="progress-labels" data-progress="true">
+        <div className="progress-track">
+          {SECTIONS.map((s, i) => (
+            <div key={i} className="progress-seg" style={{ flex: s.end - s.start + 1, cursor: 'pointer', pointerEvents: 'auto' }}
               onClick={() => jumpTo(s.start)}>
-              <div className="progress-seg-bg" />
-              <div className="progress-seg-fg" style={{ width: `${fill * 100}%` }} />
+              <div className="progress-seg-label">{String(i + 1).padStart(2, '0')} {s.label}</div>
             </div>
-          );
-        })}
+          ))}
+        </div>
       </div>
-      {foxEnabled && <FoxMascot trackRef={trackRef} idx={idx} sections={SECTIONS} />}
-    </div>
-    {/* Labels in a separate stacking context above the fox */}
-    <div className="progress-labels" data-progress="true">
-      <div className="progress-track">
-        {SECTIONS.map((s, i) => (
-          <div key={i} className="progress-seg" style={{ flex: s.end - s.start + 1, cursor: 'pointer', pointerEvents: 'auto' }}
-            onClick={() => jumpTo(s.start)}>
-            <div className="progress-seg-label">{String(i + 1).padStart(2, '0')} {s.label}</div>
-          </div>
-        ))}
-      </div>
-    </div>
     </>
   );
 }

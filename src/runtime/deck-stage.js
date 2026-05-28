@@ -190,7 +190,7 @@
       gap: 6px;
       color: var(--bg-2, rgba(255,255,255,0.72));
     }
-    .btn.reset .kbd {
+    .btn.reset .kbd, .btn.notes .kbd, .btn.toc .kbd {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -218,7 +218,7 @@
     .count .total { color: var(--ink-3, rgba(255,255,255,0.55)); }
     .step-hint { font-size: 10px; color: var(--bg-2, rgba(255,255,255,0.38)); margin-left: 5px; letter-spacing: 0.02em; }
     .step-hint:empty { display: none; }
-    .btn.notes { font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 0 10px 0 12px; gap: 6px; color: var(--bg-2, rgba(255,255,255,0.72)); }
+    .btn.notes, .btn.toc { font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 0 10px 0 12px; gap: 6px; color: var(--bg-2, rgba(255,255,255,0.72)); }
 
     .divider {
       width: 1px;
@@ -390,12 +390,15 @@
         <button class="btn reset" type="button" aria-label="Reset to first slide" title="Reset (R)">Reset<span class="kbd">R</span></button>
         <span class="divider"></span>
         <button class="btn notes" type="button" aria-label="Open speaker notes" title="Notes (N)">Notes<span class="kbd">N</span></button>
+        <span class="divider"></span>
+        <button class="btn toc" type="button" aria-label="Open table of contents" title="Contents (T)">Contents<span class="kbd">T</span></button>
       `;
 
       overlay.querySelector('.prev').addEventListener('click', () => this._go(this._index - 1, 'click'));
       overlay.querySelector('.next').addEventListener('click', () => this._go(this._index + 1, 'click'));
       overlay.querySelector('.reset').addEventListener('click', () => this._jump(0, 'click'));
       overlay.querySelector('.notes').addEventListener('click', () => this._openNotes());
+      overlay.querySelector('.toc').addEventListener('click', () => document.dispatchEvent(new KeyboardEvent('keydown', { key: 't', bubbles: true, cancelable: true })));
 
       this._root.append(style, stage, tapzones, overlay);
       this._canvas = canvas;

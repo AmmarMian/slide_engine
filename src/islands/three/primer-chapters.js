@@ -10,8 +10,8 @@ import {
 } from './scene.js';
 
 // shared default points used across chapters
-const P0 = M.fromLatLon(THREE.MathUtils.degToRad(28),  THREE.MathUtils.degToRad(22));
-const Q0 = M.fromLatLon(THREE.MathUtils.degToRad(8),   THREE.MathUtils.degToRad(78));
+const P0 = M.fromLatLon(THREE.MathUtils.degToRad(28), THREE.MathUtils.degToRad(22));
+const Q0 = M.fromLatLon(THREE.MathUtils.degToRad(8), THREE.MathUtils.degToRad(78));
 
 // Re-orient a Y-up arrow group at origin to point along direction `dir` from origin `o`.
 function setArrowAt(arrow, o, dir, len) {
@@ -21,9 +21,9 @@ function setArrowAt(arrow, o, dir, len) {
 // Thick tube along a list of THREE.Vector3 points.
 function buildTube(points, radius, color, opacity = 1) {
   const curve = new THREE.CatmullRomCurve3(points);
-  const segs  = Math.max(6, points.length - 1);
-  const geo   = new THREE.TubeGeometry(curve, segs, radius, 6, false);
-  const mat   = new THREE.MeshStandardMaterial({ color, transparent: opacity < 1, opacity, metalness: 0, roughness: 1 });
+  const segs = Math.max(6, points.length - 1);
+  const geo = new THREE.TubeGeometry(curve, segs, radius, 6, false);
+  const mat = new THREE.MeshStandardMaterial({ color, transparent: opacity < 1, opacity, metalness: 0, roughness: 1 });
   return new THREE.Mesh(geo, mat);
 }
 
@@ -35,29 +35,29 @@ function fillCurvedArrow(targetGroup, from, to, color) {
     c.geometry?.dispose();
     if (c.material) c.material.dispose();
   }
-  const mid    = from.clone().add(to).multiplyScalar(0.5);
+  const mid = from.clone().add(to).multiplyScalar(0.5);
   // Bend outward using `from` direction — `from` is outside the sphere so this
   // keeps the entire arc on the exterior of the surface.
   const outDir = from.clone().normalize();
-  const ctrl   = mid.clone().addScaledVector(outDir, from.clone().sub(to).length() * 0.50);
-  const N      = 24;
-  const pts    = [];
+  const ctrl = mid.clone().addScaledVector(outDir, from.clone().sub(to).length() * 0.50);
+  const N = 24;
+  const pts = [];
   for (let i = 0; i <= N; i++) {
     const t = i / N;
     pts.push(
-      from.clone().multiplyScalar((1-t)*(1-t))
-        .addScaledVector(ctrl, 2*(1-t)*t)
-        .addScaledVector(to, t*t)
+      from.clone().multiplyScalar((1 - t) * (1 - t))
+        .addScaledVector(ctrl, 2 * (1 - t) * t)
+        .addScaledVector(to, t * t)
     );
   }
-  const CONE_H  = 0.080;
+  const CONE_H = 0.055;
   const shaftPts = pts.slice(0, N - 2);
-  if (shaftPts.length >= 2) targetGroup.add(buildTube(shaftPts, 0.010, color));
+  if (shaftPts.length >= 2) targetGroup.add(buildTube(shaftPts, 0.006, color));
 
   const coneDir = pts[N].clone().sub(pts[N - 2]).normalize();
-  const coneGeo = new THREE.ConeGeometry(0.028, CONE_H, 8);
+  const coneGeo = new THREE.ConeGeometry(0.018, CONE_H, 8);
   const coneMat = new THREE.MeshStandardMaterial({ color, metalness: 0, roughness: 1 });
-  const cone    = new THREE.Mesh(coneGeo, coneMat);
+  const cone = new THREE.Mesh(coneGeo, coneMat);
   cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), coneDir);
   // Tip of cone sits at `to` — center is offset backward so arrowhead stays outside.
   cone.position.copy(to.clone().sub(coneDir.clone().multiplyScalar(CONE_H * 0.5)));
@@ -92,9 +92,9 @@ const ch1 = {
         color: ctx.palette.grid, transparent: true, opacity: 0.25,
       }));
     };
-    axes.add(ax(new THREE.Vector3(0,0,0), new THREE.Vector3(1.45,0,0)));
-    axes.add(ax(new THREE.Vector3(0,0,0), new THREE.Vector3(0,1.45,0)));
-    axes.add(ax(new THREE.Vector3(0,0,0), new THREE.Vector3(0,0,1.45)));
+    axes.add(ax(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1.45, 0, 0)));
+    axes.add(ax(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 1.45, 0)));
+    axes.add(ax(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 1.45)));
     ctx.group.add(axes);
 
     makeLabel(ctx, 'x', new THREE.Vector3(1.50, 0, 0), { dim: true });
@@ -123,14 +123,16 @@ const ch2 = {
   enter(ctx) {
     const p = ctx.p.clone();
     // tangent plane disc
-    const plane = buildTangentPlane({ p, radius: 0.78,
-      color: ctx.palette.tangent, opacity: 0.16 });
+    const plane = buildTangentPlane({
+      p, radius: 0.78,
+      color: ctx.palette.tangent, opacity: 0.16
+    });
     ctx.group.add(plane);
 
     // outward normal arrow (radial) — emphasises orthogonality
     const normal = buildArrow({
       origin: p, direction: p.clone(), length: 0.55,
-      color: ctx.palette.p, shaft: 0.011, head: 0.05, headLen: 0.085,
+      color: ctx.palette.p, shaft: 0.007, head: 0.032, headLen: 0.065,
     });
     ctx.group.add(normal);
 
@@ -182,8 +184,10 @@ const ch3 = {
   camera: { pos: [1.55, 1.05, 2.30], target: [0.30, 0.15, 0.10] },
   enter(ctx) {
     const p = ctx.p.clone();
-    const plane = buildTangentPlane({ p, radius: 0.78,
-      color: ctx.palette.tangent, opacity: 0.10 });
+    const plane = buildTangentPlane({
+      p, radius: 0.78,
+      color: ctx.palette.tangent, opacity: 0.10
+    });
     ctx.group.add(plane);
 
     const [e1, e2] = M.tangentFrame(p);
@@ -193,11 +197,11 @@ const ch3 = {
 
     const arrowU = buildArrow({
       origin: p, direction: u, length: u.length(),
-      color: ctx.palette.tangent, shaft: 0.0085, head: 0.038, headLen: 0.08,
+      color: ctx.palette.tangent, shaft: 0.006, head: 0.026, headLen: 0.062,
     });
     const arrowV = buildArrow({
       origin: p, direction: v, length: v.length(),
-      color: ctx.palette.accent_2 || ctx.palette.q, shaft: 0.0085, head: 0.038, headLen: 0.08,
+      color: ctx.palette.accent_2 || ctx.palette.q, shaft: 0.006, head: 0.026, headLen: 0.062,
     });
     ctx.group.add(arrowU);
     ctx.group.add(arrowV);
@@ -238,14 +242,14 @@ const ch4 = {
     geodesics are arcs of great circles — intersections of the sphere with planes
     through the origin. The geodesic leaving p with initial velocity v traces
     γ(t) on the sphere by trigonometric rotation in the plane <span class="mono">span(p, v̂)</span>.`,
-  formula: String.raw`\gamma_{p,v}(t) \;=\; \cos(t)\, p \;+\; \sin(t)\, \hat{v}, \qquad \hat{v} = v / \|v\|`,
+  formula: String.raw`\gamma_{p,v}(t) \;=\; \cos(t)\, p \;+\; \sin(t)\, \hat{v}, \\ \hat{v} = v / \|v\|`,
   camera: { pos: [0.4, 0.8, 3.0], target: [0, 0.05, 0.25] },
   pickable: true,
   enter(ctx) {
     const p = ctx.p.clone();
     const q = ctx.q.clone();
 
-    const u     = M.logMap(p, q).normalize();
+    const u = M.logMap(p, q).normalize();
     const theta = Math.acos(THREE.MathUtils.clamp(p.dot(q), -1, 1));
 
     // full great circle (faint thin)
@@ -258,7 +262,7 @@ const ch4 = {
     // thick geodesic arc p → q
     const arcPts = [];
     for (let i = 0; i <= 96; i++) arcPts.push(M.geodesicPoint(p, u, (i / 96) * theta));
-    ctx.group.add(buildTube(arcPts, 0.014, ctx.palette.geodesic));
+    ctx.group.add(buildTube(arcPts, 0.009, ctx.palette.geodesic));
 
     // moving dot that travels p → q and loops
     const movingDot = buildDot({ position: p.clone(), color: ctx.palette.accent || 0xffffff, radius: 0.030 });
@@ -310,20 +314,24 @@ const ch5 = {
     const dirHat = e1.clone().multiplyScalar(Math.cos(phi))
       .addScaledVector(e2, Math.sin(phi));
 
-    const plane = buildTangentPlane({ p, radius: 0.95,
-      color: ctx.palette.tangent, opacity: 0.10 });
+    const plane = buildTangentPlane({
+      p, radius: 0.95,
+      color: ctx.palette.tangent, opacity: 0.10
+    });
     ctx.group.add(plane);
 
     // arrow v on tangent plane (will grow w/ slider)
     const arrowV = buildArrow({
       origin: p, direction: dirHat, length: 1.1,
-      color: ctx.palette.tangent, shaft: 0.0085, head: 0.038, headLen: 0.08,
+      color: ctx.palette.tangent, shaft: 0.006, head: 0.026, headLen: 0.062,
     });
     ctx.group.add(arrowV);
 
     // tip-of-v marker (in tangent plane, *not* on sphere)
-    const tipDot = buildDot({ position: p.clone().addScaledVector(dirHat, 1.1),
-      color: ctx.palette.tangent, radius: 0.018 });
+    const tipDot = buildDot({
+      position: p.clone().addScaledVector(dirHat, 1.1),
+      color: ctx.palette.tangent, radius: 0.018
+    });
     ctx.group.add(tipDot);
 
     // dotted line from tip to exp_p(v) -- visualises the "wrapping"
@@ -382,15 +390,17 @@ const ch6 = {
     Its inverse, the <em>logarithm</em>, sends q ↦ log<sub>p</sub>(q): the unique
     tangent vector at p whose direction points toward q along the geodesic, with
     magnitude equal to the geodesic distance <span class="mono">d(p,q) = arccos⟨p,q⟩</span>.`,
-  formula: String.raw`\log_{p}(q) \;=\; \theta\, \frac{q - \langle p,q\rangle\, p}{\|q - \langle p,q\rangle\, p\|}, \quad \theta = \arccos\langle p,q\rangle`,
+  formula: String.raw`\log_{p}(q) \;=\; \theta\, \frac{q - \langle p,q\rangle\, p}{\|q - \langle p,q\rangle\, p\|}, \\ \theta = \arccos\langle p,q\rangle`,
   camera: { pos: [0.85, 0.95, 2.55], target: [0.20, 0.12, 0.20] },
   pickable: 'q',
   enter(ctx) {
     const p = ctx.p.clone();
     let q = ctx.q.clone();
 
-    const plane = buildTangentPlane({ p, radius: 1.05,
-      color: ctx.palette.tangent, opacity: 0.10 });
+    const plane = buildTangentPlane({
+      p, radius: 1.05,
+      color: ctx.palette.tangent, opacity: 0.10
+    });
     ctx.group.add(plane);
 
     // faint geodesic arc p→q
@@ -403,7 +413,7 @@ const ch6 = {
     const logV = M.logMap(p, q);
     const arrow = buildArrow({
       origin: p, direction: logV, length: logV.length(),
-      color: ctx.palette.tangent, shaft: 0.0085, head: 0.038, headLen: 0.08,
+      color: ctx.palette.tangent, shaft: 0.006, head: 0.026, headLen: 0.062,
     });
     ctx.group.add(arrow);
 
@@ -466,19 +476,21 @@ const ch7 = {
     const dirHat = e1.clone().multiplyScalar(Math.cos(phi))
       .addScaledVector(e2, Math.sin(phi));
 
-    const plane = buildTangentPlane({ p, radius: 1.45,
-      color: ctx.palette.tangent, opacity: 0.10 });
+    const plane = buildTangentPlane({
+      p, radius: 1.45,
+      color: ctx.palette.tangent, opacity: 0.10
+    });
     ctx.group.add(plane);
 
     const arrowV = buildArrow({
       origin: p, direction: dirHat, length: 1.3,
-      color: ctx.palette.tangent, shaft: 0.0085, head: 0.038, headLen: 0.08,
+      color: ctx.palette.tangent, shaft: 0.006, head: 0.026, headLen: 0.062,
     });
     ctx.group.add(arrowV);
 
     // straight chord from origin to (p+v) — shows the "lift" before normalizing
     const chord = buildPolyline({
-      points: [new THREE.Vector3(0,0,0), p.clone().addScaledVector(dirHat, 1.3)],
+      points: [new THREE.Vector3(0, 0, 0), p.clone().addScaledVector(dirHat, 1.3)],
       color: ctx.palette.retraction, opacity: 0.45, dashed: true,
     });
     ctx.group.add(chord);
@@ -504,7 +516,7 @@ const ch7 = {
     ctx.group.add(buildDot({ position: p, color: ctx.palette.p, radius: 0.022 }));
     makeLabel(ctx, 'p', p.clone().multiplyScalar(1.06), { accent: true });
     const expL = makeLabel(ctx, 'exp(v)', p.clone(), { geo: true });
-    const retL = makeLabel(ctx, 'R(v)',   p.clone(), { retract: true });
+    const retL = makeLabel(ctx, 'R(v)', p.clone(), { retract: true });
 
     function setMag(mag) {
       const v = dirHat.clone().multiplyScalar(mag);
@@ -514,10 +526,10 @@ const ch7 = {
       expDot.position.copy(ePt);
       retDot.position.copy(rPt);
       arc.userData.update(M.geodesicRay(p, v, 96));
-      chord.userData.update([new THREE.Vector3(0,0,0), p.clone().add(v)]);
+      chord.userData.update([new THREE.Vector3(0, 0, 0), p.clone().add(v)]);
       gapLine.userData.update([ePt, rPt]);
       expL.update(ePt.clone().multiplyScalar(1.10).add(new THREE.Vector3(0, 0.03, 0)));
-      retL.update(rPt.clone().multiplyScalar(1.10).add(new THREE.Vector3(0,-0.03, 0)));
+      retL.update(rPt.clone().multiplyScalar(1.10).add(new THREE.Vector3(0, -0.03, 0)));
     }
     setMag(1.3);
 
@@ -539,7 +551,7 @@ const ch8 = {
     preserves lengths, angles, and the inner product with the velocity.
     On <span class="mono">S²</span>, this is a rigid rotation in the plane
     <span class="mono">span(p, q)</span> by the geodesic angle θ.`,
-  formula: String.raw`P_{p\to q}\colon T_{p}S^{2} \to T_{q}S^{2}, \qquad \langle P_{p\to q}(u), P_{p\to q}(v)\rangle_{q} = \langle u, v\rangle_{p}`,
+  formula: String.raw`P_{p\to q}\colon T_{p}S^{2} \to T_{q}S^{2}, \\ \langle P_{p\to q}(u), P_{p\to q}(v)\rangle_{q} = \langle u, v\rangle_{p}`,
   camera: { pos: [0.6, 0.85, 2.85], target: [0.05, 0.10, 0.20] },
   enter(ctx) {
     const p = ctx.p.clone();
@@ -568,14 +580,14 @@ const ch8 = {
 
     const arrowMoving = buildArrow({
       origin: p, direction: w, length: w.length(),
-      color: ctx.palette.transport, shaft: 0.011, head: 0.045, headLen: 0.09,
+      color: ctx.palette.transport, shaft: 0.007, head: 0.030, headLen: 0.070,
     });
     ctx.group.add(arrowMoving);
 
     // start & end markers
     const startArrow = buildArrow({
       origin: p, direction: w, length: w.length(),
-      color: ctx.palette.transport, shaft: 0.008, head: 0.035, headLen: 0.07,
+      color: ctx.palette.transport, shaft: 0.006, head: 0.024, headLen: 0.055,
     });
     startArrow.userData.mat.opacity = 0.35;
     startArrow.userData.mat.transparent = true;

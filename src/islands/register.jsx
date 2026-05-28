@@ -22,6 +22,7 @@ import { SpdNetArch } from './spdnet-arch.jsx';
 import { RiemannPrimer } from './riemann-primer.jsx';
 import { RiemannDescent } from './riemann-descent.jsx';
 import { FederatedLearning } from './federated-learning.jsx';
+import { RiemannTerrain } from './riemann-terrain.jsx';
 
 // ── Bridge ─────────────────────────────────────────────────────────────────
 // opts.observed : attribute names that trigger a re-render on change
@@ -150,3 +151,4 @@ defineReactElement('spdnet-arch', SpdNetArch);
 defineReactElement('riemann-primer', RiemannPrimer);
 defineReactElement('riemann-descent', RiemannDescent);
 defineReactElement('federated-learning', FederatedLearning);
+defineReactElement('riemann-terrain', RiemannTerrain);

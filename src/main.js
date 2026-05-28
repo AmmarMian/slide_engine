@@ -51,6 +51,7 @@ import { renderMath } from './math.js';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { TweaksPanel } from './theme/tweaks-panel.jsx';
+import { TocModal } from './islands/toc-modal.jsx';
 
 // Boot sequence
 function boot() {
@@ -74,6 +75,12 @@ function boot() {
   if (tweaksRoot) {
     ReactDOM.createRoot(tweaksRoot).render(React.createElement(TweaksPanel));
   }
+
+  // Mount the TOC modal overlay (injected into body — position:fixed, above everything).
+  const tocRoot = document.createElement('div');
+  tocRoot.id = 'toc-modal-root';
+  document.body.appendChild(tocRoot);
+  ReactDOM.createRoot(tocRoot).render(React.createElement(TocModal));
 }
 
 boot();

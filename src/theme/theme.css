@@ -334,6 +334,20 @@ end-slide::before {
   to   { opacity: 1; transform: scale(1); }
 }
 
+@keyframes toc-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes toc-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Hide scrollbar inside TOC panel */
+#toc-modal-root * { box-sizing: border-box; }
+#toc-modal-root ::-webkit-scrollbar { display: none; }
+
 /* ── Inline citations ────────────────────────────────────────
    Usage: <cite-ref key="smith2024"></cite-ref>
    References defined once in: <script id="deck-refs" type="application/json">{"smith2024":"..."}</script>
@@ -417,6 +431,7 @@ cite-ref {
 /* ── Riemann island host rules ───────────────────────────────*/
 riemann-primer,
 riemann-descent,
+riemann-terrain,
 federated-learning {
   display: block;
   position: relative;

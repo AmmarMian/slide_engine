@@ -19,30 +19,30 @@ const RAIL_W = 560;
 // ── Cost function data ────────────────────────────────────────────────────────
 
 const RAYLEIGH_A = [
-  [ 1.8, 0.4, 0.3],
-  [ 0.4, 0.2,-0.2],
-  [ 0.3,-0.2,-1.4],
+  [1.8, 0.4, 0.3],
+  [0.4, 0.2, -0.2],
+  [0.3, -0.2, -1.4],
 ];
 
-const DIST_T    = M.fromLatLon(THREE.MathUtils.degToRad(-25), THREE.MathUtils.degToRad(155));
+const DIST_T = M.fromLatLon(THREE.MathUtils.degToRad(-25), THREE.MathUtils.degToRad(155));
 
 const FRECHET_TS = [
-  M.fromLatLon(THREE.MathUtils.degToRad( 35), THREE.MathUtils.degToRad( 40)),
+  M.fromLatLon(THREE.MathUtils.degToRad(35), THREE.MathUtils.degToRad(40)),
   M.fromLatLon(THREE.MathUtils.degToRad(-15), THREE.MathUtils.degToRad(160)),
-  M.fromLatLon(THREE.MathUtils.degToRad(  0), THREE.MathUtils.degToRad(-90)),
-  M.fromLatLon(THREE.MathUtils.degToRad( 55), THREE.MathUtils.degToRad(-30)),
+  M.fromLatLon(THREE.MathUtils.degToRad(0), THREE.MathUtils.degToRad(-90)),
+  M.fromLatLon(THREE.MathUtils.degToRad(55), THREE.MathUtils.degToRad(-30)),
 ];
 
 const COST_RANGES = {
   rayleigh: { min: -1.7, max: 2.0 },
-  distance: { min: 0,    max: 0.5 * Math.PI * Math.PI },
-  frechet:  { min: 0.0,  max: 1.4 },
+  distance: { min: 0, max: 0.5 * Math.PI * Math.PI },
+  frechet: { min: 0.0, max: 1.4 },
 };
 
 const X0_BY_COST = {
-  rayleigh: M.fromLatLon(THREE.MathUtils.degToRad(45),  THREE.MathUtils.degToRad(-80)),
-  distance: M.fromLatLon(THREE.MathUtils.degToRad(45),  THREE.MathUtils.degToRad(-15)),
-  frechet:  M.fromLatLon(THREE.MathUtils.degToRad(-60), THREE.MathUtils.degToRad( 50)),
+  rayleigh: M.fromLatLon(THREE.MathUtils.degToRad(45), THREE.MathUtils.degToRad(-80)),
+  distance: M.fromLatLon(THREE.MathUtils.degToRad(45), THREE.MathUtils.degToRad(-15)),
+  frechet: M.fromLatLon(THREE.MathUtils.degToRad(-60), THREE.MathUtils.degToRad(50)),
 };
 
 // ── Helper: mount developer-authored HTML without innerHTML ───────────────────
@@ -54,40 +54,52 @@ function mountHTML(el, html) {
 // ── Main island ───────────────────────────────────────────────────────────────
 
 export function RiemannDescent() {
-  const hostRef     = useRef(null);
-  const engineRef   = useRef(null);
+  const hostRef = useRef(null);
+  const engineRef = useRef(null);
 
   // React state drives button active-classes
   const [ui, setUi] = useState({ cost: 'rayleigh', playing: false, alpha: 0.18 });
 
   // DOM refs for imperatively-updated elements
-  const iterRef     = useRef(null);
-  const fNowRef     = useRef(null);
-  const fGapRef     = useRef(null);
-  const plotRef     = useRef(null);
+  const iterRef = useRef(null);
+  const fNowRef = useRef(null);
+  const fGapRef = useRef(null);
+  const plotRef = useRef(null);
   const costNameRef = useRef(null);
   const costExprRef = useRef(null);
+  const updateFormulaRef = useRef(null);
+
+  useEffect(() => {
+    if (!updateFormulaRef.current) return;
+    try {
+      katex.render(
+        String.raw`x_{k+1} = \operatorname{Retr}_{x_k}\!\bigl(-\,\alpha\operatorname{grad}_{x_k}\!f\bigr)`,
+        updateFormulaRef.current,
+        { throwOnError: false, displayMode: true },
+      );
+    } catch { /* ignore */ }
+  }, []);
 
   useEffect(() => {
     const host = hostRef.current;
     if (!host) return;
 
-    const canvas     = host.querySelector('.rd-canvas');
+    const canvas = host.querySelector('.rd-canvas');
     const labelLayer = host.querySelector('.rd-labels');
-    const noMotion   = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    let W = host.clientWidth  || 1920;
+    let W = host.clientWidth || 1920;
     let H = host.clientHeight || 900;
     let canvasW = Math.max(100, W - RAIL_W);
     let canvasH = H;
 
     // ── Three.js setup ─────────────────────────────────────────────────────
-    const renderer      = setupRenderer(canvas);
+    const renderer = setupRenderer(canvas);
     const labelRenderer = new CSS2DRenderer({ element: labelLayer });
     renderer.setSize(canvasW, canvasH);
     labelRenderer.setSize(canvasW, canvasH);
 
-    const scene  = new THREE.Scene();
+    const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(36, canvasW / canvasH, 0.05, 50);
     camera.position.set(3.5, 2.1, 3.5);
 
@@ -99,21 +111,21 @@ export function RiemannDescent() {
 
     const heatMat = new THREE.ShaderMaterial({
       uniforms: {
-        uCostMode:  { value: 0 },
-        uA:         { value: new THREE.Matrix3().set(...RAYLEIGH_A.flat()) },
-        uTarget:    { value: DIST_T.clone() },
-        uTargets:   { value: [...FRECHET_TS.map(v => v.clone()), ...Array(4).fill(new THREE.Vector3(1,0,0))] },
-        uNumTargets:{ value: FRECHET_TS.length },
-        uCMin:      { value: COST_RANGES.rayleigh.min },
-        uCMax:      { value: COST_RANGES.rayleigh.max },
-        uOpacity:   { value: 1.0 },
-        uAccent:    { value: cssColor('--accent', '#d23b1c') },
-        uBg:        { value: cssColor('--bg',     '#f0f0f2') },
-        uTint:      { value: cssColor('--tint',   '#dddde8') },
-        uInk3:      { value: cssColor('--ink-3',  '#666880') },
-        uLightDir:  { value: new THREE.Vector3(3.5, 4.5, 5.5).normalize() },
-        uAmbient:   { value: 0.55 },
-        uIsDark:    { value: palette.isDark ? 1.0 : 0.0 },
+        uCostMode: { value: 0 },
+        uA: { value: new THREE.Matrix3().set(...RAYLEIGH_A.flat()) },
+        uTarget: { value: DIST_T.clone() },
+        uTargets: { value: [...FRECHET_TS.map(v => v.clone()), ...Array(4).fill(new THREE.Vector3(1, 0, 0))] },
+        uNumTargets: { value: FRECHET_TS.length },
+        uCMin: { value: COST_RANGES.rayleigh.min },
+        uCMax: { value: COST_RANGES.rayleigh.max },
+        uOpacity: { value: 1.0 },
+        uAccent: { value: cssColor('--accent', '#d23b1c') },
+        uBg: { value: cssColor('--bg', '#f0f0f2') },
+        uTint: { value: cssColor('--tint', '#dddde8') },
+        uInk3: { value: cssColor('--ink-3', '#666880') },
+        uLightDir: { value: new THREE.Vector3(3.5, 4.5, 5.5).normalize() },
+        uAmbient: { value: 0.55 },
+        uIsDark: { value: palette.isDark ? 1.0 : 0.0 },
       },
       vertexShader: /* glsl */`
         varying vec3 vWorld;
@@ -180,13 +192,13 @@ export function RiemannDescent() {
     scene.add(eqLine);
 
     const controls = new OrbitControls(camera, canvas);
-    controls.enableDamping  = true;
-    controls.dampingFactor  = 0.08;
-    controls.rotateSpeed    = 0.65;
-    controls.minDistance    = 1.6;
-    controls.maxDistance    = 6;
-    controls.enablePan      = true;
-    controls.panSpeed       = 0.8;
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.rotateSpeed = 0.65;
+    controls.minDistance = 1.6;
+    controls.maxDistance = 6;
+    controls.enablePan = true;
+    controls.panSpeed = 0.8;
 
     // CSS2D labels
     const labelObjs = [];
@@ -196,20 +208,20 @@ export function RiemannDescent() {
     function makeLabel(text, position, opts = {}) {
       const div = document.createElement('div');
       div.className = 'world-label';
-      if (opts.accent)  div.classList.add('accent');
+      if (opts.accent) div.classList.add('accent');
       if (opts.tangent) div.classList.add('tangent-col');
-      if (opts.geo)     div.classList.add('geo-col');
-      if (opts.target)  div.classList.add('q-col');
-      if (opts.small)   div.classList.add('small');
+      if (opts.geo) div.classList.add('geo-col');
+      if (opts.target) div.classList.add('q-col');
+      if (opts.small) div.classList.add('small');
       mountHTML(div, text);
       const obj = new CSS2DObject(div);
       obj.position.copy(position);
       scene.add(obj);
       const l = {
         obj,
-        update(p)       { obj.position.copy(p); },
-        setVisible(v)   { div.style.display = v ? '' : 'none'; },
-        remove()        { scene.remove(obj); div.remove(); },
+        update(p) { obj.position.copy(p); },
+        setVisible(v) { div.style.display = v ? '' : 'none'; },
+        remove() { scene.remove(obj); div.remove(); },
       };
       labelObjs.push(l);
       return l;
@@ -222,21 +234,23 @@ export function RiemannDescent() {
       x: X0_BY_COST.rayleigh.clone(),
     };
 
-    const live = { xDot: null, euclidArrow: null, riemArrow: null, stepArrow: null,
+    const live = {
+      xDot: null, euclidArrow: null, riemArrow: null, stepArrow: null,
       plane: null, retractLine: null, nextDot: null, trail: null,
       trailDots: new THREE.Group(), targetDots: new THREE.Group(),
-      xLabel: null, nextLabel: null };
+      xLabel: null, nextLabel: null
+    };
 
     runtimeGroup.add(live.trailDots);
     runtimeGroup.add(live.targetDots);
 
     function clearLive() {
-      for (const k of ['xDot','euclidArrow','riemArrow','stepArrow','plane','retractLine','nextDot','trail']) {
+      for (const k of ['xDot', 'euclidArrow', 'riemArrow', 'stepArrow', 'plane', 'retractLine', 'nextDot', 'trail']) {
         if (live[k]) { runtimeGroup.remove(live[k]); live[k] = null; }
       }
       runtimeGroup.remove(live.trailDots);
       runtimeGroup.remove(live.targetDots);
-      live.trailDots  = new THREE.Group();
+      live.trailDots = new THREE.Group();
       live.targetDots = new THREE.Group();
       runtimeGroup.add(live.trailDots);
       runtimeGroup.add(live.targetDots);
@@ -251,7 +265,7 @@ export function RiemannDescent() {
       } else if (state.cost === 'frechet') {
         for (let i = 0; i < FRECHET_TS.length; i++) {
           live.targetDots.add(buildDot({ position: FRECHET_TS[i], color: palette.q, radius: 0.022 }));
-          makeLabel('t<sub>' + (i+1) + '</sub>', FRECHET_TS[i].clone().multiplyScalar(1.10), { target: true, small: true });
+          makeLabel('t<sub>' + (i + 1) + '</sub>', FRECHET_TS[i].clone().multiplyScalar(1.10), { target: true, small: true });
         }
       }
       live.plane = buildTangentPlane({ p: state.x, radius: 0.75, color: palette.tangent, opacity: 0.10 });
@@ -261,7 +275,7 @@ export function RiemannDescent() {
       runtimeGroup.add(live.xDot);
       live.xLabel = makeLabel('x<sub>k</sub>', state.x.clone().multiplyScalar(1.10), { accent: true });
 
-      const arrowOpts = { origin: state.x, direction: new THREE.Vector3(0,1,0), length: 0, shaft: 0.010, head: 0.038, headLen: 0.08 };
+      const arrowOpts = { origin: state.x, direction: new THREE.Vector3(0, 1, 0), length: 0, shaft: 0.010, head: 0.038, headLen: 0.08 };
       live.euclidArrow = buildArrow({ ...arrowOpts, color: palette.euclid });
       runtimeGroup.add(live.euclidArrow);
       live.riemArrow = buildArrow({ ...arrowOpts, color: palette.tangent });
@@ -302,7 +316,7 @@ export function RiemannDescent() {
 
       const gE = evalEucGrad(x);
       const gR = evalRiemGrad(x);
-      const v  = gR.clone().multiplyScalar(-state.alpha);
+      const v = gR.clone().multiplyScalar(-state.alpha);
       const xNext = M.retract(x, v);
 
       live.euclidArrow.visible = state.cost === 'rayleigh';
@@ -321,7 +335,7 @@ export function RiemannDescent() {
       if (pts.length >= 2) {
         const dense = [pts[0].clone()];
         for (let i = 1; i < pts.length; i++) {
-          const arc = M.geodesicArc(pts[i-1], pts[i], 24);
+          const arc = M.geodesicArc(pts[i - 1], pts[i], 24);
           for (let j = 1; j < arc.length; j++) dense.push(arc[j]);
         }
         live.trail.userData.update(dense);
@@ -361,12 +375,12 @@ export function RiemannDescent() {
 
     // ── Panel DOM updates ──────────────────────────────────────────────────
     function updatePanel() {
-      if (iterRef.current)  iterRef.current.textContent  = String(state.iter).padStart(3, '0');
-      if (fNowRef.current)  fNowRef.current.textContent  = evalCost(state.x).toFixed(4);
-      if (fGapRef.current)  fGapRef.current.textContent  = state.history.length > 0
+      if (iterRef.current) iterRef.current.textContent = String(state.iter).padStart(3, '0');
+      if (fNowRef.current) fNowRef.current.textContent = evalCost(state.x).toFixed(4);
+      if (fGapRef.current) fGapRef.current.textContent = state.history.length > 0
         ? `Δ = ${(evalCost(state.x) - state.history[0].f).toFixed(4)}` : '';
       drawPlot();
-          }
+    }
 
     function renderFormulas() {
       let costForm;
@@ -381,8 +395,8 @@ export function RiemannDescent() {
         costForm = String.raw`f(x) = \tfrac{1}{2N}\sum_{i=1}^{N} d_{S^{2}}(x, t_{i})^{2}`;
       }
       try {
-        if (costExprRef.current) katex.render(costForm,  costExprRef.current, { throwOnError: false, displayMode: true });
-      } catch {}
+        if (costExprRef.current) katex.render(costForm, costExprRef.current, { throwOnError: false, displayMode: true });
+      } catch { }
     }
 
     // ── 2D cost plot ───────────────────────────────────────────────────────
@@ -390,16 +404,16 @@ export function RiemannDescent() {
       const cvs = plotRef.current;
       if (!cvs) return;
       const cssW = cvs.clientWidth, cssH = cvs.clientHeight;
-      const dpr  = Math.min(window.devicePixelRatio, 2);
-      cvs.width  = cssW * dpr; cvs.height = cssH * dpr;
-      const ctx  = cvs.getContext('2d');
+      const dpr = Math.min(window.devicePixelRatio, 2);
+      cvs.width = cssW * dpr; cvs.height = cssH * dpr;
+      const ctx = cvs.getContext('2d');
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const cs    = getComputedStyle(document.documentElement);
-      const axis  = cs.getPropertyValue('--ink-3').trim()     || '#666';
-      const ink2  = cs.getPropertyValue('--ink-2').trim()     || '#333';
-      const acc   = cs.getPropertyValue('--accent').trim()    || '#d23b1c';
-      const rule  = cs.getPropertyValue('--rule-soft').trim() || 'rgba(0,0,0,.14)';
+      const cs = getComputedStyle(document.documentElement);
+      const axis = cs.getPropertyValue('--ink-3').trim() || '#666';
+      const ink2 = cs.getPropertyValue('--ink-2').trim() || '#333';
+      const acc = cs.getPropertyValue('--accent').trim() || '#d23b1c';
+      const rule = cs.getPropertyValue('--rule-soft').trim() || 'rgba(0,0,0,.14)';
 
       const series = state.history.map((h, i) => ({ k: i, f: h.f }));
       series.push({ k: state.iter, f: evalCost(state.x) });
@@ -408,32 +422,32 @@ export function RiemannDescent() {
       if (!isFinite(yMin)) { yMin = 0; yMax = 1; }
       if (yMax - yMin < 1e-6) yMax = yMin + 1;
       const yPad = (yMax - yMin) * 0.10; yMin -= yPad; yMax += yPad;
-      const xMax  = Math.max(state.maxIter, state.iter + 4);
-      const pL=38, pR=14, pT=12, pB=24;
-      const pW = cssW-pL-pR, pH = cssH-pT-pB;
+      const xMax = Math.max(state.maxIter, state.iter + 4);
+      const pL = 38, pR = 14, pT = 12, pB = 24;
+      const pW = cssW - pL - pR, pH = cssH - pT - pB;
       const X = k => pL + (k / xMax) * pW;
       const Y = f => pT + (1 - (f - yMin) / (yMax - yMin)) * pH;
 
       ctx.clearRect(0, 0, cssW, cssH);
       ctx.strokeStyle = rule; ctx.lineWidth = 1;
       ctx.beginPath();
-      for (let i = 0; i <= 4; i++) { const y = pT + i/4*pH; ctx.moveTo(pL, y); ctx.lineTo(pL+pW, y); }
+      for (let i = 0; i <= 4; i++) { const y = pT + i / 4 * pH; ctx.moveTo(pL, y); ctx.lineTo(pL + pW, y); }
       ctx.stroke();
       ctx.strokeStyle = axis;
-      ctx.beginPath(); ctx.moveTo(pL, pT); ctx.lineTo(pL, pT+pH); ctx.lineTo(pL+pW, pT+pH); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(pL, pT); ctx.lineTo(pL, pT + pH); ctx.lineTo(pL + pW, pT + pH); ctx.stroke();
 
       ctx.fillStyle = ink2; ctx.font = '10px var(--mono, monospace)';
       ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
       for (let i = 0; i <= 4; i++) {
-        const v = yMax - i/4*(yMax-yMin);
-        ctx.fillText(v.toFixed(2), pL-6, pT+i/4*pH);
+        const v = yMax - i / 4 * (yMax - yMin);
+        ctx.fillText(v.toFixed(2), pL - 6, pT + i / 4 * pH);
       }
       ctx.textAlign = 'center'; ctx.textBaseline = 'top';
       for (let i = 0; i <= 4; i++) {
-        ctx.fillText(String(Math.round(i/4*xMax)), pL+i/4*pW, pT+pH+4);
+        ctx.fillText(String(Math.round(i / 4 * xMax)), pL + i / 4 * pW, pT + pH + 4);
       }
       ctx.save();
-      ctx.translate(12, pT+pH/2); ctx.rotate(-Math.PI/2);
+      ctx.translate(12, pT + pH / 2); ctx.rotate(-Math.PI / 2);
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillStyle = ink2; ctx.font = 'italic 12px var(--serif, serif)';
       ctx.fillText('f(xₖ)', 0, 0);
@@ -442,16 +456,16 @@ export function RiemannDescent() {
       if (series.length > 1) {
         ctx.strokeStyle = acc; ctx.lineWidth = 1.4;
         ctx.beginPath();
-        series.forEach((s, i) => { const x=X(s.k),y=Y(s.f); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+        series.forEach((s, i) => { const x = X(s.k), y = Y(s.f); i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); });
         ctx.stroke();
         ctx.fillStyle = acc;
-        for (const s of series) { ctx.beginPath(); ctx.arc(X(s.k),Y(s.f),2.5,0,Math.PI*2); ctx.fill(); }
+        for (const s of series) { ctx.beginPath(); ctx.arc(X(s.k), Y(s.f), 2.5, 0, Math.PI * 2); ctx.fill(); }
       }
       if (series.length > 0) {
-        const last = series[series.length-1];
-        ctx.fillStyle = acc; ctx.beginPath(); ctx.arc(X(last.k),Y(last.f),4,0,Math.PI*2); ctx.fill();
-        ctx.strokeStyle = acc; ctx.lineWidth = 1; ctx.setLineDash([2,3]);
-        ctx.beginPath(); ctx.moveTo(X(last.k),pT); ctx.lineTo(X(last.k),pT+pH); ctx.stroke();
+        const last = series[series.length - 1];
+        ctx.fillStyle = acc; ctx.beginPath(); ctx.arc(X(last.k), Y(last.f), 4, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = acc; ctx.lineWidth = 1; ctx.setLineDash([2, 3]);
+        ctx.beginPath(); ctx.moveTo(X(last.k), pT); ctx.lineTo(X(last.k), pT + pH); ctx.stroke();
         ctx.setLineDash([]);
       }
     }
@@ -460,7 +474,7 @@ export function RiemannDescent() {
     // ── RAF loop ───────────────────────────────────────────────────────────
     const clock = new THREE.Clock();
     let stepAccum = 0;
-    let rafId     = null;
+    let rafId = null;
 
     function frame() {
       const dt = clock.getDelta();
@@ -482,11 +496,11 @@ export function RiemannDescent() {
     }
 
     const start = () => { if (!rafId) { clock.start(); rafId = requestAnimationFrame(frame); } };
-    const stop  = () => { if (rafId)  { cancelAnimationFrame(rafId); rafId = null; } };
+    const stop = () => { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } };
 
     const stage = document.querySelector('deck-stage');
     const onSlideChange = ({ detail: { slide, previousSlide } }) => {
-      if (slide?.contains(host))              start();
+      if (slide?.contains(host)) start();
       else if (previousSlide?.contains(host)) stop();
     };
     if (stage) stage.addEventListener('slidechange', onSlideChange);
@@ -496,30 +510,32 @@ export function RiemannDescent() {
     const ro = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
       if (width > 0 && height > 0) {
-        W = width|0; H = height|0;
+        W = width | 0; H = height | 0;
         canvasW = Math.max(100, W - RAIL_W); canvasH = H;
         renderer.setSize(canvasW, canvasH);
         labelRenderer.setSize(canvasW, canvasH);
         camera.aspect = canvasW / canvasH;
         camera.updateProjectionMatrix();
-        drawPlot();       }
+        drawPlot();
+      }
     });
     ro.observe(host);
 
     // ── Theme change ───────────────────────────────────────────────────────
     const onTheme = () => {
       palette = getPalette();
-      heatMat.uniforms.uAccent.value.set(getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#d23b1c');
-      heatMat.uniforms.uBg.value.set(    getComputedStyle(document.documentElement).getPropertyValue('--bg').trim()    ||'#f0f0f2');
-      heatMat.uniforms.uTint.value.set(  getComputedStyle(document.documentElement).getPropertyValue('--tint').trim()  ||'#dddde8');
-      heatMat.uniforms.uInk3.value.set(  getComputedStyle(document.documentElement).getPropertyValue('--ink-3').trim() ||'#666880');
+      heatMat.uniforms.uAccent.value.set(getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#d23b1c');
+      heatMat.uniforms.uBg.value.set(getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#f0f0f2');
+      heatMat.uniforms.uTint.value.set(getComputedStyle(document.documentElement).getPropertyValue('--tint').trim() || '#dddde8');
+      heatMat.uniforms.uInk3.value.set(getComputedStyle(document.documentElement).getPropertyValue('--ink-3').trim() || '#666880');
       heatMat.uniforms.uIsDark.value = palette.isDark ? 1.0 : 0.0;
       scene.remove(sphereGrid);
       sphereGrid = buildLatLonGrid({ radius: 1.0005, palette });
       scene.add(sphereGrid);
       eqLine.material.color.set(palette.inkNum);
       eqLine.material.opacity = palette.equatorAlpha;
-      buildLive(); updateLive(); drawPlot();     };
+      buildLive(); updateLive(); drawPlot();
+    };
     document.documentElement.addEventListener('deck-theme-change', onTheme);
 
     // ── Pointer pick (reset x₀) ────────────────────────────────────────────
@@ -539,28 +555,29 @@ export function RiemannDescent() {
 
     // ── Expose engine to React handlers ───────────────────────────────────
     engineRef.current = {
-      step()        { doStep(); },
-      reset()       { state.playing = false; setUi(u => ({ ...u, playing: false })); resetRun(); },
-      togglePlay()  {
+      step() { doStep(); },
+      reset() { state.playing = false; setUi(u => ({ ...u, playing: false })); resetRun(); },
+      togglePlay() {
         state.playing = !state.playing;
         setUi(u => ({ ...u, playing: state.playing }));
       },
-      setAlpha(v)   { state.alpha = v; setUi(u => ({ ...u, alpha: v })); updateLive(); },
-      setCost(c)    {
+      setAlpha(v) { state.alpha = v; setUi(u => ({ ...u, alpha: v })); updateLive(); },
+      setCost(c) {
         state.cost = c;
-        heatMat.uniforms.uCostMode.value = c==='rayleigh'?0:c==='distance'?1:2;
+        heatMat.uniforms.uCostMode.value = c === 'rayleigh' ? 0 : c === 'distance' ? 1 : 2;
         const r = COST_RANGES[c];
         heatMat.uniforms.uCMin.value = r.min;
         heatMat.uniforms.uCMax.value = r.max;
         setUi(u => ({ ...u, cost: c, playing: false }));
         state.playing = false;
-        resetRun(); renderFormulas();       },
+        resetRun(); renderFormulas();
+      },
     };
 
     // Boot
     resetRun();
     renderFormulas();
-    
+
     return () => {
       stop();
       ro.disconnect();
@@ -576,7 +593,7 @@ export function RiemannDescent() {
 
   // ── React UI ──────────────────────────────────────────────────────────────
 
-  const eng  = () => engineRef.current;
+  const eng = () => engineRef.current;
   const mono = { fontFamily: 'var(--mono)', letterSpacing: '0.10em', textTransform: 'uppercase' };
   const btnBase = {
     padding: '14px 12px', background: 'var(--bg-2)', border: '1px solid var(--rule)',
@@ -632,11 +649,16 @@ export function RiemannDescent() {
           <canvas ref={plotRef} style={{ display: 'block', width: '100%', height: '100%' }} />
         </div>
 
+        {/* Update rule */}
+        <div style={{ padding: '20px 18px', minHeight: '80px', background: 'var(--bg-2)', border: '1px solid var(--rule)', borderLeft: '3px solid var(--accent)', fontSize: '20px', color: 'var(--ink)', overflowX: 'auto', display: 'flex', alignItems: 'center' }}>
+          <div ref={updateFormulaRef} style={{ width: '100%' }} />
+        </div>
+
         {/* Cost selector */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <span ref={costNameRef} style={{ ...mono, fontSize: '20px', fontWeight: 600, color: 'var(--accent)' }}>Rayleigh quotient</span>
           <div style={{ display: 'flex', border: '1px solid var(--rule)' }}>
-            {[['rayleigh','Rayleigh'],['distance','Distance'],['frechet','Fréchet']].map(([c, lbl]) => (
+            {[['rayleigh', 'Rayleigh'], ['distance', 'Distance'], ['frechet', 'Fréchet']].map(([c, lbl]) => (
               <button key={c} style={{ ...costBtn(c), ...(c === 'frechet' ? { borderRight: 0 } : {}) }}
                 onClick={() => eng()?.setCost(c)}>{lbl}</button>
             ))}
