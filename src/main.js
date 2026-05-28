@@ -52,6 +52,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { TweaksPanel } from './theme/tweaks-panel.jsx';
 import { TocModal } from './islands/toc-modal.jsx';
+import { ShortcutsModal } from './islands/shortcuts-modal.jsx';
+import { SearchModal } from './islands/search-modal.jsx';
 
 // Boot sequence
 function boot() {
@@ -70,17 +72,27 @@ function boot() {
     init();
   }
 
-  // Mount the tweaks panel.
-  const tweaksRoot = document.getElementById('tweaks-root');
-  if (tweaksRoot) {
-    ReactDOM.createRoot(tweaksRoot).render(React.createElement(TweaksPanel));
-  }
+  // Mount the tweaks panel (self-creating, no deck HTML div required).
+  const tweaksContainer = document.createElement('div');
+  tweaksContainer.id = 'tweaks-root';
+  document.body.appendChild(tweaksContainer);
+  ReactDOM.createRoot(tweaksContainer).render(React.createElement(TweaksPanel));
 
-  // Mount the TOC modal overlay (injected into body — position:fixed, above everything).
+  // Mount overlays — each creates its own fixed container appended to body.
   const tocRoot = document.createElement('div');
   tocRoot.id = 'toc-modal-root';
   document.body.appendChild(tocRoot);
   ReactDOM.createRoot(tocRoot).render(React.createElement(TocModal));
+
+  const shortcutsRoot = document.createElement('div');
+  shortcutsRoot.id = 'shortcuts-modal-root';
+  document.body.appendChild(shortcutsRoot);
+  ReactDOM.createRoot(shortcutsRoot).render(React.createElement(ShortcutsModal));
+
+  const searchRoot = document.createElement('div');
+  searchRoot.id = 'search-modal-root';
+  document.body.appendChild(searchRoot);
+  ReactDOM.createRoot(searchRoot).render(React.createElement(SearchModal));
 }
 
 boot();

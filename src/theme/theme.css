@@ -331,7 +331,8 @@ end-slide::before {
 
 /* Fixed overlays live at viewport level, not inside the scaled canvas.
    Reset --type-scale so deck theme scaling never affects their legibility. */
-.progress-bar, .progress-labels, #toc-modal-root { --type-scale: 1; }
+.progress-bar, .progress-labels,
+#toc-modal-root, #tweaks-root, #shortcuts-modal-root, #search-modal-root { --type-scale: 1; }
 
 @keyframes zoomIn {
   from { opacity: 0; transform: scale(0.92); }
@@ -407,6 +408,9 @@ cite-ref {
 @media print {
   [data-step] { opacity: 1 !important; }
 }
+
+/* ── Search modal ─────────────────────────────────────────────────────────── */
+.search-snippet em { font-style: normal; color: var(--accent, #d23b1c); font-weight: 500; }
 
 /* ── Layout helpers ──────────────────────────────────────────────────────────
    slide-body   : the flex-grow content wrapper replacing inline style="flex:1"

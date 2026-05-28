@@ -15,18 +15,11 @@ import {
 } from './diffusion.jsx';
 import { InteractiveArchContent, FilmstripContent } from './misc-islands.jsx';
 import { NLLChart, DistChart, ArchDiagram } from './charts.jsx';
-import { ScatterFlow } from './d3/scatter-flow.jsx';
-import { RiemannianDescent } from './d3/riemannian-descent.jsx';
-import { TangentProjection } from './d3/tangent-projection.jsx';
-import { AlgorithmComparison } from './d3/algorithm-comparison.jsx';
-import { SPDGeodesic } from './d3/spd-geodesic.jsx';
-import { PoincareDisk } from './d3/poincare-disk.jsx';
+// D3 islands loaded lazily — see registrations below.
 import { TitleFx } from './title-fx.jsx';
 import { SpdNetArch } from './spdnet-arch.jsx';
-import { RiemannPrimer } from './riemann-primer.jsx';
-import { RiemannDescent } from './riemann-descent.jsx';
 import { FederatedLearning } from './federated-learning.jsx';
-import { RiemannTerrain } from './riemann-terrain.jsx';
+// Three.js islands loaded lazily — see registrations below.
 
 // ── Bridge ─────────────────────────────────────────────────────────────────
 // opts.observed : attribute names that trigger a re-render on change
@@ -36,14 +29,16 @@ import { RiemannTerrain } from './riemann-terrain.jsx';
 //                 props.innerHtml (string) so the component can render the
 //                 author's static HTML. Content is always deck-author HTML,
 //                 never external input — safe to use as-is in the component.
-function defineReactElement(tag, Component, opts = {}) {
+function defineReactElement(tag, ComponentOrNull, opts = {}) {
   if (customElements.get(tag)) return;
   class El extends HTMLElement {
-    connectedCallback() {
+    async connectedCallback() {
       if (this._mounted) return;
       this._mounted = true;
       if (opts.classes) opts.classes.forEach(c => this.classList.add(c));
       if (opts.innerHtml) this._innerHtml = this.innerHTML;
+      // opts.lazy: () => Promise<Component> — enables dynamic import code splitting.
+      const Component = opts.lazy ? await opts.lazy() : ComponentOrNull;
       this._root = ReactDOM.createRoot(this);
       const render = () => {
         const props = opts.props ? opts.props(this) : {};
@@ -54,6 +49,7 @@ function defineReactElement(tag, Component, opts = {}) {
       render();
     }
     static get observedAttributes() { return opts.observed || []; }
+    // No-ops if lazy mount hasn't resolved yet — props re-read at mount time.
     attributeChangedCallback() { if (this._render) this._render(); }
     disconnectedCallback() {
       if (this._root) {
@@ -133,9 +129,10 @@ defineReactElement('nll-chart',  () => React.createElement(NLLChart));
 defineReactElement('dist-chart', () => React.createElement(DistChart));
 defineReactElement('arch-diagram', () => React.createElement(ArchDiagram));
 
-defineReactElement('scatter-flow', ScatterFlow, {
+defineReactElement('scatter-flow', null, {
   observed: ['n', 'seed'],
   props: el => ({ n: readInt(el, 'n', 120), seed: readInt(el, 'seed', 42) }),
+  lazy: () => import('./d3/scatter-flow.jsx').then(m => m.ScatterFlow),
 });
 
 defineReactElement('toc-slide', TocSlideContent);
@@ -150,15 +147,36 @@ defineReactElement('progress-bar', ProgressBarContent, {
   props: el => ({ sections: readJSON(el, 'sections', null) }),
 });
 
-defineReactElement('riemannian-descent', RiemannianDescent);
-defineReactElement('tangent-projection', TangentProjection);
-defineReactElement('algorithm-comparison', AlgorithmComparison);
-defineReactElement('spd-geodesic', SPDGeodesic);
-defineReactElement('poincare-disk', PoincareDisk);
+// D3 islands — lazy loaded (~870KB chunk, only fetched when the tag appears)
+defineReactElement('riemannian-descent', null, {
+  lazy: () => import('./d3/riemannian-descent.jsx').then(m => m.RiemannianDescent),
+});
+defineReactElement('tangent-projection', null, {
+  lazy: () => import('./d3/tangent-projection.jsx').then(m => m.TangentProjection),
+});
+defineReactElement('algorithm-comparison', null, {
+  lazy: () => import('./d3/algorithm-comparison.jsx').then(m => m.AlgorithmComparison),
+});
+defineReactElement('spd-geodesic', null, {
+  lazy: () => import('./d3/spd-geodesic.jsx').then(m => m.SPDGeodesic),
+});
+defineReactElement('poincare-disk', null, {
+  lazy: () => import('./d3/poincare-disk.jsx').then(m => m.PoincareDisk),
+});
+
 defineReactElement('title-fx', TitleFx);
 defineReactElement('slide-footer', SlideFooterContent);
 defineReactElement('spdnet-arch', SpdNetArch);
-defineReactElement('riemann-primer', RiemannPrimer);
-defineReactElement('riemann-descent', RiemannDescent);
+
+// Three.js islands — lazy loaded (~32MB chunk, only fetched when the tag appears)
+defineReactElement('riemann-primer', null, {
+  lazy: () => import('./riemann-primer.jsx').then(m => m.RiemannPrimer),
+});
+defineReactElement('riemann-descent', null, {
+  lazy: () => import('./riemann-descent.jsx').then(m => m.RiemannDescent),
+});
+defineReactElement('riemann-terrain', null, {
+  lazy: () => import('./riemann-terrain.jsx').then(m => m.RiemannTerrain),
+});
+
 defineReactElement('federated-learning', FederatedLearning);
-defineReactElement('riemann-terrain', RiemannTerrain);

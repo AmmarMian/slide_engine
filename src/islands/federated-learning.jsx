@@ -279,7 +279,7 @@ function FedDiagram({ phase }) {
           d={`M ${c.epx} ${c.epy} L ${c.spx} ${c.spy}`}
           fill="none" strokeWidth="2" strokeDasharray="9 6" strokeLinecap="round"
           markerEnd="url(#fl-ah-l)"
-          fill-opacity="0"
+          fillOpacity="0"
           style={{
             stroke: GOLD,
             opacity: (isUpload || isAggregate) ? 1 : 0,
