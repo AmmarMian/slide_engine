@@ -4,12 +4,16 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { MaskedReveal } from './token-grid.jsx';
+import { ProgressBarContent } from './progress-bar.jsx';
 import {
-  MaskedReveal, SectionDividerContent, InteractiveArchContent,
-  FilmstripContent, EndSlideContent, DiffusionStripContent,
-  HeroRow, DiffusionScrubberContent, AlgorithmStepperContent, ProgressBarContent,
-  TocSlideContent, SlideHeaderContent, SlideFooterContent,
-} from './slide-elements.jsx';
+  SlideHeaderContent, SlideFooterContent, TocSlideContent,
+  SectionDividerContent, EndSlideContent,
+} from './slide-chrome.jsx';
+import {
+  HeroRow, DiffusionStripContent, DiffusionScrubberContent, AlgorithmStepperContent,
+} from './diffusion.jsx';
+import { InteractiveArchContent, FilmstripContent } from './misc-islands.jsx';
 import { NLLChart, DistChart, ArchDiagram } from './charts.jsx';
 import { ScatterFlow } from './d3/scatter-flow.jsx';
 import { RiemannianDescent } from './d3/riemannian-descent.jsx';
@@ -28,6 +32,10 @@ import { RiemannTerrain } from './riemann-terrain.jsx';
 // opts.observed : attribute names that trigger a re-render on change
 // opts.props    : (element) => props object
 // opts.classes  : CSS classes added to the host element (for slide-frame styling)
+// opts.innerHtml: true → capture innerHTML before React mounts; passed as
+//                 props.innerHtml (string) so the component can render the
+//                 author's static HTML. Content is always deck-author HTML,
+//                 never external input — safe to use as-is in the component.
 function defineReactElement(tag, Component, opts = {}) {
   if (customElements.get(tag)) return;
   class El extends HTMLElement {
@@ -35,9 +43,11 @@ function defineReactElement(tag, Component, opts = {}) {
       if (this._mounted) return;
       this._mounted = true;
       if (opts.classes) opts.classes.forEach(c => this.classList.add(c));
+      if (opts.innerHtml) this._innerHtml = this.innerHTML;
       this._root = ReactDOM.createRoot(this);
       const render = () => {
         const props = opts.props ? opts.props(this) : {};
+        if (opts.innerHtml) props.innerHtml = this._innerHtml;
         this._root.render(React.createElement(Component, props));
       };
       this._render = render;
