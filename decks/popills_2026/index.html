@@ -74,22 +74,38 @@
         </div>
         <div style="margin-top:5%" >
         <div class="pullquote">
-              covariances matrices are ubiqutuous
+              les matrices de covariance sont omniprésentes
         </div>
         <div class="small" style="margin-top:20px;margin-left:8px;font-size:40px;">
-          — probably someone, somewhere </br>
-            (possibly Arnaud Mian)
+          — sans doute quelqu'un, quelque part</br>
+            (peut-être Arnaud Mian)
         </div>
         </div>
       </div>
 
       <div class="theorem" data-step>
-        <div class="theorem-tag">Definition <span class="theorem-name">Matrice symmétrique définie positive</span></div>
+        <div class="theorem-tag">Définition <span class="theorem-name">Matrice symétrique définie positive</span></div>
         <div class="theorem-body">
-              Une matrice <span class="math">\boldsymbol{\Sigma}</span> est dite SPD (Symmétric Positive Definite) si  <span class="math">\boldsymbol{\Sigma}=\boldsymbol{\Sigma}^\mathrm{T}</span> et <span class="math">\operatorname{det}(\boldsymbol{\Sigma}) > 0</span>
+              Une matrice <span class="math">\boldsymbol{\Sigma}</span> est dite SPD (<em>Symmetric Positive Definite</em>) si  <span class="math">\boldsymbol{\Sigma}=\boldsymbol{\Sigma}^\mathrm{T}</span> et <span class="math">\operatorname{det}(\boldsymbol{\Sigma}) > 0</span>.
         </div>
       </div>
 
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §1.1b · Three domains where SPD matrices appear -->
+  <section>
+    <slide-note>Trois domaines emblématiques où les matrices SPD apparaissent naturellement : EEG (covariance spatiale entre canaux), imagerie hyperspectrale (covariance entre bandes spectrales), radar (covariance range-Doppler). Dans tous les cas, le second ordre porte une information discriminante absente du premier ordre.</slide-note>
+    <slide-header title="Trois domaines, un même objet"></slide-header>
+    <div class="slide-body">
+      <p class="lede" style="margin-bottom:24px;max-width:1500px;">
+        Dans des contextes très différents, le <strong>second ordre</strong> capte la structure pertinente :
+        ce ne sont pas les valeurs des signaux, mais leurs <em>co-variations</em>, qui portent l'information.
+      </p>
+      <div style="flex:1;min-height:0;">
+        <spd-domains></spd-domains>
+      </div>
     </div>
     <slide-footer></slide-footer>
   </section>
@@ -139,7 +155,7 @@
        §2.1 · SPDNet interactive architecture
        ═══════════════════════════════════════ -->
   <section>
-    <slide-note>Architecture de SPDNet : vue globale puis zoom sur chaque couche avec les flèches. BiMap = projection bilinéaire WXWᵀ sur la variété de Stiefel. BatchNorm riemannienne de Brooks et al. (NeurIPS 2019) : moyenne de Fréchet + transport parallèle. ReEig = rectification des valeurs propres max(ε,λ), analogue du ReLU. LogEig = logarithme matriciel, passage vers l'espace tangent en I.</slide-note>
+    <slide-note>Architecture de SPDNet : vue globale puis zoom sur chaque couche avec les flèches. BiMap = projection bilinéaire WXWᵀ. ReEig = rectification des valeurs propres max(ε,λ), analogue du ReLU. LogEig = logarithme matriciel, passage vers l'espace tangent en I. Insister : seules les BiMap ont des paramètres, et ils vivent sur Stiefel.</slide-note>
     <slide-header title="SPDNet — Architecture"></slide-header>
     <div class="slide-body" style="padding:0;overflow:hidden;">
       <spdnet-arch></spdnet-arch>
@@ -147,65 +163,687 @@
     <slide-footer></slide-footer>
   </section>
 
-  <!-- ═══════════════════════════════════════
-       §3 · Third section divider
-       ═══════════════════════════════════════ -->
-  <section-divider
-    label="BatchNorm"
-    kicker="SPDnet architecture Batchnorm"
-    blurb="Améliorer le calcul de la moyenne pour la BatchNormalization">
-  </section-divider>
+  <!-- §2.2 · What is actually learned: BiMap weights on Stiefel -->
+  <section>
+    <slide-note>Avant de plonger dans la rétropropagation : il faut identifier ce qui est optimisé. Seules les couches BiMap portent des paramètres, et ces paramètres sont contraints à vivre sur la variété de Stiefel — d'où la nécessité de l'optimisation riemannienne.</slide-note>
+    <slide-header title="Qu'est-ce qui est optimisé ?"></slide-header>
+    <div class="slide-body">
+      <div class="cols cols-2" style="gap:64px;align-items:start;margin-top:24px;">
+        <div>
+          <div class="eyebrow" style="margin-bottom:12px;">Couches sans paramètre</div>
+          <div style="display:flex;flex-direction:column;gap:18px;">
+            <div data-step style="border-left:3px solid var(--rule);padding:14px 18px;background:var(--bg-2);">
+              <div style="font-family:var(--mono);font-size:20px;font-weight:600;color:var(--ink-2);">ReEig</div>
+              <div class="body" style="font-size:18px;color:var(--ink-3);margin-top:4px;">rectification spectrale — non paramétrique</div>
+            </div>
+            <div data-step style="border-left:3px solid var(--rule);padding:14px 18px;background:var(--bg-2);">
+              <div style="font-family:var(--mono);font-size:20px;font-weight:600;color:var(--ink-2);">LogEig</div>
+              <div class="body" style="font-size:18px;color:var(--ink-3);margin-top:4px;">passage tangent en <span class="math">I</span> — non paramétrique</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Couches paramétrées</div>
+          <div data-step style="border-left:3px solid var(--accent);padding:18px 20px;background:var(--bg-2);">
+            <div style="font-family:var(--mono);font-size:22px;font-weight:600;color:var(--ink);">BiMap<sub style="font-size:14px;color:var(--ink-3);">k</sub></div>
+            <div class="display-math" style="margin:12px 0 8px;">
+              X_k = W_k\,X_{k-1}\,W_k^\top
+            </div>
+            <div class="body" style="font-size:18px;color:var(--ink-2);">
+              <span class="math">W_k \in \mathrm{St}(d_{k-1}, d_k)</span> — colonnes orthonormées
+            </div>
+          </div>
+          <div data-step class="theorem" style="margin-top:24px;">
+            <div class="theorem-tag">Conséquence</div>
+            <div class="theorem-body" style="font-size:20px;">
+              Le gradient doit être <strong>tangent à Stiefel</strong>, et la mise à jour doit <strong>y rester</strong> — d'où l'optimisation riemannienne.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §2.3 · Matrix backpropagation primer -->
+  <section>
+    <slide-note>La rétropropagation matricielle (Ionescu et al. 2015) fournit les gradients à travers des opérations comme SVD et eigendecomp. Brooks et al. (2019) propose une variante stable nécessaire pour les couches SPD.</slide-note>
+    <slide-header title="Rétropropagation matricielle"></slide-header>
+    <div class="slide-body">
+      <p class="lede" style="margin-bottom:24px;max-width:1500px;">
+        ReEig et LogEig reposent sur une <strong>décomposition spectrale</strong> :
+        la rétropropagation standard (chain-rule scalaire) ne suffit pas.
+      </p>
+
+      <div class="cols cols-2" style="gap:56px;align-items:start;margin-top:8px;">
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:14px;">Le cadre matriciel</div>
+          <div class="body" style="font-size:20px;margin-bottom:14px;">
+            Soit <span class="math">f(X) = U\,g(\Sigma)\,U^\top</span> avec <span class="math">X = U\Sigma U^\top</span>.
+            Le différentiel de <span class="math">\mathcal{L}</span> par rapport à <span class="math">X</span> s'écrit (Ionescu 2015) :
+          </div>
+          <div class="display-math">
+            \frac{\partial \mathcal{L}}{\partial X} = U\left( P \odot (U^\top \tfrac{\partial \mathcal{L}}{\partial U}) + \mathrm{diag}\!\left(\tfrac{\partial \mathcal{L}}{\partial \Sigma}\right)\right) U^\top
+          </div>
+          <div class="small" style="color:var(--ink-3);margin-top:10px;font-size:16px;">
+            où <span class="math">P_{ij} = 1/(\sigma_i - \sigma_j)</span> pour <span class="math">i\neq j</span>, et <span class="math">\odot</span> le produit de Hadamard.
+          </div>
+        </div>
+
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:14px;">Le piège numérique</div>
+          <div class="body" style="font-size:20px;">
+            Les coefficients <span class="math">1/(\sigma_i - \sigma_j)</span> explosent quand deux valeurs propres se rapprochent.
+          </div>
+          <div class="theorem" style="margin-top:20px;">
+            <div class="theorem-tag">Brooks et al. <span class="theorem-name">NeurIPS 2019</span></div>
+            <div class="theorem-body" style="font-size:18px;">
+              Reformulation symétrique évitant les divisions instables — désormais la norme dans les implémentations SPDNet modernes.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §2.4 · Riemannian update on Stiefel — animated -->
+  <section>
+    <slide-note>Une fois le gradient euclidien de la perte par rapport à W obtenu via la rétropropagation matricielle, il reste à le rendre compatible avec la contrainte de Stiefel. Trois opérations : projection sur le tangent, pas dans l'ambiant, rétraction. Les flèches font avancer l'animation.</slide-note>
+    <slide-header title="Mise à jour sur Stiefel"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <stiefel-update></stiefel-update>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §2.5 · Full SPDNet training step summary -->
+  <section>
+    <slide-note>Récapitulatif : la formation d'un SPDNet combine rétropropagation matricielle pour traverser les couches non-linéaires + optimisation riemannienne pour les paramètres contraints.</slide-note>
+    <slide-header title="Une itération d'entraînement, vue d'ensemble"></slide-header>
+    <div class="slide-body">
+      <div style="display:flex;flex-direction:column;gap:20px;max-width:1500px;margin-top:24px;">
+        <div data-step style="display:flex;align-items:center;gap:32px;">
+          <div style="flex-shrink:0;width:50px;height:50px;border-radius:50%;background:var(--accent);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:22px;">1</div>
+          <div>
+            <div style="font-family:var(--sans);font-size:24px;font-weight:600;color:var(--ink);">Passe avant</div>
+            <div class="body" style="font-size:19px;color:var(--ink-2);">BiMap, ReEig, LogEig à travers les <span class="math">K</span> couches, puis classifieur en sortie.</div>
+          </div>
+        </div>
+        <div data-step style="display:flex;align-items:center;gap:32px;">
+          <div style="flex-shrink:0;width:50px;height:50px;border-radius:50%;background:var(--accent);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:22px;">2</div>
+          <div>
+            <div style="font-family:var(--sans);font-size:24px;font-weight:600;color:var(--ink);">Rétropropagation <em>matricielle</em></div>
+            <div class="body" style="font-size:19px;color:var(--ink-2);">Gradients à travers SVD/eigendecomp via la formulation Brooks ; produit le gradient euclidien <span class="math">\nabla_{W_k}\mathcal{L}</span> pour chaque BiMap.</div>
+          </div>
+        </div>
+        <div data-step style="display:flex;align-items:center;gap:32px;">
+          <div style="flex-shrink:0;width:50px;height:50px;border-radius:50%;background:var(--accent);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:22px;">3</div>
+          <div>
+            <div style="font-family:var(--sans);font-size:24px;font-weight:600;color:var(--ink);">Mise à jour <em>riemannienne</em></div>
+            <div class="body" style="font-size:19px;color:var(--ink-2);">Pour chaque <span class="math">W_k</span> : projection tangente + rétraction polaire — c'est la seule étape spécifique à la géométrie.</div>
+          </div>
+        </div>
+        <div data-step class="theorem" style="margin-top:18px;">
+          <div class="theorem-tag">À retenir</div>
+          <div class="theorem-body" style="font-size:21px;">
+            La contrainte géométrique n'apparaît qu'à l'étape 3, et avec un <strong>coût quasi linéaire</strong> en la dimension. C'est ce qui rendra possible le passage au cadre distribué.
+          </div>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
 
   <!-- ═══════════════════════════════════════
-       §3.1 · Another content slide
+       §3 · GPR application
        ═══════════════════════════════════════ -->
+  <section-divider
+    label="Application"
+    kicker="Radar à pénétration de sol"
+    blurb="Classification d'objets enterrés à partir de données GPR">
+  </section-divider>
+
+  <!-- §3.1 · GPR motivation -->
   <section>
-    <slide-note>Conclure sur le message principal à retenir.</slide-note>
-    <slide-header title="Another Slide"></slide-header>
+    <slide-note>Le radar GPR fournit des B-scans bruités à faible rapport signal-sur-bruit. Les objets enterrés y apparaissent comme des hyperboles. Tâche : classifier l'objet à partir d'une vignette d'hyperbole détectée. Deux écueils : les CNN superficiels manquent de représentation riche ; les gros modèles CV ont trop de paramètres pour le peu de données étiquetées disponibles.</slide-note>
+    <slide-header title="GPR — pourquoi c'est difficile"></slide-header>
     <div class="slide-body">
-      <p class="lede" style="max-width:1400px;">Your content here.</p>
+      <div class="cols cols-2" style="gap:56px;margin-top:16px;">
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;">Le signal</div>
+          <p class="body" style="font-size:21px;color:var(--ink-2);">
+            Un B-scan radar : on déplace l'antenne le long du sol, chaque objet enterré produit une <strong>hyperbole</strong> caractéristique. Faible SNR, fortes variations selon le sol et la fréquence d'acquisition.
+          </p>
+          <div style="margin-top:18px;padding:16px;background:var(--bg-2);border-left:3px solid var(--accent);font-family:var(--mono);font-size:17px;color:var(--ink-3);">
+            B-scan typique : 4000 × 800 px → 1 584 vignettes 60 × 112 px
+          </div>
+        </div>
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;">Les contraintes</div>
+          <div style="display:flex;flex-direction:column;gap:12px;font-size:20px;color:var(--ink-2);">
+            <div>• <strong>Peu d'étiquettes</strong> : labellisation par expert géophysicien</div>
+            <div>• <strong>Bruit d'étiquetage</strong> : classes ambigües au-delà du métal/non-métal</div>
+            <div>• <strong>Hétérogénéité</strong> : sable humide, sable sec, gravier — multiples fréquences radar</div>
+          </div>
+          <div class="theorem" style="margin-top:22px;">
+            <div class="theorem-tag">Tension</div>
+            <div class="theorem-body" style="font-size:19px;">
+              Modèles riches ↔ peu de paramètres : exactement le compromis que les <em>statistiques d'ordre deux</em> savent résoudre.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §3.2 · GPR pipeline -->
+  <section>
+    <slide-note>Le pipeline complet : ResNet-34 tronqué (L=8 couches) → covariance pooling (estime la covariance entre canaux convolutionnels) → SPDNet (BiMap+ReEig empilés) → LogEig + dropout + dense + softmax. Tout est entraîné de bout en bout. Deux variantes selon que l'on prend la dernière sortie de bloc (RCNet, d=64) ou la concaténation des 32 premières couches (SRCNet, d=256).</slide-note>
+    <slide-header title="Pipeline : ResNet + covariance + SPDNet"></slide-header>
+    <div class="slide-body">
+      <p class="lede" style="margin-bottom:24px;max-width:1500px;">
+        Idée : <strong>réutiliser un extracteur CV</strong> mais le brancher sur une représentation d'<strong>ordre deux</strong> compacte et géométriquement structurée.
+      </p>
+
+      <div style="display:flex;align-items:stretch;gap:0;margin-top:20px;border:1px solid var(--rule);border-radius:6px;overflow:hidden;">
+        <div data-step style="flex:1;padding:24px;background:var(--bg-2);border-right:1px solid var(--rule);">
+          <div class="eyebrow" style="color:var(--accent);margin-bottom:10px;">Étage 1</div>
+          <div style="font-family:var(--sans);font-size:22px;font-weight:600;">ResNet-34</div>
+          <div class="small" style="color:var(--ink-3);margin-top:8px;font-size:15px;">
+            <span class="math">L = 8</span> premières couches, ré-entraînées <em>de zéro</em>.
+          </div>
+        </div>
+        <div data-step style="flex:1;padding:24px;background:var(--bg-2);border-right:1px solid var(--rule);">
+          <div class="eyebrow" style="color:var(--accent);margin-bottom:10px;">Étage 2</div>
+          <div style="font-family:var(--sans);font-size:22px;font-weight:600;">Covariance pooling</div>
+          <div class="small" style="color:var(--ink-3);margin-top:8px;font-size:15px;">
+            Fast MPN-Cov ; produit la covariance entre canaux <span class="math">\hat{\Sigma} \in \mathcal{S}^{++}_d</span>.
+          </div>
+        </div>
+        <div data-step style="flex:1;padding:24px;background:var(--bg-2);border-right:1px solid var(--rule);">
+          <div class="eyebrow" style="color:var(--accent);margin-bottom:10px;">Étage 3</div>
+          <div style="font-family:var(--sans);font-size:22px;font-weight:600;">SPDNet</div>
+          <div class="small" style="color:var(--ink-3);margin-top:8px;font-size:15px;">
+            Empilement BiMap + ReEig ; réduit la dimension SPD.
+          </div>
+        </div>
+        <div data-step style="flex:1;padding:24px;background:var(--bg-2);">
+          <div class="eyebrow" style="color:var(--accent);margin-bottom:10px;">Étage 4</div>
+          <div style="font-family:var(--sans);font-size:22px;font-weight:600;">LogEig + dense</div>
+          <div class="small" style="color:var(--ink-3);margin-top:8px;font-size:15px;">
+            Vectorisation + Dropout + couche dense + softmax → 4 classes.
+          </div>
+        </div>
+      </div>
+
+      <div data-step class="cols cols-2" style="gap:40px;margin-top:36px;">
+        <div style="padding:18px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
+          <div class="label">RCNet</div>
+          <div style="font-family:var(--mono);font-size:18px;color:var(--ink-2);margin-top:6px;">
+            dernier bloc → <span class="math">d = 64 \to 32</span>
+          </div>
+        </div>
+        <div style="padding:18px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
+          <div class="label">SRCNet</div>
+          <div style="font-family:var(--mono);font-size:18px;color:var(--ink-2);margin-top:6px;">
+            32 premières couches empilées → <span class="math">d = 256 \to 128</span>
+          </div>
+        </div>
+      </div>
+
+      <div data-step style="margin-top:22px;padding:16px 20px;background:var(--tint);border-left:3px solid var(--accent);font-size:19px;color:var(--ink-2);">
+        Tout l'édifice est <strong>entraîné de bout en bout</strong> : la rétropropagation traverse Fast MPN-Cov, les couches SPDNet (eigendecomp), et les BiMap (mise à jour Stiefel).
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §3.3 · Dataset -->
+  <section>
+    <slide-note>Jeu de données fourni par Géolithe : 732 B-scans, conditions d'acquisition variées (fréquence, hauteur d'antenne, type de sol). Après détection des hyperboles : 1584 vignettes 60×112 px, quatre classes. La classe "vide" est constituée de bruit pur — un test important pour la robustesse.</slide-note>
+    <slide-header title="Données Géolithe — 4 classes"></slide-header>
+    <div class="slide-body">
+      <div class="cols cols-2" style="gap:56px;margin-top:24px;align-items:start;">
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:14px;">Acquisition</div>
+          <div style="display:flex;flex-direction:column;gap:10px;font-size:18px;color:var(--ink-2);font-family:var(--mono);">
+            <div><span style="color:var(--ink-3);">B-scans</span> &nbsp;&nbsp; 732</div>
+            <div><span style="color:var(--ink-3);">Fréquences</span> &nbsp;&nbsp; 200 / 350 MHz</div>
+            <div><span style="color:var(--ink-3);">Hauteurs antenne</span> &nbsp;&nbsp; 0–150 cm</div>
+            <div><span style="color:var(--ink-3);">Sols</span> &nbsp;&nbsp; sable, sable humide, gravier, gravier sec</div>
+            <div><span style="color:var(--ink-3);">Vignettes finales</span> &nbsp;&nbsp; 1 584 × (60 × 112)</div>
+            <div><span style="color:var(--ink-3);">Split</span> &nbsp;&nbsp; 1108 / 238 / 238</div>
+          </div>
+        </div>
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:14px;">Les quatre classes</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div style="padding:18px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
+              <div style="font-family:var(--sans);font-size:20px;font-weight:600;color:var(--ink);">Métal</div>
+              <div class="small" style="color:var(--ink-3);margin-top:4px;">hyperbole nette, forte réflectivité</div>
+            </div>
+            <div style="padding:18px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
+              <div style="font-family:var(--sans);font-size:20px;font-weight:600;color:var(--ink);">Non-métal</div>
+              <div class="small" style="color:var(--ink-3);margin-top:4px;">signature plus diffuse</div>
+            </div>
+            <div style="padding:18px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
+              <div style="font-family:var(--sans);font-size:20px;font-weight:600;color:var(--ink);">Abri en bois</div>
+              <div class="small" style="color:var(--ink-3);margin-top:4px;">structure creuse, hyperboles multiples</div>
+            </div>
+            <div style="padding:18px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
+              <div style="font-family:var(--sans);font-size:20px;font-weight:600;color:var(--ink);">Vide</div>
+              <div class="small" style="color:var(--ink-3);margin-top:4px;">bruit pur — contrôle</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §3.4 · Results placeholder -->
+  <section>
+    <slide-note>Résultats à venir — deux études : (i) précision en fonction de la fraction d'entraînement (régime peu de données) ; (ii) précision en fonction du pourcentage d'étiquettes corrompues (robustesse au bruit d'étiquettes). Les modèles à covariance gagnent en variance et en moyenne dans les deux régimes.</slide-note>
+    <slide-header title="Résultats — régimes peu de données et étiquettes bruitées"></slide-header>
+    <div class="slide-body">
+      <div class="cols cols-2" style="gap:48px;margin-top:24px;">
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;">Vs. fraction d'entraînement</div>
+          <div style="aspect-ratio:16/10;background:var(--bg-2);border:2px dashed var(--rule-soft);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--ink-3);font-family:var(--mono);font-size:14px;letter-spacing:0.05em;text-transform:uppercase;">
+            graphique — à venir
+          </div>
+          <p class="body" style="font-size:18px;color:var(--ink-2);margin-top:14px;">
+            Précision moyenne sur 100 graines, bandes 5–95 %. RCNet / SRCNet attendus au-dessus de ResNet-34 et du CNN GPR superficiel <strong>à tous les régimes</strong>.
+          </p>
+        </div>
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;">Vs. taux d'étiquettes corrompues</div>
+          <div style="aspect-ratio:16/10;background:var(--bg-2);border:2px dashed var(--rule-soft);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--ink-3);font-family:var(--mono);font-size:14px;letter-spacing:0.05em;text-transform:uppercase;">
+            graphique — à venir
+          </div>
+          <p class="body" style="font-size:18px;color:var(--ink-2);margin-top:14px;">
+            RCNet le plus robuste : la représentation de covariance amortit le bruit d'étiquetage, là où le CNN superficiel s'effondre dès quelques pourcents.
+          </p>
+        </div>
+      </div>
+
+      <div data-step style="margin-top:30px;padding:20px 24px;background:var(--tint);border-left:3px solid var(--accent);font-size:20px;color:var(--ink-2);">
+        <strong>Message :</strong> les gains de l'ordre deux se concentrent là où les deep nets classiques peinent — <em>peu d'étiquettes, bruit d'étiquetage</em> — ce qui est exactement la réalité du GPR.
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       §4 · Contribution 1 — BatchNorm + ARMAGNAC
+       ═══════════════════════════════════════ -->
+  <section-divider
+    label="BatchNorm SPD"
+    kicker="Première contribution"
+    blurb="Moyennes alternatives + paramètre appris pour la batch-normalisation sur SPD">
+  </section-divider>
+
+  <!-- §4.1 · The problem -->
+  <section>
+    <slide-note>BatchNorm sur SPD (Brooks 2019) repose sur la moyenne de Fréchet — sans forme close, calculée par itérations de Karcher. Coût dominant à l'entraînement. Notre contribution : moyennes alternatives quasi-équivalentes + version paramétrique apprise (ARMAGNAC).</slide-note>
+    <slide-header title="BatchNorm sur SPD — le verrou de la moyenne"></slide-header>
+    <div class="slide-body">
+      <p class="lede" style="margin-bottom:24px;max-width:1500px;">
+        BatchNorm requiert une moyenne. Sur la variété SPD, la moyenne « naturelle » est la <strong>moyenne de Fréchet</strong> — minimiseur de la distance riemannienne quadratique.
+      </p>
+
+      <div class="cols cols-2" style="gap:48px;align-items:start;margin-top:12px;">
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;">Moyenne de Fréchet</div>
+          <div class="display-math">
+            \bar{\Sigma} = \arg\min_{\Sigma \in \mathcal{S}^{++}} \sum_{i=1}^B d_R(\Sigma, \Sigma_i)^2
+          </div>
+          <p class="body" style="font-size:18px;color:var(--ink-2);margin-top:10px;">
+            Pas de forme close ; résolu par <strong>itérations de Karcher</strong> à chaque batch :
+          </p>
+          <div style="margin-top:10px;padding:12px 16px;background:var(--bg-2);border-left:3px solid var(--rule);font-family:var(--mono);font-size:16px;color:var(--ink-3);">
+            for k in 1..K : <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;ΣᵢLog(Σ_k, Σᵢ) → mise à jour de Σ_k
+          </div>
+        </div>
+
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Le coût caché</div>
+          <p class="body" style="font-size:20px;color:var(--ink-2);">
+            À chaque batch, à chaque couche BatchNorm : <strong>K SVD complètes</strong> par échantillon.
+          </p>
+          <div class="theorem" style="margin-top:20px;">
+            <div class="theorem-tag">Symptôme</div>
+            <div class="theorem-body" style="font-size:19px;">
+              Le temps d'entraînement est dominé par la moyenne — sur certaines configurations, BatchNorm représente plus de la moitié du wall-clock.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §4.2 · Our alternatives + ARMAGNAC -->
+  <section>
+    <slide-note>Notre contribution : (i) des moyennes alternatives — par exemple log-euclidienne, moyenne harmonique, ou hybrides — qui approchent la moyenne de Fréchet avec une fraction du coût ; (ii) ARMAGNAC, une version paramétrique apprise qui apprend la moyenne adaptée aux données. Gain en temps d'entraînement jusqu'à ×5 sans dégradation notable, parfois amélioration.</slide-note>
+    <slide-header title="Deux contributions sur la moyenne"></slide-header>
+    <div class="slide-body">
+      <div style="display:flex;flex-direction:column;gap:22px;margin-top:16px;max-width:1500px;">
+
+        <div data-step style="display:flex;gap:28px;padding:24px 28px;background:var(--bg-2);border-left:4px solid var(--accent);border-radius:0 6px 6px 0;">
+          <div style="flex-shrink:0;width:80px;font-family:var(--mono);font-size:32px;font-weight:700;color:var(--accent);line-height:1;">01</div>
+          <div style="flex:1;">
+            <div style="font-family:var(--sans);font-size:26px;font-weight:600;color:var(--ink);">Moyennes alternatives, calcul direct</div>
+            <p class="body" style="font-size:19px;color:var(--ink-2);margin-top:8px;">
+              On remplace la moyenne de Fréchet par des moyennes <strong>en forme close</strong> (log-euclidienne, harmonique, hybrides) — quasi-équivalentes statistiquement pour la BatchNorm, mais sans boucle de Karcher.
+            </p>
+            <div style="display:inline-block;margin-top:12px;padding:6px 14px;background:var(--accent);color:var(--bg);font-family:var(--mono);font-size:15px;font-weight:600;border-radius:4px;letter-spacing:0.04em;">
+              jusqu'à × 5 sur le temps d'entraînement
+            </div>
+          </div>
+        </div>
+
+        <div data-step style="display:flex;gap:28px;padding:24px 28px;background:var(--bg-2);border-left:4px solid var(--accent);border-radius:0 6px 6px 0;">
+          <div style="flex-shrink:0;width:80px;font-family:var(--mono);font-size:32px;font-weight:700;color:var(--accent);line-height:1;">02</div>
+          <div style="flex:1;">
+            <div style="font-family:var(--sans);font-size:26px;font-weight:600;color:var(--ink);">ARMAGNAC — moyenne paramétrique apprise</div>
+            <p class="body" style="font-size:19px;color:var(--ink-2);margin-top:8px;">
+              Plutôt que de fixer la moyenne <em>a priori</em>, on introduit un <strong>paramètre appris</strong> qui interpole entre plusieurs moyennes selon les données.
+              Le réseau choisit lui-même la géométrie de normalisation la mieux adaptée à chaque couche.
+            </p>
+            <div style="display:inline-block;margin-top:12px;padding:6px 14px;background:var(--ink);color:var(--bg);font-family:var(--mono);font-size:15px;font-weight:600;border-radius:4px;letter-spacing:0.04em;">
+              un seul scalaire par couche, différentiable
+            </div>
+          </div>
+        </div>
+
+        <div data-step class="theorem" style="margin-top:8px;">
+          <div class="theorem-tag">Bilan</div>
+          <div class="theorem-body" style="font-size:20px;">
+            Une BatchNorm SPD <strong>aussi performante</strong> que celle de Brooks, mais <strong>jusqu'à cinq fois plus rapide</strong> — et qui peut <em>s'adapter</em> aux données.
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §4.3 · BatchNorm results placeholder -->
+  <section>
+    <slide-note>Résultats BatchNorm : (i) wall-clock training time ; (ii) précision finale comparée à la BatchNorm de Brooks. Placeholders.</slide-note>
+    <slide-header title="BatchNorm — résultats"></slide-header>
+    <div class="slide-body">
+      <div class="cols cols-2" style="gap:48px;margin-top:24px;">
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;">Temps d'entraînement</div>
+          <div style="aspect-ratio:16/10;background:var(--bg-2);border:2px dashed var(--rule-soft);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--ink-3);font-family:var(--mono);font-size:14px;letter-spacing:0.05em;text-transform:uppercase;">
+            graphique — à venir
+          </div>
+        </div>
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;">Précision finale</div>
+          <div style="aspect-ratio:16/10;background:var(--bg-2);border:2px dashed var(--rule-soft);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--ink-3);font-family:var(--mono);font-size:14px;letter-spacing:0.05em;text-transform:uppercase;">
+            graphique — à venir
+          </div>
+        </div>
+      </div>
     </div>
     <slide-footer></slide-footer>
   </section>
 
 
-    <!-- ═══════════════════════════════════════
-       §4 · Fourth section divider
+  <!-- ═══════════════════════════════════════
+       §5 · Contribution 2 — Federated SPDNet
        ═══════════════════════════════════════ -->
   <section-divider
-    label="Federated learning"
-    kicker="SPDnet architecture in a federated context"
-    blurb="Apprentissage fédéré sur matrices de covariances">
+    label="SPDNet fédéré"
+    kicker="Seconde contribution"
+    blurb="Agrégation projetée sur Stiefel — RFedProj / RFedRL">
   </section-divider>
 
-  <!-- §4.1 · Federated learning animation (stepped) -->
+  <!-- §5.1 · FL motivation + animation -->
   <section>
-    <slide-note>Apprentissage fédéré : sélection des clients, diffusion du modèle global, entraînement local, remontée des mises à jour, agrégation FedAvg. Les flèches avancent pas à pas.</slide-note>
-    <slide-header title="Apprentissage fédéré"></slide-header>
+    <slide-note>L'apprentissage fédéré entraîne un modèle partagé sans jamais partager les données. Motivations : confidentialité, contraintes réglementaires, données disséminées. L'animation détaille un round FedAvg : sélection des clients, diffusion du modèle global, entraînement local, remontée des mises à jour, agrégation.</slide-note>
+    <slide-header title="Apprentissage fédéré — le cadre"></slide-header>
     <div class="slide-body" style="padding:0;overflow:hidden;">
       <federated-learning></federated-learning>
     </div>
     <slide-footer></slide-footer>
   </section>
 
+  <!-- §5.2 · The aggregation problem on a manifold -->
+  <section>
+    <slide-note>FedAvg moyenne arithmétiquement les poids. Problème : si les poids sont sur Stiefel, la moyenne arithmétique sort de la variété. Il faut donc une opération d'agrégation qui (i) reste sur la variété et (ii) reste peu coûteuse à grande échelle.</slide-note>
+    <slide-header title="Le problème — moyenner sur une variété"></slide-header>
+    <div class="slide-body">
+      <p class="lede" style="margin-bottom:28px;max-width:1500px;">
+        FedAvg moyenne arithmétiquement les poids des clients. Sur une variété, cette moyenne <strong>n'est pas un point de la variété</strong>.
+      </p>
+
+      <div class="cols cols-2" style="gap:48px;align-items:start;">
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Approches existantes</div>
+          <div style="display:flex;flex-direction:column;gap:14px;font-size:18px;color:var(--ink-2);">
+            <div style="padding:14px 16px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
+              <strong>Karcher / Fréchet</strong> — log → moyenne tangente → exp. Sur Stiefel le log est itératif, l'exp instable.
+            </div>
+            <div style="padding:14px 16px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
+              <strong>Projection + correction de dérive</strong> — Zhang et al. 2024 : requiert la participation totale.
+            </div>
+            <div style="padding:14px 16px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
+              <strong>Flux de gradients</strong> — Huang et al. 2024 : verrouille l'optimiseur à SGD.
+            </div>
+          </div>
+        </div>
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Le trou à combler</div>
+          <div class="theorem" style="margin-top:0;">
+            <div class="theorem-tag">Objectif</div>
+            <div class="theorem-body" style="font-size:19px;">
+              Une agrégation qui combine :
+              <ul style="margin-top:10px;padding-left:18px;line-height:1.7;">
+                <li>projections + rétractions <strong>seulement</strong></li>
+                <li><strong>participation partielle</strong></li>
+                <li>plusieurs époques locales</li>
+                <li>indépendante de l'optimiseur client</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §5.3 · RFedProj / RFedRL — the two rules -->
+  <section>
+    <slide-note>Nos deux règles d'agrégation : RFedProj projette la moyenne euclidienne des itérés clients sur la variété ; RFedRL projette les déplacements clients sur le tangent, les moyenne, puis rétracte. Théoriquement équivalents en termes de taux ; en pratique différence de F1 &lt; 0,2%.</slide-note>
+    <slide-header title="RFedProj &amp; RFedRL — projections seulement"></slide-header>
+    <div class="slide-body">
+      <div style="display:flex;flex-direction:column;gap:24px;max-width:1500px;margin-top:18px;">
+
+        <div data-step style="padding:24px 28px;background:var(--bg-2);border:1px solid var(--rule);border-radius:6px;">
+          <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:10px;">
+            <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--accent);">RFedProj</div>
+            <div class="small" style="color:var(--ink-3);">le plus simple — pas besoin de mémoriser l'itéré global précédent</div>
+          </div>
+          <div class="display-math" style="margin:8px 0 4px;">
+            x_{t+1} \;=\; P_{\mathcal{M}}\!\left(\tfrac{1}{k}\sum_{i \in S_t} x^{(i)}_{t,\tau}\right)
+          </div>
+          <p class="small" style="font-size:16px;color:var(--ink-3);margin-top:6px;">
+            On moyenne arithmétiquement les sorties locales des <span class="math">k</span> clients participants, puis on projette sur <span class="math">\mathcal{M}</span>.
+          </p>
+        </div>
+
+        <div data-step style="padding:24px 28px;background:var(--bg-2);border:1px solid var(--rule);border-radius:6px;">
+          <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:10px;">
+            <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--accent);">RFedRL</div>
+            <div class="small" style="color:var(--ink-3);">retracted-lifted — relève les déplacements au tangent, moyenne, rétracte</div>
+          </div>
+          <div class="display-math" style="margin:8px 0 4px;">
+            x_{t+1} \;=\; P_{\mathcal{M}}\!\left(x_t \;+\; \tfrac{1}{k}\sum_{i \in S_t} P_{x_t}\!\left(x^{(i)}_{t,\tau} - x_t\right)\right)
+          </div>
+          <p class="small" style="font-size:16px;color:var(--ink-3);margin-top:6px;">
+            Variante géométriquement « plus propre » — équivalente en taux, requiert de stocker <span class="math">x_t</span>.
+          </p>
+        </div>
+
+        <div data-step class="theorem">
+          <div class="theorem-tag">Sur Stiefel</div>
+          <div class="theorem-body" style="font-size:19px;">
+            La projection <span class="math">P_{\mathcal{M}}</span> est le <strong>facteur polaire</strong> <span class="math">\mathrm{uf}(A) = A(A^\top A)^{-1/2}</span> — une SVD réduite suffit. Aucun exp, aucun log.
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §5.4 · Theorem -->
+  <section>
+    <slide-note>Théorème 4.6 : sous lissité Lipschitz des objectifs clients et lissité proximale de la variété, les deux algorithmes convergent en O(1/√T) sous participation partielle, avec un facteur (n-k)/((n-1)k) qui mesure l'effet de la participation. Le résultat est l'analogue strict des garanties FedAvg classiques.</slide-note>
+    <slide-header title="Garantie de convergence"></slide-header>
+    <div class="slide-body">
+      <div class="theorem" data-step style="margin-top:18px;">
+        <div class="theorem-tag">Théorème <span class="theorem-name">RFedProj &amp; RFedRL (sous-mvts compacts)</span></div>
+        <div class="theorem-body" style="font-size:19px;">
+          Sous lissité Lipschitz des objectifs clients et lissité proximale de <span class="math">\mathcal{M}</span> :
+          <div class="display-math" style="margin:14px 0;">
+            \tfrac{1}{T}\sum_{t=1}^T \mathbb{E}\|\mathrm{grad}\,F(x_t)\|^2 \;=\; \mathcal{O}\!\left(\tfrac{1}{\sqrt{T}}\right) + \mathcal{O}\!\left(\tfrac{1}{k\sqrt{T}}\Big(\tfrac{n-k}{n-1}\sigma^2 + \tfrac{\sigma^2_{sg}}{B}\Big)\right)
+          </div>
+        </div>
+      </div>
+
+      <div class="cols cols-2" style="gap:40px;margin-top:28px;">
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:10px;">Lecture du facteur de participation</div>
+          <div style="font-family:var(--mono);font-size:18px;color:var(--ink-2);line-height:1.9;">
+            <div><span class="math">k = n</span> &nbsp;→&nbsp; le facteur s'annule</div>
+            <div><span class="math">k = 1</span> &nbsp;→&nbsp; le facteur vaut 1</div>
+            <div><span class="math">k \ll n</span> &nbsp;→&nbsp; comportement en <span class="math">1/k</span></div>
+          </div>
+        </div>
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:10px;">Lecture</div>
+          <p class="body" style="font-size:19px;color:var(--ink-2);">
+            <strong>Même borne</strong> que FedAvg euclidien — la contrainte géométrique n'ajoute pas de coût asymptotique. Les deux algorithmes ne diffèrent qu'aux termes de courbure d'ordre supérieur, donc <strong>indistinguables en pratique</strong>.
+          </p>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §5.5 · Federated experiments -->
+  <section>
+    <slide-note>Expériences EEG motor imagery — 3 datasets MOABB. SPDNet fédéré (BiMap agrégés par RFedProj, classifieur par FedAvg) vs EEGNet+FedAvg. Mesure : F1 macro, dégradation par rapport au centralisé. Placeholder pour la figure dégradation.</slide-note>
+    <slide-header title="Expériences EEG fédérées"></slide-header>
+    <div class="slide-body">
+      <div class="cols cols-2" style="gap:48px;margin-top:18px;align-items:start;">
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:14px;">Protocole</div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-family:var(--mono);font-size:17px;color:var(--ink-2);">
+            <div><span style="color:var(--ink-3);">Tâche</span> &nbsp;&nbsp; Motor-imagery classification</div>
+            <div><span style="color:var(--ink-3);">Datasets</span> &nbsp;&nbsp; Weibo2014, Schirrmeister2017, PhysionetMI</div>
+            <div><span style="color:var(--ink-3);">Modèles</span> &nbsp;&nbsp; FedSPDNet vs FedEEGNet</div>
+            <div><span style="color:var(--ink-3);">Participation</span> &nbsp;&nbsp; ρ = k/n ∈ {1, 0.8, 0.5, 0.2}</div>
+            <div><span style="color:var(--ink-3);">Rounds</span> &nbsp;&nbsp; T = 150 &nbsp; · &nbsp; τ = 2 époques locales</div>
+            <div><span style="color:var(--ink-3);">Métrique</span> &nbsp;&nbsp; F1 macro · IID + non-IID (par sujet)</div>
+          </div>
+        </div>
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:14px;">Dégradation vs centralisé — à venir</div>
+          <div style="aspect-ratio:16/10;background:var(--bg-2);border:2px dashed var(--rule-soft);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--ink-3);font-family:var(--mono);font-size:14px;letter-spacing:0.05em;text-transform:uppercase;">
+            graphique — à venir
+          </div>
+        </div>
+      </div>
+
+      <div data-step style="margin-top:28px;padding:20px 24px;background:var(--tint);border-left:3px solid var(--accent);font-size:19px;color:var(--ink-2);">
+        <strong>Attendus :</strong> RFedProj ≡ RFedRL à &lt; 0,2 % près. FedSPDNet dégrade <em>moins</em> que FedEEGNet quand la participation chute — interprétation : la géométrie joue un rôle <strong>régularisant</strong> contre la dérive client.
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
 
   <!-- ═══════════════════════════════════════
-       §5 · Final section divider
+       §6 · Conclusion
        ═══════════════════════════════════════ -->
   <section-divider
-    label="Conclusion"
-    kicker=""
+    label="Synthèse"
+    kicker="Ce que la géométrie apporte"
     blurb="">
   </section-divider>
 
-  <!-- ═══════════════════════════════════════
-       §5.1 · Another content slide
-       ═══════════════════════════════════════ -->
+  <!-- §6.1 · Synthesis -->
   <section>
-    <slide-note>Conclure sur le message principal à retenir.</slide-note>
-    <slide-header title="Key takeaways"></slide-header>
+    <slide-note>Synthèse : la structure géométrique des données SPD induit des problèmes d'optimisation non-triviaux à toutes les échelles — de la rétropropagation dans le réseau jusqu'à l'agrégation distribuée. Et à chaque échelle, la même idée : remplacer les opérations coûteuses (Fréchet, exp/log) par des projections / rétractions peu chères.</slide-note>
+    <slide-header title="Une même idée à toutes les échelles"></slide-header>
     <div class="slide-body">
-      <p class="lede" style="max-width:1400px;">Your content here.</p>
+      <div style="display:flex;flex-direction:column;gap:18px;max-width:1500px;margin-top:24px;">
+
+        <div data-step style="display:flex;gap:24px;align-items:baseline;padding:18px 24px;border-left:3px solid var(--accent);background:var(--bg-2);">
+          <div style="flex-shrink:0;width:160px;font-family:var(--mono);font-size:15px;letter-spacing:0.05em;text-transform:uppercase;color:var(--accent);">Échelle locale</div>
+          <div style="flex:1;font-size:20px;color:var(--ink-2);">
+            <strong>Rétropropagation matricielle</strong> + projection / rétraction sur Stiefel — coût quasi linéaire en <span class="math">d</span>.
+          </div>
+        </div>
+
+        <div data-step style="display:flex;gap:24px;align-items:baseline;padding:18px 24px;border-left:3px solid var(--accent);background:var(--bg-2);">
+          <div style="flex-shrink:0;width:160px;font-family:var(--mono);font-size:15px;letter-spacing:0.05em;text-transform:uppercase;color:var(--accent);">BatchNorm</div>
+          <div style="flex:1;font-size:20px;color:var(--ink-2);">
+            <strong>Moyennes alternatives</strong> + paramètre appris (ARMAGNAC) en lieu et place de la moyenne de Fréchet itérative.
+          </div>
+        </div>
+
+        <div data-step style="display:flex;gap:24px;align-items:baseline;padding:18px 24px;border-left:3px solid var(--accent);background:var(--bg-2);">
+          <div style="flex-shrink:0;width:160px;font-family:var(--mono);font-size:15px;letter-spacing:0.05em;text-transform:uppercase;color:var(--accent);">Distribué</div>
+          <div style="flex:1;font-size:20px;color:var(--ink-2);">
+            <strong>Agrégation projetée</strong> (RFedProj / RFedRL) en lieu et place de Karcher fédéré.
+          </div>
+        </div>
+
+        <div data-step class="theorem" style="margin-top:16px;">
+          <div class="theorem-tag">Message principal</div>
+          <div class="theorem-body" style="font-size:21px;">
+            La structure géométrique <em>n'est pas un obstacle</em> à l'optimisation — à chaque échelle on peut la respecter en n'utilisant que des projections / rétractions <strong>peu coûteuses</strong>. La performance et la robustesse suivent.
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §6.2 · Outlook -->
+  <section>
+    <slide-note>Perspectives : extension non compacte (variété SPD elle-même), confidentialité différentielle dans le cadre fédéré (DP-RFedProj), optimiseurs adaptatifs (Adam riemannien), applications hyperspectral / radar avec géométrie en grande dimension.</slide-note>
+    <slide-header title="Perspectives"></slide-header>
+    <div class="slide-body">
+      <div class="cols cols-2" style="gap:48px;margin-top:24px;">
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Théorie</div>
+          <ul style="font-size:20px;color:var(--ink-2);line-height:1.8;padding-left:18px;">
+            <li>Variétés <strong>non compactes</strong> — la variété SPD elle-même</li>
+            <li>Optimiseurs <strong>adaptatifs</strong> (Adam riemannien) avec garanties</li>
+            <li>Différentialité de la moyenne <strong>ARMAGNAC</strong> en limite</li>
+          </ul>
+        </div>
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Pratique</div>
+          <ul style="font-size:20px;color:var(--ink-2);line-height:1.8;padding-left:18px;">
+            <li>Extension à la <strong>confidentialité différentielle</strong> (DP-RFedProj)</li>
+            <li>Déploiement multi-sites <strong>BCI</strong> / clinique</li>
+            <li>Imagerie <strong>hyperspectrale</strong> et radar en très grande dimension</li>
+          </ul>
+        </div>
+      </div>
     </div>
     <slide-footer></slide-footer>
   </section>

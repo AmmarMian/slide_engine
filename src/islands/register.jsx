@@ -168,6 +168,16 @@ defineReactElement('title-fx', TitleFx);
 defineReactElement('slide-footer', SlideFooterContent);
 defineReactElement('spdnet-arch', SpdNetArch);
 
+// Pure-SVG island, lightweight — eager.
+defineReactElement('spd-domains', null, {
+  lazy: () => import('./spd-domains.jsx').then(m => m.SpdDomains),
+});
+
+// Stiefel update animation (intercepts arrow keys when slide is active).
+defineReactElement('stiefel-update', null, {
+  lazy: () => import('./stiefel-update.jsx').then(m => m.StiefelUpdate),
+});
+
 // Three.js islands — lazy loaded (~32MB chunk, only fetched when the tag appears)
 defineReactElement('riemann-primer', null, {
   lazy: () => import('./riemann-primer.jsx').then(m => m.RiemannPrimer),

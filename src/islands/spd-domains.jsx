@@ -1,0 +1,270 @@
+// spd-domains.jsx — three-panel motivational island for "where SPD matrices appear":
+// EEG (BCI), hyperspectral imagery, radar. Each panel: stylised data on top,
+// resulting covariance heatmap below. Pure SVG, no external dependencies.
+
+import React, { useMemo } from 'react';
+
+// ── Deterministic PRNG (mulberry32) so renders are stable ─────────────────
+function rng(seed) {
+  let s = seed >>> 0;
+  return () => {
+    s = (s + 0x6D2B79F5) >>> 0;
+    let t = s;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// ── Synthetic dataset generators ──────────────────────────────────────────
+// Each returns an n×d matrix of observations from which we compute the d×d covariance.
+
+function eegSignals(d = 8, n = 220, seed = 7) {
+  // Multivariate "alpha + noise" — a couple of latent oscillations shared across channels
+  const r = rng(seed);
+  const phases = Array.from({ length: 3 }, () => r() * Math.PI * 2);
+  const mix = Array.from({ length: d }, () => Array.from({ length: 3 }, () => r() * 2 - 1));
+  const X = [];
+  for (let t = 0; t < n; t++) {
+    const lat = [
+      Math.sin(2 * Math.PI * 0.05 * t + phases[0]),
+      Math.sin(2 * Math.PI * 0.12 * t + phases[1]),
+      Math.sin(2 * Math.PI * 0.20 * t + phases[2]),
+    ];
+    const row = new Array(d);
+    for (let c = 0; c < d; c++) {
+      row[c] = mix[c][0] * lat[0] + mix[c][1] * lat[1] + mix[c][2] * lat[2] + (r() - 0.5) * 0.4;
+    }
+    X.push(row);
+  }
+  return X;
+}
+
+function hsiPixels(d = 8, n = 220, seed = 19) {
+  // Hyperspectral — neighbouring bands strongly correlated, with two material clusters
+  const r = rng(seed);
+  const X = [];
+  for (let i = 0; i < n; i++) {
+    const cluster = r() > 0.5 ? 1 : -1;
+    const smooth = Array.from({ length: d }, (_, k) => cluster * (1 - Math.abs(k - d / 2) / d) + (r() - 0.5) * 0.5);
+    // smooth across bands (moving average)
+    for (let k = 1; k < d; k++) smooth[k] = 0.6 * smooth[k] + 0.4 * smooth[k - 1];
+    X.push(smooth);
+  }
+  return X;
+}
+
+function radarPulses(d = 8, n = 220, seed = 31) {
+  // Range bins with target signal + clutter; strong block-correlation near target
+  const r = rng(seed);
+  const X = [];
+  const tgt = Math.floor(d / 2);
+  for (let i = 0; i < n; i++) {
+    const amp = (r() - 0.5) * 2;
+    const row = Array.from({ length: d }, (_, k) => {
+      const sig = amp * Math.exp(-((k - tgt) ** 2) / 1.5);
+      const clutter = (r() - 0.5) * 0.4 + 0.15 * Math.sin(2 * Math.PI * k / 5 + i * 0.1);
+      return sig + clutter;
+    });
+    X.push(row);
+  }
+  return X;
+}
+
+// ── Covariance estimator ──────────────────────────────────────────────────
+function covariance(X) {
+  const n = X.length, d = X[0].length;
+  const mean = new Array(d).fill(0);
+  for (const row of X) for (let k = 0; k < d; k++) mean[k] += row[k];
+  for (let k = 0; k < d; k++) mean[k] /= n;
+  const C = Array.from({ length: d }, () => new Array(d).fill(0));
+  for (const row of X) {
+    for (let i = 0; i < d; i++) for (let j = 0; j < d; j++) {
+      C[i][j] += (row[i] - mean[i]) * (row[j] - mean[j]);
+    }
+  }
+  for (let i = 0; i < d; i++) for (let j = 0; j < d; j++) C[i][j] /= n - 1;
+  return C;
+}
+
+// ── Signal plot (stacked traces) ──────────────────────────────────────────
+function SignalPlot({ X, width, height, color }) {
+  const n = X.length;
+  const d = X[0].length;
+  const traces = useMemo(() => {
+    return Array.from({ length: d }, (_, c) => {
+      const col = X.map(r => r[c]);
+      const yMin = Math.min(...col), yMax = Math.max(...col);
+      const range = yMax - yMin || 1;
+      const trackH = height / d;
+      const yBase = c * trackH + trackH / 2;
+      const amp = trackH * 0.35;
+      const path = col.map((v, i) => {
+        const x = (i / (n - 1)) * width;
+        const y = yBase - ((v - (yMin + yMax) / 2) / range) * 2 * amp;
+        return `${i === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`;
+      }).join(' ');
+      return path;
+    });
+  }, [X, width, height]);
+  return (
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ display: 'block' }}>
+      {traces.map((p, i) => (
+        <path key={i} d={p} stroke={color} strokeWidth="1.1" fill="none" opacity={0.55 + (i / traces.length) * 0.4} />
+      ))}
+    </svg>
+  );
+}
+
+// ── HSI cube panel (false-color band slices) ──────────────────────────────
+function HsiCube({ X, width, height, color }) {
+  const d = X[0].length;
+  const bandW = width / d;
+  const stripeH = height;
+  return (
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ display: 'block' }}>
+      {Array.from({ length: d }, (_, k) => {
+        const intensity = X.reduce((s, r) => s + Math.abs(r[k]), 0) / X.length;
+        const norm = Math.min(1, intensity / 1.5);
+        return (
+          <rect key={k}
+            x={k * bandW} y={0} width={bandW - 1} height={stripeH}
+            fill={color}
+            opacity={0.18 + norm * 0.7}
+          />
+        );
+      })}
+      {/* Faint cube depth lines */}
+      <path d={`M0 ${height * 0.15} L${width * 0.97} ${height * 0.05} L${width * 0.97} ${height * 0.92} L${width * 0.03} ${height * 0.92} Z`}
+            stroke="rgba(255,255,255,0.0)" fill="none" />
+    </svg>
+  );
+}
+
+// ── Radar range/azimuth panel ─────────────────────────────────────────────
+function RadarPanel({ width, height, color, seed = 41 }) {
+  const r = rng(seed);
+  const bins = 18, sweeps = 8;
+  const cells = [];
+  const tgtX = 12, tgtY = 4;
+  for (let i = 0; i < bins; i++) for (let j = 0; j < sweeps; j++) {
+    const d2 = (i - tgtX) ** 2 + (j - tgtY) ** 2 * 4;
+    const sig = Math.exp(-d2 / 8);
+    const noise = r() * 0.25;
+    cells.push({ i, j, v: Math.min(1, sig * 0.9 + noise) });
+  }
+  const cw = width / bins, ch = height / sweeps;
+  return (
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ display: 'block' }}>
+      {cells.map(({ i, j, v }, k) => (
+        <rect key={k} x={i * cw} y={j * ch} width={cw - 0.5} height={ch - 0.5} fill={color} opacity={0.1 + v * 0.85} />
+      ))}
+    </svg>
+  );
+}
+
+// ── Covariance heatmap ────────────────────────────────────────────────────
+function CovHeatmap({ C, width, height, color }) {
+  const d = C.length;
+  const cw = width / d;
+  const ch = height / d;
+  let absMax = 0;
+  for (let i = 0; i < d; i++) for (let j = 0; j < d; j++) absMax = Math.max(absMax, Math.abs(C[i][j]));
+  return (
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ display: 'block' }}>
+      {C.flatMap((row, i) => row.map((v, j) => {
+        const norm = absMax > 0 ? v / absMax : 0; // -1..1
+        const op = Math.min(1, Math.abs(norm));
+        const fill = norm >= 0 ? color : 'rgba(40,40,40,0.55)';
+        return (
+          <rect key={`${i}-${j}`} x={j * cw} y={i * ch} width={cw - 0.4} height={ch - 0.4} fill={fill} opacity={op} />
+        );
+      }))}
+      {/* Outer frame */}
+      <rect x={0} y={0} width={width} height={height} fill="none" stroke="var(--rule-soft, rgba(0,0,0,0.15))" />
+    </svg>
+  );
+}
+
+// ── Single domain panel ───────────────────────────────────────────────────
+function DomainPanel({ title, kicker, dataLabel, covLabel, X, Visual }) {
+  const C = useMemo(() => covariance(X), [X]);
+  const accent = 'var(--accent)';
+  return (
+    <div style={{
+      display: 'flex', flexDirection: 'column', gap: 16,
+      padding: 20,
+      background: 'var(--bg-2)',
+      border: '1px solid var(--rule-soft)',
+      borderRadius: 6,
+      minHeight: 0,
+    }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <div className="eyebrow" style={{ color: accent, fontSize: 14 }}>{kicker}</div>
+        <div style={{ fontFamily: 'var(--sans)', fontSize: 28, fontWeight: 600, color: 'var(--ink)', letterSpacing: '-0.02em' }}>{title}</div>
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div className="label" style={{ fontSize: 13 }}>{dataLabel}</div>
+        <div style={{ width: '100%', aspectRatio: '16/8', background: 'var(--bg)', borderRadius: 4, overflow: 'hidden', border: '1px solid var(--rule-soft)' }}>
+          <Visual X={X} width={400} height={160} color={accent} />
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, color: 'var(--ink-3)', fontFamily: 'var(--mono)', fontSize: 18 }}>
+        <span>↓</span>
+        <span style={{ fontSize: 13, letterSpacing: '0.06em', textTransform: 'uppercase' }}>covariance</span>
+        <span>↓</span>
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div className="label" style={{ fontSize: 13 }}>{covLabel}</div>
+        <div style={{ width: '70%', aspectRatio: '1/1', alignSelf: 'center', background: 'var(--bg)', borderRadius: 4, overflow: 'hidden' }}>
+          <CovHeatmap C={C} width={240} height={240} color={accent} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Main island ────────────────────────────────────────────────────────────
+export function SpdDomains() {
+  const eeg = useMemo(() => eegSignals(8, 200, 7), []);
+  const hsi = useMemo(() => hsiPixels(8, 200, 19), []);
+  const rad = useMemo(() => radarPulses(8, 200, 31), []);
+
+  return (
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(3, 1fr)',
+      gap: 32,
+      height: '100%',
+      alignItems: 'stretch',
+    }}>
+      <DomainPanel
+        kicker="Interfaces cerveau-machine"
+        title="EEG"
+        dataLabel="Signaux multi-canaux"
+        covLabel="Covariance spatiale entre canaux"
+        X={eeg}
+        Visual={SignalPlot}
+      />
+      <DomainPanel
+        kicker="Imagerie hyperspectrale"
+        title="Hyperspectral"
+        dataLabel="Cube de bandes spectrales"
+        covLabel="Covariance entre bandes"
+        X={hsi}
+        Visual={({ X, width, height, color }) => <HsiCube X={X} width={width} height={height} color={color} />}
+      />
+      <DomainPanel
+        kicker="Radar — détection"
+        title="Radar"
+        dataLabel="Cellules range-azimut"
+        covLabel="Covariance range-Doppler"
+        X={rad}
+        Visual={({ width, height, color }) => <RadarPanel width={width} height={height} color={color} seed={41} />}
+      />
+    </div>
+  );
+}
