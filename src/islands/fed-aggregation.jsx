@@ -153,7 +153,8 @@ export function FedAggregation() {
     const host = hostRef.current;
     if (!host) return;
 
-    let W = host.clientWidth || 1, H = host.clientHeight || 1;
+    let W = host.clientWidth  || 1920;
+    let H = host.clientHeight || 900;
     let canvasW = Math.max(100, W - PANEL_W);
 
     const canvas = document.createElement('canvas');
