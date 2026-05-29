@@ -477,119 +477,246 @@
   </section>
 
   <!-- ═══════════════════════════════════════
-       §4 · Contribution 1 — BatchNorm + ARMAGNAC
+       §4 · Contribution 1 — ARMAGNAC : BatchNorm paramétrique
        ═══════════════════════════════════════ -->
   <section-divider
-    label="BatchNorm SPD"
+    label="ARMAGNAC"
     kicker="Première contribution"
-    blurb="Moyennes alternatives + paramètre appris pour la batch-normalisation sur SPD">
+    blurb="Une batch-normalisation SPD paramétrique, à moyenne apprise">
   </section-divider>
 
-  <!-- §4.1 · The problem -->
+  <!-- §4.1 · BatchNorm on SPD: the block + where the mean shows up -->
   <section>
-    <slide-note>BatchNorm sur SPD (Brooks 2019) repose sur la moyenne de Fréchet — sans forme close, calculée par itérations de Karcher. Coût dominant à l'entraînement. Notre contribution : moyennes alternatives quasi-équivalentes + version paramétrique apprise (ARMAGNAC).</slide-note>
-    <slide-header title="BatchNorm sur SPD — le verrou de la moyenne"></slide-header>
+    <slide-note>BatchNorm SPD : recentrer le batch autour de l'identité via une moyenne sur la variété, puis re-biaiser avec un paramètre SPD appris Γ. Le verrou : quel mean choisit-on ? Le mean géométrique (Fréchet) est l'idéal géométrique, mais demande une itération à point fixe coûteuse.</slide-note>
+    <slide-header title="BatchNorm sur SPD — la recette"></slide-header>
     <div class="slide-body">
       <p class="lede" style="margin-bottom:24px;max-width:1500px;">
-        BatchNorm requiert une moyenne. Sur la variété SPD, la moyenne « naturelle » est la <strong>moyenne de Fréchet</strong> — minimiseur de la distance riemannienne quadratique.
+        On insère un bloc de BatchNorm SPD entre les couches BiMap+ReEig. Il recentre le batch autour de l'identité — via une <strong>moyenne sur la variété</strong> — puis re-biaise avec un paramètre SPD appris.
       </p>
 
       <div class="cols cols-2" style="gap:48px;align-items:start;margin-top:12px;">
         <div data-step>
-          <div class="eyebrow" style="margin-bottom:12px;">Moyenne de Fréchet</div>
+          <div class="eyebrow" style="margin-bottom:12px;">Entraînement</div>
           <div class="display-math">
-            \bar{\Sigma} = \arg\min_{\Sigma \in \mathcal{S}^{++}} \sum_{i=1}^B d_R(\Sigma, \Sigma_i)^2
+            \{\Sigma\}_b \;\leftarrow\; \Gamma\, M_b^{-1/2}\,\{\Sigma\}_b\, M_b^{-1/2}\,\Gamma
           </div>
-          <p class="body" style="font-size:18px;color:var(--ink-2);margin-top:10px;">
-            Pas de forme close ; résolu par <strong>itérations de Karcher</strong> à chaque batch :
+          <p class="body" style="font-size:17px;color:var(--ink-3);margin-top:8px;">
+            <span class="math">M_b</span> = moyenne du batch ; <span class="math">\Gamma \in \mathcal{S}^{++}</span> = biais appris ; on entretient une moyenne globale <span class="math">R</span> par momentum <span class="math">\gamma</span>.
           </p>
-          <div style="margin-top:10px;padding:12px 16px;background:var(--bg-2);border-left:3px solid var(--rule);font-family:var(--mono);font-size:16px;color:var(--ink-3);">
-            for k in 1..K : <br>
-            &nbsp;&nbsp;&nbsp;&nbsp;ΣᵢLog(Σ_k, Σᵢ) → mise à jour de Σ_k
-          </div>
         </div>
 
         <div data-step>
-          <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Le coût caché</div>
-          <p class="body" style="font-size:20px;color:var(--ink-2);">
-            À chaque batch, à chaque couche BatchNorm : <strong>K SVD complètes</strong> par échantillon.
-          </p>
-          <div class="theorem" style="margin-top:20px;">
-            <div class="theorem-tag">Symptôme</div>
-            <div class="theorem-body" style="font-size:19px;">
-              Le temps d'entraînement est dominé par la moyenne — sur certaines configurations, BatchNorm représente plus de la moitié du wall-clock.
-            </div>
+          <div class="eyebrow" style="margin-bottom:12px;">Inférence</div>
+          <div class="display-math">
+            \Sigma \;\leftarrow\; \Gamma\, R^{-1/2}\,\Sigma\, R^{-1/2}\,\Gamma
           </div>
+          <p class="body" style="font-size:17px;color:var(--ink-3);margin-top:8px;">
+            La moyenne <span class="math">R</span> du training remplace <span class="math">M_b</span> — analogie directe avec BatchNorm euclidienne.
+          </p>
+        </div>
+      </div>
+
+      <div data-step class="theorem" style="margin-top:28px;max-width:1500px;">
+        <div class="theorem-tag">Le verrou</div>
+        <div class="theorem-body" style="font-size:20px;">
+          Tout repose sur le choix de <span class="math">M_b</span>. Le candidat « naturel » — la <strong>moyenne géométrique de Fréchet</strong> — n'a pas de forme close et exige une itération à point fixe avec eigen-décompositions à chaque passe.
         </div>
       </div>
     </div>
     <slide-footer></slide-footer>
   </section>
 
-  <!-- §4.2 · Our alternatives + ARMAGNAC -->
+  <!-- §4.2 · Hierarchy of means: A, H, GAH, geometric -->
   <section>
-    <slide-note>Notre contribution : (i) des moyennes alternatives — par exemple log-euclidienne, moyenne harmonique, ou hybrides — qui approchent la moyenne de Fréchet avec une fraction du coût ; (ii) ARMAGNAC, une version paramétrique apprise qui apprend la moyenne adaptée aux données. Gain en temps d'entraînement jusqu'à ×5 sans dégradation notable, parfois amélioration.</slide-note>
-    <slide-header title="Deux contributions sur la moyenne"></slide-header>
+    <slide-note>Hiérarchie des moyennes SPD : arithmétique (MLE Wishart), harmonique (MLE inverse-Wishart), GAH = moyenne géométrique de A et H = minimiseur de la KL symétrisée. La moyenne géométrique est l'idéal mais coûte cher. GAH est un compromis bon marché — mais figé à mi-chemin entre A et H.</slide-note>
+    <slide-header title="Quelle moyenne ?"></slide-header>
     <div class="slide-body">
-      <div style="display:flex;flex-direction:column;gap:22px;margin-top:16px;max-width:1500px;">
+      <div style="display:flex;flex-direction:column;gap:14px;margin-top:16px;max-width:1620px;">
 
-        <div data-step style="display:flex;gap:28px;padding:24px 28px;background:var(--bg-2);border-left:4px solid var(--accent);border-radius:0 6px 6px 0;">
-          <div style="flex-shrink:0;width:80px;font-family:var(--mono);font-size:32px;font-weight:700;color:var(--accent);line-height:1;">01</div>
-          <div style="flex:1;">
-            <div style="font-family:var(--sans);font-size:26px;font-weight:600;color:var(--ink);">Moyennes alternatives, calcul direct</div>
-            <p class="body" style="font-size:19px;color:var(--ink-2);margin-top:8px;">
-              On remplace la moyenne de Fréchet par des moyennes <strong>en forme close</strong> (log-euclidienne, harmonique, hybrides) — quasi-équivalentes statistiquement pour la BatchNorm, mais sans boucle de Karcher.
-            </p>
-            <div style="display:inline-block;margin-top:12px;padding:6px 14px;background:var(--accent);color:var(--bg);font-family:var(--mono);font-size:15px;font-weight:600;border-radius:4px;letter-spacing:0.04em;">
-              jusqu'à × 5 sur le temps d'entraînement
-            </div>
-          </div>
+        <div data-step style="display:grid;grid-template-columns:120px 1fr 1.2fr;gap:24px;align-items:center;padding:16px 22px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:6px;">
+          <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--ink-2);text-align:center;">Arithmétique</div>
+          <div><span class="math">A = \tfrac{1}{K}\sum_k \Sigma_k</span></div>
+          <div class="small" style="font-size:16px;color:var(--ink-3);">forme close · MLE sous Wishart · <span class="math">\arg\min \sum_k D_{KL}(A, \Sigma_k)</span></div>
         </div>
 
-        <div data-step style="display:flex;gap:28px;padding:24px 28px;background:var(--bg-2);border-left:4px solid var(--accent);border-radius:0 6px 6px 0;">
-          <div style="flex-shrink:0;width:80px;font-family:var(--mono);font-size:32px;font-weight:700;color:var(--accent);line-height:1;">02</div>
-          <div style="flex:1;">
-            <div style="font-family:var(--sans);font-size:26px;font-weight:600;color:var(--ink);">ARMAGNAC — moyenne paramétrique apprise</div>
-            <p class="body" style="font-size:19px;color:var(--ink-2);margin-top:8px;">
-              Plutôt que de fixer la moyenne <em>a priori</em>, on introduit un <strong>paramètre appris</strong> qui interpole entre plusieurs moyennes selon les données.
-              Le réseau choisit lui-même la géométrie de normalisation la mieux adaptée à chaque couche.
-            </p>
-            <div style="display:inline-block;margin-top:12px;padding:6px 14px;background:var(--ink);color:var(--bg);font-family:var(--mono);font-size:15px;font-weight:600;border-radius:4px;letter-spacing:0.04em;">
-              un seul scalaire par couche, différentiable
-            </div>
-          </div>
+        <div data-step style="display:grid;grid-template-columns:120px 1fr 1.2fr;gap:24px;align-items:center;padding:16px 22px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:6px;">
+          <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--ink-2);text-align:center;">Harmonique</div>
+          <div><span class="math">H = \left(\tfrac{1}{K}\sum_k \Sigma_k^{-1}\right)^{-1}</span></div>
+          <div class="small" style="font-size:16px;color:var(--ink-3);">forme close · MLE sous Wishart inverse · <span class="math">\arg\min \sum_k D_{KL}(\Sigma_k, H)</span></div>
         </div>
 
-        <div data-step class="theorem" style="margin-top:8px;">
-          <div class="theorem-tag">Bilan</div>
-          <div class="theorem-body" style="font-size:20px;">
-            Une BatchNorm SPD <strong>aussi performante</strong> que celle de Brooks, mais <strong>jusqu'à cinq fois plus rapide</strong> — et qui peut <em>s'adapter</em> aux données.
-          </div>
+        <div data-step style="display:grid;grid-template-columns:120px 1fr 1.2fr;gap:24px;align-items:center;padding:16px 22px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:6px;">
+          <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--ink-2);text-align:center;">GAH</div>
+          <div><span class="math">\Theta = A \,\#_{1/2}\, H</span></div>
+          <div class="small" style="font-size:16px;color:var(--ink-3);">forme close · minimiseur de la <strong>KL symétrisée</strong> · poids fixé à <span class="math">\tfrac{1}{2}</span></div>
         </div>
 
+        <div data-step style="display:grid;grid-template-columns:120px 1fr 1.2fr;gap:24px;align-items:center;padding:16px 22px;background:var(--bg-2);border:1px solid var(--accent);border-radius:6px;">
+          <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--accent);text-align:center;">Géométrique</div>
+          <div><span class="math">G = \arg\min_M \sum_k d_R(M, \Sigma_k)^2</span></div>
+          <div class="small" style="font-size:16px;color:var(--ink-3);">idéal géométrique · <strong>pas de forme close</strong> · point fixe + eig à chaque passe</div>
+        </div>
+
+      </div>
+
+      <div data-step class="theorem" style="margin-top:24px;max-width:1620px;">
+        <div class="theorem-tag">Question</div>
+        <div class="theorem-body" style="font-size:20px;">
+          GAH est un bon compromis cheap, mais fixe le poids à <span class="math">\tfrac{1}{2}</span>. Pourquoi ne pas <strong>apprendre</strong> ce poids à partir des données ?
+        </div>
       </div>
     </div>
     <slide-footer></slide-footer>
   </section>
 
-  <!-- §4.3 · BatchNorm results placeholder -->
+  <!-- §4.3 · ARMAGNAC — the method -->
   <section>
-    <slide-note>Résultats BatchNorm : (i) wall-clock training time ; (ii) précision finale comparée à la BatchNorm de Brooks. Placeholders.</slide-note>
-    <slide-header title="BatchNorm — résultats"></slide-header>
+    <slide-note>ARMAGNAC = bAtch noRMalisation pArametric Geometric harmoNic ArithmetiC. Φ = H #_t A : moyenne géométrique pondérée le long du géodésique reliant A et H. Un seul scalaire t ∈ [0,1] appris : t=1 → arithmétique, t=0 → harmonique, t=0.5 → GAH. Forme close pour le forward ET le backward.</slide-note>
+    <slide-header title="ARMAGNAC — un mean paramétrique"></slide-header>
     <div class="slide-body">
-      <div class="cols cols-2" style="gap:48px;margin-top:24px;">
-        <div data-step>
-          <div class="eyebrow" style="margin-bottom:12px;">Temps d'entraînement</div>
-          <div style="aspect-ratio:16/10;background:var(--bg-2);border:2px dashed var(--rule-soft);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--ink-3);font-family:var(--mono);font-size:14px;letter-spacing:0.05em;text-transform:uppercase;">
-            graphique — à venir
+      <p class="lede" style="margin-bottom:20px;max-width:1600px;">
+        Au lieu de figer <span class="math">\tfrac{1}{2}</span>, on apprend un scalaire <span class="math">t \in [0,1]</span> qui glisse <strong>le long du géodésique reliant A et H</strong>.
+      </p>
+
+      <div data-step style="padding:24px 28px;background:var(--bg-2);border-left:4px solid var(--accent);border-radius:0 6px 6px 0;max-width:1600px;">
+        <div class="eyebrow" style="color:var(--accent);margin-bottom:10px;">Forward — forme close</div>
+        <div class="display-math" style="font-size:26px;">
+          \Phi \;=\; H \,\#_t\, A \;=\; H^{1/2}\, \big(\underbrace{H^{-1/2} A H^{-1/2}}_{\displaystyle Q}\big)^{t}\, H^{1/2}
+        </div>
+        <div style="display:flex;gap:36px;margin-top:14px;font-family:var(--mono);font-size:17px;color:var(--ink-2);">
+          <div><span style="color:var(--ink-3);">t = 0</span> &nbsp;&nbsp; → &nbsp; harmonique</div>
+          <div><span style="color:var(--ink-3);">t = 0,5</span> &nbsp; → &nbsp; GAH</div>
+          <div><span style="color:var(--ink-3);">t = 1</span> &nbsp;&nbsp; → &nbsp; arithmétique</div>
+        </div>
+      </div>
+
+      <div data-step style="padding:24px 28px;background:var(--bg-2);border-left:4px solid var(--accent);border-radius:0 6px 6px 0;max-width:1600px;margin-top:18px;">
+        <div class="eyebrow" style="color:var(--accent);margin-bottom:10px;">Backward — gradients explicites (Proposition 1)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;">
+          <div>
+            <div class="small" style="font-size:14px;letter-spacing:0.05em;text-transform:uppercase;color:var(--ink-3);font-family:var(--mono);margin-bottom:6px;">vis-à-vis de <span class="math">t</span></div>
+            <div class="display-math" style="font-size:19px;">\tfrac{\partial \ell}{\partial t} = \mathrm{tr}\!\left( H^{1/2}\,\tfrac{\partial \ell}{\partial \Phi}\, H^{1/2}\, \log Q\, Q^{t}\right)</div>
+          </div>
+          <div>
+            <div class="small" style="font-size:14px;letter-spacing:0.05em;text-transform:uppercase;color:var(--ink-3);font-family:var(--mono);margin-bottom:6px;">vis-à-vis de <span class="math">A</span>, <span class="math">H</span>, puis <span class="math">\Sigma_k</span></div>
+            <p class="body" style="font-size:17px;color:var(--ink-2);margin:0;line-height:1.5;">
+              Via la formule de <strong>Daleckiĭ–Kreĭn</strong> et matrices de Loewner pour différentier <span class="math">Q^t</span>. Aucun solveur itératif dans la passe arrière.
+            </p>
           </div>
         </div>
+      </div>
+
+      <div data-step class="theorem" style="margin-top:24px;max-width:1600px;">
+        <div class="theorem-tag">Coût · expressivité</div>
+        <div class="theorem-body" style="font-size:19px;">
+          <strong>Un seul scalaire</strong> appris par couche, <strong>forme close</strong> partout — on garde la frugalité des moyennes simples et l'on gagne la capacité de s'adapter aux données.
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §4.3b · ARMAGNAC t animation — Φ(t) morphing between H and A -->
+  <section>
+    <slide-note>Animation auto-play : Φ(t) glisse continûment entre H (t=0) et A (t=1), passant par GAH (t=0.5). Les matrices SPD 2×2 sont visualisées comme des ellipses (axes = vecteurs propres, demi-axes = √valeurs propres). On voit Φ se déformer en suivant la géodésique. Touche P pour basculer pause/lecture.</slide-note>
+    <slide-header title="Φ(t) en mouvement"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <armagnac-t></armagnac-t>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §4.4 · Adaptivity on synthetic data -->
+  <section>
+    <slide-note>Données simulées — Wishart vs inverse-Wishart, 64×64, 3 classes, 360 échantillons. L'arithmétique est le MLE Wishart, l'harmonique le MLE inverse-Wishart. ARMAGNAC apprend t=0.91 sur Wishart (vers A) et t=0.12 sur inverse-Wishart (vers H) : il découvre le bon régime tout seul. Ne pas survendre : un mean fixe correct gagne légèrement, mais un mean fixe FAUX s'effondre (arithmétique → 45% sur inverse-Wishart) alors qu'ARMAGNAC reste robuste.</slide-note>
+    <slide-header title="Données simulées — ARMAGNAC trouve le bon mean"></slide-header>
+    <div class="slide-body">
+      <div class="cols cols-2" style="gap:48px;margin-top:18px;align-items:start;">
         <div data-step>
-          <div class="eyebrow" style="margin-bottom:12px;">Précision finale</div>
-          <div style="aspect-ratio:16/10;background:var(--bg-2);border:2px dashed var(--rule-soft);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--ink-3);font-family:var(--mono);font-size:14px;letter-spacing:0.05em;text-transform:uppercase;">
-            graphique — à venir
+          <div class="eyebrow" style="margin-bottom:12px;">Protocole</div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-family:var(--mono);font-size:17px;color:var(--ink-2);">
+            <div><span style="color:var(--ink-3);">Données</span> &nbsp;&nbsp; Wishart vs inverse-Wishart, 64×64</div>
+            <div><span style="color:var(--ink-3);">3 classes</span> &nbsp;&nbsp; moyennes perturbées · 360 échantillons</div>
+            <div><span style="color:var(--ink-3);">Réseau</span> &nbsp;&nbsp; minimal — BatchNorm + FC</div>
+            <div><span style="color:var(--ink-3);">Oracle</span> &nbsp;&nbsp; A est MLE Wishart · H est MLE inverse-Wishart</div>
+          </div>
+          <p class="body" style="font-size:18px;color:var(--ink-2);margin-top:18px;line-height:1.55;">
+            Sur chaque famille, on regarde quelle valeur de <span class="math">t</span> ARMAGNAC choisit, et si elle correspond au mean attendu.
+          </p>
+        </div>
+
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);"><span class="math">t</span> appris — résultat</div>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+
+            <div style="padding:18px 22px;background:var(--bg-2);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;">
+                <div style="font-family:var(--sans);font-size:21px;font-weight:600;color:var(--ink);">Wishart</div>
+                <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--accent);">t = 0,91</div>
+              </div>
+              <div class="small" style="font-size:15px;color:var(--ink-3);margin-top:4px;font-family:var(--mono);">→ ARMAGNAC penche vers A — comme attendu</div>
+            </div>
+
+            <div style="padding:18px 22px;background:var(--bg-2);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;">
+                <div style="font-family:var(--sans);font-size:21px;font-weight:600;color:var(--ink);">Inverse-Wishart</div>
+                <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--accent);">t = 0,12</div>
+              </div>
+              <div class="small" style="font-size:15px;color:var(--ink-3);margin-top:4px;font-family:var(--mono);">→ ARMAGNAC penche vers H — comme attendu</div>
+            </div>
+
           </div>
         </div>
+      </div>
+
+      <div data-step style="margin-top:22px;padding:18px 22px;background:var(--tint);border-left:3px solid var(--accent);font-size:19px;color:var(--ink-2);line-height:1.55;max-width:1600px;">
+        <strong>Robustesse à la modélisation :</strong> un mean fixe incorrect <em>s'effondre</em> (l'arithmétique chute à 45 % sur inverse-Wishart) ; ARMAGNAC reste proche du bon mean automatiquement — on ne paye pas le prix d'un mauvais choix <em>a priori</em>.
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §4.5 · Real data results -->
+  <section>
+    <slide-note>HyperLeaf (4 variétés × 3 niveaux de fertilisation, 600 échantillons, covariances 204×204) et Rices90 (4 variétés de riz, 384 échantillons, covariances 256×256). Architecture : un bloc SPD + FC. ARMAGNAC apprend t ≈ 0.5 dans les deux cas — proche de GAH mais avec une variance plus basse et de meilleurs scores. La moyenne géométrique gagne légèrement sur Rices90 mais coûte ~9× plus cher à entraîner. Placeholder pour le graphique.</slide-note>
+    <slide-header title="Imagerie hyperspectrale — HyperLeaf &amp; Rices90"></slide-header>
+    <div class="slide-body">
+      <div class="cols cols-2" style="gap:36px;margin-top:18px;align-items:start;">
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;">HyperLeaf</div>
+          <div style="font-family:var(--mono);font-size:15px;color:var(--ink-3);margin-bottom:14px;">4 variétés × 3 fertilisations · 600 échantillons · covariances 204×204</div>
+          <div style="display:flex;flex-direction:column;gap:6px;font-family:var(--mono);font-size:16px;color:var(--ink-2);">
+            <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--accent);color:var(--bg);font-weight:600;border-radius:3px;">
+              <span>ARMAGNAC</span><span>80,6 ± 4,2 %</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:6px 10px;"><span>Arithmétique</span><span>78,8</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 10px;"><span>Géométrique</span><span>78,7</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 10px;"><span>Harmonique</span><span>77,0</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 10px;"><span>GAH</span><span>75,3</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 10px;color:var(--ink-3);"><span>sans BN</span><span>73,5</span></div>
+          </div>
+        </div>
+
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;">Rices90</div>
+          <div style="font-family:var(--mono);font-size:15px;color:var(--ink-3);margin-bottom:14px;">4 variétés de riz · 384 échantillons · covariances 256×256</div>
+          <div style="display:flex;flex-direction:column;gap:6px;font-family:var(--mono);font-size:16px;color:var(--ink-2);">
+            <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--ink);color:var(--bg);font-weight:600;border-radius:3px;">
+              <span>Géométrique <span style="font-weight:400;opacity:0.6;">(~9× plus cher)</span></span><span>93,7 ± 2,8 %</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--accent);color:var(--bg);font-weight:600;border-radius:3px;">
+              <span>ARMAGNAC</span><span>91,3 ± 4,0 %</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:6px 10px;"><span>Arithmétique</span><span>91,8</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 10px;"><span>GAH</span><span>89,0</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 10px;"><span>Harmonique</span><span>87,9</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 10px;color:var(--ink-3);"><span>sans BN</span><span>85,3</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div data-step style="margin-top:24px;padding:18px 22px;background:var(--tint);border-left:3px solid var(--accent);font-size:19px;color:var(--ink-2);line-height:1.55;max-width:1620px;">
+        <strong>Lecture :</strong> ARMAGNAC apprend <span class="math">t \approx 0{,}5</span> dans les deux cas — proche de GAH, mais avec une <strong>variance plus basse</strong> et un meilleur score moyen. La moyenne géométrique gagne légèrement sur Rices90, au prix d'un entraînement <strong>~9× plus long</strong>.
       </div>
     </div>
     <slide-footer></slide-footer>

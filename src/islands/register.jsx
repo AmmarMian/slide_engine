@@ -188,6 +188,11 @@ defineReactElement('fed-aggregation', null, {
   lazy: () => import('./fed-aggregation.jsx').then(m => m.FedAggregation),
 });
 
+// ARMAGNAC t-parameter visualisation (2×2 SPD as ellipses, auto-play loop).
+defineReactElement('armagnac-t', null, {
+  lazy: () => import('./armagnac-t.jsx').then(m => m.ArmagnacT),
+});
+
 // Three.js islands — lazy loaded (~32MB chunk, only fetched when the tag appears)
 defineReactElement('riemann-primer', null, {
   lazy: () => import('./riemann-primer.jsx').then(m => m.RiemannPrimer),
