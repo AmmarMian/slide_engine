@@ -110,6 +110,26 @@
     <slide-footer></slide-footer>
   </section>
 
+  <!-- §1.1c · How a covariance is computed — HSI sliding window -->
+  <section>
+    <slide-note>Démonstration pas-à-pas : on isole une fenêtre glissante sur une image hyperspectrale, on collecte les signatures spectrales des pixels, on les centre, on calcule les produits extérieurs et enfin la covariance. Touches flèches pour avancer.</slide-note>
+    <slide-header title="Comment se construit Σ — hyperspectral"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <hsi-cov></hsi-cov>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §1.1d · How a covariance is computed — EEG spatial cov -->
+  <section>
+    <slide-note>Pendant pédagogique côté EEG : la covariance spatiale entre canaux. Les D canaux sont mesurés simultanément, on centre chaque canal, puis on construit Σ entrée par entrée. La topographie sur le casque éclaire la signification géométrique de chaque coefficient.</slide-note>
+    <slide-header title="Comment se construit Σ — EEG spatial"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <eeg-cov></eeg-cov>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
 
   <!-- §1.2 · Riemannian geometry primer (stepped 3D) -->
   <section>
@@ -186,7 +206,7 @@
           <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Couches paramétrées</div>
           <div data-step style="border-left:3px solid var(--accent);padding:18px 20px;background:var(--bg-2);">
             <div style="font-family:var(--mono);font-size:22px;font-weight:600;color:var(--ink);">BiMap<sub style="font-size:14px;color:var(--ink-3);">k</sub></div>
-            <div class="display-math" style="margin:12px 0 8px;">
+            <div class="math-display" style="margin:12px 0 8px;">
               X_k = W_k\,X_{k-1}\,W_k^\top
             </div>
             <div class="body" style="font-size:18px;color:var(--ink-2);">
@@ -222,7 +242,7 @@
             Soit <span class="math">f(X) = U\,g(\Sigma)\,U^\top</span> avec <span class="math">X = U\Sigma U^\top</span>.
             Le différentiel de <span class="math">\mathcal{L}</span> par rapport à <span class="math">X</span> s'écrit (Ionescu 2015) :
           </div>
-          <div class="display-math">
+          <div class="math-display">
             \frac{\partial \mathcal{L}}{\partial X} = U\left( P \odot (U^\top \tfrac{\partial \mathcal{L}}{\partial U}) + \mathrm{diag}\!\left(\tfrac{\partial \mathcal{L}}{\partial \Sigma}\right)\right) U^\top
           </div>
           <div class="small" style="color:var(--ink-3);margin-top:10px;font-size:16px;">
@@ -296,15 +316,10 @@
   </section>
 
   <!-- ═══════════════════════════════════════
-       §3 · GPR application
+       §2.6+ · GPR application (sits inside the SPDNet section)
        ═══════════════════════════════════════ -->
-  <section-divider
-    label="Application"
-    kicker="Radar à pénétration de sol"
-    blurb="Classification d'objets enterrés à partir de données GPR">
-  </section-divider>
 
-  <!-- §3.1 · GPR motivation -->
+  <!-- §2.6 · GPR motivation -->
   <section>
     <slide-note>Le radar GPR fournit des B-scans bruités à faible rapport signal-sur-bruit. Les objets enterrés y apparaissent comme des hyperboles. Tâche : classifier l'objet à partir d'une vignette d'hyperbole détectée. Deux écueils : les CNN superficiels manquent de représentation riche ; les gros modèles CV ont trop de paramètres pour le peu de données étiquetées disponibles.</slide-note>
     <slide-header title="GPR — pourquoi c'est difficile"></slide-header>
@@ -497,7 +512,7 @@
       <div class="cols cols-2" style="gap:48px;align-items:start;margin-top:12px;">
         <div data-step>
           <div class="eyebrow" style="margin-bottom:12px;">Entraînement</div>
-          <div class="display-math">
+          <div class="math-display">
             \{\Sigma\}_b \;\leftarrow\; \Gamma\, M_b^{-1/2}\,\{\Sigma\}_b\, M_b^{-1/2}\,\Gamma
           </div>
           <p class="body" style="font-size:17px;color:var(--ink-3);margin-top:8px;">
@@ -507,7 +522,7 @@
 
         <div data-step>
           <div class="eyebrow" style="margin-bottom:12px;">Inférence</div>
-          <div class="display-math">
+          <div class="math-display">
             \Sigma \;\leftarrow\; \Gamma\, R^{-1/2}\,\Sigma\, R^{-1/2}\,\Gamma
           </div>
           <p class="body" style="font-size:17px;color:var(--ink-3);margin-top:8px;">
@@ -533,25 +548,25 @@
     <div class="slide-body">
       <div style="display:flex;flex-direction:column;gap:14px;margin-top:16px;max-width:1620px;">
 
-        <div data-step style="display:grid;grid-template-columns:120px 1fr 1.2fr;gap:24px;align-items:center;padding:16px 22px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:6px;">
+        <div data-step style="display:grid;grid-template-columns:180px 1fr 1.3fr;gap:32px;align-items:center;padding:18px 24px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:6px;">
           <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--ink-2);text-align:center;">Arithmétique</div>
           <div><span class="math">A = \tfrac{1}{K}\sum_k \Sigma_k</span></div>
           <div class="small" style="font-size:16px;color:var(--ink-3);">forme close · MLE sous Wishart · <span class="math">\arg\min \sum_k D_{KL}(A, \Sigma_k)</span></div>
         </div>
 
-        <div data-step style="display:grid;grid-template-columns:120px 1fr 1.2fr;gap:24px;align-items:center;padding:16px 22px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:6px;">
+        <div data-step style="display:grid;grid-template-columns:180px 1fr 1.3fr;gap:32px;align-items:center;padding:18px 24px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:6px;">
           <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--ink-2);text-align:center;">Harmonique</div>
           <div><span class="math">H = \left(\tfrac{1}{K}\sum_k \Sigma_k^{-1}\right)^{-1}</span></div>
           <div class="small" style="font-size:16px;color:var(--ink-3);">forme close · MLE sous Wishart inverse · <span class="math">\arg\min \sum_k D_{KL}(\Sigma_k, H)</span></div>
         </div>
 
-        <div data-step style="display:grid;grid-template-columns:120px 1fr 1.2fr;gap:24px;align-items:center;padding:16px 22px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:6px;">
+        <div data-step style="display:grid;grid-template-columns:180px 1fr 1.3fr;gap:32px;align-items:center;padding:18px 24px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:6px;">
           <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--ink-2);text-align:center;">GAH</div>
           <div><span class="math">\Theta = A \,\#_{1/2}\, H</span></div>
           <div class="small" style="font-size:16px;color:var(--ink-3);">forme close · minimiseur de la <strong>KL symétrisée</strong> · poids fixé à <span class="math">\tfrac{1}{2}</span></div>
         </div>
 
-        <div data-step style="display:grid;grid-template-columns:120px 1fr 1.2fr;gap:24px;align-items:center;padding:16px 22px;background:var(--bg-2);border:1px solid var(--accent);border-radius:6px;">
+        <div data-step style="display:grid;grid-template-columns:180px 1fr 1.3fr;gap:32px;align-items:center;padding:18px 24px;background:var(--bg-2);border:1px solid var(--accent);border-radius:6px;">
           <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--accent);text-align:center;">Géométrique</div>
           <div><span class="math">G = \arg\min_M \sum_k d_R(M, \Sigma_k)^2</span></div>
           <div class="small" style="font-size:16px;color:var(--ink-3);">idéal géométrique · <strong>pas de forme close</strong> · point fixe + eig à chaque passe</div>
@@ -580,7 +595,7 @@
 
       <div data-step style="padding:24px 28px;background:var(--bg-2);border-left:4px solid var(--accent);border-radius:0 6px 6px 0;max-width:1600px;">
         <div class="eyebrow" style="color:var(--accent);margin-bottom:10px;">Forward — forme close</div>
-        <div class="display-math" style="font-size:26px;">
+        <div class="math-display" style="font-size:26px;">
           \Phi \;=\; H \,\#_t\, A \;=\; H^{1/2}\, \big(\underbrace{H^{-1/2} A H^{-1/2}}_{\displaystyle Q}\big)^{t}\, H^{1/2}
         </div>
         <div style="display:flex;gap:36px;margin-top:14px;font-family:var(--mono);font-size:17px;color:var(--ink-2);">
@@ -595,7 +610,7 @@
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;">
           <div>
             <div class="small" style="font-size:14px;letter-spacing:0.05em;text-transform:uppercase;color:var(--ink-3);font-family:var(--mono);margin-bottom:6px;">vis-à-vis de <span class="math">t</span></div>
-            <div class="display-math" style="font-size:19px;">\tfrac{\partial \ell}{\partial t} = \mathrm{tr}\!\left( H^{1/2}\,\tfrac{\partial \ell}{\partial \Phi}\, H^{1/2}\, \log Q\, Q^{t}\right)</div>
+            <div class="math-display" style="font-size:19px;">\tfrac{\partial \ell}{\partial t} = \mathrm{tr}\!\left( H^{1/2}\,\tfrac{\partial \ell}{\partial \Phi}\, H^{1/2}\, \log Q\, Q^{t}\right)</div>
           </div>
           <div>
             <div class="small" style="font-size:14px;letter-spacing:0.05em;text-transform:uppercase;color:var(--ink-3);font-family:var(--mono);margin-bottom:6px;">vis-à-vis de <span class="math">A</span>, <span class="math">H</span>, puis <span class="math">\Sigma_k</span></div>
@@ -808,7 +823,7 @@
             <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--accent);">RFedProj</div>
             <div class="small" style="color:var(--ink-3);">le plus simple — pas besoin de mémoriser l'itéré global précédent</div>
           </div>
-          <div class="display-math" style="margin:8px 0 4px;">
+          <div class="math-display" style="margin:8px 0 4px;">
             x_{t+1} \;=\; P_{\mathcal{M}}\!\left(\tfrac{1}{k}\sum_{i \in S_t} x^{(i)}_{t,\tau}\right)
           </div>
           <p class="small" style="font-size:16px;color:var(--ink-3);margin-top:6px;">
@@ -821,7 +836,7 @@
             <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--accent);">RFedRL</div>
             <div class="small" style="color:var(--ink-3);">retracted-lifted — relève les déplacements au tangent, moyenne, rétracte</div>
           </div>
-          <div class="display-math" style="margin:8px 0 4px;">
+          <div class="math-display" style="margin:8px 0 4px;">
             x_{t+1} \;=\; P_{\mathcal{M}}\!\left(x_t \;+\; \tfrac{1}{k}\sum_{i \in S_t} P_{x_t}\!\left(x^{(i)}_{t,\tau} - x_t\right)\right)
           </div>
           <p class="small" style="font-size:16px;color:var(--ink-3);margin-top:6px;">
@@ -850,7 +865,7 @@
         <div class="theorem-tag">Théorème <span class="theorem-name">RFedProj &amp; RFedRL (sous-mvts compacts)</span></div>
         <div class="theorem-body" style="font-size:19px;">
           Sous lissité Lipschitz des objectifs clients et lissité proximale de <span class="math">\mathcal{M}</span> :
-          <div class="display-math" style="margin:14px 0;">
+          <div class="math-display" style="margin:14px 0;">
             \tfrac{1}{T}\sum_{t=1}^T \mathbb{E}\|\mathrm{grad}\,F(x_t)\|^2 \;=\; \mathcal{O}\!\left(\tfrac{1}{\sqrt{T}}\right) + \mathcal{O}\!\left(\tfrac{1}{k\sqrt{T}}\Big(\tfrac{n-k}{n-1}\sigma^2 + \tfrac{\sigma^2_{sg}}{B}\Big)\right)
           </div>
         </div>

@@ -26,18 +26,18 @@ const RED    = '#d23b1c';
 
 // ── Diagram geometry ─────────────────────────────────────────────────────
 const VB_W = 1920;
-const VB_H = 760;
-const FWD_Y = 220;   // forward boxes vertical center
-const BWD_Y = 560;   // backward boxes vertical center
-const BOX_W = 110;
-const BOX_H = 80;
+const VB_H = 900;
+const FWD_Y = 260;   // forward boxes vertical center
+const BWD_Y = 680;   // backward boxes vertical center
+const BOX_W = 130;
+const BOX_H = 96;
 
 const FWD = [
-  { id: 'f1',   x: 320,  short: 'f',  sub: '1',     skipDots: false },
-  { id: 'fl-1', x: 880,  short: 'f',  sub: 'ℓ−1',   skipDots: true  }, // dots come before this
-  { id: 'fl',   x: 1220, short: 'f',  sub: 'ℓ',     skipDots: false },
+  { id: 'f1',   x: 340,  short: 'f',  sub: '1',     skipDots: false },
+  { id: 'fl-1', x: 900,  short: 'f',  sub: 'ℓ−1',   skipDots: true  },
+  { id: 'fl',   x: 1260, short: 'f',  sub: 'ℓ',     skipDots: false },
 ];
-const LOSS_X = 1560;
+const LOSS_X = 1620;
 
 // X-coordinates of "between-box" labels on the forward row
 const FWD_LABELS = [
@@ -227,6 +227,8 @@ function FwdBox({ x, y, sub, active, reached, isLoss }) {
 
 // ── Backward-row box (dashed) ────────────────────────────────────────────
 function BwdBox({ x, y, sub, active }) {
+  // Combined ∇f_sub label rendered as a single text element so spacing stays clean
+  const color = active ? RED : INK2;
   return (
     <g>
       <rect x={x - BOX_W / 2} y={y - BOX_H / 2} width={BOX_W} height={BOX_H}
@@ -235,13 +237,14 @@ function BwdBox({ x, y, sub, active }) {
             strokeWidth={active ? 3 : 1.5}
             strokeDasharray="6 4"
             style={{ transition: 'stroke 280ms, stroke-width 280ms' }} />
-      <g>
-        <text x={x - 6} y={y + 12} textAnchor="middle"
-              fontFamily="var(--serif), Georgia, serif"
-              fontSize="30" fill={active ? RED : INK2}
-              style={{ transition: 'fill 280ms' }}>∇</text>
-        <MathLabel x={x + 14} y={y + 12} base="f" sub={sub} fill={active ? RED : INK2} fontSize={30} />
-      </g>
+      <text x={x} y={y + 14} textAnchor="middle"
+            fontFamily="var(--serif), Georgia, serif"
+            fontSize="34" fill={color}
+            style={{ transition: 'fill 280ms' }}>
+        <tspan fontStyle="normal">∇</tspan>
+        <tspan dx="2" fontStyle="italic">f</tspan>
+        <tspan dy="8" dx="1" fontSize="22" fontStyle="italic">{sub}</tspan>
+      </text>
     </g>
   );
 }

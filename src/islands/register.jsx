@@ -193,6 +193,16 @@ defineReactElement('armagnac-t', null, {
   lazy: () => import('./armagnac-t.jsx').then(m => m.ArmagnacT),
 });
 
+// Hyperspectral sliding-window covariance tutorial.
+defineReactElement('hsi-cov', null, {
+  lazy: () => import('./hsi-cov.jsx').then(m => m.HsiCov),
+});
+
+// EEG spatial covariance tutorial.
+defineReactElement('eeg-cov', null, {
+  lazy: () => import('./eeg-cov.jsx').then(m => m.EegCov),
+});
+
 // Three.js islands — lazy loaded (~32MB chunk, only fetched when the tag appears)
 defineReactElement('riemann-primer', null, {
   lazy: () => import('./riemann-primer.jsx').then(m => m.RiemannPrimer),

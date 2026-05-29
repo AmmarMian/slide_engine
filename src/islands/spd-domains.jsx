@@ -108,9 +108,10 @@ function SignalPlot({ X, width, height, color }) {
     });
   }, [X, width, height]);
   return (
-    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ display: 'block' }}>
+    <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none"
+         style={{ display: 'block', width: '100%', height: '100%' }}>
       {traces.map((p, i) => (
-        <path key={i} d={p} stroke={color} strokeWidth="1.1" fill="none" opacity={0.55 + (i / traces.length) * 0.4} />
+        <path key={i} d={p} stroke={color} strokeWidth="1.5" fill="none" opacity={0.55 + (i / traces.length) * 0.4} />
       ))}
     </svg>
   );
@@ -122,7 +123,8 @@ function HsiCube({ X, width, height, color }) {
   const bandW = width / d;
   const stripeH = height;
   return (
-    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ display: 'block' }}>
+    <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none"
+         style={{ display: 'block', width: '100%', height: '100%' }}>
       {Array.from({ length: d }, (_, k) => {
         const intensity = X.reduce((s, r) => s + Math.abs(r[k]), 0) / X.length;
         const norm = Math.min(1, intensity / 1.5);
@@ -134,9 +136,6 @@ function HsiCube({ X, width, height, color }) {
           />
         );
       })}
-      {/* Faint cube depth lines */}
-      <path d={`M0 ${height * 0.15} L${width * 0.97} ${height * 0.05} L${width * 0.97} ${height * 0.92} L${width * 0.03} ${height * 0.92} Z`}
-            stroke="rgba(255,255,255,0.0)" fill="none" />
     </svg>
   );
 }
@@ -155,7 +154,8 @@ function RadarPanel({ width, height, color, seed = 41 }) {
   }
   const cw = width / bins, ch = height / sweeps;
   return (
-    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ display: 'block' }}>
+    <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none"
+         style={{ display: 'block', width: '100%', height: '100%' }}>
       {cells.map(({ i, j, v }, k) => (
         <rect key={k} x={i * cw} y={j * ch} width={cw - 0.5} height={ch - 0.5} fill={color} opacity={0.1 + v * 0.85} />
       ))}
@@ -187,40 +187,51 @@ function CovHeatmap({ C, width, height, color }) {
 }
 
 // ── Single domain panel ───────────────────────────────────────────────────
-function DomainPanel({ title, kicker, dataLabel, covLabel, X, Visual }) {
+function DomainPanel({ title, kicker, covLabel, X, Visual }) {
   const C = useMemo(() => covariance(X), [X]);
   const accent = 'var(--accent)';
   return (
     <div style={{
-      display: 'flex', flexDirection: 'column', gap: 16,
+      display: 'flex', flexDirection: 'column',
       padding: 20,
+      gap: 14,
       background: 'var(--bg-2)',
       border: '1px solid var(--rule-soft)',
-      borderRadius: 6,
+      borderRadius: 8,
       minHeight: 0,
     }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-        <div className="eyebrow" style={{ color: accent, fontSize: 14 }}>{kicker}</div>
-        <div style={{ fontFamily: 'var(--sans)', fontSize: 28, fontWeight: 600, color: 'var(--ink)', letterSpacing: '-0.02em' }}>{title}</div>
+      {/* Header — compact */}
+      <div>
+        <div className="eyebrow" style={{ color: accent, fontSize: 13, marginBottom: 2, letterSpacing: '0.06em' }}>{kicker}</div>
+        <div style={{ fontFamily: 'var(--sans)', fontSize: 30, fontWeight: 600, color: 'var(--ink)', letterSpacing: '-0.025em', lineHeight: 1 }}>{title}</div>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <div className="label" style={{ fontSize: 13 }}>{dataLabel}</div>
-        <div style={{ width: '100%', aspectRatio: '16/8', background: 'var(--bg)', borderRadius: 4, overflow: 'hidden', border: '1px solid var(--rule-soft)' }}>
-          <Visual X={X} width={400} height={160} color={accent} />
-        </div>
+      {/* Signal viz — takes major flex share */}
+      <div style={{
+        flex: 2.2, minHeight: 0,
+        background: 'var(--bg)', borderRadius: 4, overflow: 'hidden',
+        border: '1px solid var(--rule-soft)',
+        display: 'flex',
+      }}>
+        <Visual X={X} width={500} height={300} color={accent} />
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, color: 'var(--ink-3)', fontFamily: 'var(--mono)', fontSize: 18 }}>
-        <span>↓</span>
-        <span style={{ fontSize: 13, letterSpacing: '0.06em', textTransform: 'uppercase' }}>covariance</span>
-        <span>↓</span>
+      {/* Arrow — small */}
+      <div style={{ textAlign: 'center', color: 'var(--ink-3)', fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', margin: '-4px 0' }}>
+        ↓ &nbsp; covariance &nbsp; ↓
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <div className="label" style={{ fontSize: 13 }}>{covLabel}</div>
-        <div style={{ width: '70%', aspectRatio: '1/1', alignSelf: 'center', background: 'var(--bg)', borderRadius: 4, overflow: 'hidden' }}>
-          <CovHeatmap C={C} width={240} height={240} color={accent} />
+      {/* Cov heatmap — also flex, label inline above */}
+      <div style={{ flex: 1.4, minHeight: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <div className="label" style={{ fontSize: 12, lineHeight: 1.2 }}>{covLabel}</div>
+        <div style={{
+          flex: 1, minHeight: 0,
+          background: 'var(--bg)', borderRadius: 4, overflow: 'hidden',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <div style={{ height: '100%', aspectRatio: '1/1' }}>
+            <CovHeatmap C={C} width={200} height={200} color={accent} />
+          </div>
         </div>
       </div>
     </div>

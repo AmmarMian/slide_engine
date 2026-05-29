@@ -352,15 +352,15 @@ export function ArmagnacT() {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: 18, color: INK2 }}>
             <div style={{ display: 'flex', gap: 12, alignItems: 'baseline' }}>
-              <span style={{ width: 70, fontFamily: 'var(--mono)', color: INK3 }}>t = 0</span>
+              <span style={{ width: 95, flexShrink: 0, fontFamily: 'var(--mono)', color: INK3, whiteSpace: 'nowrap' }}>t = 0</span>
               <span>Φ = H — moyenne harmonique pure</span>
             </div>
             <div style={{ display: 'flex', gap: 12, alignItems: 'baseline' }}>
-              <span style={{ width: 70, fontFamily: 'var(--mono)', color: INK3 }}>t = 0,5</span>
+              <span style={{ width: 95, flexShrink: 0, fontFamily: 'var(--mono)', color: INK3, whiteSpace: 'nowrap' }}>t = 0,5</span>
               <span>Φ = GAH — moyenne géométrique de A et H</span>
             </div>
             <div style={{ display: 'flex', gap: 12, alignItems: 'baseline' }}>
-              <span style={{ width: 70, fontFamily: 'var(--mono)', color: INK3 }}>t = 1</span>
+              <span style={{ width: 95, flexShrink: 0, fontFamily: 'var(--mono)', color: INK3, whiteSpace: 'nowrap' }}>t = 1</span>
               <span>Φ = A — moyenne arithmétique pure</span>
             </div>
           </div>

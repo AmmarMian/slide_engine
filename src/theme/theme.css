@@ -444,7 +444,9 @@ federated-learning,
 fed-aggregation,
 spdnet-backprop,
 stiefel-update,
-armagnac-t {
+armagnac-t,
+hsi-cov,
+eeg-cov {
   display: block;
   position: relative;
   width: 100%;
