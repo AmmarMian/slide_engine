@@ -2,20 +2,20 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 const SHORTCUTS = [
-  { keys: ['→', 'Space', 'PgDn'], action: 'Next slide / reveal step' },
-  { keys: ['←', 'PgUp'],          action: 'Previous slide / hide step' },
-  { keys: ['Home'],                action: 'First slide' },
-  { keys: ['End'],                 action: 'Last slide' },
-  { keys: ['1 – 9'],               action: 'Jump to slide N' },
-  { keys: ['R'],                   action: 'Reset to slide 1' },
-  { keys: ['T'],                   action: 'Table of contents' },
-  { keys: ['C'],                   action: 'Notation cheatsheet' },
-  { keys: ['E'],                   action: 'Theme editor' },
-  { keys: ['/'],                   action: 'Search slides' },
-  { keys: ['?'],                   action: 'Keyboard shortcuts' },
-  { keys: ['N'],                   action: 'Speaker notes window' },
-  { keys: ['F'],                   action: 'Fullscreen toggle' },
-  { keys: ['Esc'],                 action: 'Close overlay' },
+  { keys: ['→', 'Space', 'PgDn'], action: 'Diapo suivante / révéler étape' },
+  { keys: ['←', 'PgUp'],          action: 'Diapo précédente / masquer étape' },
+  { keys: ['Home'],                action: 'Première diapo' },
+  { keys: ['End'],                 action: 'Dernière diapo' },
+  { keys: ['1 – 9'],               action: 'Aller à la diapo N' },
+  { keys: ['R'],                   action: 'Réinitialiser (diapo 1)' },
+  { keys: ['T'],                   action: 'Table des matières' },
+  { keys: ['C'],                   action: 'Aide-mémoire notation' },
+  { keys: ['E'],                   action: 'Éditeur de thème' },
+  { keys: ['/'],                   action: 'Rechercher' },
+  { keys: ['?'],                   action: 'Raccourcis clavier' },
+  { keys: ['N'],                   action: 'Fenêtre notes orateur' },
+  { keys: ['F'],                   action: 'Plein écran' },
+  { keys: ['Esc'],                 action: 'Fermer' },
 ];
 
 const kbd = (key) => (
@@ -89,7 +89,7 @@ export function ShortcutsModal() {
             fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.12em',
             textTransform: 'uppercase', color: 'rgba(255,255,255,0.32)',
           }}>
-            Keyboard shortcuts — {kbd('?')} or {kbd('Esc')} to close
+            Raccourcis clavier — {kbd('?')} ou {kbd('Esc')} pour fermer
           </span>
         </div>
 

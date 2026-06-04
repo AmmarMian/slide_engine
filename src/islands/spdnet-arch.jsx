@@ -4,16 +4,16 @@ import katex from 'katex';
 // ─── SVG pipeline constants ───────────────────────────────────────────────────
 const W = 1760, H = 990;
 
-// Architecture: BiMap → ReEig → BN (× k), then LogEig → vec → FC → Softmax
+// Architecture: BiMap → ReEig (× k), then LogEig → vec → FC → Softmax
+// BN layer moved to ARMAGNAC section of the deck.
 const BLOCKS = [
-  { label: 'BiMap',    eq: 'Xₖ = Wₖ Xₖ₋₁ Wₖᵀ' },
-  { label: 'ReEig',   eq: 'Xₖ = U max(εI,Σ) Uᵀ' },
-  { label: 'Riem. BN', eq: 'X̃ = M⁻½ X M⁻½' },
-  { label: 'LogEig',  eq: 'Xₖ = U log(Σ) Uᵀ' },
+  { label: 'BiMap',   eq: 'Xₖ = Wₖ Xₖ₋₁ Wₖᵀ' },
+  { label: 'ReEig',  eq: 'Xₖ = U max(εI,Σ) Uᵀ' },
+  { label: 'LogEig', eq: 'Xₖ = U log(Σ) Uᵀ' },
 ];
 
 // Block layout
-const BX = [170, 480, 790, 1080]; // x positions
+const BX = [170, 480, 790]; // x positions (3 blocks)
 const BY = 110, BW = 260, BH = 320, MID_Y = BY + BH / 2; // center y = 270
 const DY = 210; // vertical offset applied by the Pipeline translate
 
@@ -24,9 +24,8 @@ const STATES = [
   [0, 0, W, H],                                                          // 0 overview
   [BX[0] + BW / 2 - ZW / 2, MID_Y + DY - ZH / 2, ZW, ZH],             // 1 BiMap
   [BX[1] + BW / 2 - ZW / 2, MID_Y + DY - ZH / 2, ZW, ZH],             // 2 ReEig
-  [BX[2] + BW / 2 - ZW / 2, MID_Y + DY - ZH / 2, ZW, ZH],             // 3 Riem. BN
-  [BX[3] + BW / 2 - ZW / 2, MID_Y + DY - ZH / 2, ZW, ZH],             // 4 LogEig
-  [0, 0, W, H],                                                          // 5 recap
+  [BX[2] + BW / 2 - ZW / 2, MID_Y + DY - ZH / 2, ZW, ZH],             // 3 LogEig
+  [0, 0, W, H],                                                          // 4 recap
 ];
 
 function ease(t) { return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; }
@@ -93,20 +92,20 @@ function Pipeline({ activeIdx }) {
       ))}
 
       {/* Arrows between core blocks */}
-      {[0, 1, 2].map(i => (
+      {[0, 1].map(i => (
         <path key={i}
           d={`M ${BX[i] + BW} ${ay} H ${BX[i + 1]}`}
           stroke="var(--ink)" strokeWidth={1.8} fill="none" markerEnd="url(#spa)" />
       ))}
 
-      {/* ×k repeat brace under first 3 blocks */}
-      <path d={`M ${BX[0] - 6} ${BY + BH + 46} H ${BX[2] + BW + 6}`}
+      {/* ×k repeat brace under first 2 blocks (BiMap + ReEig) */}
+      <path d={`M ${BX[0] - 6} ${BY + BH + 46} H ${BX[1] + BW + 6}`}
         stroke="var(--ink-3)" strokeWidth={1} strokeDasharray="5 3" fill="none" />
-      <text x={(BX[0] + BX[2] + BW) / 2} y={BY + BH + 70}
+      <text x={(BX[0] + BX[1] + BW) / 2} y={BY + BH + 70}
         fontFamily="var(--mono)" fontSize={18} fill="var(--ink-3)" textAnchor="middle">× k</text>
 
       {/* LogEig → vec → FC → Softmax → ŷ */}
-      <path d={`M ${BX[3] + BW} ${ay} H ${1388}`}
+      <path d={`M ${BX[2] + BW} ${ay} H ${1388}`}
         stroke="var(--ink)" strokeWidth={1.8} fill="none" markerEnd="url(#spa)" />
 
       <circle cx={1415} cy={ay} r={34}
@@ -136,7 +135,7 @@ function Pipeline({ activeIdx }) {
 
       <text x={W / 2} y={H - 52}
         fontFamily="var(--mono)" fontSize={19} fill="var(--ink-3)" textAnchor="middle">
-        {activeIdx === 0 ? 'press → to explore each layer' : ''}
+        {activeIdx === 0 ? 'appuyer → pour explorer chaque couche' : ''}
       </text>
     </g>
   );
@@ -208,9 +207,9 @@ function DiagramBiMap() {
         fill="var(--ink-3)" textAnchor="middle">d₁ × d₁</text>
 
       <text x={200} y={240} fontFamily="var(--sans)" fontSize={13}
-        fill="var(--ink-3)" textAnchor="middle">d₁ &lt; d₀  —  dimension reduced</text>
+        fill="var(--ink-3)" textAnchor="middle">d₁ &lt; d₀  —  dimension réduite</text>
       <text x={200} y={260} fontFamily="var(--mono)" fontSize={12}
-        fill="var(--ink-3)" textAnchor="middle">Wₖ ∈ Stiefel manifold St(d₁, d₀)</text>
+        fill="var(--ink-3)" textAnchor="middle">Wₖ ∈ variété de Stiefel St(d₁, d₀)</text>
     </svg>
   );
 }
@@ -339,17 +338,17 @@ function DiagramBN() {
       <line x1={M[0] + 11} y1={M[1] + 5} x2={M[0] + 30} y2={M[1] + 28}
         stroke="var(--ink-3)" strokeWidth={0.8} />
       <text x={M[0] + 32} y={M[1] + 30}
-        fontFamily="var(--mono)" fontSize={11} fill="var(--ink-3)">Fréchet mean</text>
+        fontFamily="var(--mono)" fontSize={11} fill="var(--ink-3)">moyenne de Fréchet</text>
 
       {/* Surface label */}
       <text x={200} y={170}
         fontFamily="var(--mono)" fontSize={11} fill="var(--ink-3)" textAnchor="middle">
-        (Sym⁺_d, d_R) — SPD manifold
+        (Sym⁺_d, d_R) — variété SPD
       </text>
 
       {/* ── M → I → G chain ── */}
       <g transform="translate(18, 190)">
-        {[['M', 'batch mean'], ['I', 'identity'], ['G', 'learned']].map(([lbl, sub], i) => (
+        {[['M', 'moy. batch'], ['I', 'identité'], ['G', 'appris']].map(([lbl, sub], i) => (
           <React.Fragment key={lbl}>
             <circle cx={i * 118 + 46} cy={28} r={22}
               fill="var(--bg-2)" stroke="var(--ink)" strokeWidth={1.5} />
@@ -368,7 +367,7 @@ function DiagramBN() {
         ))}
         <text x={182} y={76}
           fontFamily="var(--mono)" fontSize={10} fill="var(--ink-3)" textAnchor="middle">
-          parallel transport
+          transport parallèle
         </text>
       </g>
     </svg>
@@ -498,7 +497,7 @@ function DiagramLogEig() {
       <text x={308} y={168}
         fontFamily="var(--mono)" fontSize={10} fill="var(--ink-3)" textAnchor="middle">Sym⁺_d</text>
       <text x={308} y={179}
-        fontFamily="var(--mono)" fontSize={10} fill="var(--ink-3)" textAnchor="middle">(manifold)</text>
+        fontFamily="var(--mono)" fontSize={10} fill="var(--ink-3)" textAnchor="middle">(variété)</text>
 
       {/* Point X on cone */}
       <circle cx={Xx} cy={Xy} r={8} fill="var(--ink)" />
@@ -513,51 +512,39 @@ function DiagramLogEig() {
 
 const DETAILS = [
   {
-    title: 'BiMap — bilinear mapping',
+    title: 'BiMap — projection bilinéaire',
     formula: String.raw`X_k = W_k\, X_{k-1}\, W_k^\top`,
     formulaSub: String.raw`W_k \in \mathbb{R}^{d_1 \times d_0},\quad d_1 < d_0`,
     diagram: <DiagramBiMap />,
     text: [
-      'Each BiMap layer takes a d₀×d₀ covariance matrix and maps it down to a smaller d₁×d₁ one.',
-      'The weight matrix Wₖ has full row rank, which is enough to guarantee that the output stays symmetric positive definite — the manifold structure is preserved throughout.',
-      'W is constrained to live on the Stiefel manifold St(d₁, d₀) of semi-orthogonal matrices. Backpropagation uses Riemannian gradients on this manifold.',
-      'Stack k of these blocks and you get a progressively compressed covariance feature hierarchy.',
+      'Chaque couche BiMap prend une matrice de covariance d₀×d₀ et la projette vers une matrice d₁×d₁ plus petite.',
+      'La matrice de poids Wₖ est de rang plein en lignes, ce qui suffit à garantir que la sortie reste symétrique définie positive — la structure de variété est préservée à chaque couche.',
+      'W est contraint de vivre sur la variété de Stiefel St(d₁, d₀) des matrices semi-orthogonales. La rétropropagation utilise les gradients riemanniens sur cette variété.',
+      'Empiler k de ces blocs produit une hiérarchie de covariances progressivement compressées.',
     ],
     ref: 'Huang & Van Gool, AAAI 2017',
   },
   {
-    title: 'ReEig — eigenvalue rectification',
+    title: 'ReEig — rectification spectrale',
     formula: String.raw`X_k = U\,\max(\varepsilon I,\,\Sigma)\,U^\top`,
-    formulaSub: String.raw`X_{k-1} = U\Sigma U^\top\;\text{(eigendecomposition)}`,
+    formulaSub: String.raw`X_{k-1} = U\Sigma U^\top\;\text{(décomposition propre)}`,
     diagram: <DiagramReEig />,
     text: [
-      'During training, some eigenvalues inevitably drift toward zero — the matrix nearly loses rank and gradients through the eigendecomposition become unreliable.',
-      'ReEig is the fix: any eigenvalue below the threshold ε is raised to exactly ε. That\'s all there is to it.',
-      'The eigendecomposition stays differentiable, so gradients still flow. Think of it as a floor on the spectrum, the SPD analogue of ReLU.',
+      "À l'entraînement, certaines valeurs propres dérivent inévitablement vers zéro — la matrice frôle la perte de rang et les gradients à travers la décomposition propre deviennent instables.",
+      'ReEig est le remède : toute valeur propre en dessous du seuil ε est remontée à exactement ε. Rien de plus.',
+      "La décomposition propre reste différentiable, les gradients continuent de circuler. C'est un plancher sur le spectre — l'analogue SPD du ReLU.",
     ],
     ref: 'Huang & Van Gool, AAAI 2017',
   },
   {
-    title: 'Riemannian BatchNorm',
-    formula: String.raw`\tilde{X}_i = M^{-\tfrac{1}{2}}\, X_i\, M^{-\tfrac{1}{2}}`,
-    formulaSub: String.raw`X_{\mathrm{out}} = G^{\tfrac{1}{2}}\, \tilde{X}_i\, G^{\tfrac{1}{2}}`,
-    diagram: <DiagramBN />,
-    text: [
-      'Standard batch normalisation subtracts the mean and rescales. Here the geometry is curved, so "mean" means Fréchet mean — the point minimising the sum of squared geodesic distances.',
-      'Parallel transport then slides each matrix to a common reference at the identity I, removing the mean while staying on the manifold.',
-      'A learned SPD parameter G acts as the trainable bias, shifting the normalised batch to wherever training finds it useful. At inference, a running Fréchet mean replaces the batch estimate.',
-    ],
-    ref: 'Brooks, Rencker & Holighaus, NeurIPS 2019',
-  },
-  {
-    title: 'LogEig — mapping to Euclidean space',
+    title: "LogEig — passage vers l'espace euclidien",
     formula: String.raw`X_k = U\,\log(\Sigma)\,U^\top`,
-    formulaSub: String.raw`\log \text{ applied element-wise to eigenvalues}`,
+    formulaSub: String.raw`\log \text{ appliqué élément par élément aux valeurs propres}`,
     diagram: <DiagramLogEig />,
     text: [
-      'The matrix logarithm unrolls the curved SPD manifold onto a flat tangent plane at the identity. The output is a symmetric matrix, and symmetric matrices form a Euclidean space.',
-      'Vectorise the upper triangle and you have a plain feature vector. From there, a standard fully-connected layer and softmax handle classification.',
-      'Everything that was geometric is now algebraic. The classifier never needs to know about the manifold.',
+      "Le logarithme matriciel déplie la variété SPD courbée sur un plan tangent plat en l'identité. La sortie est une matrice symétrique, et les matrices symétriques forment un espace euclidien.",
+      'Vectoriser le triangle supérieur donne un vecteur de caractéristiques ordinaire. De là, une couche dense standard et un softmax assurent la classification.',
+      "Tout ce qui était géométrique est désormais algébrique. Le classifieur n'a plus besoin de connaître la variété.",
     ],
     ref: 'Huang & Van Gool, AAAI 2017',
   },
@@ -722,8 +709,8 @@ export function SpdNetArch() {
       const to   = STATES[Math.max(0, Math.min(STATES.length - 1, n))];
 
       tween(from, to, 560, () => {
-        // Fade detail in only for zoom states 1-4
-        if (n >= 1 && n <= 4) {
+        // Fade detail in only for zoom states 1-3
+        if (n >= 1 && n <= 3) {
           timerRef.current = setTimeout(() => setDetailIdx(n), 40);
         }
       });

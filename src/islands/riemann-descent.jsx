@@ -385,13 +385,13 @@ export function RiemannDescent() {
     function renderFormulas() {
       let costForm;
       if (state.cost === 'rayleigh') {
-        if (costNameRef.current) costNameRef.current.textContent = 'Rayleigh quotient';
+        if (costNameRef.current) costNameRef.current.textContent = 'Quotient de Rayleigh';
         costForm = String.raw`f(x) = x^{\!\top}\! A\, x, \quad A = A^{\!\top}`;
       } else if (state.cost === 'distance') {
-        if (costNameRef.current) costNameRef.current.textContent = 'Distance² to target';
+        if (costNameRef.current) costNameRef.current.textContent = 'Distance² à la cible';
         costForm = String.raw`f(x) = \tfrac{1}{2}\, d_{S^{2}}(x, t)^{2} = \tfrac{1}{2}\,\arccos\langle x, t\rangle^{2}`;
       } else {
-        if (costNameRef.current) costNameRef.current.textContent = 'Fréchet mean';
+        if (costNameRef.current) costNameRef.current.textContent = 'Moyenne de Fréchet';
         costForm = String.raw`f(x) = \tfrac{1}{2N}\sum_{i=1}^{N} d_{S^{2}}(x, t_{i})^{2}`;
       }
       try {
@@ -630,7 +630,7 @@ export function RiemannDescent() {
         {/* Iter counter */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-            <span style={{ ...mono, fontSize: '20px', fontWeight: 500, color: 'var(--ink-3)' }}>Iteration</span>
+            <span style={{ ...mono, fontSize: '20px', fontWeight: 500, color: 'var(--ink-3)' }}>Itération</span>
             <span style={{ fontFamily: 'var(--mono)', fontSize: '48px', fontWeight: 500, letterSpacing: '-0.01em', color: 'var(--ink)' }}>
               <span ref={iterRef}>000</span>
               <span style={{ color: 'var(--ink-3)', fontSize: '32px' }}> / 080</span>
@@ -656,9 +656,9 @@ export function RiemannDescent() {
 
         {/* Cost selector */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <span ref={costNameRef} style={{ ...mono, fontSize: '20px', fontWeight: 600, color: 'var(--accent)' }}>Rayleigh quotient</span>
+          <span ref={costNameRef} style={{ ...mono, fontSize: '20px', fontWeight: 600, color: 'var(--accent)' }}>Quotient de Rayleigh</span>
           <div style={{ display: 'flex', border: '1px solid var(--rule)' }}>
-            {[['rayleigh', 'Rayleigh'], ['distance', 'Distance'], ['frechet', 'Fréchet']].map(([c, lbl]) => (
+            {[['rayleigh', 'Rayleigh'], ['distance', 'Distance²'], ['frechet', 'Fréchet']].map(([c, lbl]) => (
               <button key={c} style={{ ...costBtn(c), ...(c === 'frechet' ? { borderRight: 0 } : {}) }}
                 onClick={() => eng()?.setCost(c)}>{lbl}</button>
             ))}
@@ -681,11 +681,11 @@ export function RiemannDescent() {
 
         {/* Buttons */}
         <div style={{ display: 'flex', gap: '6px' }}>
-          <button style={btnBase} onClick={() => eng()?.step()}>Step</button>
+          <button style={btnBase} onClick={() => eng()?.step()}>Pas</button>
           <button style={ui.playing ? btnActive : btnBase} onClick={() => eng()?.togglePlay()}>
-            {ui.playing ? 'Pause' : 'Play'}
+            {ui.playing ? 'Pause' : 'Lancer'}
           </button>
-          <button style={btnBase} onClick={() => eng()?.reset()}>Reset</button>
+          <button style={btnBase} onClick={() => eng()?.reset()}>Réinit.</button>
         </div>
       </div>
     </div>

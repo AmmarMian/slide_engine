@@ -1047,6 +1047,105 @@
     blurb="Une batch-normalisation SPD paramétrique, à moyenne apprise">
   </section-divider>
 
+  <!-- §4.0 · SPDNet architecture with BN highlighted — context before the BN slides -->
+  <section>
+    <style>
+      .spda-block { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; border-radius:8px; border:1.5px solid var(--rule); background:var(--bg-2); padding:18px 22px; flex-shrink:0; }
+      .spda-block.accent { border-color:var(--accent); background:color-mix(in srgb, var(--accent) 8%, var(--bg-2)); }
+      .spda-label { font-family:var(--sans); font-size:28px; font-weight:700; color:var(--ink); }
+      .spda-eq { font-family:var(--mono); font-size:14px; color:var(--ink-3); white-space:nowrap; }
+      .spda-arrow { font-size:28px; color:var(--ink-3); flex-shrink:0; align-self:center; }
+      .spda-group { display:flex; align-items:center; gap:0; border:1.5px dashed var(--rule); border-radius:10px; padding:18px 22px; position:relative; }
+      .spda-group-label { position:absolute; bottom:-28px; left:50%; transform:translateX(-50%); font-family:var(--mono); font-size:18px; color:var(--ink-3); white-space:nowrap; }
+    </style>
+    <slide-note>Avant les détails de la BN SPD : montrer où elle s'insère dans SPDNet. Le bloc BN est répété à l'intérieur de la boucle ×k, entre ReEig et la sortie de chaque couche BiMap+ReEig.</slide-note>
+    <slide-header title="BatchNorm dans SPDNet — où ?"></slide-header>
+    <div class="slide-body" style="justify-content:center; align-items:center; gap:52px;">
+
+      <!-- Pipeline diagram -->
+      <div style="display:flex; align-items:center; gap:10px;">
+
+        <!-- Input -->
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; flex-shrink:0;">
+          <div style="display:flex; flex-direction:column; gap:0; position:relative; width:72px; height:72px;">
+            <div style="position:absolute; left:10px; top:10px; width:55px; height:55px; background:var(--bg-2); border:1.5px solid var(--ink);"></div>
+            <div style="position:absolute; left:5px; top:5px; width:55px; height:55px; background:var(--bg-2); border:1.5px solid var(--ink);"></div>
+            <div style="position:absolute; left:0; top:0; width:55px; height:55px; background:var(--bg-2); border:1.5px solid var(--ink);"></div>
+          </div>
+          <div style="font-family:var(--mono); font-size:15px; color:var(--ink-3); margin-top:8px;">Σ ∈ 𝒮₊₊</div>
+        </div>
+
+        <div class="spda-arrow">→</div>
+
+        <!-- ×k group: BiMap + ReEig + BN -->
+        <div class="spda-group" style="gap:10px;">
+          <div class="spda-block">
+            <div class="spda-label">BiMap</div>
+            <div class="spda-eq">WXWᵀ</div>
+          </div>
+          <div class="spda-arrow" style="font-size:22px; padding:0 4px;">→</div>
+          <div class="spda-block">
+            <div class="spda-label">ReEig</div>
+            <div class="spda-eq">max(ε,λ)</div>
+          </div>
+          <div class="spda-arrow" style="font-size:22px; padding:0 4px;">→</div>
+          <!-- BN block — highlighted -->
+          <div class="spda-block accent">
+            <div class="spda-label" style="color:var(--accent);">BN</div>
+            <div class="spda-eq" style="color:var(--accent); font-weight:600;">M⁻½ X M⁻½</div>
+          </div>
+          <div class="spda-group-label">× k</div>
+        </div>
+
+        <div class="spda-arrow">→</div>
+
+        <div class="spda-block">
+          <div class="spda-label">LogEig</div>
+          <div class="spda-eq">log(λ)</div>
+        </div>
+
+        <div class="spda-arrow">→</div>
+
+        <div class="spda-block">
+          <div class="spda-label">vec</div>
+        </div>
+
+        <div class="spda-arrow">→</div>
+
+        <div class="spda-block">
+          <div class="spda-label">FC</div>
+        </div>
+
+        <div class="spda-arrow">→</div>
+
+        <div class="spda-block">
+          <div class="spda-label">Softmax</div>
+        </div>
+
+        <div class="spda-arrow">→</div>
+        <div style="font-family:var(--mono); font-size:40px; color:var(--ink); flex-shrink:0;">ŷ</div>
+
+      </div>
+
+      <!-- Callout -->
+      <div style="max-width:1400px; padding:22px 32px; background:var(--bg-2); border-left:4px solid var(--accent); border-radius:8px; display:flex; gap:32px; align-items:center;">
+        <div style="font-size:48px; flex-shrink:0;">📌</div>
+        <div>
+          <div class="eyebrow" style="color:var(--accent); margin-bottom:8px;">Enjeu</div>
+          <p class="body" style="font-size:22px; color:var(--ink-2); margin:0;">
+            Le bloc <strong>BN</strong> recentre le batch autour d'une <strong>moyenne sur la variété</strong>
+            <span class="math">\mathcal{S}_{++}^d</span>.
+            Quel mean choisir ? La moyenne de Fréchet est l'idéal géométrique
+            — mais n'a <strong>pas de forme close</strong> et coûte cher.
+            ARMAGNAC apprend à <strong>interpoler</strong> entre deux moyennes à forme close.
+          </p>
+        </div>
+      </div>
+
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
   <!-- §4.1 · BatchNorm on SPD: the block + where the mean shows up -->
   <section>
     <slide-note>BatchNorm SPD : recentrer le batch autour de l'identité via une moyenne sur la variété, puis re-biaiser avec un paramètre SPD appris Γ. Le verrou : quel mean choisit-on ? Le mean géométrique (Fréchet) est l'idéal géométrique, mais demande une itération à point fixe coûteuse.</slide-note>
