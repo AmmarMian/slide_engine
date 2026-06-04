@@ -33,17 +33,17 @@ function tangentArrow(uv, w, color, scale = 1) {
 }
 
 // ===========================================================================
-// CH 1 — Any Riemannian manifold
+// CH 1 — Toute variété riemannienne
 // ===========================================================================
 const ch1 = {
   id: 'manifold',
-  eyebrow: 'Manifold',
-  title: 'Any Riemannian manifold',
-  body: `Everything we saw on S² generalises. A <em>Riemannian manifold</em>
-    (ℳ, g) is any smooth space locally homeomorphic to ℝⁿ, equipped with a
-    <em>smoothly varying inner product</em> g on each tangent space. This
-    terrain — with hills, valleys, saddles — is one example among infinitely
-    many. No symmetries are assumed.`,
+  eyebrow: 'Variété',
+  title: 'Toute variété riemannienne',
+  body: `Tout ce que nous avons vu sur S² se généralise. Une <em>variété riemannienne</em>
+    (ℳ, g) est un espace lisse localement homéomorphe à ℝⁿ, muni d'un
+    <em>produit intérieur variant continûment</em> g sur chaque espace tangent. Ce
+    terrain — avec collines, vallées, cols — en est un exemple parmi une infinité.
+    Aucune symétrie n'est supposée.`,
   formula: String.raw`(\mathcal{M},\, g),\quad \dim \mathcal{M} = n,\\
     g_p : T_p\mathcal{M} \times T_p\mathcal{M} \to \mathbb{R}`,
   camera: { pos: [3.6, 2.8, 4.2], target: [0, 0.15, 0] },
@@ -67,17 +67,17 @@ const ch1 = {
 };
 
 // ===========================================================================
-// CH 2 — Tangent space T_p ℳ
+// CH 2 — Espace tangent T_p ℳ
 // ===========================================================================
 const ch2 = {
   id: 'tangent',
-  eyebrow: 'Tangent space',
+  eyebrow: 'Espace tangent',
   title: 'Tₚ ℳ',
-  body: `At each p ∈ ℳ the <em>tangent space</em> T<sub>p</sub>ℳ is a
-    vector space of the same dimension as ℳ. Tangent vectors are the
-    velocities of smooth curves through p. Gradients, descent directions,
-    and updates all live here. The basis vectors r<sub>u</sub>, r<sub>v</sub>
-    span T<sub>p</sub>ℳ for this surface.`,
+  body: `En chaque p ∈ ℳ, l'<em>espace tangent</em> T<sub>p</sub>ℳ est un
+    espace vectoriel de même dimension que ℳ. Les vecteurs tangents sont les
+    vitesses des courbes lisses passant par p. Gradients, directions de descente
+    et mises à jour y vivent tous. Les vecteurs de base r<sub>u</sub>, r<sub>v</sub>
+    engendrent T<sub>p</sub>ℳ pour cette surface.`,
   formula: String.raw`T_p\mathcal{M} \;=\; \bigl\{\, \dot\gamma(0) : \gamma \;\text{smooth},\;
     \gamma(0) = p \bigr\}`,
   camera: { pos: [2.4, 2.1, 2.9], target: [-0.3, 0.3, 0] },
@@ -102,10 +102,10 @@ const ch2 = {
     ctx.group.add(dotP);
 
     const pp = T.surfacePoint(stateP.x, stateP.y);
-    const lblP = lbl(ctx, 'p', pp.clone().add(new THREE.Vector3(0.03, 0.07, 0)), { accent: true });
+    const lblP  = lbl(ctx, 'p', pp.clone().add(new THREE.Vector3(0.03, 0.07, 0)), { accent: true });
     const lblRU = lbl(ctx, 'r<sub>u</sub>', pp.clone().addScaledVector(ru, 0.62).add(new THREE.Vector3(0, 0.06, 0.02)), { tangent: true });
     const lblRV = lbl(ctx, 'r<sub>v</sub>', pp.clone().addScaledVector(rv, 0.62).add(new THREE.Vector3(0.02, 0.04, 0.04)), { tangent: true });
-    const lblN = lbl(ctx, 'n', pp.clone().addScaledVector(n, 0.55).add(new THREE.Vector3(0.04, 0.05, 0.0)), { geo: true });
+    const lblN  = lbl(ctx, 'n', pp.clone().addScaledVector(n, 0.55).add(new THREE.Vector3(0.04, 0.05, 0.0)), { geo: true });
 
     function refresh() {
       disc.userData.update(stateP);
@@ -126,17 +126,17 @@ const ch2 = {
 };
 
 // ===========================================================================
-// CH 3 — Riemannian metric g
+// CH 3 — Métrique riemannienne g
 // ===========================================================================
 const ch3 = {
   id: 'metric',
-  eyebrow: 'Metric',
-  title: 'The Riemannian metric',
-  body: `The metric g<sub>p</sub> is a <em>smooth, positive-definite, symmetric
-    bilinear form</em> on T<sub>p</sub>ℳ. It defines lengths of curves, angles
-    between tangent vectors, and geodesic distances. The metric varies from
-    point to point — that is what makes the geometry non-trivially curved.
-    The unit-g ellipse (orange) differs from the Euclidean circle (grey).`,
+  eyebrow: 'Métrique',
+  title: 'La métrique riemannienne',
+  body: `La métrique g<sub>p</sub> est une <em>forme bilinéaire lisse, symétrique,
+    définie positive</em> sur T<sub>p</sub>ℳ. Elle définit longueurs des courbes,
+    angles entre vecteurs tangents et distances géodésiques. La métrique varie de
+    point en point — c'est ce qui rend la géométrie non trivialement courbée.
+    L'ellipse unité-g (orange) diffère du cercle euclidien (gris).`,
   formula: String.raw`g_p(u,u) > 0 \;\; \forall\, u \ne 0,\\
     \|v\|_p = \sqrt{g_p(v,v)},\qquad g_p \in C^\infty`,
   camera: { pos: [2.5, 2.2, 2.8], target: [-0.2, 0.25, 0.05] },
@@ -201,17 +201,17 @@ const ch3 = {
 };
 
 // ===========================================================================
-// CH 4 — Geodesic
+// CH 4 — Géodésique
 // ===========================================================================
 const ch4 = {
   id: 'geodesic',
-  eyebrow: 'Geodesic',
-  title: 'The straightest curve',
-  body: `A <em>geodesic</em> is a curve with vanishing covariant acceleration:
-    it does not "turn" within the manifold. Geodesics locally minimise arc
-    length and generalise straight lines. On ℳ their shape is dictated by the
-    Christoffel symbols Γ — the "correction" terms the curvature requires. The
-    ambient straight segment (grey) slices through the surface instead.`,
+  eyebrow: 'Géodésique',
+  title: 'La courbe la plus droite',
+  body: `Une <em>géodésique</em> est une courbe d'accélération covariante nulle :
+    elle ne « tourne » pas dans la variété. Les géodésiques minimisent localement
+    la longueur d'arc et généralisent les droites. Sur ℳ, leur forme est dictée par
+    les symboles de Christoffel Γ — les termes de « correction » requis par la
+    courbure. Le segment droit ambiant (gris) tranche la surface.`,
   formula: String.raw`\nabla_{\dot\gamma}\dot\gamma = 0,\qquad
     \ddot u^k + \Gamma^k_{ij}\,\dot u^i\dot u^j = 0`,
   camera: { pos: [2.3, 2.6, 3.6], target: [0.05, 0.25, 0.10] },
@@ -227,8 +227,8 @@ const ch4 = {
     let lineDrop = buildPolyline({ points: [new THREE.Vector3()], color: palette.euclid, opacity: 0.55, dashed: true });
     let lineGeo = buildPolyline({ points: [new THREE.Vector3()], color: palette.geodesic, opacity: 1.0 });
     ctx.group.add(lineAmbient); ctx.group.add(lineDrop); ctx.group.add(lineGeo);
-    const lblGeo = lbl(ctx, 'geodesic', new THREE.Vector3(), { geo: true, small: true });
-    const lblAmb = lbl(ctx, 'ambient', new THREE.Vector3(), { small: true, dim: true });
+    const lblGeo = lbl(ctx, 'géodésique', new THREE.Vector3(), { geo: true, small: true });
+    const lblAmb = lbl(ctx, 'ambiant', new THREE.Vector3(), { small: true, dim: true });
 
     function refresh() {
       const pW = T.surfacePoint(stateP.x, stateP.y);
@@ -260,23 +260,22 @@ const ch4 = {
 };
 
 // ===========================================================================
-// CH 5 — Exponential map
+// CH 5 — Application exponentielle
 // ===========================================================================
 const ch5 = {
   id: 'exp',
-  eyebrow: 'Exp map',
+  eyebrow: 'Application Exp',
   title: 'expₚ',
-  body: `The exponential map <em>exp<sub>p</sub> : T<sub>p</sub>ℳ → ℳ</em> wraps
-    the tangent space onto the manifold: exp<sub>p</sub>(v) is the point reached
-    by following the geodesic from p in direction v for unit time. It linearises
-    the geometry around any base point. Many geodesics radiate from p — a fan
-    of them is shown for context.`,
+  body: `L'application exponentielle <em>exp<sub>p</sub> : T<sub>p</sub>ℳ → ℳ</em> enroule
+    l'espace tangent sur la variété : exp<sub>p</sub>(v) est le point atteint en suivant
+    la géodésique depuis p dans la direction v pendant un temps unité. Elle linéarise
+    la géométrie autour de tout point de base. Un éventail de géodésiques rayonne depuis p.`,
   formula: String.raw`\exp_p(v) = \gamma_v(1),\quad \dot\gamma_v(0) = v,\quad \exp_p(0) = p`,
   camera: { pos: [2.2, 2.3, 3.1], target: [-0.15, 0.30, 0.05] },
   pickable: true,
   controlSchema: {
     angle: { label: 'angle', min: 0, max: 6.28, step: 0.01, value: 0.7 },
-    length: { label: 'length', min: 0.1, max: 1.4, step: 0.01, value: 0.95 },
+    length: { label: 'longueur', min: 0.1, max: 1.4, step: 0.01, value: 0.95 },
   },
   enter(ctx) {
     const palette = ctx.palette;
@@ -335,17 +334,17 @@ const ch5 = {
 };
 
 // ===========================================================================
-// CH 6 — Log map
+// CH 6 — Application logarithmique
 // ===========================================================================
 const ch6 = {
   id: 'log',
-  eyebrow: 'Log map',
+  eyebrow: 'Application Log',
   title: 'logₚ',
-  body: `The logarithmic map is the local inverse of exp<sub>p</sub>. Given q
-    close to p, <em>log<sub>p</sub>(q)</em> is the tangent vector that shoots
-    a geodesic from p to q in unit time. Its norm equals the geodesic distance
-    d(p, q). No closed form exists for a generic ℳ — a shooting Newton
-    iteration recovers it numerically.`,
+  body: `L'application logarithmique est l'inverse local d'exp<sub>p</sub>. Étant donné q
+    proche de p, <em>log<sub>p</sub>(q)</em> est le vecteur tangent qui tire une géodésique
+    de p vers q en temps unité. Sa norme est égale à la distance géodésique d(p, q).
+    Il n'existe pas de forme fermée pour une variété ℳ quelconque — une itération de Newton
+    par tir la récupère numériquement.`,
   formula: String.raw`\log_p(q) \in T_p\mathcal{M},\quad
     d(p,q) = \bigl\|\log_p(q)\bigr\|_p,\quad \exp_p\!\bigl(\log_p(q)\bigr) = q`,
   camera: { pos: [2.4, 2.4, 3.3], target: [0.05, 0.25, 0.05] },
@@ -393,24 +392,24 @@ const ch6 = {
 };
 
 // ===========================================================================
-// CH 7 — Retraction
+// CH 7 — Rétraction
 // ===========================================================================
 const ch7 = {
   id: 'retract',
-  eyebrow: 'Retraction',
-  title: 'Retraction Rₚ',
-  body: `Computing exp<sub>p</sub> requires integrating a geodesic ODE. For
-    iterative algorithms a first-order substitute suffices: a <em>retraction</em>
-    R<sub>p</sub> : T<sub>p</sub>ℳ → ℳ that agrees with exp<sub>p</sub> to first
-    order at 0. On this surface, one cheap retraction is "step in ℝ³, project
-    back onto ℳ" (drop back to the height h). Compare the two endpoints.`,
+  eyebrow: 'Rétraction',
+  title: 'Rétraction Rₚ',
+  body: `Le calcul d'exp<sub>p</sub> nécessite l'intégration d'une EDO géodésique. Pour
+    les algorithmes itératifs, un substitut au premier ordre suffit : une <em>rétraction</em>
+    R<sub>p</sub> : T<sub>p</sub>ℳ → ℳ qui coïncide avec exp<sub>p</sub> au premier ordre
+    en 0. Sur cette surface, une rétraction bon marché est « avancer dans ℝ³, projeter sur ℳ »
+    (retomber à la hauteur h). Comparez les deux extrémités.`,
   formula: String.raw`R_p(0) = p,\quad \mathrm{d}R_p|_0 = \mathrm{id},\quad
     R_p(v) = \exp_p(v) + O(\|v\|^2)`,
   camera: { pos: [2.2, 2.3, 3.1], target: [-0.15, 0.30, 0.05] },
   pickable: true,
   controlSchema: {
     angle: { label: 'angle', min: 0, max: 6.28, step: 0.01, value: 1.2 },
-    length: { label: 'length', min: 0.1, max: 1.4, step: 0.01, value: 0.9 },
+    length: { label: 'longueur', min: 0.1, max: 1.4, step: 0.01, value: 0.9 },
   },
   enter(ctx) {
     const palette = ctx.palette;
@@ -470,54 +469,65 @@ const ch7 = {
 };
 
 // ===========================================================================
-// CH 8 — Parallel transport
+// CH 8 — Transport parallèle — deux vecteurs pour montrer la conservation de l'angle
 // ===========================================================================
 const ch8 = {
   id: 'transport',
-  eyebrow: 'Parallel transport',
-  title: 'Sliding a vector',
-  body: `Moving a vector from T<sub>p</sub>ℳ to T<sub>q</sub>ℳ by naive
-    translation breaks tangency. The <em>Levi-Civita connection</em> defines the
-    canonical transport that preserves lengths and angles — compatible with the
-    metric and with the geodesic structure. Slide the progress control to watch
-    W(t) travel along the geodesic, staying tangent and keeping its norm.`,
+  eyebrow: 'Transport parallèle',
+  title: 'Glisser un vecteur',
+  body: `Déplacer naïvement un vecteur de T<sub>p</sub>ℳ vers T<sub>q</sub>ℳ rompt la
+    tangence. La <em>connexion de Levi-Civita</em> définit le transport canonique compatible
+    avec la métrique. <strong>Deux vecteurs</strong> W₁(t), W₂(t) sont transportés
+    simultanément — leur angle mutuel est préservé le long de toute la géodésique.`,
   formula: String.raw`\nabla_{\dot\gamma} W = 0,\qquad
     \bigl\|W(t)\bigr\|_{\gamma(t)} = \mathrm{const}`,
   camera: { pos: [2.7, 2.4, 3.4], target: [0.05, 0.30, 0.10] },
   pickable: 'q',
   controlSchema: {
-    t: { label: 'progress', min: 0, max: 1, step: 0.005, value: 1.0 },
+    t: { label: 'avancement', min: 0, max: 1, step: 0.005, value: 1.0 },
   },
   enter(ctx) {
     const palette = ctx.palette;
     const stateP = ctx.p.clone(), stateQ = ctx.q.clone();
     const params = { t: 1.0 };
-    const dotP = pointMarker(stateP, palette.p, palette); ctx.group.add(dotP);
-    const dotQ = pointMarker(stateQ, palette.q, palette); ctx.group.add(dotQ);
+    const dotP   = pointMarker(stateP, palette.p, palette);         ctx.group.add(dotP);
+    const dotQ   = pointMarker(stateQ, palette.q, palette);         ctx.group.add(dotQ);
     const dotNow = pointMarker(stateP, palette.transport, palette, 0.028); ctx.group.add(dotNow);
-    const lblP = lbl(ctx, 'p', new THREE.Vector3(), { accent: true });
-    const lblQ = lbl(ctx, 'q', new THREE.Vector3(), { q: true });
-    const lblW = lbl(ctx, 'W(0)', new THREE.Vector3(), { transport: true, small: true });
-    const lblWt = lbl(ctx, 'W(t)', new THREE.Vector3(), { transport: true, small: true });
+    const lblP   = lbl(ctx, 'p',    new THREE.Vector3(), { accent: true });
+    const lblQ   = lbl(ctx, 'q',    new THREE.Vector3(), { q: true });
+    const lblW   = lbl(ctx, 'W₁(0)', new THREE.Vector3(), { transport: true, small: true });
+    const lblW2  = lbl(ctx, 'W₂(0)', new THREE.Vector3(), { q: true,        small: true });
+    const lblWt  = lbl(ctx, 'W₁(t)', new THREE.Vector3(), { transport: true, small: true });
+    const lblWt2 = lbl(ctx, 'W₂(t)', new THREE.Vector3(), { q: true,        small: true });
     let geo = buildPolyline({ points: [new THREE.Vector3()], color: palette.geodesic, opacity: 0.85 });
     ctx.group.add(geo);
-    let initialArrow = tangentArrow(stateP, new THREE.Vector3(0.1, 0, 0), palette.transport);
-    let movingArrow = tangentArrow(stateP, new THREE.Vector3(0.1, 0, 0), palette.transport);
-    ctx.group.add(initialArrow); ctx.group.add(movingArrow);
+    let initialArrow  = tangentArrow(stateP, new THREE.Vector3(0.1, 0, 0), palette.transport);
+    let initialArrow2 = tangentArrow(stateP, new THREE.Vector3(0.1, 0, 0), palette.q);
+    let movingArrow   = tangentArrow(stateP, new THREE.Vector3(0.1, 0, 0), palette.transport);
+    let movingArrow2  = tangentArrow(stateP, new THREE.Vector3(0.1, 0, 0), palette.q);
+    ctx.group.add(initialArrow); ctx.group.add(initialArrow2);
+    ctx.group.add(movingArrow);  ctx.group.add(movingArrow2);
+    // ghost arrow at q — shows the "naively placed" initial vector for contrast
     let ghost = tangentArrow(stateQ, new THREE.Vector3(0.1, 0, 0), palette.ink3Num);
     ctx.group.add(ghost);
-    let cachedPath = null, cachedW = null, cachedPts = null, cachedDt = null;
+    let cachedPath = null, cachedW = null, cachedW2 = null, cachedPts = null, cachedDt = null;
 
     function recompute() {
-      const v = T.logMap(stateP, stateQ);
+      const v   = T.logMap(stateP, stateQ);
       const duv = T.worldToParam(stateP, v);
-      const r = T.traceGeodesic(stateP, duv, 1, 96);
+      const r   = T.traceGeodesic(stateP, duv, 1, 96);
       cachedPath = r.path; cachedDt = r.dt; cachedPts = r.points;
+      // W0 perpendicular to geodesic direction in param space
       const initParam = new THREE.Vector2(duv.x, duv.y);
       const W0 = new THREE.Vector2(-initParam.y, initParam.x);
       const gn = T.gNorm(stateP, W0);
       W0.multiplyScalar(0.55 / Math.max(gn, 1e-6));
       cachedW = T.parallelTransport(cachedPath, cachedDt, W0);
+      // W02 along geodesic direction in param space (≈ 90° from W0 in param space)
+      const W02 = new THREE.Vector2(initParam.x, initParam.y);
+      const gn2 = T.gNorm(stateP, W02);
+      W02.multiplyScalar(0.45 / Math.max(gn2, 1e-6));
+      cachedW2 = T.parallelTransport(cachedPath, cachedDt, W02);
     }
 
     function refresh() {
@@ -532,17 +542,31 @@ const ch8 = {
       recompute();
       const lifted = cachedPts.map(pp => new THREE.Vector3(pp.x, pp.y + 0.004, pp.z));
       geo.userData.update(lifted);
-      const W0 = cachedW[0];
-      const w0World = T.paramToWorld(stateP, new THREE.Vector2(W0.Wu, W0.Wv));
-      initialArrow.userData.update(pLift, w0World.clone(), w0World.length());
-      lblW.update(pLift.clone().addScaledVector(w0World, 0.55).add(new THREE.Vector3(0.03, 0.06, 0)));
+
+      // initial arrows at p
+      const W0  = cachedW[0];
+      const W02 = cachedW2[0];
+      const w0World  = T.paramToWorld(stateP, new THREE.Vector2(W0.Wu,  W0.Wv));
+      const w02World = T.paramToWorld(stateP, new THREE.Vector2(W02.Wu, W02.Wv));
+      initialArrow.userData.update(pLift,  w0World.clone(),  w0World.length());
+      initialArrow2.userData.update(pLift, w02World.clone(), w02World.length());
+      lblW.update(pLift.clone().addScaledVector(w0World,  0.55).add(new THREE.Vector3( 0.03,  0.06, 0)));
+      lblW2.update(pLift.clone().addScaledVector(w02World, 0.55).add(new THREE.Vector3(-0.03, -0.06, 0)));
+
+      // moving arrows at current t
       const idx = Math.min(cachedPath.length - 1, Math.round(params.t * (cachedPath.length - 1)));
-      const ss = cachedPath[idx], ww = cachedW[idx];
-      const pos = T.surfacePoint(ss.u, ss.v).addScaledVector(T.normalAt(ss.u, ss.v), 0.006);
-      const wWorld = T.paramToWorld(new THREE.Vector2(ss.u, ss.v), new THREE.Vector2(ww.Wu, ww.Wv));
-      movingArrow.userData.update(pos, wWorld.clone(), wWorld.length());
+      const ss  = cachedPath[idx];
+      const ww  = cachedW[idx];
+      const ww2 = cachedW2[idx];
+      const pos    = T.surfacePoint(ss.u, ss.v).addScaledVector(T.normalAt(ss.u, ss.v), 0.006);
+      const wWorld  = T.paramToWorld(new THREE.Vector2(ss.u, ss.v), new THREE.Vector2(ww.Wu,  ww.Wv));
+      const wWorld2 = T.paramToWorld(new THREE.Vector2(ss.u, ss.v), new THREE.Vector2(ww2.Wu, ww2.Wv));
+      movingArrow.userData.update(pos,  wWorld.clone(),  wWorld.length());
+      movingArrow2.userData.update(pos, wWorld2.clone(), wWorld2.length());
       dotNow.position.copy(pos);
-      lblWt.update(pos.clone().addScaledVector(wWorld, 0.55).add(new THREE.Vector3(0.03, 0.06, 0)));
+      lblWt.update(pos.clone().addScaledVector(wWorld,  0.55).add(new THREE.Vector3( 0.03,  0.06, 0)));
+      lblWt2.update(pos.clone().addScaledVector(wWorld2, 0.55).add(new THREE.Vector3(-0.03, -0.06, 0)));
+      // ghost shows naively placed initial vector at q for contrast
       ghost.userData.update(qLift, w0World.clone(), w0World.length());
     }
     refresh();
@@ -554,17 +578,17 @@ const ch8 = {
 };
 
 // ===========================================================================
-// CH 9 — Curvature
+// CH 9 — Courbure
 // ===========================================================================
 const ch9 = {
   id: 'curvature',
-  eyebrow: 'Curvature',
-  title: 'Curvature K',
-  body: `The Riemann curvature tensor is the intrinsic invariant measuring
-    deviation from flatness. Geodesics <em>converge</em> where K > 0 (hilltops,
-    valley bottoms) and <em>diverge</em> where K < 0 (saddles). The terrain is
-    recoloured by K — warm = positive, cool = negative. The holonomy of a small
-    loop equals ∫K dA (Gauss–Bonnet in miniature).`,
+  eyebrow: 'Courbure',
+  title: 'Courbure K',
+  body: `Le tenseur de courbure de Riemann est l'invariant intrinsèque mesurant
+    l'écart à la platitude. Les géodésiques <em>convergent</em> là où K > 0 (sommets,
+    fonds de vallée) et <em>divergent</em> là où K < 0 (cols). Le terrain est recoloré
+    selon K — chaud = positif, froid = négatif. L'holonomie d'une petite boucle vaut
+    ∫K dA (Gauss–Bonnet en miniature).`,
   formula: String.raw`K = \frac{R_{1212}}{g_{11}g_{22}-g_{12}^{2}},\\
     \iint_D K\,\mathrm{d}A = 2\pi - \oint_{\partial D}\kappa_g\,\mathrm{d}s`,
   camera: { pos: [2.5, 2.9, 3.6], target: [0.0, 0.20, 0.05] },
@@ -580,7 +604,7 @@ const ch9 = {
     const loop = buildPolyline({ points: [new THREE.Vector3()], color: palette.transport, opacity: 0.9 });
     ctx.group.add(loop);
     const arrowStart = tangentArrow(stateP, new THREE.Vector3(0.1, 0, 0), palette.transport);
-    const arrowEnd = tangentArrow(stateP, new THREE.Vector3(0.1, 0, 0), palette.tangent);
+    const arrowEnd   = tangentArrow(stateP, new THREE.Vector3(0.1, 0, 0), palette.tangent);
     ctx.group.add(arrowStart); ctx.group.add(arrowEnd);
     const lblHol = lbl(ctx, '', new THREE.Vector3(), { transport: true, small: true });
 
@@ -622,7 +646,7 @@ const ch9 = {
       const cosA = THREE.MathUtils.clamp(sw.dot(ew), -1, 1);
       const sinA = new THREE.Vector3().crossVectors(sw, ew).dot(n);
       const ang = Math.atan2(sinA, cosA);
-      lblHol.setText(`holonomy ≈ ${(ang * 180 / Math.PI).toFixed(1)}°`);
+      lblHol.setText(`holonomie ≈ ${(ang * 180 / Math.PI).toFixed(1)}°`);
       lblHol.update(pLift.clone().add(new THREE.Vector3(0.0, 0.42, 0.0)));
     }
     refresh();

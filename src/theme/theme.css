@@ -332,7 +332,7 @@ end-slide::before {
 /* Fixed overlays live at viewport level, not inside the scaled canvas.
    Reset --type-scale so deck theme scaling never affects their legibility. */
 .progress-bar, .progress-labels,
-#toc-modal-root, #tweaks-root, #shortcuts-modal-root, #search-modal-root { --type-scale: 1; }
+#toc-modal-root, #tweaks-root, #shortcuts-modal-root, #search-modal-root, #notation-modal-root { --type-scale: 1; }
 
 @keyframes zoomIn {
   from { opacity: 0; transform: scale(0.92); }
@@ -352,6 +352,9 @@ end-slide::before {
 /* Hide scrollbar inside TOC panel */
 #toc-modal-root * { box-sizing: border-box; }
 #toc-modal-root ::-webkit-scrollbar { display: none; }
+#notation-modal-root * { box-sizing: border-box; }
+#notation-modal-root ::-webkit-scrollbar { display: none; }
+#notation-modal-root .katex { color: rgba(255,255,255,0.9); }
 
 /* ── Inline citations ────────────────────────────────────────
    Usage: <cite-ref key="smith2024"></cite-ref>
@@ -446,7 +449,8 @@ spdnet-backprop,
 stiefel-update,
 armagnac-t,
 hsi-cov,
-eeg-cov {
+eeg-cov,
+spd-cone {
   display: block;
   position: relative;
   width: 100%;

@@ -1,5 +1,5 @@
 // spd-domains.jsx — three-panel motivational island for "where SPD matrices appear":
-// EEG (BCI), hyperspectral imagery, radar. Each panel: stylised data on top,
+// EEG (BCI), hyperspectral imagery, SAR SITS. Each panel: stylised data on top,
 // resulting covariance heatmap below. Pure SVG, no external dependencies.
 
 import React, { useMemo } from 'react';
@@ -54,17 +54,23 @@ function hsiPixels(d = 8, n = 220, seed = 19) {
   return X;
 }
 
-function radarPulses(d = 8, n = 220, seed = 31) {
-  // Range bins with target signal + clutter; strong block-correlation near target
+function sarSits(d = 8, n = 220, seed = 31) {
+  // SAR Satellite Image Time Series — d temporal acquisitions, n pixels in a spatial window.
+  // Pixels have seasonal backscatter modulation; some pixels undergo a change event.
   const r = rng(seed);
   const X = [];
-  const tgt = Math.floor(d / 2);
   for (let i = 0; i < n; i++) {
-    const amp = (r() - 0.5) * 2;
-    const row = Array.from({ length: d }, (_, k) => {
-      const sig = amp * Math.exp(-((k - tgt) ** 2) / 1.5);
-      const clutter = (r() - 0.5) * 0.4 + 0.15 * Math.sin(2 * Math.PI * k / 5 + i * 0.1);
-      return sig + clutter;
+    const isVegetation = r() > 0.4;
+    const base    = isVegetation ? 0.25 + r() * 0.2 : 0.55 + r() * 0.25;
+    const season  = isVegetation ? 0.22 : 0.06;
+    const phase   = r() * Math.PI * 2;
+    const hasChange = r() > 0.72;
+    const changeAt  = hasChange ? Math.floor(r() * (d - 1)) + 1 : -1;
+    const changeMag = (r() > 0.5 ? 1 : -1) * (0.2 + r() * 0.25);
+    const row = Array.from({ length: d }, (_, t) => {
+      const s = season * Math.sin(2 * Math.PI * t / d + phase);
+      const c = hasChange && t >= changeAt ? changeMag : 0;
+      return base + s + c + (r() - 0.5) * 0.1;
     });
     X.push(row);
   }
@@ -140,25 +146,47 @@ function HsiCube({ X, width, height, color }) {
   );
 }
 
-// ── Radar range/azimuth panel ─────────────────────────────────────────────
-function RadarPanel({ width, height, color, seed = 41 }) {
-  const r = rng(seed);
-  const bins = 18, sweeps = 8;
-  const cells = [];
-  const tgtX = 12, tgtY = 4;
-  for (let i = 0; i < bins; i++) for (let j = 0; j < sweeps; j++) {
-    const d2 = (i - tgtX) ** 2 + (j - tgtY) ** 2 * 4;
-    const sig = Math.exp(-d2 / 8);
-    const noise = r() * 0.25;
-    cells.push({ i, j, v: Math.min(1, sig * 0.9 + noise) });
-  }
-  const cw = width / bins, ch = height / sweeps;
+// ── SAR SITS space-time raster (pixels × time acquisitions) ──────────────
+function SarPanel({ X, width, height, color }) {
+  const T = X[0].length;
+  const showN = Math.min(X.length, 36);
+  const axisH = 22;
+  const plotH = height - axisH;
+  const colW = width / T;
+  const rowH = plotH / showN;
+
+  let vMin = Infinity, vMax = -Infinity;
+  for (let i = 0; i < showN; i++)
+    for (let t = 0; t < T; t++) {
+      if (X[i][t] < vMin) vMin = X[i][t];
+      if (X[i][t] > vMax) vMax = X[i][t];
+    }
+  const range = vMax - vMin || 1;
+
   return (
     <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none"
          style={{ display: 'block', width: '100%', height: '100%' }}>
-      {cells.map(({ i, j, v }, k) => (
-        <rect key={k} x={i * cw} y={j * ch} width={cw - 0.5} height={ch - 0.5} fill={color} opacity={0.1 + v * 0.85} />
+      {Array.from({ length: showN }, (_, i) =>
+        Array.from({ length: T }, (_, t) => {
+          const norm = (X[i][t] - vMin) / range;
+          return (
+            <rect key={`${i}-${t}`}
+              x={t * colW} y={i * rowH}
+              width={colW - 0.4} height={rowH - 0.2}
+              fill={color} opacity={0.07 + norm * 0.88}
+            />
+          );
+        })
+      )}
+      {/* Time axis labels */}
+      {Array.from({ length: T }, (_, t) => (
+        <text key={t}
+          x={(t + 0.5) * colW} y={plotH + axisH - 4}
+          textAnchor="middle" fontSize="11" fill="var(--ink-3)"
+          fontFamily="var(--mono)">t{t + 1}</text>
       ))}
+      {/* Divider line */}
+      <line x1={0} y1={plotH} x2={width} y2={plotH} stroke="var(--rule-soft)" strokeWidth="0.8" />
     </svg>
   );
 }
@@ -242,7 +270,7 @@ function DomainPanel({ title, kicker, covLabel, X, Visual }) {
 export function SpdDomains() {
   const eeg = useMemo(() => eegSignals(8, 200, 7), []);
   const hsi = useMemo(() => hsiPixels(8, 200, 19), []);
-  const rad = useMemo(() => radarPulses(8, 200, 31), []);
+  const sar = useMemo(() => sarSits(8, 200, 31), []);
 
   return (
     <div style={{
@@ -269,12 +297,12 @@ export function SpdDomains() {
         Visual={({ X, width, height, color }) => <HsiCube X={X} width={width} height={height} color={color} />}
       />
       <DomainPanel
-        kicker="Radar — détection"
-        title="Radar"
-        dataLabel="Cellules range-azimut"
-        covLabel="Covariance range-Doppler"
-        X={rad}
-        Visual={({ width, height, color }) => <RadarPanel width={width} height={height} color={color} seed={41} />}
+        kicker="Séries temporelles SAR"
+        title="SAR SITS"
+        dataLabel="Rétrodiffusion par acquisition"
+        covLabel="Covariance temporelle T×T"
+        X={sar}
+        Visual={({ X, width, height, color }) => <SarPanel X={X} width={width} height={height} color={color} />}
       />
     </div>
   );

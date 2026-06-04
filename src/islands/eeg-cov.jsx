@@ -128,7 +128,7 @@ function ExplainPanel({ step }) {
     if (ref.current) ref.current.innerHTML = STEP_HTML[step];
     renderMath();
   }, [step]);
-  return <div ref={ref} style={{ padding: '24px 36px 18px', borderTop: `1px solid ${RULE_S}`, background: BG, minHeight: 180 }} />;
+  return <div ref={ref} style={{ padding: '24px 36px 18px', borderTop: `1px solid ${RULE_S}`, background: BG, height: 220, flexShrink: 0, overflow: 'hidden' }} />;
 }
 
 function StepPips({ step, total }) {

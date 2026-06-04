@@ -88,7 +88,7 @@ function PrimerPanel({ idx, chapter, handleRef }) {
 
       {chapter.pickable && (
         <div style={{ fontFamily: 'var(--mono)', fontSize: '18px', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-3)', lineHeight: 1.6 }}>
-          {'↳ click sphere to move '}
+          {'↳ cliquer la sphère pour déplacer '}
           <span style={{ color: 'var(--accent)' }}>{chapter.pickable === 'q' ? 'q' : 'p'}</span>
         </div>
       )}

@@ -102,7 +102,7 @@ export function TocSlideContent() {
         <div className="label">Outline</div>
         <div className="label">{fmt(pos.idx)} / {fmt(pos.total)}</div>
       </div>
-      <h2 className="h1" style={{ marginBottom: 52 }}>What we cover.</h2>
+      <h2 className="h1" style={{ marginBottom: 52 }}>Contenu.</h2>
       <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '28px 96px', alignContent: 'start' }}>
         {entries.map(e => (
           <div key={e.num} className="toc-entry" style={{ cursor: 'pointer' }}

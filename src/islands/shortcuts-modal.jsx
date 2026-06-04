@@ -9,6 +9,7 @@ const SHORTCUTS = [
   { keys: ['1 – 9'],               action: 'Jump to slide N' },
   { keys: ['R'],                   action: 'Reset to slide 1' },
   { keys: ['T'],                   action: 'Table of contents' },
+  { keys: ['C'],                   action: 'Notation cheatsheet' },
   { keys: ['E'],                   action: 'Theme editor' },
   { keys: ['/'],                   action: 'Search slides' },
   { keys: ['?'],                   action: 'Keyboard shortcuts' },

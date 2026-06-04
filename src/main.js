@@ -54,6 +54,7 @@ import { TweaksPanel } from './theme/tweaks-panel.jsx';
 import { TocModal } from './islands/toc-modal.jsx';
 import { ShortcutsModal } from './islands/shortcuts-modal.jsx';
 import { SearchModal } from './islands/search-modal.jsx';
+import { NotationModal } from './islands/notation-modal.jsx';
 
 // Boot sequence
 function boot() {
@@ -93,6 +94,11 @@ function boot() {
   searchRoot.id = 'search-modal-root';
   document.body.appendChild(searchRoot);
   ReactDOM.createRoot(searchRoot).render(React.createElement(SearchModal));
+
+  const notationRoot = document.createElement('div');
+  notationRoot.id = 'notation-modal-root';
+  document.body.appendChild(notationRoot);
+  ReactDOM.createRoot(notationRoot).render(React.createElement(NotationModal));
 }
 
 boot();

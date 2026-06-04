@@ -8,12 +8,12 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { renderMath } from '../math.js';
 
 const ACCENT = 'var(--accent)';
-const INK    = 'var(--ink)';
-const INK2   = 'var(--ink-2)';
-const INK3   = 'var(--ink-3)';
+const INK = 'var(--ink)';
+const INK2 = 'var(--ink-2)';
+const INK3 = 'var(--ink-3)';
 const RULE_S = 'var(--rule-soft)';
-const BG2    = 'var(--bg-2)';
-const BG     = 'var(--bg)';
+const BG2 = 'var(--bg-2)';
+const BG = 'var(--bg)';
 
 // ── Synthetic hyperspectral image generator ──────────────────────────────
 // 16×16 spatial grid, D = 8 spectral bands. Each pixel has a signature
@@ -167,7 +167,7 @@ function ExplainPanel({ step }) {
     if (ref.current) ref.current.innerHTML = STEP_HTML[step];
     renderMath();
   }, [step]);
-  return <div ref={ref} style={{ padding: '24px 36px 18px', borderTop: `1px solid ${RULE_S}`, background: BG, minHeight: 180 }} />;
+  return <div ref={ref} style={{ padding: '24px 36px 18px', borderTop: `1px solid ${RULE_S}`, background: BG, height: 220, flexShrink: 0, overflow: 'hidden' }} />;
 }
 
 function StepPips({ step, total }) {
@@ -191,18 +191,18 @@ function ImageView({ img, winX, winY, winSize, highlight }) {
     <svg viewBox={`0 0 ${totalW} ${totalH}`} style={{ display: 'block', width: '100%', height: '100%' }}>
       {img.flatMap((row, y) => row.map((sig, x) => (
         <rect key={`${y}-${x}`} x={padding + x * cell} y={padding + y * cell} width={cell - 1} height={cell - 1}
-              fill={pixelToRGB(sig)} stroke="rgba(0,0,0,0.05)" strokeWidth="0.5" />
+          fill={pixelToRGB(sig)} stroke="rgba(0,0,0,0.05)" strokeWidth="0.5" />
       )))}
       {/* Sliding window — accent overlay */}
       <g style={{ transition: 'transform 600ms cubic-bezier(0.4, 0, 0.2, 1)', transform: `translate(${padding + winX * cell}px, ${padding + winY * cell}px)` }}>
         <rect x={-2} y={-2} width={winSize * cell + 4} height={winSize * cell + 4}
-              fill="none" stroke={ACCENT} strokeWidth="3" rx="3" />
+          fill="none" stroke={ACCENT} strokeWidth="3" rx="3" />
         {highlight && (
           <rect x={-2} y={-2} width={winSize * cell + 4} height={winSize * cell + 4}
-                fill={ACCENT} fillOpacity="0.08" stroke="none" rx="3" />
+            fill={ACCENT} fillOpacity="0.08" stroke="none" rx="3" />
         )}
         {/* corner ticks */}
-        {[[0,0],[winSize*cell,0],[0,winSize*cell],[winSize*cell,winSize*cell]].map(([cx,cy],i)=>(
+        {[[0, 0], [winSize * cell, 0], [0, winSize * cell], [winSize * cell, winSize * cell]].map(([cx, cy], i) => (
           <circle key={i} cx={cx} cy={cy} r="3" fill={ACCENT} />
         ))}
       </g>
@@ -233,7 +233,7 @@ function SignaturePlot({ vecs, meanVec, showMean, centered: showCentered }) {
       {/* zero line if centered */}
       {showCentered && (
         <line x1={pad.l} y1={yOf(0)} x2={W - pad.r} y2={yOf(0)}
-              stroke={INK3} strokeWidth="1" strokeDasharray="3 4" opacity="0.5" />
+          stroke={INK3} strokeWidth="1" strokeDasharray="3 4" opacity="0.5" />
       )}
       {/* axes */}
       <line x1={pad.l} y1={pad.t} x2={pad.l} y2={pad.t + ih} stroke={RULE_S} strokeWidth="1" />
@@ -243,12 +243,12 @@ function SignaturePlot({ vecs, meanVec, showMean, centered: showCentered }) {
       {dataSet.map((v, i) => {
         const path = v.map((vi, k) => `${k === 0 ? 'M' : 'L'} ${xOf(k).toFixed(1)} ${yOf(vi).toFixed(1)}`).join(' ');
         return <path key={i} d={path} stroke={showCentered ? ACCENT : INK2} strokeWidth="1.5"
-                     opacity={showCentered ? 0.55 : 0.4} fill="none" />;
+          opacity={showCentered ? 0.55 : 0.4} fill="none" />;
       })}
       {/* mean */}
       {showMean && !showCentered && meanVec && (
         <path d={meanVec.map((vi, k) => `${k === 0 ? 'M' : 'L'} ${xOf(k).toFixed(1)} ${yOf(vi).toFixed(1)}`).join(' ')}
-              stroke={ACCENT} strokeWidth="3" fill="none" strokeLinejoin="round" />
+          stroke={ACCENT} strokeWidth="3" fill="none" strokeLinejoin="round" />
       )}
     </svg>
   );
@@ -273,13 +273,13 @@ function CovHeatmap({ M, label }) {
         const fill = n >= 0 ? ACCENT : '#264052';
         return (
           <rect key={`${i}-${j}`} x={pad + 30 + j * cell} y={pad + 20 + i * cell} width={cell - 1} height={cell - 1}
-                fill={fill} opacity={op}
-                style={{ transition: 'opacity 280ms, fill 280ms' }} />
+            fill={fill} opacity={op}
+            style={{ transition: 'opacity 280ms, fill 280ms' }} />
         );
       }))}
       {/* outer frame */}
       <rect x={pad + 30} y={pad + 20} width={D * cell} height={D * cell}
-            fill="none" stroke={INK3} strokeWidth="1" opacity="0.4" />
+        fill="none" stroke={INK3} strokeWidth="1" opacity="0.4" />
     </svg>
   );
 }
@@ -376,10 +376,10 @@ export function HsiCov() {
   }, []);
 
   const showSignatures = step >= 1;
-  const showMean       = step >= 2 && step < 3;
-  const showCentered   = step >= 3;
-  const showCov        = step >= 3;
-  const fullCovOnly    = step >= 4;
+  const showMean = step >= 2 && step < 3;
+  const showCentered = step >= 3;
+  const showCov = step >= 3;
+  const fullCovOnly = step >= 4;
 
   return (
     <div ref={containerRef} style={{
@@ -401,7 +401,7 @@ export function HsiCov() {
           minHeight: 0,
         }}>
           <div className="eyebrow" style={{ color: ACCENT }}>
-            Image hyperspectrale — {16}×{16} pixels, D = {D} bandes {sliding && '·  fenêtre en mouvement'}
+            Image hyperspectrale — {16}×{16} pixels, D = {D} bandes {sliding}
           </div>
           <div style={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <ImageView img={img} winX={winX} winY={winY} winSize={WIN} highlight={showSignatures} />

@@ -183,6 +183,11 @@ defineReactElement('spdnet-backprop', null, {
   lazy: () => import('./spdnet-backprop.jsx').then(m => m.SpdNetBackprop),
 });
 
+// SPD cone for 2×2 matrices — Three.js 3D visualization.
+defineReactElement('spd-cone', null, {
+  lazy: () => import('./spd-cone.jsx').then(m => m.SpdCone),
+});
+
 // Federated aggregation on a manifold (Three.js — heavy chunk, lazy).
 defineReactElement('fed-aggregation', null, {
   lazy: () => import('./fed-aggregation.jsx').then(m => m.FedAggregation),

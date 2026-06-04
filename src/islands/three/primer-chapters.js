@@ -70,16 +70,13 @@ function makeLabel(ctx, text, position, opts = {}) {
 }
 
 // ---------------------------------------------------------------------------
-// CH 1: The manifold S²
+// CH 1: La variété S²
 // ---------------------------------------------------------------------------
 const ch1 = {
   id: 'manifold',
-  eyebrow: 'Manifold',
-  title: 'The 2-sphere',
-  body: `The unit sphere <span class="mono">S²</span> sits in ℝ³ as the level set
-    of the squared norm. It is a smooth, compact, two-dimensional Riemannian
-    manifold — the simplest non-trivial setting for optimization with a unit-norm
-    constraint, and the proving ground for the concepts that follow.`,
+  eyebrow: 'Variété',
+  title: 'La 2-sphère',
+  body: `La sphère unité <span class="mono">S²</span> s'inscrit dans ℝ³ comme l'ensemble de niveau de la norme au carré. C'est une variété riemannienne lisse, compacte, de dimension deux — le cadre le plus simple pour l'optimisation sous contrainte de norme unitaire, et le terrain d'expérimentation des concepts qui suivent.`,
   formula: String.raw`S^{2} \;=\; \bigl\{\, x \in \mathbb{R}^{3} : \|x\| = 1 \,\bigr\}, \quad \dim S^{2} = 2`,
   camera: { pos: [0, 0.55, 3.4], target: [0, 0, 0] },
   enter(ctx) {
@@ -107,16 +104,13 @@ const ch1 = {
 };
 
 // ---------------------------------------------------------------------------
-// CH 2: Tangent space
+// CH 2: Espace tangent
 // ---------------------------------------------------------------------------
 const ch2 = {
   id: 'tangent',
-  eyebrow: 'Tangent space',
-  title: 'T\u209A S²',
-  body: `At each <em>p ∈ S²</em>, the tangent space is the 2-plane through
-    the origin <em>orthogonal to the radial direction</em>. Tangent vectors are
-    the instantaneous velocities of smooth curves on <span class="mono">S²</span> passing through p; they are the
-    objects gradients, search directions, and momenta live in.`,
+  eyebrow: 'Espace tangent',
+  title: 'Tₚ S²',
+  body: `En chaque <em>p ∈ S²</em>, l'espace tangent est le 2-plan passant par l'origine <em>orthogonal à la direction radiale</em>. Les vecteurs tangents sont les vitesses instantanées des courbes lisses sur <span class="mono">S²</span> passant par p ; c'est là que vivent les gradients, directions de descente et moments.`,
   formula: String.raw`T_{p}S^{2} \;=\; \bigl\{\, v \in \mathbb{R}^{3} : \langle v,\, p\rangle = 0 \,\bigr\}`,
   camera: { pos: [1.55, 1.05, 2.30], target: [0.30, 0.15, 0.10] },
   pickable: true,
@@ -170,16 +164,13 @@ const ch2 = {
 };
 
 // ---------------------------------------------------------------------------
-// CH 3: Riemannian metric
+// CH 3: Métrique riemannienne
 // ---------------------------------------------------------------------------
 const ch3 = {
   id: 'metric',
-  eyebrow: 'Metric',
-  title: 'Inner product on T\u209A',
-  body: `<span class="mono">S²</span> inherits its Riemannian metric from the ambient
-    Euclidean inner product: lengths and angles of tangent vectors are simply those
-    of ℝ³, restricted to each tangent plane. This is what lets us talk about
-    <em>gradient</em>, <em>orthogonality</em>, and <em>norm</em> intrinsically.`,
+  eyebrow: 'Métrique',
+  title: 'Produit intérieur sur Tₚ',
+  body: `<span class="mono">S²</span> hérite de sa métrique riemannienne du produit scalaire euclidien ambiant : longueurs et angles des vecteurs tangents sont simplement ceux de ℝ³, restreints à chaque plan tangent. C'est ce qui permet de parler de <em>gradient</em>, d'<em>orthogonalité</em> et de <em>norme</em> de façon intrinsèque.`,
   formula: String.raw`\langle u,\, v\rangle_{p} \;=\; u\!\cdot\! v, \qquad \|v\|_{p} = \sqrt{\langle v,v\rangle_{p}}`,
   camera: { pos: [1.55, 1.05, 2.30], target: [0.30, 0.15, 0.10] },
   enter(ctx) {
@@ -232,16 +223,13 @@ const ch3 = {
 };
 
 // ---------------------------------------------------------------------------
-// CH 4: Geodesics
+// CH 4: Géodésiques
 // ---------------------------------------------------------------------------
 const ch4 = {
   id: 'geodesic',
-  eyebrow: 'Geodesics',
-  title: 'Great circles',
-  body: `A <em>geodesic</em> is a locally length-minimizing curve. On <span class="mono">S²</span>
-    geodesics are arcs of great circles — intersections of the sphere with planes
-    through the origin. The geodesic leaving p with initial velocity v traces
-    γ(t) on the sphere by trigonometric rotation in the plane <span class="mono">span(p, v̂)</span>.`,
+  eyebrow: 'Géodésiques',
+  title: 'Grands cercles',
+  body: `Une <em>géodésique</em> est une courbe qui minimise localement la longueur. Sur <span class="mono">S²</span>, les géodésiques sont des arcs de grands cercles — intersections de la sphère avec des plans passant par l'origine. La géodésique partant de p avec vitesse initiale v trace γ(t) par rotation trigonométrique dans le plan <span class="mono">span(p, v̂)</span>.`,
   formula: String.raw`\gamma_{p,v}(t) \;=\; \cos(t)\, p \;+\; \sin(t)\, \hat{v}, \\ \hat{v} = v / \|v\|`,
   camera: { pos: [0.4, 0.8, 3.0], target: [0, 0.05, 0.25] },
   pickable: true,
@@ -292,17 +280,13 @@ const ch4 = {
 };
 
 // ---------------------------------------------------------------------------
-// CH 5: Exponential map
+// CH 5: Application exponentielle
 // ---------------------------------------------------------------------------
 const ch5 = {
   id: 'exp',
   eyebrow: 'Exp',
-  title: 'exp\u209A : T\u209AS² → S²',
-  body: `The exponential map sends a tangent vector v ∈ T<sub>p</sub>S² to the
-    endpoint of the geodesic of length ‖v‖ that leaves p with direction v̂.
-    Intuitively, it <em>wraps the line p + tv on the tangent plane onto the
-    sphere</em> along the unique geodesic in that direction. Diffeomorphic for
-    ‖v‖ &lt; π.`,
+  title: 'expₚ : TₚS² → S²',
+  body: `L'application exponentielle envoie un vecteur tangent v ∈ T<sub>p</sub>S² vers l'extrémité de la géodésique de longueur ‖v‖ partant de p dans la direction v̂. Intuitivement, elle <em>enroule la droite p + tv sur la sphère</em> le long de l'unique géodésique dans cette direction. Difféomorphisme pour ‖v‖ &lt; π.`,
   formula: String.raw`\exp_{p}(v) \;=\; \cos(\|v\|)\, p \;+\; \sin(\|v\|)\, \tfrac{v}{\|v\|}`,
   camera: { pos: [1.55, 1.10, 2.20], target: [0.30, 0.18, 0.10] },
   controlSchema: { vMag: { min: 0.05, max: Math.PI * 0.95, step: 0.01, value: 1.1, label: '‖v‖' } },
@@ -380,16 +364,13 @@ const ch5 = {
 };
 
 // ---------------------------------------------------------------------------
-// CH 6: Log map
+// CH 6: Application logarithmique
 // ---------------------------------------------------------------------------
 const ch6 = {
   id: 'log',
   eyebrow: 'Log',
-  title: 'log\u209A : S² → T\u209AS²',
-  body: `On the open hemisphere centred at p, the exponential map is invertible.
-    Its inverse, the <em>logarithm</em>, sends q ↦ log<sub>p</sub>(q): the unique
-    tangent vector at p whose direction points toward q along the geodesic, with
-    magnitude equal to the geodesic distance <span class="mono">d(p,q) = arccos⟨p,q⟩</span>.`,
+  title: 'logₚ : S² → TₚS²',
+  body: `Sur l'hémisphère ouvert centré en p, l'application exponentielle est inversible. Son inverse, le <em>logarithme</em>, envoie q ↦ log<sub>p</sub>(q) : l'unique vecteur tangent en p dont la direction pointe vers q le long de la géodésique, de module égal à la distance géodésique <span class="mono">d(p,q) = arccos⟨p,q⟩</span>.`,
   formula: String.raw`\log_{p}(q) \;=\; \theta\, \frac{q - \langle p,q\rangle\, p}{\|q - \langle p,q\rangle\, p\|}, \\ \theta = \arccos\langle p,q\rangle`,
   camera: { pos: [0.85, 0.95, 2.55], target: [0.20, 0.12, 0.20] },
   pickable: 'q',
@@ -455,17 +436,13 @@ const ch6 = {
 };
 
 // ---------------------------------------------------------------------------
-// CH 7: Retraction
+// CH 7: Rétraction
 // ---------------------------------------------------------------------------
 const ch7 = {
   id: 'retract',
-  eyebrow: 'Retraction',
-  title: 'R\u209A ≈ exp\u209A',
-  body: `A <em>retraction</em> is any smooth map T<sub>p</sub>S² → S² that agrees
-    with the identity to first order at <span class="mono">0 ∈ T<sub>p</sub>S²</span>.
-    On the sphere, the cheap standard choice is metric projection — just normalize.
-    It coincides with exp<sub>p</sub> at v = 0 and to first order, but diverges as
-    ‖v‖ grows. The cost saving is dramatic: no trig, no normalization of v.`,
+  eyebrow: 'Rétraction',
+  title: 'Rₚ ≈ expₚ',
+  body: `Une <em>rétraction</em> est toute application lisse T<sub>p</sub>S² → S² qui coïncide avec l'identité au premier ordre en <span class="mono">0 ∈ T<sub>p</sub>S²</span>. Sur la sphère, le choix canonique bon marché est la projection métrique — normaliser simplement. Elle coïncide avec exp<sub>p</sub> en v = 0 et au premier ordre, mais s'en écarte quand ‖v‖ croît. Le gain en coût est considérable : pas de trig, pas de normalisation de v.`,
   formula: String.raw`R_{p}(v) \;=\; \frac{p + v}{\|p + v\|}`,
   camera: { pos: [1.55, 1.10, 2.20], target: [0.30, 0.18, 0.10] },
   controlSchema: { vMag: { min: 0.05, max: Math.PI * 0.95, step: 0.01, value: 1.3, label: '‖v‖' } },
@@ -540,75 +517,92 @@ const ch7 = {
 };
 
 // ---------------------------------------------------------------------------
-// CH 8: Parallel transport
+// CH 8: Transport parallèle — deux vecteurs pour montrer la conservation de l'angle
 // ---------------------------------------------------------------------------
 const ch8 = {
   id: 'transport',
-  eyebrow: 'Connection',
-  title: 'Parallel transport',
-  body: `To compare tangent vectors at different points we need a notion of
-    transport. The <em>Levi-Civita parallel transport</em> along a geodesic
-    preserves lengths, angles, and the inner product with the velocity.
-    On <span class="mono">S²</span>, this is a rigid rotation in the plane
-    <span class="mono">span(p, q)</span> by the geodesic angle θ.`,
+  eyebrow: 'Connexion',
+  title: 'Transport parallèle',
+  body: `Pour comparer des vecteurs tangents en des points différents, il faut une notion de transport. Le <em>transport parallèle de Levi-Civita</em> le long d'une géodésique préserve longueurs, angles et le produit intérieur avec la vitesse. Sur <span class="mono">S²</span>, c'est une rotation rigide dans le plan <span class="mono">span(p, q)</span>. <strong>Deux vecteurs</strong> sont transportés ici : leur angle mutuel est constant.`,
   formula: String.raw`P_{p\to q}\colon T_{p}S^{2} \to T_{q}S^{2}, \\ \langle P_{p\to q}(u), P_{p\to q}(v)\rangle_{q} = \langle u, v\rangle_{p}`,
   camera: { pos: [0.6, 0.85, 2.85], target: [0.05, 0.10, 0.20] },
   enter(ctx) {
     const p = ctx.p.clone();
     const q = ctx.q.clone();
 
-    // geodesic
+    // geodesic arc p → q
     const arc = buildPolyline({
       points: M.geodesicArc(p, q, 96), color: ctx.palette.geodesic, opacity: 0.6,
     });
     ctx.group.add(arc);
 
-    // trail of transported vectors (faint)
-    const trailGroup = new THREE.Group();
+    // trail groups for ghost arrows
+    const trailGroup  = new THREE.Group();
+    const trailGroup2 = new THREE.Group();
     ctx.group.add(trailGroup);
+    ctx.group.add(trailGroup2);
 
-    // an initial tangent vector w at p, off-axis relative to log_p(q)
+    // first vector w at p — off-axis relative to log_p(q)
     const lpq = M.logMap(p, q);
-    const [e1] = M.tangentFrame(p);
     const baseDir = lpq.clone().normalize();
-    // rotate baseDir by ~60° in tangent plane
     const ortho = new THREE.Vector3().crossVectors(p, baseDir).normalize();
     const rot = THREE.MathUtils.degToRad(55);
     const w = baseDir.clone().multiplyScalar(Math.cos(rot))
       .addScaledVector(ortho, Math.sin(rot))
       .multiplyScalar(0.35);
 
+    // second vector w2 — rotate w by 70° around the outward normal at p
+    const normalP = p.clone().normalize();
+    const rot2cos = Math.cos(THREE.MathUtils.degToRad(70));
+    const rot2sin = Math.sin(THREE.MathUtils.degToRad(70));
+    const wPerp = new THREE.Vector3().crossVectors(normalP, w.clone().normalize()).multiplyScalar(w.length());
+    const w2 = w.clone().multiplyScalar(rot2cos).addScaledVector(wPerp, rot2sin);
+
+    // moving arrows (travel along geodesic)
     const arrowMoving = buildArrow({
       origin: p, direction: w, length: w.length(),
       color: ctx.palette.transport, shaft: 0.007, head: 0.030, headLen: 0.070,
     });
+    const arrowMoving2 = buildArrow({
+      origin: p, direction: w2, length: w2.length(),
+      color: ctx.palette.q, shaft: 0.007, head: 0.030, headLen: 0.070,
+    });
     ctx.group.add(arrowMoving);
+    ctx.group.add(arrowMoving2);
 
-    // start & end markers
+    // ghost arrows at start (semi-transparent)
     const startArrow = buildArrow({
       origin: p, direction: w, length: w.length(),
       color: ctx.palette.transport, shaft: 0.006, head: 0.024, headLen: 0.055,
     });
     startArrow.userData.mat.opacity = 0.35;
     startArrow.userData.mat.transparent = true;
+    const startArrow2 = buildArrow({
+      origin: p, direction: w2, length: w2.length(),
+      color: ctx.palette.q, shaft: 0.006, head: 0.024, headLen: 0.055,
+    });
+    startArrow2.userData.mat.opacity = 0.35;
+    startArrow2.userData.mat.transparent = true;
     ctx.group.add(startArrow);
+    ctx.group.add(startArrow2);
 
     ctx.group.add(buildDot({ position: p, color: ctx.palette.p, radius: 0.022 }));
     ctx.group.add(buildDot({ position: q, color: ctx.palette.q, radius: 0.022 }));
 
     makeLabel(ctx, 'p', p.clone().multiplyScalar(1.06), { accent: true });
     makeLabel(ctx, 'q', q.clone().multiplyScalar(1.06), { q: true });
-    const wLabel = makeLabel(ctx, 'w', p.clone().add(w.clone().multiplyScalar(1.25)),
-      { transport: true });
-    const PwLabel = makeLabel(ctx, 'P(w)', q.clone(), { transport: true });
+    const wLabel  = makeLabel(ctx, 'w₁', p.clone().add(w.clone().multiplyScalar(1.28)),  { transport: true });
+    const w2Label = makeLabel(ctx, 'w₂', p.clone().add(w2.clone().multiplyScalar(1.28)), { q: true });
+    const PwLabel  = makeLabel(ctx, 'P(w₁)', q.clone(), { transport: true });
+    const Pw2Label = makeLabel(ctx, 'P(w₂)', q.clone(), { q: true });
 
-    // animated parameter t ∈ [0,1] looping
     let t = 0;
-    const period = 4.2;     // seconds for a full traversal
-    const hold = 0.7;       // hold at end before reset
-    let phase = 'travel';   // travel | hold
+    const period = 4.2;   // seconds for a full traversal
+    const hold = 0.7;     // hold at destination before reset
+    let phase = 'travel';
     let phaseT = 0;
-    let trailPts = [];
+    let trailPts  = [];
+    let trailPts2 = [];
 
     return {
       tick(time, dt) {
@@ -619,33 +613,43 @@ const ch8 = {
         } else {
           phaseT += dt;
           if (phaseT > hold) {
-            // reset
-            phase = 'travel';
-            phaseT = 0;
-            // clear trail
-            for (const c of trailPts) trailGroup.remove(c);
-            trailPts = [];
+            phase = 'travel'; phaseT = 0;
+            for (const c of trailPts)  trailGroup.remove(c);
+            for (const c of trailPts2) trailGroup2.remove(c);
+            trailPts = []; trailPts2 = [];
           }
         }
-        const dot = THREE.MathUtils.clamp(p.dot(q), -1, 1);
+        const dot   = THREE.MathUtils.clamp(p.dot(q), -1, 1);
         const theta = Math.acos(dot);
-        const u = q.clone().addScaledVector(p, -dot).normalize();
-        const cur = M.geodesicPoint(p, u, t * theta);
-        const wt = M.parallelTransport(p, cur, w);
+        const u     = q.clone().addScaledVector(p, -dot).normalize();
+        const cur   = M.geodesicPoint(p, u, t * theta);
+        const wt    = M.parallelTransport(p, cur, w);
+        const w2t   = M.parallelTransport(p, cur, w2);
+
         arrowMoving.userData.update(cur, wt, wt.length());
+        arrowMoving2.userData.update(cur, w2t, w2t.length());
+        PwLabel.update(cur.clone().add(wt.clone().multiplyScalar(1.28)));
+        Pw2Label.update(cur.clone().add(w2t.clone().multiplyScalar(1.28)));
 
-        PwLabel.update(cur.clone().add(wt.clone().multiplyScalar(1.25)));
-
-        // intermittently drop a ghost arrow into the trail
+        // drop ghost arrows into trail for both vectors simultaneously
         if (phase === 'travel' && Math.floor(t * 12) > trailPts.length - 1) {
           const ghost = buildArrow({
             origin: cur, direction: wt, length: wt.length(),
             color: ctx.palette.transport, shaft: 0.006, head: 0.028, headLen: 0.055,
           });
-          ghost.userData.mat.opacity = 0.30;
+          ghost.userData.mat.opacity = 0.22;
           ghost.userData.mat.transparent = true;
           trailGroup.add(ghost);
           trailPts.push(ghost);
+
+          const ghost2 = buildArrow({
+            origin: cur, direction: w2t, length: w2t.length(),
+            color: ctx.palette.q, shaft: 0.006, head: 0.028, headLen: 0.055,
+          });
+          ghost2.userData.mat.opacity = 0.22;
+          ghost2.userData.mat.transparent = true;
+          trailGroup2.add(ghost2);
+          trailPts2.push(ghost2);
         }
       },
     };

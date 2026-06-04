@@ -19,6 +19,79 @@
 <meta name="deck-date"  content="10 Juin 2026">
 
 <script type="module" src="/src/main.js"></script>
+
+<script id="deck-notation" type="application/json">
+{
+  "title": "Notation",
+  "sections": [
+    {
+      "heading": "Spaces & Matrices",
+      "entries": [
+        { "symbol": "\\mathcal{S}_{++}^d",           "meaning": "Manifold of d×d symmetric positive definite (SPD) matrices" },
+        { "symbol": "\\mathrm{St}(d_{k-1}, d_k)",    "meaning": "Stiefel manifold — semi-orthogonal matrices W with WᵀW = I" },
+        { "symbol": "\\boldsymbol{\\Sigma}",          "meaning": "SPD covariance matrix (generic)" },
+        { "symbol": "X = U \\Lambda U^\\top",         "meaning": "Eigendecomposition of symmetric matrix X" },
+        { "symbol": "\\Lambda = \\mathrm{diag}(\\sigma_1,\\ldots,\\sigma_d)", "meaning": "Diagonal matrix of eigenvalues" },
+        { "symbol": "P_{ij} = 1/(\\sigma_i - \\sigma_j)", "meaning": "Off-diagonal backprop sensitivity (Ionescu 2015)" }
+      ]
+    },
+    {
+      "heading": "Riemannian Geometry",
+      "entries": [
+        { "symbol": "\\nabla^{\\!R} f",              "meaning": "Riemannian gradient of f (projected to tangent space)" },
+        { "symbol": "\\mathrm{Exp}_x(v)",            "meaning": "Exponential map — geodesic from x in direction v" },
+        { "symbol": "\\mathrm{Log}_x(y)",            "meaning": "Logarithm map — tangent vector at x pointing to y" },
+        { "symbol": "d_R(M, \\Sigma)",               "meaning": "Riemannian (geodesic) distance between two SPD matrices" },
+        { "symbol": "T_x \\mathcal{M}",              "meaning": "Tangent space to manifold ℳ at point x" },
+        { "symbol": "\\mathrm{Retr}_x(v)",           "meaning": "Retraction — cheap approximation to Exp" },
+        { "symbol": "\\mathcal{P}_{T_{x}\\mathcal{M}}", "meaning": "Orthogonal projection onto tangent space at x" }
+      ]
+    },
+    {
+      "heading": "SPDNet Layers",
+      "entries": [
+        { "symbol": "\\mathrm{BiMap}_k(X) = W_k X W_k^\\top", "meaning": "Bilinear projection layer k; W_k ∈ St(d_{k-1}, d_k)" },
+        { "symbol": "\\mathrm{ReEig}(X)",            "meaning": "Eigenvalue rectification: replace σᵢ → max(ε, σᵢ)" },
+        { "symbol": "\\mathrm{LogEig}(X)",           "meaning": "Eigenvalue logarithm: replace σᵢ → log(σᵢ); maps to tangent at I" },
+        { "symbol": "\\partial\\mathcal{L}/\\partial X", "meaning": "Gradient of loss w.r.t. SPD matrix X (matrix backprop)" },
+        { "symbol": "\\nabla_{W_k}\\mathcal{L}",     "meaning": "Riemannian gradient of loss w.r.t. layer weight W_k" }
+      ]
+    },
+    {
+      "heading": "ARMAGNAC — Parametric Mean",
+      "entries": [
+        { "symbol": "A = \\tfrac{1}{K}\\sum_k \\Sigma_k",       "meaning": "Arithmetic mean (MLE under Wishart)" },
+        { "symbol": "H = \\bigl[\\tfrac{1}{K}\\sum_k \\Sigma_k^{-1}\\bigr]^{-1}", "meaning": "Harmonic mean (MLE under inverse-Wishart)" },
+        { "symbol": "G = \\arg\\min_M \\sum_k d_R(M,\\Sigma_k)^2", "meaning": "Fréchet (geometric) mean — no closed form" },
+        { "symbol": "A \\#_t B",                     "meaning": "Weighted geometric mean: A^{1/2}(A^{-1/2}BA^{-1/2})^t A^{1/2}" },
+        { "symbol": "\\Phi = H \\#_t A,\\; t\\in[0,1]", "meaning": "ARMAGNAC mean; t=0→H, t=0.5→GAH, t=1→A (t is learned)" },
+        { "symbol": "\\Gamma \\in \\mathcal{S}_{++}^d", "meaning": "Learned SPD bias (affine shift in BatchNorm)" }
+      ]
+    },
+    {
+      "heading": "Federated Learning",
+      "entries": [
+        { "symbol": "x_t",                           "meaning": "Global model at communication round t" },
+        { "symbol": "x^{(i)}_{t,\\tau}",             "meaning": "Local model of client i after τ local SGD epochs" },
+        { "symbol": "S_t \\subseteq [n]",             "meaning": "Set of participating clients at round t" },
+        { "symbol": "\\rho = k/n",                   "meaning": "Client participation rate (k active out of n total)" },
+        { "symbol": "\\mathrm{RFedProj}",            "meaning": "Projected Riemannian federated average: P_ℳ(mean of local models)" },
+        { "symbol": "\\mathrm{RFedRL}",              "meaning": "Retracted-lifted aggregation (tangent-space variant)" }
+      ]
+    },
+    {
+      "heading": "Optimization & Convergence",
+      "entries": [
+        { "symbol": "\\mathcal{L}(\\theta)",          "meaning": "Loss function (scalar training objective)" },
+        { "symbol": "\\alpha",                        "meaning": "Learning rate / step size" },
+        { "symbol": "\\tau",                          "meaning": "Number of local SGD epochs per federated round" },
+        { "symbol": "\\mathcal{O}(1/\\sqrt{T})",     "meaning": "Convergence rate of RFedProj/RFedRL (Theorem 4.6)" },
+        { "symbol": "\\|\\nabla^{\\!R} F(x_t)\\|^2", "meaning": "Squared Riemannian gradient norm (convergence criterion)" }
+      ]
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <deck-stage width="1920" height="1080">
@@ -36,8 +109,12 @@
         <div class="eyebrow" style="margin-bottom:32px;">Journée Parcimonie, Optimisation et Problèmes Inverses Lyon Saint-Etienne Savoie</div>
         <h1 class="title">Apprentissage profond sur matrices de covariance </h1>
         <div class="lede" style="margin-top:36px;max-width:1300px;">Optimisation Riemannienne</div>
-        <div style="margin-top:40px"><img  height="150" src="./assets/listic-logo-horiz.png" alt="listic-logo">
-            <img height="150" src="./assets/Logo_USMB_web_grand_RVB.png" alt="logo usmb"></div>
+        <div style="margin-top:40px;display:flex;align-items:center;gap:40px;">
+          <img style="height:100px;width:auto;object-fit:contain;" src="./assets/listic-logo-horiz.png" alt="listic-logo">
+          <img style="height:100px;width:auto;object-fit:contain;" src="./assets/Logo_USMB_web_grand_RVB.png" alt="logo usmb">
+          <img style="height:100px;width:auto;object-fit:contain;" src="./assets/L2S_logo.png" alt="logo l2s">
+          <img style="height:100px;width:auto;object-fit:contain;" src="./assets/cnrs.png" alt="logo cnrs">
+        </div>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:baseline;">
         <div class="body" style="font-size:28px;">Ammar Mian</div>
@@ -51,6 +128,158 @@
   <toc-slide>
     <slide-note>Présenter le plan de l'exposé.</slide-note>
   </toc-slide>
+
+  <!-- ═══════════════════════════════════════
+       03 · Team / Collaborateurs
+       ═══════════════════════════════════════ -->
+  <section data-label="Collaborateurs">
+    <slide-header title="Collaborateurs"></slide-header>
+    <div class="slide-body">
+      <style>
+        .collab-container {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          gap: 36px;
+          padding: 36px 88px 44px;
+        }
+        .collab-intro {
+          font-family: var(--sans);
+          font-size: 22px;
+          font-weight: 400;
+          color: var(--ink-2);
+          letter-spacing: -0.01em;
+          line-height: 1.3;
+        }
+        .collab-wrap {
+          display: flex;
+          align-items: stretch;
+        }
+        .collab-card {
+          flex: 1;
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          padding: 28px 44px 36px;
+          overflow: hidden;
+          border: 1px solid var(--rule);
+          margin-left: -1px;
+          height: 480px;
+          /* override the global data-step transition to include transform */
+          transition: opacity 380ms ease, transform 420ms cubic-bezier(0.16,1,0.3,1) !important;
+        }
+        .collab-card:first-child { margin-left: 0; }
+        /* slide up from below when not yet revealed */
+        .collab-card[data-step]:not([data-step-visible]) {
+          transform: translateY(22px);
+        }
+        .collab-monogram {
+          position: absolute;
+          top: -8px;
+          left: 10px;
+          font-family: var(--sans);
+          font-size: 220px;
+          font-weight: 800;
+          line-height: 1;
+          color: transparent;
+          -webkit-text-stroke: 1.5px var(--rule-soft);
+          user-select: none;
+          pointer-events: none;
+          letter-spacing: -0.04em;
+        }
+        .collab-accent-bar {
+          width: 28px;
+          height: 2px;
+          background: var(--accent);
+          margin-bottom: 16px;
+          flex-shrink: 0;
+        }
+        .collab-firstname {
+          font-family: var(--sans);
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--ink-2);
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          line-height: 1;
+          margin-bottom: 8px;
+          position: relative;
+          z-index: 1;
+        }
+        .collab-lastname {
+          font-family: var(--sans);
+          font-size: 42px;
+          font-weight: 700;
+          color: var(--ink);
+          letter-spacing: -0.03em;
+          line-height: 1;
+          position: relative;
+          z-index: 1;
+          margin-bottom: 14px;
+        }
+        .collab-role {
+          font-family: var(--sans);
+          font-size: 13px;
+          font-weight: 400;
+          font-style: italic;
+          color: var(--ink-3);
+          line-height: 1.45;
+          position: relative;
+          z-index: 1;
+        }
+        .collab-lab {
+          font-family: var(--mono);
+          font-size: 11px;
+          font-weight: 400;
+          color: var(--ink-3);
+          letter-spacing: 0.06em;
+          margin-top: 6px;
+          position: relative;
+          z-index: 1;
+        }
+      </style>
+      <div class="collab-container">
+        <div class="collab-intro">Le travail présenté a été réalisé en collaboration avec :</div>
+        <div class="collab-wrap">
+          <div class="collab-card" data-step>
+            <span class="collab-monogram">M</span>
+            <div class="collab-accent-bar"></div>
+            <div class="collab-firstname">Matthieu</div>
+            <div class="collab-lastname">Gallet</div>
+            <div class="collab-role">Maître de conférences</div>
+            <div class="collab-lab">LISTIC · Université Savoie Mont Blanc</div>
+          </div>
+          <div class="collab-card" data-step>
+            <span class="collab-monogram">T</span>
+            <div class="collab-accent-bar"></div>
+            <div class="collab-firstname">Thibault</div>
+            <div class="collab-lastname">Pautrel</div>
+            <div class="collab-role">Post-doctorant</div>
+            <div class="collab-lab">L2S · CNRS</div>
+          </div>
+          <div class="collab-card" data-step>
+            <span class="collab-monogram">G</span>
+            <div class="collab-accent-bar"></div>
+            <div class="collab-firstname">Guillaume</div>
+            <div class="collab-lastname">Ginolhac</div>
+            <div class="collab-role">Professeur des universités</div>
+            <div class="collab-lab">LISTIC · USMB</div>
+          </div>
+          <div class="collab-card" data-step>
+            <span class="collab-monogram">F</span>
+            <div class="collab-accent-bar"></div>
+            <div class="collab-firstname">Florent</div>
+            <div class="collab-lastname">Bouchard</div>
+            <div class="collab-role">Chargé de recherche CNRS</div>
+            <div class="collab-lab">L2S · CNRS</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
 
   <!-- ═══════════════════════════════════════
        §1 · First section divider
@@ -83,39 +312,129 @@
         </div>
       </div>
 
-      <div class="theorem" data-step>
-        <div class="theorem-tag">Définition <span class="theorem-name">Matrice symétrique définie positive</span></div>
-        <div class="theorem-body">
-              Une matrice <span class="math">\boldsymbol{\Sigma}</span> est dite SPD (<em>Symmetric Positive Definite</em>) si  <span class="math">\boldsymbol{\Sigma}=\boldsymbol{\Sigma}^\mathrm{T}</span> et <span class="math">\operatorname{det}(\boldsymbol{\Sigma}) > 0</span>.
-        </div>
-      </div>
 
     </div>
     <slide-footer></slide-footer>
   </section>
 
-  <!-- §1.1b · Three domains where SPD matrices appear -->
+  <!-- §1.1a · EEG — brain-computer interfaces -->
   <section>
-    <slide-note>Trois domaines emblématiques où les matrices SPD apparaissent naturellement : EEG (covariance spatiale entre canaux), imagerie hyperspectrale (covariance entre bandes spectrales), radar (covariance range-Doppler). Dans tous les cas, le second ordre porte une information discriminante absente du premier ordre.</slide-note>
-    <slide-header title="Trois domaines, un même objet"></slide-header>
+    <slide-note>L'EEG comme exemple canonique : la covariance spatiale entre canaux encode la topographie des rythmes cérébraux et permet de discriminer les états cognitifs dans les BCI.</slide-note>
+    <slide-header title="EEG — interfaces cerveau-machine"></slide-header>
     <div class="slide-body">
-      <p class="lede" style="margin-bottom:24px;max-width:1500px;">
-        Dans des contextes très différents, le <strong>second ordre</strong> capte la structure pertinente :
-        ce ne sont pas les valeurs des signaux, mais leurs <em>co-variations</em>, qui portent l'information.
-      </p>
-      <div style="flex:1;min-height:0;">
-        <spd-domains></spd-domains>
-      </div>
-    </div>
-    <slide-footer></slide-footer>
-  </section>
+      <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:72px;min-height:0;align-items:center;">
 
-  <!-- §1.1c · How a covariance is computed — HSI sliding window -->
-  <section>
-    <slide-note>Démonstration pas-à-pas : on isole une fenêtre glissante sur une image hyperspectrale, on collecte les signatures spectrales des pixels, on les centre, on calcule les produits extérieurs et enfin la covariance. Touches flèches pour avancer.</slide-note>
-    <slide-header title="Comment se construit Σ — hyperspectral"></slide-header>
-    <div class="slide-body" style="padding:0;overflow:hidden;">
-      <hsi-cov></hsi-cov>
+        <!-- Left: EEG head topography SVG -->
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px;">
+          <svg viewBox="0 0 500 540" style="width:100%;max-height:580px;height:auto;">
+            <defs>
+              <clipPath id="eeg-clip">
+                <circle cx="250" cy="270" r="210"/>
+              </clipPath>
+              <radialGradient id="eeg-gc3" gradientUnits="userSpaceOnUse" cx="145" cy="270" r="160">
+                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.52"/>
+                <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="eeg-gc4" gradientUnits="userSpaceOnUse" cx="355" cy="270" r="120">
+                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.26"/>
+                <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="eeg-gpz" gradientUnits="userSpaceOnUse" cx="250" cy="348" r="95">
+                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.16"/>
+                <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+
+            <!-- Head fill -->
+            <circle cx="250" cy="270" r="210" fill="var(--bg-2)"/>
+            <!-- Heatmap blobs -->
+            <g clip-path="url(#eeg-clip)">
+              <rect x="0" y="0" width="500" height="540" fill="url(#eeg-gc3)"/>
+              <rect x="0" y="0" width="500" height="540" fill="url(#eeg-gc4)"/>
+              <rect x="0" y="0" width="500" height="540" fill="url(#eeg-gpz)"/>
+            </g>
+            <!-- Head outline -->
+            <circle cx="250" cy="270" r="210" fill="none" stroke="var(--ink-2)" stroke-width="2.5"/>
+            <!-- Nose -->
+            <polygon points="238,68 250,50 262,68" fill="none" stroke="var(--ink-2)" stroke-width="2"/>
+            <!-- Ears -->
+            <path d="M42,255 Q18,270 42,285" fill="none" stroke="var(--ink-2)" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M458,255 Q482,270 458,285" fill="none" stroke="var(--ink-2)" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Cross guide lines -->
+            <line x1="250" y1="62" x2="250" y2="478" stroke="var(--rule-soft)" stroke-width="1" stroke-dasharray="4 5"/>
+            <line x1="42"  y1="270" x2="458" y2="270" stroke="var(--rule-soft)" stroke-width="1" stroke-dasharray="4 5"/>
+
+            <!-- Fp row -->
+            <circle cx="210" cy="102" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="210" y="88" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">Fp1</text>
+            <circle cx="290" cy="102" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="290" y="88" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">Fp2</text>
+
+            <!-- F row -->
+            <circle cx="99"  cy="173" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="99"  y="159" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">F7</text>
+            <circle cx="168" cy="178" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="168" y="164" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">F3</text>
+            <circle cx="250" cy="192" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="250" y="178" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">Fz</text>
+            <circle cx="332" cy="178" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="332" y="164" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">F4</text>
+            <circle cx="401" cy="173" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="401" y="159" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">F8</text>
+
+            <!-- C/T row -->
+            <circle cx="65"  cy="270" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="65"  y="256" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">T7</text>
+            <!-- C3 — highlighted (contralateral motor cortex) -->
+            <circle cx="145" cy="270" r="10" fill="var(--accent)" stroke="var(--bg)" stroke-width="2.5"/>
+            <text x="145" y="254" text-anchor="middle" font-size="13" font-family="var(--mono)" fill="var(--ink)" font-weight="700">C3</text>
+            <!-- Cz -->
+            <circle cx="250" cy="270" r="7" fill="var(--bg)" stroke="var(--ink-2)" stroke-width="2"/>
+            <text x="264" y="266" text-anchor="start" font-size="12" font-family="var(--mono)" fill="var(--ink-2)">Cz</text>
+            <!-- C4 — secondary activation -->
+            <circle cx="355" cy="270" r="9" fill="var(--accent)" stroke="var(--bg)" stroke-width="2.5" opacity="0.55"/>
+            <text x="355" y="254" text-anchor="middle" font-size="13" font-family="var(--mono)" fill="var(--ink)" font-weight="700">C4</text>
+            <circle cx="435" cy="270" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="435" y="256" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">T8</text>
+
+            <!-- P row -->
+            <circle cx="99"  cy="367" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="99"  y="385" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">P7</text>
+            <circle cx="168" cy="362" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="168" y="380" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">P3</text>
+            <circle cx="250" cy="348" r="6" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="266" y="352" text-anchor="start" font-size="12" font-family="var(--mono)" fill="var(--ink-3)">Pz</text>
+            <circle cx="332" cy="362" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="332" y="380" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">P4</text>
+            <circle cx="401" cy="367" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="401" y="385" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">P8</text>
+
+            <!-- O row -->
+            <circle cx="210" cy="438" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="210" y="456" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">O1</text>
+            <circle cx="290" cy="438" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="290" y="456" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">O2</text>
+          </svg>
+          <div style="font-size:14px;font-family:var(--mono);color:var(--ink-3);letter-spacing:0.06em;text-align:center;">
+            Topographie — imagerie motrice (main droite)
+          </div>
+        </div>
+
+        <!-- Right: text -->
+        <div style="display:flex;flex-direction:column;gap:30px;">
+          <p class="lede">
+            L'électroencéphalographie (EEG) mesure l'activité électrique cérébrale via <strong>D électrodes</strong> posées sur le cuir chevelu, avec une résolution temporelle de l'ordre de la milliseconde.
+          </p>
+          <div>
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:10px;">Applications</div>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>Interfaces cerveau-machine (BCI) — imagerie motrice gauche / droite</li>
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>Détection de l'épilepsie, surveillance des états cognitifs</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
     </div>
     <slide-footer></slide-footer>
   </section>
@@ -129,6 +448,105 @@
     </div>
     <slide-footer></slide-footer>
   </section>
+
+
+
+  <!-- §1.1a(bis) · Hyperspectral imagery -->
+  <section>
+    <slide-note>L'imagerie hyperspectrale : le cube de données (x, y, λ) et la covariance spectrale entre bandes comme descripteur de texture et de composition.</slide-note>
+    <slide-header title="Imagerie hyperspectrale"></slide-header>
+    <div class="slide-body">
+      <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:72px;min-height:0;align-items:center;">
+
+        <!-- Left: HSI image -->
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px;">
+          <img src="./assets/image_hsi.png" alt="Image hyperspectrale"
+               style="max-width:100%;max-height:580px;width:auto;height:auto;object-fit:contain;border:1px solid var(--rule-soft);border-radius:4px;"/>
+          <div style="font-size:14px;font-family:var(--mono);color:var(--ink-3);letter-spacing:0.06em;text-align:center;">
+            Composition colorée fausse couleur (bandes RGB sélectionnées). </br> Image credit: Lincoln Laboratory Journal, 4
+          </div>
+        </div>
+
+        <!-- Right: text -->
+        <div style="display:flex;flex-direction:column;gap:30px;">
+          <p class="lede">
+            Un capteur hyperspectral acquiert <strong>des centaines de bandes spectrales</strong> par pixel (λ₁, …, λ_D), formant un cube de données (x, y, λ) à très haute résolution spectrale.
+          </p>
+          <div>
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:10px;">Applications</div>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>Classification de couverts végétaux — HyperLeaf (4 variétés × 3 fertilisations, 204×204)</li>
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>Classification de variétés de riz — Rices90 (4 classes, covariances 256×256)</li>
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>Surveillance agricole, cartographie minérale, contrôle qualité alimentaire</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §1.1b · Three domains where SPD matrices appear -->
+  <!-- <section> -->
+  <!--   <slide-note>Trois domaines emblématiques où les matrices SPD apparaissent naturellement : EEG (covariance spatiale entre canaux), imagerie hyperspectrale (covariance entre bandes spectrales), radar (covariance range-Doppler). Dans tous les cas, le second ordre porte une information discriminante absente du premier ordre.</slide-note> -->
+  <!--   <slide-header title="Trois domaines, un même objet"></slide-header> -->
+  <!--   <div class="slide-body"> -->
+  <!--     <p class="lede" style="margin-bottom:24px;max-width:1500px;"> -->
+  <!--       Dans des contextes très différents, le <strong>second ordre</strong> capte la structure pertinente : -->
+  <!--       ce ne sont pas les valeurs des signaux, mais leurs <em>co-variations</em>, qui portent l'information. -->
+  <!--     </p> -->
+  <!--     <div style="flex:1;min-height:0;"> -->
+  <!--       <spd-domains></spd-domains> -->
+  <!--     </div> -->
+  <!--   </div> -->
+  <!--   <slide-footer></slide-footer> -->
+  <!-- </section> -->
+
+  <!-- §1.1c · How a covariance is computed — HSI sliding window -->
+  <section>
+    <slide-note>Démonstration pas-à-pas : on isole une fenêtre glissante sur une image hyperspectrale, on collecte les signatures spectrales des pixels, on les centre, on calcule les produits extérieurs et enfin la covariance. Touches flèches pour avancer.</slide-note>
+    <slide-header title="Comment se construit Σ — hyperspectral"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <hsi-cov></hsi-cov>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+
+  <section>
+    <slide-header title="Travailler sur des données de matrices de covariance"></slide-header>
+    <div class="slide-body" >
+      <p style="font-size:31px">Les matrices de covariances ont une structure particulière :</p>
+      <div class="theorem" data-step>
+        <div class="theorem-tag">Définition <span class="theorem-name">Matrice symétrique définie positive</span></div>
+        <div class="theorem-body">
+              Une matrice <span class="math">\boldsymbol{\Sigma}\in\mathbb{R}^d</span> est dite SPD (<em>Symmetric Positive Definite</em>) si  <span class="math">\boldsymbol{\Sigma}=\boldsymbol{\Sigma}^\mathrm{T}</span> et <span class="math">\mathbf{x}^\mathrm{T}\boldsymbol{\Sigma}\mathbf{x} > 0,\, \forall \mathbf{x}\in\mathbb{R}^d</span>.
+        </div>
+      </div>
+      <p style="font-size:31px" data-step>-> Est-ce que cela pose un problème pour effectuer un traitement ?</p>
+
+    </div>
+  </section>
+
+  <!-- §1.1d · SPD cone geometry (Three.js) -->
+  <section>
+    <slide-note>Le cône SPD pour les matrices 2×2 : visualisation 3D dans l'espace (a,b,c). La surface quadrique ac=b² est le bord du cône, les trois matrices sont dans son intérieur.</slide-note>
+    <slide-header title="Le cône S++ — géométrie pour d = 2"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <spd-cone></spd-cone>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+
+
+  <section-divider
+    label="Géométrie riemannienne"
+    kicker="Riemannian"
+    blurb="Un tutoriel sur la géométrie riemannienne">
+  </section-divider>
+
 
 
   <!-- §1.2 · Riemannian geometry primer (stepped 3D) -->
@@ -147,6 +565,135 @@
     <slide-header title="Géométrie riemannienne — généralisation"></slide-header>
     <div class="slide-body" style="padding:0;overflow:hidden;">
       <riemann-terrain></riemann-terrain>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §1.4-intro · Principe de l'optimisation riemannienne (normal slide) -->
+  <section>
+    <style>
+      .rop-card[data-step] { transition: opacity 0.45s ease, transform 0.45s ease; }
+      .rop-card[data-step]:not([data-step-visible]) { transform: translateY(20px); }
+      .rop-step { display:flex; gap:16px; align-items:baseline; }
+      .rop-step-num { font-family:var(--mono); font-size:19px; font-weight:700; flex-shrink:0; width:28px; line-height:1.5; }
+      .rop-step-body { font-family:var(--sans); font-size:22px; line-height:1.5; color:var(--ink-2); }
+      .rop-step-highlight { border-radius:6px; padding:11px 16px; border-left-width:3px; border-left-style:solid; }
+    </style>
+    <slide-note>Avant l'island interactive : poser le problème d'optimisation sur variété, montrer la faiblesse du gradient ambiant + re-projection, puis introduire la descente riemannienne intrinsèque. Insister sur les trois étapes grad tangent → pas → rétraction.</slide-note>
+    <slide-header title="Optimisation sur variété"></slide-header>
+    <div class="slide-body" style="padding:36px 80px 28px; flex-direction:column; gap:26px;">
+
+      <!-- ── Problem banner (always visible) ─────────────────────────────── -->
+      <div style="display:flex; gap:0; background:var(--bg-2); border:1px solid var(--rule); border-left:4px solid var(--accent); border-radius:10px; overflow:hidden; flex-shrink:0;">
+        <!-- formula cell -->
+        <div style="padding:22px 36px; display:flex; flex-direction:column; justify-content:center; gap:8px; flex-shrink:0;">
+          <div class="eyebrow" style="color:var(--accent); margin-bottom:2px;">Problème</div>
+          <div class="math-display" style="margin:0;">
+            x^\star \;=\; \arg\min_{x \,\in\, \mathcal{M}} f(x)
+          </div>
+        </div>
+        <!-- divider -->
+        <div style="width:1px; background:var(--rule); flex-shrink:0;"></div>
+        <!-- dataset cell -->
+        <div style="padding:22px 36px; display:flex; flex-direction:column; justify-content:center; gap:10px; flex:1;">
+          <div class="eyebrow" style="margin-bottom:0;">Jeu de données</div>
+          <div class="body" style="color:var(--ink-2); font-size:22px;">
+            <span class="math">\{\Sigma_1,\ldots,\Sigma_N\} \subset \mathcal{S}_{++}^d</span>
+            — matrices de covariance SPD
+          </div>
+          <div class="body" style="color:var(--ink-3); font-size:20px;">
+            ex. coût de Fréchet&nbsp;:
+            <span class="math">f(x) = \dfrac{1}{N}\displaystyle\sum_{i=1}^N d_R^2\!\left(x,\,\Sigma_i\right)</span>
+          </div>
+        </div>
+        <!-- divider -->
+        <div style="width:1px; background:var(--rule); flex-shrink:0;"></div>
+        <!-- manifold cell -->
+        <div style="padding:22px 36px; display:flex; flex-direction:column; justify-content:center; gap:10px; flex-shrink:0;">
+          <div class="eyebrow" style="margin-bottom:0;">Contrainte</div>
+          <div class="math-display" style="margin:0; font-size:28px;">
+            x \in \mathcal{S}_{++}^d \subset \mathbb{R}^{d^2}
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Two-column comparison ─────────────────────────────────────────── -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px; flex:1; min-height:0;">
+
+        <!-- Classic GD -->
+        <div data-step class="rop-card" style="border:1px solid var(--rule); border-radius:10px; padding:28px 34px; display:flex; flex-direction:column; gap:18px;">
+          <div>
+            <div class="eyebrow" style="color:var(--ink-3); margin-bottom:5px;">Approche naïve</div>
+            <div style="font-family:var(--sans); font-size:38px; font-weight:600; letter-spacing:-0.025em; color:var(--ink); line-height:1.05;">Gradient euclidien</div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:11px;">
+            <div class="rop-step">
+              <span class="rop-step-num" style="color:var(--ink-3);">1.</span>
+              <span class="rop-step-body">Calculer <span class="math">\nabla f(x_k) \in \mathbb{R}^{d^2}</span> — gradient ambiant</span>
+            </div>
+            <div class="rop-step">
+              <span class="rop-step-num" style="color:var(--ink-3);">2.</span>
+              <span class="rop-step-body">Effectuer le pas :
+                <span class="math">y = x_k - \alpha\,\nabla f(x_k)</span>
+              </span>
+            </div>
+            <div class="rop-step rop-step-highlight" style="background:rgba(180,40,40,0.07); border-left-color:#b03030;">
+              <span class="rop-step-num" style="color:#b03030;">⚠</span>
+              <span class="rop-step-body" style="color:#b03030;">
+                <span class="math">y \notin \mathcal{S}_{++}^d</span>
+                &nbsp;— re-projeter :
+                <span class="math">x_{k+1} = \mathrm{Proj}_{\mathcal{M}}(y)</span>
+              </span>
+            </div>
+          </div>
+
+          <div style="margin-top:auto; padding-top:14px; border-top:1px solid var(--rule-soft); display:flex; flex-direction:column; gap:6px;">
+            <div class="small" style="color:var(--ink-3);">· Projection coûteuse à chaque itération</div>
+            <div class="small" style="color:var(--ink-3);">· Ignore la courbure de <span class="math">\mathcal{S}_{++}^d</span></div>
+            <div class="small" style="color:var(--ink-3);">· Convergence dégradée loin de la contrainte</div>
+          </div>
+        </div>
+
+        <!-- Riemannian GD -->
+        <div data-step class="rop-card" style="border:1px solid var(--accent); border-radius:10px; padding:28px 34px; display:flex; flex-direction:column; gap:18px;">
+          <div>
+            <div class="eyebrow" style="color:var(--accent); margin-bottom:5px;">Approche intrinsèque</div>
+            <div style="font-family:var(--sans); font-size:38px; font-weight:600; letter-spacing:-0.025em; color:var(--ink); line-height:1.05;">Gradient riemannien</div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:11px;">
+            <div class="rop-step">
+              <span class="rop-step-num" style="color:var(--accent);">1.</span>
+              <span class="rop-step-body">Projeter dans <span class="math">T_{x_k}\mathcal{M}</span> :
+                <span class="math">\xi_k = \mathrm{grad}_{\mathcal{M}} f(x_k)</span>
+              </span>
+            </div>
+            <div class="rop-step">
+              <span class="rop-step-num" style="color:var(--accent);">2.</span>
+              <span class="rop-step-body">Faire le pas tangent :
+                <span class="math">v_k = {-}\alpha\,\xi_k \;\in\; T_{x_k}\mathcal{M}</span>
+              </span>
+            </div>
+            <div class="rop-step rop-step-highlight" style="background:rgba(5,120,80,0.07); border-left-color:#058050;">
+              <span class="rop-step-num" style="color:#058050;">✓</span>
+              <span class="rop-step-body" style="color:#058050;">
+                Rétracter sur <span class="math">\mathcal{M}</span> :
+                <span class="math">x_{k+1} = R_{x_k}(v_k) \in \mathcal{S}_{++}^d</span>
+              </span>
+            </div>
+          </div>
+
+          <div style="margin-top:auto; padding-top:14px; border-top:1px solid var(--rule-soft); display:flex; flex-direction:column; gap:6px;">
+            <div class="small" style="color:var(--ink-3);">· Reste sur <span class="math">\mathcal{M}</span> par construction, sans post-traitement</div>
+            <div class="small" style="color:var(--ink-3);">· Exploite la géométrie : pas courts mais pertinents</div>
+            <div class="small" style="color:var(--ink-3);">· Convergence garantie en
+              <span class="math">\mathcal{O}(1/\sqrt{T})</span>
+              (non-convexe)</div>
+          </div>
+        </div>
+
+      </div>
     </div>
     <slide-footer></slide-footer>
   </section>
