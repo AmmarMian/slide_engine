@@ -20,6 +20,32 @@
 
 <script type="module" src="/src/main.js"></script>
 
+  <script id="deck-refs" type="application/json">
+    {
+      "Ghamisi2017": "P. Ghamisi et al., \"Advances in Hyperspectral Image and Signal Processing: A Comprehensive Overview of the State of the Art,\" in IEEE Geoscience and Remote Sensing Magazine, vol. 5, no. 4, pp. 37-78, Dec. 2017",
+      "hsi_book": "Amigo, J. M. (2019). Hyperspectral imaging (Vol. 32). Elsevier.",
+      "huang2017": "Huang, Z., Makur, A. & Van Gool, L. (2017). A Riemannian Network for SPD Matrix Learning. AAAI.",
+      "brooks2019": "Brooks, D., Schwander, O., Barbaresco, F., Schneider, J.-Y. & Cord, M. (2019). Riemannian batch normalization for SPD neural networks. NeurIPS.",
+      "zhang2024": "Zhang, Z. et al. (2024). Federated learning on Riemannian manifolds with projection and drift correction.",
+      "huang2024": "Huang, H. et al. (2024). Gradient flow on manifolds for federated optimization.",
+      "almaimani18": "Almaimani, M. (2018). Classifying GPR images using convolutional neural networks. MSc thesis, University of Tennessee at Chattanooga.",
+      "absil2008": "Absil, P.-A., Mahony, R. & Sepulchre, R. (2008). Optimization Algorithms on Matrix Manifolds. Princeton University Press.",
+      "boumal2023": "Boumal, N. (2023). An Introduction to Optimization on Smooth Manifolds. Cambridge University Press.",
+      "pennec2006": "Pennec, X., Fillard, P. & Ayache, N. (2006). A Riemannian Framework for Tensor Computing. International Journal of Computer Vision, 66(1), 41–66.",
+      "bhatia2007": "Bhatia, R. (2007). Positive Definite Matrices. Princeton University Press.",
+      "karcher1977": "Karcher, H. (1977). Riemannian center of mass and mollifier smoothing. Communications on Pure and Applied Mathematics, 30(5), 509–541.",
+      "barachant2012": "Barachant, A., Bonnet, S., Congedo, M. & Jutten, C. (2012). Multiclass Brain–Computer Interface Classification by Riemannian Geometry. IEEE Transactions on Biomedical Engineering, 59(4), 920–928.",
+      "barachant2013": "Barachant, A., Bonnet, S., Congedo, M. & Jutten, C. (2013). Classification of covariance matrices using a Riemannian-based kernel for BCI applications. Neurocomputing, 112, 172–178.",
+      "jayaram2018": "Jayaram, V. & Barachant, A. (2018). MOABB: trustworthy algorithm benchmarking for BCIs. Journal of Neural Engineering, 15(6), 066011.",
+      "mcmahan2017": "McMahan, B., Moore, E., Ramage, D., Hampson, S. & Arcas, B. A. (2017). Communication-Efficient Learning of Deep Networks from Decentralized Data. AISTATS.",
+      "ionescu2015": "Ionescu, C., Vantzos, O. & Sminchisescu, C. (2015). Matrix Backpropagation for Deep Networks with Structured Layers. ICCV.",
+      "li2017mpncov": "Li, P., Xie, J., Wang, Q. & Zuo, W. (2017). Is Second-order Information Helpful for Large-scale Visual Recognition? ICCV.",
+      "li2018isqrt": "Li, P., Xie, J., Wang, Q. & Gao, Z. (2018). Towards Faster Training of Global Covariance Pooling Networks by Iterative Matrix Square Root Normalization. CVPR.",
+      "he2016": "He, K., Zhang, X., Ren, S. & Sun, J. (2016). Deep Residual Learning for Image Recognition. CVPR.",
+      "ioffe2015": "Ioffe, S. & Szegedy, C. (2015). Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift. ICML."
+    }
+  </script>
+
 <script id="deck-notation" type="application/json">
 {
   "title": "Notation",
@@ -146,7 +172,7 @@
         }
         .collab-intro {
           font-family: var(--sans);
-          font-size: 22px;
+          font-size: 35px;
           font-weight: 400;
           color: var(--ink-2);
           letter-spacing: -0.01em;
@@ -428,7 +454,7 @@
           <div>
             <div class="eyebrow" style="color:var(--accent);margin-bottom:10px;">Applications</div>
             <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
-              <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>Interfaces cerveau-machine (BCI) — imagerie motrice gauche / droite</li>
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>Interfaces cerveau-machine (BCI) — imagerie motrice gauche / droite<cite-ref key="barachant2012"></cite-ref></li>
               <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>Détection de l'épilepsie, surveillance des états cognitifs</li>
             </ul>
           </div>
@@ -473,11 +499,11 @@
             Un capteur hyperspectral acquiert <strong>des centaines de bandes spectrales</strong> par pixel (λ₁, …, λ_D), formant un cube de données (x, y, λ) à très haute résolution spectrale.
           </p>
           <div>
-            <div class="eyebrow" style="color:var(--accent);margin-bottom:10px;">Applications</div>
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:10px;">Applications <cite-ref key="Ghamisi2017"></cite-ref> <cite-ref key="hsi_book"></cite-ref>  </div>
             <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
-              <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>Classification de couverts végétaux — HyperLeaf (4 variétés × 3 fertilisations, 204×204)</li>
-              <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>Classification de variétés de riz — Rices90 (4 classes, covariances 256×256)</li>
-              <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>Surveillance agricole, cartographie minérale, contrôle qualité alimentaire</li>
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>Classification de couverts végétaux </li>
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>Analyse de variétés de fruits/riz</li>
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>Imagerie médicale</li>
             </ul>
           </div>
         </div>
@@ -521,10 +547,10 @@
       <div class="theorem" data-step>
         <div class="theorem-tag">Définition <span class="theorem-name">Matrice symétrique définie positive</span></div>
         <div class="theorem-body">
-              Une matrice <span class="math">\boldsymbol{\Sigma}\in\mathbb{R}^d</span> est dite SPD (<em>Symmetric Positive Definite</em>) si  <span class="math">\boldsymbol{\Sigma}=\boldsymbol{\Sigma}^\mathrm{T}</span> et <span class="math">\mathbf{x}^\mathrm{T}\boldsymbol{\Sigma}\mathbf{x} > 0,\, \forall \mathbf{x}\in\mathbb{R}^d</span>.
+              Une matrice <span class="math">\boldsymbol{\Sigma}\in\mathbb{R}^d</span> est dite SPD (<em>Symmetric Positive Definite</em>) si  <span class="math">\boldsymbol{\Sigma}=\boldsymbol{\Sigma}^\mathrm{T}</span> et <span class="math">\mathbf{x}^\mathrm{T}\boldsymbol{\Sigma}\mathbf{x} > 0,\, \forall \mathbf{x}\in\mathbb{R}^d</span>.<cite-ref key="bhatia2007"></cite-ref>
         </div>
       </div>
-      <p style="font-size:31px" data-step>-> Est-ce que cela pose un problème pour effectuer un traitement ?</p>
+      <p style="font-size:31px" data-step>-> Est-ce que cela pose un problème pour effectuer un traitement ?<cite-ref key="barachant2013"></cite-ref></p>
 
     </div>
   </section>
@@ -598,12 +624,12 @@
         <div style="padding:22px 36px; display:flex; flex-direction:column; justify-content:center; gap:10px; flex:1;">
           <div class="eyebrow" style="margin-bottom:0;">Jeu de données</div>
           <div class="body" style="color:var(--ink-2); font-size:22px;">
-            <span class="math">\{\Sigma_1,\ldots,\Sigma_N\} \subset \mathcal{S}_{++}^d</span>
-            — matrices de covariance SPD
+            <span class="math">\{x_1,\ldots,x_N\} \subset \mathcal{M}</span>
+            — points sur une variété
           </div>
           <div class="body" style="color:var(--ink-3); font-size:20px;">
-            ex. coût de Fréchet&nbsp;:
-            <span class="math">f(x) = \dfrac{1}{N}\displaystyle\sum_{i=1}^N d_R^2\!\left(x,\,\Sigma_i\right)</span>
+            ex. moyenne de Fréchet&nbsp;:
+            <span class="math">f(x) = \dfrac{1}{N}\displaystyle\sum_{i=1}^N d_{\mathcal{M}}^2\!\left(x,\,x_i\right)</span>
           </div>
         </div>
         <!-- divider -->
@@ -612,7 +638,7 @@
         <div style="padding:22px 36px; display:flex; flex-direction:column; justify-content:center; gap:10px; flex-shrink:0;">
           <div class="eyebrow" style="margin-bottom:0;">Contrainte</div>
           <div class="math-display" style="margin:0; font-size:28px;">
-            x \in \mathcal{S}_{++}^d \subset \mathbb{R}^{d^2}
+            x \in \mathcal{M} \subset \mathbb{R}^n
           </div>
         </div>
       </div>
@@ -641,7 +667,7 @@
             <div class="rop-step rop-step-highlight" style="background:rgba(180,40,40,0.07); border-left-color:#b03030;">
               <span class="rop-step-num" style="color:#b03030;">⚠</span>
               <span class="rop-step-body" style="color:#b03030;">
-                <span class="math">y \notin \mathcal{S}_{++}^d</span>
+                <span class="math">y \notin \mathcal{M}</span>
                 &nbsp;— re-projeter :
                 <span class="math">x_{k+1} = \mathrm{Proj}_{\mathcal{M}}(y)</span>
               </span>
@@ -650,7 +676,7 @@
 
           <div style="margin-top:auto; padding-top:14px; border-top:1px solid var(--rule-soft); display:flex; flex-direction:column; gap:6px;">
             <div class="small" style="color:var(--ink-3);">· Projection coûteuse à chaque itération</div>
-            <div class="small" style="color:var(--ink-3);">· Ignore la courbure de <span class="math">\mathcal{S}_{++}^d</span></div>
+            <div class="small" style="color:var(--ink-3);">· Ignore la courbure de <span class="math">\mathcal{M}</span></div>
             <div class="small" style="color:var(--ink-3);">· Convergence dégradée loin de la contrainte</div>
           </div>
         </div>
@@ -659,7 +685,7 @@
         <div data-step class="rop-card" style="border:1px solid var(--accent); border-radius:10px; padding:28px 34px; display:flex; flex-direction:column; gap:18px;">
           <div>
             <div class="eyebrow" style="color:var(--accent); margin-bottom:5px;">Approche intrinsèque</div>
-            <div style="font-family:var(--sans); font-size:38px; font-weight:600; letter-spacing:-0.025em; color:var(--ink); line-height:1.05;">Gradient riemannien</div>
+            <div style="font-family:var(--sans); font-size:38px; font-weight:600; letter-spacing:-0.025em; color:var(--ink); line-height:1.05;">Gradient riemannien<cite-ref key="absil2008"></cite-ref><cite-ref key="boumal2023"></cite-ref></div>
           </div>
 
           <div style="display:flex; flex-direction:column; gap:11px;">
@@ -679,7 +705,7 @@
               <span class="rop-step-num" style="color:#058050;">✓</span>
               <span class="rop-step-body" style="color:#058050;">
                 Rétracter sur <span class="math">\mathcal{M}</span> :
-                <span class="math">x_{k+1} = R_{x_k}(v_k) \in \mathcal{S}_{++}^d</span>
+                <span class="math">x_{k+1} = R_{x_k}(v_k) \in \mathcal{M}</span>
               </span>
             </div>
           </div>
@@ -687,9 +713,6 @@
           <div style="margin-top:auto; padding-top:14px; border-top:1px solid var(--rule-soft); display:flex; flex-direction:column; gap:6px;">
             <div class="small" style="color:var(--ink-3);">· Reste sur <span class="math">\mathcal{M}</span> par construction, sans post-traitement</div>
             <div class="small" style="color:var(--ink-3);">· Exploite la géométrie : pas courts mais pertinents</div>
-            <div class="small" style="color:var(--ink-3);">· Convergence garantie en
-              <span class="math">\mathcal{O}(1/\sqrt{T})</span>
-              (non-convexe)</div>
           </div>
         </div>
 
@@ -709,6 +732,272 @@
   </section>
 
 
+  <!-- §1.5 · Riemannian toolbox reference table -->
+  <section>
+    <slide-note>Tableau récapitulatif des formules riemanniennes sur les trois variétés utilisées dans la suite : sphère (référence simple), Stiefel (contrainte BiMap), SPD (espace des données). Chaque ligne = un outil ; chaque colonne = une variété.</slide-note>
+    <slide-header title="Boîte à outils riemannienne"></slide-header>
+    <div class="slide-body" style="padding:28px 64px 24px; gap:0;">
+      <style>
+        /* ── manifold card layout ── */
+        .mc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; flex:1; min-height:0; }
+        .mc-card { border:1px solid var(--rule); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; }
+        .mc-card-head { padding:18px 24px 14px; display:flex; flex-direction:column; gap:6px; }
+        .mc-card-head .mc-name { font-family:var(--sans); font-size:38px; font-weight:700; letter-spacing:-0.02em; line-height:1; }
+        .mc-card-head .mc-def  { font-family:var(--mono); font-size:19px; color:var(--ink-3); line-height:1.4; }
+        .mc-rows { display:flex; flex-direction:column; flex:1; }
+        .mc-row  { padding:12px 24px; border-top:1px solid var(--rule-soft); display:flex; flex-direction:column; gap:4px; }
+        .mc-row:nth-child(even) { background:color-mix(in srgb, var(--bg-2) 55%, var(--bg)); }
+        .mc-row-line { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+        .mc-notation { font-family:var(--mono); font-size:22px; font-weight:600; color:var(--accent); white-space:nowrap; flex-shrink:0; }
+        .mc-eq { font-family:var(--mono); font-size:22px; color:var(--ink-3); flex-shrink:0; }
+        .mc-formula { font-family:var(--mono); font-size:22px; color:var(--ink); line-height:1.5; }
+        .mc-sub { font-family:var(--sans); font-size:15px; color:var(--ink-3); padding-left:2px; }
+        .mc-na  { font-style:italic; color:var(--ink-3); font-size:20px; }
+        .mc-hi .mc-formula { color:var(--accent); font-weight:600; }
+        .mc-hi .mc-notation { color:var(--accent); }
+        .mc-hi .mc-eq { color:var(--accent); }
+        /* accent border per card */
+        .mc-card:nth-child(1) .mc-card-head { background:color-mix(in srgb, var(--bg-2) 80%, var(--bg)); border-bottom:2px solid var(--ink-3); }
+        .mc-card:nth-child(2) .mc-card-head { background:color-mix(in srgb, var(--bg-2) 80%, var(--bg)); border-bottom:2px solid var(--ink-2); }
+        .mc-card:nth-child(3) .mc-card-head { background:color-mix(in srgb, var(--accent) 12%, var(--bg)); border-bottom:2px solid var(--accent); }
+        .mc-card:nth-child(3) .mc-card-head .mc-name { color:var(--accent); }
+      </style>
+
+      <div class="mc-grid">
+
+        <!-- ── Sphère ─────────────────────────────────────────────── -->
+        <div data-step class="mc-card">
+          <div class="mc-card-head">
+            <div class="mc-name">Sphère</div>
+            <div class="mc-def"><span class="math">\mathcal{S}^{n-1} = \{x\in\mathbb{R}^n : \|x\|=1\}</span></div>
+          </div>
+          <div class="mc-rows">
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">T_x\mathcal{M}</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">\{v\in\mathbb{R}^n : x^\top v = 0\}</span></span>
+              </div>
+            </div>
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">\langle u,v\rangle_x</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">u^\top v</span></span>
+              </div>
+              <div class="mc-sub">euclidienne standard</div>
+            </div>
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">\mathrm{Exp}_x(v)</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">\cos\|v\|\cdot x + \sin\|v\|\cdot\dfrac{v}{\|v\|}</span></span>
+              </div>
+            </div>
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">d(x,y)</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">\arccos(x^\top y)</span></span>
+              </div>
+            </div>
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">\mathrm{grad}\,f</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">\nabla\!f - (x^\top\!\nabla\!f)\,x</span></span>
+              </div>
+              <div class="mc-sub">projection orthogonale sur <span class="math">T_x\mathcal{S}^{n-1}</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Stiefel ────────────────────────────────────────────── -->
+        <div data-step class="mc-card">
+          <div class="mc-card-head">
+            <div class="mc-name">Stiefel</div>
+            <div class="mc-def"><span class="math">\mathrm{St}(p,n) = \{X\in\mathbb{R}^{n\times p} : X^\top\!X = I_p\}</span></div>
+          </div>
+          <div class="mc-rows">
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">T_X\mathcal{M}</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">\{\Delta : X^\top\!\Delta + \Delta^\top\!X = 0\}</span></span>
+              </div>
+              <div class="mc-sub"><span class="math">= \{X\Omega + X_\perp B,\;\Omega=-\Omega^\top\}</span></div>
+            </div>
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">\langle U,V\rangle_X</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">\mathrm{tr}\!\bigl(U^\top(I - \tfrac{1}{2}XX^\top)V\bigr)</span></span>
+              </div>
+              <div class="mc-sub">métrique canonique</div>
+            </div>
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">\mathrm{Exp}_X(\Delta)</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">[X,Q]\,\exp_m\!\begin{pmatrix}\Omega & {-}R^\top \\ R & 0\end{pmatrix}\begin{pmatrix}I_p\\0\end{pmatrix}</span></span>
+              </div>
+              <div class="mc-sub"><span class="math">\Omega=X^\top\!\Delta,\;QR=(I-XX^\top)\Delta</span></div>
+            </div>
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">d(X,Y)</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">\|\mathrm{Log}_X(Y)\|_F</span></span>
+              </div>
+              <div class="mc-sub">numérique — pas de forme close</div>
+            </div>
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">\mathrm{grad}\,f</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">\nabla\!f - X\,\mathrm{sym}(X^\top\!\nabla\!f)</span></span>
+              </div>
+              <div class="mc-sub"><span class="math">\mathrm{sym}(A)=\tfrac{1}{2}(A+A^\top)</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SPD ───────────────────────────────────────────────── -->
+        <div data-step class="mc-card">
+          <div class="mc-card-head">
+            <div class="mc-name">SPD</div>
+            <div class="mc-def"><span class="math">\mathcal{S}_{++}^d = \{X\in\mathbb{R}^{d\times d} : X=X^\top,\,X\succ 0\}</span></div>
+          </div>
+          <div class="mc-rows">
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">T_X\mathcal{M}</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">\mathrm{Sym}(d)</span></span>
+              </div>
+              <div class="mc-sub">toute matrice symétrique <span class="math">d\times d</span></div>
+            </div>
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">\langle U,V\rangle_X</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">\mathrm{tr}(X^{-1}U\,X^{-1}V)</span></span>
+              </div>
+              <div class="mc-sub">métrique affine-invariante<cite-ref key="pennec2006"></cite-ref></div>
+            </div>
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">\mathrm{Exp}_X(U)</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">X^{1/2}\exp_m\!\bigl(X^{-1/2}U X^{-1/2}\bigr)X^{1/2}</span></span>
+              </div>
+            </div>
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">d(X,Y)</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">\Bigl\|\log_m\!\bigl(X^{-1/2}YX^{-1/2}\bigr)\Bigr\|_F</span></span>
+              </div>
+              <div class="mc-sub"><span class="math">= \sqrt{\sum_i \log^2\!\lambda_i(X^{-1}Y)}</span></div>
+            </div>
+            <div class="mc-row mc-hi">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">\mathrm{grad}\,f</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">X\,\mathrm{sym}(\nabla\!f)\,X</span></span>
+              </div>
+              <div class="mc-sub">conjugaison par <span class="math">X</span> (mét. aff.-inv.)</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!--
+  ═══════════════════════════════════════════════════════════════
+  ANCIEN LAYOUT — tableau dense (commenté, conservé pour référence)
+  ═══════════════════════════════════════════════════════════════
+  <section>
+    <slide-note>Tableau récapitulatif des formules riemanniennes sur les trois variétés utilisées dans la suite : sphère (référence simple), Stiefel (contrainte BiMap), SPD (espace des données). Chaque ligne = un outil ; chaque colonne = une variété.</slide-note>
+    <slide-header title="Boîte à outils riemannienne"></slide-header>
+    <div class="slide-body" style="padding-top:8px;padding-bottom:0;overflow:hidden;">
+      <style>
+        .rt { width:100%; border-collapse:collapse; table-layout:fixed; }
+        .rt thead tr th { padding:10px 18px 9px; font-family:var(--sans); font-weight:700; font-size:15px; text-align:center; border-bottom:2px solid var(--ink); }
+        .rt thead tr th:first-child { background:var(--bg); color:var(--ink-3); font-weight:400; font-size:13px; text-align:left; border-bottom:2px solid var(--ink); }
+        .rt thead tr th:not(:first-child) { background:var(--ink); color:var(--bg); }
+        .rt thead tr th .rt-def { display:block; font-family:var(--mono); font-size:12px; font-weight:400; opacity:0.72; margin-top:3px; }
+        .rt tbody tr td { padding:7px 16px; border-bottom:1px solid var(--rule-soft); vertical-align:middle; line-height:1.55; }
+        .rt tbody tr td:first-child { font-family:var(--sans); font-size:15px; font-weight:700; color:var(--ink-2); background:var(--bg-2); white-space:nowrap; border-right:2px solid var(--rule); }
+        .rt tbody tr td:not(:first-child) { font-family:var(--mono); font-size:14px; color:var(--ink); text-align:center; }
+        .rt tbody tr:nth-child(even) td:not(:first-child) { background:color-mix(in srgb, var(--bg-2) 60%, var(--bg)); }
+        .rt-sub { display:block; font-size:12px; color:var(--ink-3); margin-top:3px; }
+        .rt-na { color:var(--ink-3); font-style:italic; font-size:13px; }
+        .rt-hi { color:var(--accent); font-weight:600; }
+      </style>
+      <table class="rt">
+        <colgroup>
+          <col style="width:170px">
+          <col style="width:calc((100% - 170px)/3)">
+          <col style="width:calc((100% - 170px)/3)">
+          <col style="width:calc((100% - 170px)/3)">
+        </colgroup>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Sphère <span class="rt-def"><span class="math">\mathcal{S}^{n-1} = \{x\in\mathbb{R}^n : \|x\|=1\}</span></span></th>
+            <th>Stiefel <span class="rt-def"><span class="math">\mathrm{St}(p,n) = \{X\in\mathbb{R}^{n\times p} : X^\top\!X = I_p\}</span></span></th>
+            <th>SPD <span class="rt-def"><span class="math">\mathcal{S}_{++}^d = \{X\in\mathbb{R}^{d\times d} : X=X^\top,\,X\succ 0\}</span></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Espace tangent<br><span style="font-weight:400;font-size:12px;color:var(--ink-3);font-family:var(--mono);"><span class="math">T_x\mathcal{M}</span></span></td>
+            <td><span class="math">\{v\in\mathbb{R}^n : x^\top v = 0\}</span></td>
+            <td><span class="math">\{\Delta\in\mathbb{R}^{n\times p} : X^\top\!\Delta + \Delta^\top\!X = 0\}</span><span class="rt-sub"><span class="math">= \{X\Omega + X_\perp B : \Omega = -\Omega^\top\}</span></span></td>
+            <td><span class="math">\mathrm{Sym}(d) = \{S\in\mathbb{R}^{d\times d} : S = S^\top\}</span><span class="rt-sub">toute matrice symétrique</span></td>
+          </tr>
+          <tr>
+            <td>Métrique<br><span style="font-weight:400;font-size:12px;color:var(--ink-3);font-family:var(--mono);"><span class="math">\langle u,v\rangle_x</span></span></td>
+            <td><span class="math">u^\top v</span></td>
+            <td><span class="math">\mathrm{tr}\!\left(U^\top\!\Bigl(I_n - \tfrac{1}{2}XX^\top\Bigr)V\right)</span><span class="rt-sub">métrique canonique</span></td>
+            <td><span class="math">\mathrm{tr}(X^{-1}U\,X^{-1}V)</span><span class="rt-sub">métrique affine-invariante</span></td>
+          </tr>
+          <tr>
+            <td>Exp. géodésique<br><span style="font-weight:400;font-size:12px;color:var(--ink-3);font-family:var(--mono);"><span class="math">\mathrm{Exp}_x(v)</span></span></td>
+            <td><span class="math">\cos\|v\|\cdot x + \sin\|v\|\cdot\dfrac{v}{\|v\|}</span></td>
+            <td><span class="math">[X,\,Q]\,\exp_m\!\begin{pmatrix}\Omega & {-}R^\top \\ R & 0\end{pmatrix}\begin{pmatrix}I_p \\ 0\end{pmatrix}</span><span class="rt-sub"><span class="math">\Omega = X^\top\!\Delta\;\text{(anti-sym.)},\quad QR = (I-XX^\top)\Delta</span></span></td>
+            <td><span class="math">X^{1/2}\exp_m\!\bigl(X^{-1/2}U X^{-1/2}\bigr)X^{1/2}</span></td>
+          </tr>
+          <tr>
+            <td>Logarithme<br><span style="font-weight:400;font-size:12px;color:var(--ink-3);font-family:var(--mono);"><span class="math">\mathrm{Log}_x(y)</span></span></td>
+            <td><span class="math">\dfrac{\arccos(x^\top y)}{\|y-(x^\top y)x\|}\,(y - (x^\top y)\,x)</span></td>
+            <td><span class="rt-na">pas de forme close</span><span class="rt-sub">(Newton–Schulz itératif)</span></td>
+            <td><span class="math">X^{1/2}\log_m\!\bigl(X^{-1/2}Y X^{-1/2}\bigr)X^{1/2}</span></td>
+          </tr>
+          <tr>
+            <td>Distance<br><span style="font-weight:400;font-size:12px;color:var(--ink-3);font-family:var(--mono);"><span class="math">d(x,y)</span></span></td>
+            <td><span class="math">\arccos(x^\top y)</span></td>
+            <td><span class="math">\bigl\|\mathrm{Log}_X(Y)\bigr\|_F</span><span class="rt-sub">(numérique)</span></td>
+            <td><span class="math">\Bigl\|\log_m\!\bigl(X^{-1/2}YX^{-1/2}\bigr)\Bigr\|_F = \sqrt{\textstyle\sum_i \log^2\!\lambda_i(X^{-1}Y)}</span></td>
+          </tr>
+          <tr>
+            <td>Gradient<br><span style="font-weight:400;font-size:12px;color:var(--ink-3);font-family:var(--mono);"><span class="math">\nabla^{\!R}f</span></span></td>
+            <td><span class="math">\nabla\!f - (x^\top\!\nabla\!f)\,x</span><span class="rt-sub">proj. sur <span class="math">T_x\mathcal{S}^{n-1}</span></span></td>
+            <td><span class="math">\nabla\!f - X\,\mathrm{sym}(X^\top\!\nabla\!f)</span><span class="rt-sub"><span class="math">\mathrm{sym}(A)=\tfrac{1}{2}(A+A^\top)</span></span></td>
+            <td><span class="math rt-hi">X\,\mathrm{sym}(\nabla\!f)\,X</span><span class="rt-sub">conjugaison par <span class="math">X</span> (mét. aff.-inv.)</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+  ═══════════════════════════════════════════════════════════════ -->
+
+
   <!-- ═══════════════════════════════════════
        §2 · Second section divider
        ═══════════════════════════════════════ -->
@@ -724,9 +1013,11 @@
   <section>
     <slide-note>Architecture de SPDNet : vue globale puis zoom sur chaque couche avec les flèches. BiMap = projection bilinéaire WXWᵀ. ReEig = rectification des valeurs propres max(ε,λ), analogue du ReLU. LogEig = logarithme matriciel, passage vers l'espace tangent en I. Insister : seules les BiMap ont des paramètres, et ils vivent sur Stiefel.</slide-note>
     <slide-header title="SPDNet — Architecture"></slide-header>
-    <div class="slide-body" style="padding:0;overflow:hidden;">
+    <div class="slide-body" style="padding:0 0 110px;overflow:hidden;">
       <spdnet-arch></spdnet-arch>
     </div>
+    <!-- cite-refs placed here so citations.js picks them up at DOMContentLoaded -->
+    <span style="display:none"><cite-ref key="huang2017"></cite-ref></span>
     <slide-footer></slide-footer>
   </section>
 
@@ -757,7 +1048,7 @@
               X_k = W_k\,X_{k-1}\,W_k^\top
             </div>
             <div class="body" style="font-size:18px;color:var(--ink-2);">
-              <span class="math">W_k \in \mathrm{St}(d_{k-1}, d_k)</span> — colonnes orthonormées
+              <span class="math">W_k \in \mathrm{St}(d_{k-1}, d_k)</span> — colonnes orthonormées<cite-ref key="absil2008"></cite-ref>
             </div>
           </div>
           <div data-step class="theorem" style="margin-top:24px;">
@@ -787,7 +1078,7 @@
           <div class="eyebrow" style="margin-bottom:14px;">Le cadre matriciel</div>
           <div class="body" style="font-size:20px;margin-bottom:14px;">
             Soit <span class="math">f(X) = U\,g(\Sigma)\,U^\top</span> avec <span class="math">X = U\Sigma U^\top</span>.
-            Le différentiel de <span class="math">\mathcal{L}</span> par rapport à <span class="math">X</span> s'écrit (Ionescu 2015) :
+            Le différentiel de <span class="math">\mathcal{L}</span> par rapport à <span class="math">X</span> s'écrit<cite-ref key="ionescu2015"></cite-ref> :
           </div>
           <div class="math-display">
             \frac{\partial \mathcal{L}}{\partial X} = U\left( P \odot (U^\top \tfrac{\partial \mathcal{L}}{\partial U}) + \mathrm{diag}\!\left(\tfrac{\partial \mathcal{L}}{\partial \Sigma}\right)\right) U^\top
@@ -803,7 +1094,7 @@
             Les coefficients <span class="math">1/(\sigma_i - \sigma_j)</span> explosent quand deux valeurs propres se rapprochent.
           </div>
           <div class="theorem" style="margin-top:20px;">
-            <div class="theorem-tag">Brooks et al. <span class="theorem-name">NeurIPS 2019</span></div>
+            <div class="theorem-tag"><cite-ref key="brooks2019"></cite-ref> <span class="theorem-name">NeurIPS 2019</span></div>
             <div class="theorem-body" style="font-size:18px;">
               Reformulation symétrique évitant les divisions instables — désormais la norme dans les implémentations SPDNet modernes.
             </div>
@@ -820,6 +1111,16 @@
     <slide-header title="Passe avant &amp; rétropropagation"></slide-header>
     <div class="slide-body" style="padding:0;overflow:hidden;">
       <spdnet-backprop></spdnet-backprop>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §2.4b · SPDNet eigenvalue-sensitive backpropagation (K-matrix animation) -->
+  <section>
+    <slide-note>Animation spécifique SPDNet : 8 phases — vue d'ensemble, BiMap avant, ReEig avant (eigendecomposition), LogEig avant, perte, LogEig arrière (K-matrix — pièce maîtresse), ReEig arrière, BiMap arrière. La phase LogEig arrière montre la matrice K et le produit de Hadamard K⊙G qui maintient le gradient sur la variété SPD.</slide-note>
+    <slide-header title="Rétropropagation SPDNet — matrice de sensibilité K"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <spdnet-backprop-spd></spdnet-backprop-spd>
     </div>
     <slide-footer></slide-footer>
   </section>
@@ -904,61 +1205,11 @@
   <section>
     <slide-note>Le pipeline complet : ResNet-34 tronqué (L=8 couches) → covariance pooling (estime la covariance entre canaux convolutionnels) → SPDNet (BiMap+ReEig empilés) → LogEig + dropout + dense + softmax. Tout est entraîné de bout en bout. Deux variantes selon que l'on prend la dernière sortie de bloc (RCNet, d=64) ou la concaténation des 32 premières couches (SRCNet, d=256).</slide-note>
     <slide-header title="Pipeline : ResNet + covariance + SPDNet"></slide-header>
-    <div class="slide-body">
-      <p class="lede" style="margin-bottom:24px;max-width:1500px;">
-        Idée : <strong>réutiliser un extracteur CV</strong> mais le brancher sur une représentation d'<strong>ordre deux</strong> compacte et géométriquement structurée.
-      </p>
-
-      <div style="display:flex;align-items:stretch;gap:0;margin-top:20px;border:1px solid var(--rule);border-radius:6px;overflow:hidden;">
-        <div data-step style="flex:1;padding:24px;background:var(--bg-2);border-right:1px solid var(--rule);">
-          <div class="eyebrow" style="color:var(--accent);margin-bottom:10px;">Étage 1</div>
-          <div style="font-family:var(--sans);font-size:22px;font-weight:600;">ResNet-34</div>
-          <div class="small" style="color:var(--ink-3);margin-top:8px;font-size:15px;">
-            <span class="math">L = 8</span> premières couches, ré-entraînées <em>de zéro</em>.
-          </div>
-        </div>
-        <div data-step style="flex:1;padding:24px;background:var(--bg-2);border-right:1px solid var(--rule);">
-          <div class="eyebrow" style="color:var(--accent);margin-bottom:10px;">Étage 2</div>
-          <div style="font-family:var(--sans);font-size:22px;font-weight:600;">Covariance pooling</div>
-          <div class="small" style="color:var(--ink-3);margin-top:8px;font-size:15px;">
-            Fast MPN-Cov ; produit la covariance entre canaux <span class="math">\hat{\Sigma} \in \mathcal{S}^{++}_d</span>.
-          </div>
-        </div>
-        <div data-step style="flex:1;padding:24px;background:var(--bg-2);border-right:1px solid var(--rule);">
-          <div class="eyebrow" style="color:var(--accent);margin-bottom:10px;">Étage 3</div>
-          <div style="font-family:var(--sans);font-size:22px;font-weight:600;">SPDNet</div>
-          <div class="small" style="color:var(--ink-3);margin-top:8px;font-size:15px;">
-            Empilement BiMap + ReEig ; réduit la dimension SPD.
-          </div>
-        </div>
-        <div data-step style="flex:1;padding:24px;background:var(--bg-2);">
-          <div class="eyebrow" style="color:var(--accent);margin-bottom:10px;">Étage 4</div>
-          <div style="font-family:var(--sans);font-size:22px;font-weight:600;">LogEig + dense</div>
-          <div class="small" style="color:var(--ink-3);margin-top:8px;font-size:15px;">
-            Vectorisation + Dropout + couche dense + softmax → 4 classes.
-          </div>
-        </div>
-      </div>
-
-      <div data-step class="cols cols-2" style="gap:40px;margin-top:36px;">
-        <div style="padding:18px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
-          <div class="label">RCNet</div>
-          <div style="font-family:var(--mono);font-size:18px;color:var(--ink-2);margin-top:6px;">
-            dernier bloc → <span class="math">d = 64 \to 32</span>
-          </div>
-        </div>
-        <div style="padding:18px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
-          <div class="label">SRCNet</div>
-          <div style="font-family:var(--mono);font-size:18px;color:var(--ink-2);margin-top:6px;">
-            32 premières couches empilées → <span class="math">d = 256 \to 128</span>
-          </div>
-        </div>
-      </div>
-
-      <div data-step style="margin-top:22px;padding:16px 20px;background:var(--tint);border-left:3px solid var(--accent);font-size:19px;color:var(--ink-2);">
-        Tout l'édifice est <strong>entraîné de bout en bout</strong> : la rétropropagation traverse Fast MPN-Cov, les couches SPDNet (eigendecomp), et les BiMap (mise à jour Stiefel).
-      </div>
+    <div class="slide-body" style="padding:0 0 96px;overflow:hidden;">
+      <gpr-pipeline></gpr-pipeline>
     </div>
+    <!-- cite-refs placed here so citations.js picks them up at DOMContentLoaded -->
+    <span style="display:none"><cite-ref key="he2016"></cite-ref><cite-ref key="li2017mpncov"></cite-ref><cite-ref key="li2018isqrt"></cite-ref><cite-ref key="ionescu2015"></cite-ref></span>
     <slide-footer></slide-footer>
   </section>
 
@@ -1005,34 +1256,39 @@
     <slide-footer></slide-footer>
   </section>
 
-  <!-- §3.4 · Results placeholder -->
+  <!-- §3.4 · Results — accuracy vs train ratio -->
   <section>
-    <slide-note>Résultats à venir — deux études : (i) précision en fonction de la fraction d'entraînement (régime peu de données) ; (ii) précision en fonction du pourcentage d'étiquettes corrompues (robustesse au bruit d'étiquettes). Les modèles à covariance gagnent en variance et en moyenne dans les deux régimes.</slide-note>
-    <slide-header title="Résultats — régimes peu de données et étiquettes bruitées"></slide-header>
-    <div class="slide-body">
-      <div class="cols cols-2" style="gap:48px;margin-top:24px;">
-        <div data-step>
-          <div class="eyebrow" style="margin-bottom:12px;">Vs. fraction d'entraînement</div>
-          <div style="aspect-ratio:16/10;background:var(--bg-2);border:2px dashed var(--rule-soft);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--ink-3);font-family:var(--mono);font-size:14px;letter-spacing:0.05em;text-transform:uppercase;">
-            graphique — à venir
-          </div>
-          <p class="body" style="font-size:18px;color:var(--ink-2);margin-top:14px;">
-            Précision moyenne sur 100 graines, bandes 5–95 %. RCNet / SRCNet attendus au-dessus de ResNet-34 et du CNN GPR superficiel <strong>à tous les régimes</strong>.
-          </p>
-        </div>
-        <div data-step>
-          <div class="eyebrow" style="margin-bottom:12px;">Vs. taux d'étiquettes corrompues</div>
-          <div style="aspect-ratio:16/10;background:var(--bg-2);border:2px dashed var(--rule-soft);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--ink-3);font-family:var(--mono);font-size:14px;letter-spacing:0.05em;text-transform:uppercase;">
-            graphique — à venir
-          </div>
-          <p class="body" style="font-size:18px;color:var(--ink-2);margin-top:14px;">
-            RCNet le plus robuste : la représentation de covariance amortit le bruit d'étiquetage, là où le CNN superficiel s'effondre dès quelques pourcents.
-          </p>
-        </div>
+    <slide-note>Précision test en fonction de la fraction d'entraînement (régime peu de données). Moyenne et bande sur les graines. RCNet/SRCNet (rouge/violet) dominent surtout en régime pauvre : à 10–30 % d'entraînement l'écart sur les CNN et ResNet est net. À mesure que les données abondent, tout le monde converge.</slide-note>
+    <slide-header title="Résultats — précision vs fraction d'entraînement"></slide-header>
+    <div class="slide-body" style="padding:0;display:flex;flex-direction:column;gap:6px;">
+      <p class="small" style="margin:0;color:var(--ink-3);">
+        CNN1 : CNN GPR de référence<cite-ref key="almaimani18"></cite-ref> · RCNet / SRCNet : nos modèles à covariance d'ordre deux.
+      </p>
+      <div style="flex:1;min-height:0;padding-bottom:58px;">
+        <line-chart
+          xlabel="Fraction d'entraînement"
+          ylabel="Précision test (%)"
+          series='[{"name":"CNN1","color":"#1f77b4","values":[[0.1,58.7831],[0.2,62.8812],[0.3,69.5266],[0.4,67.3161],[0.5,73.0066],[0.6,74.8013],[0.7,75.861],[0.8,75.7294],[0.9,79.4375]],"band":[[0.1,55.813,61.437],[0.2,60.714,65.004],[0.3,67.03,71.899],[0.4,65.3295,69.561],[0.5,69.44,76.26],[0.6,71.2745,77.92],[0.7,72.69,78.99],[0.8,71.6055,79.87],[0.9,75,83.8125]]},{"name":"ResNet-34 ré-entr.","color":"#ff7f0e","values":[[0.1,61.9877],[0.2,68.1817],[0.3,73.0271],[0.4,73.5888],[0.5,79.5588],[0.6,80.1898],[0.7,82.224],[0.8,83.2017],[0.9,83.5875]],"band":[[0.1,58.053,65.92],[0.2,63.394,70.82],[0.3,69.883,76.049],[0.4,70.5585,75.84],[0.5,76.77,81.82],[0.6,77.904,82.9855],[0.7,79.41,85.311],[0.8,80.5,86.16],[0.9,78.75,87.5]]},{"name":"ResNet-34 fine-tuné","color":"#2ca02c","values":[[0.1,56.7362],[0.2,62.022],[0.3,69.8792],[0.4,68.5811],[0.5,73.9601],[0.6,76.552],[0.7,80.7078],[0.8,80.6733],[0.9,83.4625]],"band":[[0.1,45.538,65.255],[0.2,51.037,69.0975],[0.3,62.637,76.778],[0.4,59.4395,76.68],[0.5,65.3495,80.6105],[0.6,70.03,81.437],[0.7,74.727,84.471],[0.8,76.1,85.53],[0.9,77.4375,88.75]]},{"name":"RCNet (nous)","color":"#d62728","width":3.2,"values":[[0.1,65.5798],[0.2,74.5222],[0.3,77.4314],[0.4,76.9068],[0.5,79.7613],[0.6,79.1387],[0.7,83.7906],[0.8,82.5161],[0.9,82.8125]],"band":[[0.1,64.373,66.76],[0.2,73.174,75.71],[0.3,76.031,78.74],[0.4,75.21,78.15],[0.5,78.527,81.0725],[0.6,77.904,80.76],[0.7,82.35,85.29],[0.8,79.839,84.91],[0.9,80,85.0625]]},{"name":"SRCNet (nous)","color":"#9467bd","width":3.2,"values":[[0.1,62.2788],[0.2,74.2267],[0.3,76.0494],[0.4,74.3658],[0.5,79.8134],[0.6,80.124],[0.7,83.0808],[0.8,84.3251],[0.9,82.4145]],"band":[[0.1,60.863,63.677],[0.2,73.014,75.574],[0.3,74.77,77.309],[0.4,72.48,76.2705],[0.5,78.255,81.5825],[0.6,77.6,82.02],[0.7,81.09,84.891],[0.8,81.13,86.8215],[0.9,78.6875,86.25]]}]'
+        ></line-chart>
       </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
 
-      <div data-step style="margin-top:30px;padding:20px 24px;background:var(--tint);border-left:3px solid var(--accent);font-size:20px;color:var(--ink-2);">
-        <strong>Message :</strong> les gains de l'ordre deux se concentrent là où les deep nets classiques peinent — <em>peu d'étiquettes, bruit d'étiquetage</em> — ce qui est exactement la réalité du GPR.
+  <!-- §3.5 · Results — robustness to label noise -->
+  <section>
+    <slide-note>Robustesse au bruit d'étiquetage : à 70 % d'entraînement, on corrompt une fraction croissante des étiquettes. Le CNN de référence s'effondre dès 10 % (descend vers le hasard ~25 % à 4 classes). ResNet décroît régulièrement. RCNet/SRCNet restent quasi plats — la représentation de covariance amortit fortement le bruit d'étiquetage. C'est le message clé de robustesse.</slide-note>
+    <slide-header title="Robustesse — précision vs étiquettes corrompues"></slide-header>
+    <div class="slide-body" style="padding:0;display:flex;flex-direction:column;gap:6px;">
+      <p class="small" style="margin:0;color:var(--ink-3);">
+        À 70 % d'entraînement, fraction croissante d'étiquettes corrompues. RCNet (rouge) reste quasi plat ; le CNN de référence s'effondre vers le hasard.
+      </p>
+      <div style="flex:1;min-height:0;padding-bottom:8px;">
+        <line-chart
+          xlabel="Taux d'étiquettes corrompues"
+          ylabel="Précision test (%)"
+          series='[{"name":"CNN1","color":"#1f77b4","values":[[0,75.861],[0.05,68.2164],[0.1,54.1439],[0.15,43.0423],[0.2,37.8234],[0.25,37.6888],[0.3,38.7267],[0.35,35.9367],[0.4,38.9949]],"band":[[0,72.69,78.99],[0.05,62.5885,73.971],[0.1,24.79,69.75],[0.15,24.79,66.39],[0.2,24.349,66.432],[0.25,24.79,63.051],[0.3,24.79,63.471],[0.35,24.769,59.681],[0.4,25.21,59.681]]},{"name":"ResNet-34 ré-entr.","color":"#ff7f0e","values":[[0,82.224],[0.05,78.8766],[0.1,75.7854],[0.15,72.1859],[0.2,70.548],[0.25,65.128],[0.3,62.1303],[0.35,58.2417],[0.4,54.3723]],"band":[[0,79.41,85.311],[0.05,75.609,81.51],[0.1,71.85,79.431],[0.15,67.209,76.47],[0.2,65.088,75.63],[0.25,59.24,71.451],[0.3,58.358,67.23],[0.35,53.738,63.891],[0.4,48.74,60.122]]},{"name":"ResNet-34 fine-tuné","color":"#2ca02c","values":[[0,80.7078],[0.05,76.5372],[0.1,71.308],[0.15,66.5977],[0.2,65.409],[0.25,63.7401],[0.3,60.8194],[0.35,56.7257],[0.4,53.8139]],"band":[[0,74.727,84.471],[0.05,69.309,81.111],[0.1,64.269,78.171],[0.15,58.358,75.651],[0.2,58.4,73.551],[0.25,56.279,70.611],[0.3,51.68,68.07],[0.35,45.779,64.752],[0.4,41.936,61.8025]]},{"name":"RCNet (nous)","color":"#d62728","width":3.2,"values":[[0,83.7906],[0.05,83.505],[0.1,82.077],[0.15,81.258],[0.2,80.9136],[0.25,79.7754],[0.3,79.578],[0.35,77.9022],[0.4,76.2348]],"band":[[0,82.35,85.29],[0.05,81.51,85.29],[0.1,80.25,84.03],[0.15,79.41,83.19],[0.2,78.99,82.77],[0.25,78.15,81.531],[0.3,77.31,81.51],[0.35,76.029,79.851],[0.4,73.95,78.171]]},{"name":"SRCNet (nous)","color":"#9467bd","width":3.2,"values":[[0,83.0808],[0.05,81.7704],[0.1,79.9392],[0.15,77.1042],[0.2,77.6082],[0.25,74.727],[0.3,72.5294],[0.35,69.5064],[0.4,68.1698]],"band":[[0,81.09,84.891],[0.05,79.809,83.631],[0.1,77.31,82.371],[0.15,73.53,79.431],[0.2,73.95,80.25],[0.25,71.43,77.331],[0.3,69.75,76.05],[0.35,65.529,72.27],[0.4,65.13,71.451]]}]'
+        ></line-chart>
       </div>
     </div>
     <slide-footer></slide-footer>
@@ -1152,7 +1408,7 @@
     <slide-header title="BatchNorm sur SPD — la recette"></slide-header>
     <div class="slide-body">
       <p class="lede" style="margin-bottom:24px;max-width:1500px;">
-        On insère un bloc de BatchNorm SPD entre les couches BiMap+ReEig. Il recentre le batch autour de l'identité — via une <strong>moyenne sur la variété</strong> — puis re-biaise avec un paramètre SPD appris.
+        On insère un bloc de BatchNorm SPD<cite-ref key="brooks2019"></cite-ref> entre les couches BiMap+ReEig. Il recentre le batch autour de l'identité — via une <strong>moyenne sur la variété</strong> — puis re-biaise avec un paramètre SPD appris.
       </p>
 
       <div class="cols cols-2" style="gap:48px;align-items:start;margin-top:12px;">
@@ -1172,7 +1428,7 @@
             \Sigma \;\leftarrow\; \Gamma\, R^{-1/2}\,\Sigma\, R^{-1/2}\,\Gamma
           </div>
           <p class="body" style="font-size:17px;color:var(--ink-3);margin-top:8px;">
-            La moyenne <span class="math">R</span> du training remplace <span class="math">M_b</span> — analogie directe avec BatchNorm euclidienne.
+            La moyenne <span class="math">R</span> du training remplace <span class="math">M_b</span> — analogie directe avec BatchNorm euclidienne.<cite-ref key="ioffe2015"></cite-ref>
           </p>
         </div>
       </div>
@@ -1215,7 +1471,7 @@
         <div data-step style="display:grid;grid-template-columns:180px 1fr 1.3fr;gap:32px;align-items:center;padding:18px 24px;background:var(--bg-2);border:1px solid var(--accent);border-radius:6px;">
           <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--accent);text-align:center;">Géométrique</div>
           <div><span class="math">G = \arg\min_M \sum_k d_R(M, \Sigma_k)^2</span></div>
-          <div class="small" style="font-size:16px;color:var(--ink-3);">idéal géométrique · <strong>pas de forme close</strong> · point fixe + eig à chaque passe</div>
+          <div class="small" style="font-size:16px;color:var(--ink-3);">idéal géométrique<cite-ref key="karcher1977"></cite-ref><cite-ref key="pennec2006"></cite-ref> · <strong>pas de forme close</strong> · point fixe + eig à chaque passe</div>
         </div>
 
       </div>
@@ -1342,36 +1598,28 @@
     <slide-note>HyperLeaf (4 variétés × 3 niveaux de fertilisation, 600 échantillons, covariances 204×204) et Rices90 (4 variétés de riz, 384 échantillons, covariances 256×256). Architecture : un bloc SPD + FC. ARMAGNAC apprend t ≈ 0.5 dans les deux cas — proche de GAH mais avec une variance plus basse et de meilleurs scores. La moyenne géométrique gagne légèrement sur Rices90 mais coûte ~9× plus cher à entraîner. Placeholder pour le graphique.</slide-note>
     <slide-header title="Imagerie hyperspectrale — HyperLeaf &amp; Rices90"></slide-header>
     <div class="slide-body">
-      <div class="cols cols-2" style="gap:36px;margin-top:18px;align-items:start;">
-        <div data-step>
-          <div class="eyebrow" style="margin-bottom:12px;">HyperLeaf</div>
-          <div style="font-family:var(--mono);font-size:15px;color:var(--ink-3);margin-bottom:14px;">4 variétés × 3 fertilisations · 600 échantillons · covariances 204×204</div>
-          <div style="display:flex;flex-direction:column;gap:6px;font-family:var(--mono);font-size:16px;color:var(--ink-2);">
-            <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--accent);color:var(--bg);font-weight:600;border-radius:3px;">
-              <span>ARMAGNAC</span><span>80,6 ± 4,2 %</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;padding:6px 10px;"><span>Arithmétique</span><span>78,8</span></div>
-            <div style="display:flex;justify-content:space-between;padding:6px 10px;"><span>Géométrique</span><span>78,7</span></div>
-            <div style="display:flex;justify-content:space-between;padding:6px 10px;"><span>Harmonique</span><span>77,0</span></div>
-            <div style="display:flex;justify-content:space-between;padding:6px 10px;"><span>GAH</span><span>75,3</span></div>
-            <div style="display:flex;justify-content:space-between;padding:6px 10px;color:var(--ink-3);"><span>sans BN</span><span>73,5</span></div>
+      <div class="cols cols-2" style="gap:36px;margin-top:12px;align-items:stretch;flex:1;min-height:0;">
+        <div data-step style="display:flex;flex-direction:column;min-height:0;">
+          <div class="eyebrow" style="margin-bottom:6px;">HyperLeaf</div>
+          <div style="font-family:var(--mono);font-size:15px;color:var(--ink-3);margin-bottom:8px;">4 variétés × 3 fertilisations · 600 échantillons · covariances 204×204</div>
+          <div style="flex:1;min-height:0;">
+            <bar-chart
+              ylabel="Précision (%)"
+              ymin="70" ymax="86"
+              data='[{"label":"ARMAGNAC","value":80.6,"err":4.2,"emphasis":true},{"label":"Arith.","value":78.8},{"label":"Géom.","value":78.7},{"label":"Harm.","value":77.0},{"label":"GAH","value":75.3},{"label":"sans BN","value":73.5,"muted":true}]'
+            ></bar-chart>
           </div>
         </div>
 
-        <div data-step>
-          <div class="eyebrow" style="margin-bottom:12px;">Rices90</div>
-          <div style="font-family:var(--mono);font-size:15px;color:var(--ink-3);margin-bottom:14px;">4 variétés de riz · 384 échantillons · covariances 256×256</div>
-          <div style="display:flex;flex-direction:column;gap:6px;font-family:var(--mono);font-size:16px;color:var(--ink-2);">
-            <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--ink);color:var(--bg);font-weight:600;border-radius:3px;">
-              <span>Géométrique <span style="font-weight:400;opacity:0.6;">(~9× plus cher)</span></span><span>93,7 ± 2,8 %</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--accent);color:var(--bg);font-weight:600;border-radius:3px;">
-              <span>ARMAGNAC</span><span>91,3 ± 4,0 %</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;padding:6px 10px;"><span>Arithmétique</span><span>91,8</span></div>
-            <div style="display:flex;justify-content:space-between;padding:6px 10px;"><span>GAH</span><span>89,0</span></div>
-            <div style="display:flex;justify-content:space-between;padding:6px 10px;"><span>Harmonique</span><span>87,9</span></div>
-            <div style="display:flex;justify-content:space-between;padding:6px 10px;color:var(--ink-3);"><span>sans BN</span><span>85,3</span></div>
+        <div data-step style="display:flex;flex-direction:column;min-height:0;">
+          <div class="eyebrow" style="margin-bottom:6px;">Rices90</div>
+          <div style="font-family:var(--mono);font-size:15px;color:var(--ink-3);margin-bottom:8px;">4 variétés de riz · 384 échantillons · covariances 256×256 · <span style="color:var(--ink-2);">Géométrique ~9× plus cher</span></div>
+          <div style="flex:1;min-height:0;">
+            <bar-chart
+              ylabel="Précision (%)"
+              ymin="80" ymax="98"
+              data='[{"label":"ARMAGNAC","value":91.3,"err":4.0,"emphasis":true},{"label":"Arith.","value":91.8},{"label":"Géom.","value":93.7,"err":2.8,"color":"ink"},{"label":"Harm.","value":87.9},{"label":"GAH","value":89.0},{"label":"sans BN","value":85.3,"muted":true}]'
+            ></bar-chart>
           </div>
         </div>
       </div>
@@ -1379,6 +1627,40 @@
       <div data-step style="margin-top:24px;padding:18px 22px;background:var(--tint);border-left:3px solid var(--accent);font-size:19px;color:var(--ink-2);line-height:1.55;max-width:1620px;">
         <strong>Lecture :</strong> ARMAGNAC apprend <span class="math">t \approx 0{,}5</span> dans les deux cas — proche de GAH, mais avec une <strong>variance plus basse</strong> et un meilleur score moyen. La moyenne géométrique gagne légèrement sur Rices90, au prix d'un entraînement <strong>~9× plus long</strong>.
       </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+
+  <!-- §4.6 · Computation time comparison (CPU) -->
+  <section>
+    <slide-note>Temps de calcul CPU pour les 5 moyennes en fonction de la taille de batch. La moyenne arithmétique est O(d²) donc quasi-constante ; la géométrique (itérative) explose linéairement. GAH / harmonique / log-euclidienne sont dans un régime intermédiaire raisonnable. Message clé : ARMAGNAC hérite du coût de A et H — bien moins cher que la géométrique.</slide-note>
+    <slide-header title="Complexité computationnelle — CPU"></slide-header>
+    <div class="slide-body" style="padding:0 0 8px;">
+      <line-chart
+        xlabel="Taille du batch"
+        ylabel="Temps (s)"
+        xmode="log"
+        ymode="log"
+        series='[{"name":"arithmétique","color":"#1f77b4","values":[[1,4.68e-5],[2,4.81e-5],[4,4.67e-5],[8,4.77e-5],[16,1.80e-5],[32,1.77e-5],[64,1.96e-5],[128,2.22e-5]],"band":[[1,4.55e-5,4.92e-5],[2,4.75e-5,5.05e-5],[4,4.60e-5,4.90e-5],[8,4.59e-5,5.00e-5],[16,1.65e-5,1.75e-5],[32,1.68e-5,1.80e-5],[64,1.83e-5,1.98e-5],[128,2.07e-5,2.26e-5]]},{"name":"géométrique","color":"#ff7f0e","values":[[1,4.93e-3],[2,6.80e-3],[4,9.60e-3],[8,1.527e-2],[16,2.644e-2],[32,4.917e-2],[64,9.454e-2],[128,0.1873]],"band":[[1,3.98e-3,5.38e-3],[2,6.69e-3,7.47e-3],[4,9.46e-3,1.031e-2],[8,1.502e-2,1.613e-2],[16,2.612e-2,2.709e-2],[32,4.858e-2,5.015e-2],[64,9.421e-2,9.537e-2],[128,0.1853,0.1901]]},{"name":"harmonique","color":"#2ca02c","values":[[1,3.04e-4],[2,3.86e-4],[4,5.49e-4],[8,8.60e-4],[16,1.034e-3],[32,1.466e-3],[64,2.802e-3],[128,5.513e-3]],"band":[[1,2.98e-4,3.14e-4],[2,3.81e-4,4.00e-4],[4,5.35e-4,5.58e-4],[8,8.45e-4,8.66e-4],[16,7.70e-4,1.48e-3],[32,1.447e-3,1.506e-3],[64,2.763e-3,2.857e-3],[128,5.41e-3,5.73e-3]]},{"name":"GAH","color":"#d62728","values":[[1,6.12e-4],[2,7.31e-4],[4,8.29e-4],[8,1.006e-3],[16,1.369e-3],[32,2.087e-3],[64,3.470e-3],[128,6.150e-3]],"band":[[1,5.95e-4,6.39e-4],[2,7.06e-4,7.57e-4],[4,7.99e-4,8.54e-4],[8,9.79e-4,1.034e-3],[16,1.340e-3,1.392e-3],[32,2.051e-3,2.128e-3],[64,3.41e-3,3.61e-3],[128,6.064e-3,6.387e-3]]},{"name":"log-euclidien","color":"#9467bd","values":[[1,4.67e-4],[2,6.89e-4],[4,1.092e-3],[8,1.884e-3],[16,3.506e-3],[32,6.644e-3],[64,1.315e-2],[128,2.578e-2]],"band":[[1,4.39e-4,4.93e-4],[2,6.63e-4,7.11e-4],[4,1.055e-3,1.148e-3],[8,1.830e-3,1.936e-3],[16,3.433e-3,3.612e-3],[32,6.479e-3,6.772e-3],[64,1.290e-2,1.334e-2],[128,2.556e-2,2.605e-2]]}]'
+      ></line-chart>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+
+  <!-- §4.7 · Computation time comparison (CUDA) -->
+  <section>
+    <slide-note>Même comparaison sur GPU (CUDA) en fonction de la dimension matricielle. La moyenne arithmétique reste quasi-constante (opérations matrice creuses, très rapide sur GPU). La géométrique explose à partir de d=64 et dépasse 2 s à d=512. GAH / harmonique / log-euclidien occupent le milieu de tableau — ARMAGNAC hérite des coûts de A et H.</slide-note>
+    <slide-header title="Complexité computationnelle — CUDA"></slide-header>
+    <div class="slide-body" style="padding:0 0 8px;">
+      <line-chart
+        xlabel="Dimension matricielle"
+        ylabel="Temps (s)"
+        xmode="log"
+        ymode="log"
+        series='[{"name":"arithmétique","color":"#1f77b4","values":[[32,1.891e-5],[64,1.865e-5],[128,7.174e-5],[256,6.893e-5],[512,1.129e-4]],"band":[[32,1.792e-5,1.985e-5],[64,1.780e-5,2.054e-5],[128,5.785e-5,7.812e-5],[256,5.988e-5,1.482e-4],[512,8.451e-5,2.778e-4]]},{"name":"géométrique","color":"#ff7f0e","values":[[32,4.416e-3],[64,0.10746],[128,0.25529],[256,0.70374],[512,2.09746]],"band":[[32,4.071e-3,5.512e-3],[64,0.10512,0.11027],[128,0.25044,0.26203],[256,0.69436,0.71391],[512,2.06858,2.17870]]},{"name":"harmonique","color":"#2ca02c","values":[[32,2.654e-4],[64,4.105e-4],[128,7.470e-4],[256,1.748e-3],[512,5.830e-3]],"band":[[32,2.529e-4,2.842e-4],[64,3.736e-4,6.070e-4],[128,7.101e-4,8.285e-4],[256,1.679e-3,2.073e-3],[512,5.692e-3,6.312e-3]]},{"name":"GAH","color":"#d62728","values":[[32,1.071e-3],[64,1.807e-3],[128,3.655e-3],[256,1.041e-2],[512,3.140e-2]],"band":[[32,1.015e-3,1.246e-3],[64,1.735e-3,2.062e-3],[128,3.546e-3,4.058e-3],[256,9.851e-3,1.136e-2],[512,3.002e-2,3.313e-2]]},{"name":"log-euclidien","color":"#9467bd","values":[[32,5.533e-4],[64,2.311e-2],[128,5.276e-2],[256,1.432e-1],[512,4.201e-1]],"band":[[32,4.954e-4,7.523e-4],[64,2.123e-2,2.854e-2],[128,4.925e-2,5.907e-2],[256,1.366e-1,1.609e-1],[512,4.103e-1,4.818e-1]]}]'
+      ></line-chart>
     </div>
     <slide-footer></slide-footer>
   </section>
@@ -1409,7 +1691,7 @@
     <slide-header title="Le problème — moyenner sur une variété"></slide-header>
     <div class="slide-body">
       <p class="lede" style="margin-bottom:28px;max-width:1500px;">
-        FedAvg moyenne arithmétiquement les poids des clients. Sur une variété, cette moyenne <strong>n'est pas un point de la variété</strong>.
+        FedAvg<cite-ref key="mcmahan2017"></cite-ref> moyenne arithmétiquement les poids des clients. Sur une variété, cette moyenne <strong>n'est pas un point de la variété</strong>.
       </p>
 
       <div class="cols cols-2" style="gap:48px;align-items:start;">
@@ -1417,13 +1699,13 @@
           <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Approches existantes</div>
           <div style="display:flex;flex-direction:column;gap:14px;font-size:18px;color:var(--ink-2);">
             <div style="padding:14px 16px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
-              <strong>Karcher / Fréchet</strong> — log → moyenne tangente → exp. Sur Stiefel le log est itératif, l'exp instable.
+              <strong>Karcher / Fréchet</strong><cite-ref key="karcher1977"></cite-ref> — log → moyenne tangente → exp. Sur Stiefel le log est itératif, l'exp instable.
             </div>
             <div style="padding:14px 16px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
-              <strong>Projection + correction de dérive</strong> — Zhang et al. 2024 : requiert la participation totale.
+              <strong>Projection + correction de dérive</strong> — <cite-ref key="zhang2024"></cite-ref> : requiert la participation totale.
             </div>
             <div style="padding:14px 16px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
-              <strong>Flux de gradients</strong> — Huang et al. 2024 : verrouille l'optimiseur à SGD.
+              <strong>Flux de gradients</strong> — <cite-ref key="huang2024"></cite-ref> : verrouille l'optimiseur à SGD.
             </div>
           </div>
         </div>
@@ -1547,7 +1829,7 @@
           <div class="eyebrow" style="margin-bottom:14px;">Protocole</div>
           <div style="display:flex;flex-direction:column;gap:8px;font-family:var(--mono);font-size:17px;color:var(--ink-2);">
             <div><span style="color:var(--ink-3);">Tâche</span> &nbsp;&nbsp; Motor-imagery classification</div>
-            <div><span style="color:var(--ink-3);">Datasets</span> &nbsp;&nbsp; Weibo2014, Schirrmeister2017, PhysionetMI</div>
+            <div><span style="color:var(--ink-3);">Datasets</span> &nbsp;&nbsp; Weibo2014, Schirrmeister2017, PhysionetMI<cite-ref key="jayaram2018"></cite-ref></div>
             <div><span style="color:var(--ink-3);">Modèles</span> &nbsp;&nbsp; FedSPDNet vs FedEEGNet</div>
             <div><span style="color:var(--ink-3);">Participation</span> &nbsp;&nbsp; ρ = k/n ∈ {1, 0.8, 0.5, 0.2}</div>
             <div><span style="color:var(--ink-3);">Rounds</span> &nbsp;&nbsp; T = 150 &nbsp; · &nbsp; τ = 2 époques locales</div>
@@ -1651,6 +1933,9 @@
   <!-- ═══════════════════════════════════════
        End
        ═══════════════════════════════════════ -->
+  <refs-slide>
+    <p class="h1">References</p>
+    </refs-slide>
 
   <end-slide
     heading="MERCI"

@@ -7,8 +7,8 @@ const W = 1760, H = 990;
 // Architecture: BiMap → ReEig (× k), then LogEig → vec → FC → Softmax
 // BN layer moved to ARMAGNAC section of the deck.
 const BLOCKS = [
-  { label: 'BiMap',   eq: 'Xₖ = Wₖ Xₖ₋₁ Wₖᵀ' },
-  { label: 'ReEig',  eq: 'Xₖ = U max(εI,Σ) Uᵀ' },
+  { label: 'BiMap', eq: 'Xₖ = Wₖ Xₖ₋₁ Wₖᵀ' },
+  { label: 'ReEig', eq: 'Xₖ = U max(εI,Σ) Uᵀ' },
   { label: 'LogEig', eq: 'Xₖ = U log(Σ) Uᵀ' },
 ];
 
@@ -54,7 +54,7 @@ function Pipeline({ activeIdx }) {
       </text>
       <text x={W / 2} y={84}
         fontFamily="var(--mono)" fontSize={20} fill="var(--ink-3)" textAnchor="middle">
-        Huang &amp; Van Gool, AAAI 2017  ·  Brooks et al., NeurIPS 2019
+        Huang, Makur &amp; Van Gool (2017)  ·  Brooks et al. (2019)
       </text>
 
       {/* Input covariance matrix (stacked squares) */}
@@ -429,7 +429,7 @@ function DiagramLogEig() {
       {[0.33, 0.66].map(h => {
         const lx = pT.x1 + h * (pB.x1 - pT.x1);
         const rx = pT.x2 + h * (pB.x2 - pT.x2);
-        const y  = pT.y  + h * (pB.y  - pT.y);
+        const y = pT.y + h * (pB.y - pT.y);
         return <line key={h} x1={lx} y1={y} x2={rx} y2={y}
           stroke="var(--ink-3)" strokeWidth={0.5} />;
       })}
@@ -508,6 +508,22 @@ function DiagramLogEig() {
   );
 }
 
+// ─── Citation label — reads the number citations.js already wrote into the DOM ─
+function CiteLabel({ refKey }) {
+  const [num, setNum] = useState('');
+  useEffect(() => {
+    const el = document.querySelector(`cite-ref[key="${refKey}"]`);
+    if (el) setNum(el.textContent);
+  }, [refKey]);
+  if (!num) return null;
+  return (
+    <div style={{ fontFamily: 'var(--sans)', fontSize: '18px', color: 'var(--ink-3)', marginTop: '8px' }}>
+      <sup style={{ fontFamily: 'var(--mono)', color: 'var(--accent)', fontWeight: 700, fontSize: '14px' }}>{num}</sup>
+      {' '}Huang, Makur &amp; Van Gool (AAAI 2017)
+    </div>
+  );
+}
+
 // ─── Detail slide layout (HTML, covers the full slide body) ──────────────────
 
 const DETAILS = [
@@ -520,9 +536,8 @@ const DETAILS = [
       'Chaque couche BiMap prend une matrice de covariance d₀×d₀ et la projette vers une matrice d₁×d₁ plus petite.',
       'La matrice de poids Wₖ est de rang plein en lignes, ce qui suffit à garantir que la sortie reste symétrique définie positive — la structure de variété est préservée à chaque couche.',
       'W est contraint de vivre sur la variété de Stiefel St(d₁, d₀) des matrices semi-orthogonales. La rétropropagation utilise les gradients riemanniens sur cette variété.',
-      'Empiler k de ces blocs produit une hiérarchie de covariances progressivement compressées.',
     ],
-    ref: 'Huang & Van Gool, AAAI 2017',
+    refKey: 'huang2017',
   },
   {
     title: 'ReEig — rectification spectrale',
@@ -534,7 +549,7 @@ const DETAILS = [
       'ReEig est le remède : toute valeur propre en dessous du seuil ε est remontée à exactement ε. Rien de plus.',
       "La décomposition propre reste différentiable, les gradients continuent de circuler. C'est un plancher sur le spectre — l'analogue SPD du ReLU.",
     ],
-    ref: 'Huang & Van Gool, AAAI 2017',
+    refKey: 'huang2017',
   },
   {
     title: "LogEig — passage vers l'espace euclidien",
@@ -546,12 +561,12 @@ const DETAILS = [
       'Vectoriser le triangle supérieur donne un vecteur de caractéristiques ordinaire. De là, une couche dense standard et un softmax assurent la classification.',
       "Tout ce qui était géométrique est désormais algébrique. Le classifieur n'a plus besoin de connaître la variété.",
     ],
-    ref: 'Huang & Van Gool, AAAI 2017',
+    refKey: 'huang2017',
   },
 ];
 
 function DetailSlide({ d }) {
-  const formulaRef    = useRef(null);
+  const formulaRef = useRef(null);
   const formulaSubRef = useRef(null);
 
   useEffect(() => {
@@ -640,15 +655,8 @@ function DetailSlide({ d }) {
             ))}
           </div>
 
-          {/* Citation */}
-          <div style={{
-            fontFamily: 'var(--mono)',
-            fontSize: '20px',
-            color: 'var(--ink-3)',
-            marginTop: '4px',
-          }}>
-            {d.ref}
-          </div>
+          {/* Citation — number read from the already-processed cite-ref in the slide HTML */}
+          {d.refKey && <CiteLabel refKey={d.refKey} />}
         </div>
       </div>
     </div>
@@ -658,18 +666,18 @@ function DetailSlide({ d }) {
 // ─── Main island ──────────────────────────────────────────────────────────────
 
 export function SpdNetArch() {
-  const svgRef       = useRef(null);
+  const svgRef = useRef(null);
   const containerRef = useRef(null);
-  const rafRef       = useRef(null);
-  const timerRef     = useRef(null);
+  const rafRef = useRef(null);
+  const timerRef = useRef(null);
 
   // state: which block is highlighted in the overview (immediate)
   // detailIdx: which detail slide is visible, -1 = none (delayed)
-  const [state,      setState]      = useState(0);
-  const [detailIdx,  setDetailIdx]  = useState(-1);
+  const [state, setState] = useState(0);
+  const [detailIdx, setDetailIdx] = useState(-1);
 
   useEffect(() => {
-    const svg       = svgRef.current;
+    const svg = svgRef.current;
     const container = containerRef.current;
     if (!svg || !container) return;
 
@@ -706,7 +714,7 @@ export function SpdNetArch() {
 
       const from = (svg.getAttribute('viewBox') || STATES[0].join(' '))
         .split(' ').map(Number);
-      const to   = STATES[Math.max(0, Math.min(STATES.length - 1, n))];
+      const to = STATES[Math.max(0, Math.min(STATES.length - 1, n))];
 
       tween(from, to, 560, () => {
         // Fade detail in only for zoom states 1-3

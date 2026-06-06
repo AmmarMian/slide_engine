@@ -8,13 +8,17 @@
 //
 //   2. Cite inline in any <section>:
 //      <cite-ref key="austin2021"></cite-ref>
-//      Renders as a superscript [1]. Multiple refs to the same key share the same number.
+//      Renders as a superscript [N]. Numbers are global across the whole deck,
+//      assigned in first-appearance order.
 //
 //   3. The full citation appears automatically as a footnote bar at the bottom of
-//      the slide, above the .page-footer. Numbers restart at [1] per slide.
+//      the slide, above the .page-footer.
+//
+//   4. Add <refs-slide> anywhere in <deck-stage> to get a full bibliography slide.
 
 // Register as a do-nothing custom element so the browser parses it correctly.
 customElements.define('cite-ref', class extends HTMLElement {});
+customElements.define('refs-slide', class extends HTMLElement {});
 
 function buildCiteItem(num, text) {
   const item = document.createElement('div');
@@ -23,9 +27,6 @@ function buildCiteItem(num, text) {
   numEl.className = 'cite-item-num';
   numEl.textContent = `[${num}]`;
   item.appendChild(numEl);
-  // Reference text is authored in the deck's own JSON — not user-controlled input.
-  // It may include simple HTML like <em>. We use a template + insertAdjacentHTML
-  // rather than a blanket innerHTML assignment for clarity.
   const span = document.createElement('span');
   // safe: deck-author-controlled content from an inline JSON script tag
   // eslint-disable-next-line no-unsanitized/property
@@ -41,31 +42,51 @@ function processCitations() {
   let db;
   try { db = JSON.parse(refsEl.textContent); } catch { return; }
 
+  // First pass: assign global numbers in first-appearance order across all slides.
+  const globalOrder = [];
+  const globalKeyToNum = {};
+
+  document.querySelectorAll('deck-stage cite-ref[key]').forEach(el => {
+    const key = el.getAttribute('key');
+    if (!globalKeyToNum[key]) {
+      globalKeyToNum[key] = globalOrder.length + 1;
+      globalOrder.push(key);
+    }
+  });
+
+  // Second pass: render inline labels and per-slide footnote bars.
   document.querySelectorAll('deck-stage > section').forEach(slide => {
     const refs = slide.querySelectorAll('cite-ref[key]');
     if (!refs.length) return;
 
-    const order = [];
-    const keyToNum = {};
-
+    const slideKeys = [];
     refs.forEach(el => {
       const key = el.getAttribute('key');
-      if (!keyToNum[key]) {
-        keyToNum[key] = order.length + 1;
-        order.push(key);
-      }
-      el.textContent = `[${keyToNum[key]}]`;
+      el.textContent = `[${globalKeyToNum[key]}]`;
+      if (!slideKeys.includes(key)) slideKeys.push(key);
     });
 
     const bar = document.createElement('div');
     bar.className = 'slide-citations';
-    order.forEach((key, i) => {
-      bar.appendChild(buildCiteItem(i + 1, db[key] || key));
+    slideKeys.forEach(key => {
+      bar.appendChild(buildCiteItem(globalKeyToNum[key], db[key] || key));
     });
 
-    const footer = slide.querySelector('.page-footer');
-    if (footer) slide.insertBefore(bar, footer);
+    // Insert before <slide-footer> which is always in the HTML at parse time.
+    // Fallback: before .page-footer (React-rendered), then append.
+    const anchor = slide.querySelector('slide-footer') || slide.querySelector('.page-footer');
+    if (anchor) slide.insertBefore(bar, anchor);
     else slide.appendChild(bar);
+  });
+
+  // Populate <refs-slide> with the full bibliography.
+  document.querySelectorAll('deck-stage refs-slide').forEach(slide => {
+    const list = document.createElement('div');
+    list.className = 'refs-slide-list';
+    globalOrder.forEach(key => {
+      list.appendChild(buildCiteItem(globalKeyToNum[key], db[key] || key));
+    });
+    slide.appendChild(list);
   });
 }
 

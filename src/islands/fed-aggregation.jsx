@@ -192,22 +192,27 @@ export function FedAggregation() {
     const K = 5; // clients
     // Initial global model (a slightly off-axis point so the geometry is clear)
     const globalStart = new THREE.Vector3(0.25, 0.55, 0.8).normalize();
-    // Local optima (where each client drifts to) — deterministic spread
-    const seed = (i) => {
-      // small deterministic angular offsets around the global start
-      const golden = 2.39996;
-      const ang  = i * golden;
-      const tilt = 0.45 + 0.18 * Math.sin(i * 1.7);
-      const dx = Math.cos(ang) * tilt;
-      const dy = Math.sin(ang) * tilt * 0.6;
-      const dz = -tilt * 0.3 + 0.15 * Math.cos(i * 0.9);
-      return new THREE.Vector3(dx, dy, dz);
-    };
+
+    // Orthonormal tangent basis at globalStart, so clients can be placed at a
+    // controlled angular distance around it.
+    const _ref = Math.abs(globalStart.y) < 0.9
+      ? new THREE.Vector3(0, 1, 0)
+      : new THREE.Vector3(1, 0, 0);
+    const e1 = _ref.clone().sub(globalStart.clone().multiplyScalar(_ref.dot(globalStart))).normalize();
+    const e2 = new THREE.Vector3().crossVectors(globalStart, e1).normalize();
+
+    // Spread the k clients across a WIDE cone (polar angle ≈ 60°) around the
+    // global model. Far-apart unit vectors have a short average, so their
+    // arithmetic (Euclidean) mean sits clearly INSIDE the sphere — the whole
+    // point of the visualisation.
     const clientTargets = Array.from({ length: K }, (_, i) => {
-      // Build target by adding a tangent perturbation then re-projecting to sphere
-      const off = seed(i);
-      const tang = off.clone().sub(globalStart.clone().multiplyScalar(off.dot(globalStart)));
-      return globalStart.clone().add(tang.multiplyScalar(0.85)).normalize();
+      const phi   = i * (2 * Math.PI / K) + 0.6 * Math.sin(i * 2.3); // azimuth, slightly irregular
+      const theta = 1.05 + 0.22 * Math.sin(i * 1.7);                  // angle from globalStart (~47°–73°)
+      const tangent = e1.clone().multiplyScalar(Math.cos(phi))
+        .add(e2.clone().multiplyScalar(Math.sin(phi)));
+      return globalStart.clone().multiplyScalar(Math.cos(theta))
+        .add(tangent.multiplyScalar(Math.sin(theta)))
+        .normalize();
     });
 
     // ── Three.js objects ──────────────────────────────────────────────

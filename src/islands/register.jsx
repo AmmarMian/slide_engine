@@ -135,6 +135,36 @@ defineReactElement('scatter-flow', null, {
   lazy: () => import('./d3/scatter-flow.jsx').then(m => m.ScatterFlow),
 });
 
+defineReactElement('bar-chart', null, {
+  observed: ['title', 'xlabel', 'ylabel', 'data', 'ymin', 'ymax', 'width', 'height'],
+  props: el => ({
+    title:  readStr(el, 'title',  ''),
+    xlabel: readStr(el, 'xlabel', ''),
+    ylabel: readStr(el, 'ylabel', ''),
+    data:   readJSON(el, 'data', []),
+    ymin:   el.getAttribute('ymin'),
+    ymax:   el.getAttribute('ymax'),
+    width:  readInt(el, 'width',  760),
+    height: readInt(el, 'height', 660),
+  }),
+  lazy: () => import('./d3/bar-chart.jsx').then(m => m.BarChart),
+});
+
+defineReactElement('line-chart', null, {
+  observed: ['title', 'xlabel', 'ylabel', 'xmode', 'ymode', 'series', 'width', 'height'],
+  props: el => ({
+    title:  readStr(el, 'title',  ''),
+    xlabel: readStr(el, 'xlabel', ''),
+    ylabel: readStr(el, 'ylabel', ''),
+    xmode:  readStr(el, 'xmode',  'linear'),
+    ymode:  readStr(el, 'ymode',  'linear'),
+    series: readJSON(el, 'series', []),
+    width:  readInt(el, 'width',  1560),
+    height: readInt(el, 'height', 680),
+  }),
+  lazy: () => import('./d3/line-chart.jsx').then(m => m.LineChart),
+});
+
 defineReactElement('toc-slide', TocSlideContent);
 
 defineReactElement('slide-header', SlideHeaderContent, {
@@ -178,9 +208,14 @@ defineReactElement('stiefel-update', null, {
   lazy: () => import('./stiefel-update.jsx').then(m => m.StiefelUpdate),
 });
 
-// SPDNet forward + backward propagation animation.
+// SPDNet forward + backward propagation animation (generic).
 defineReactElement('spdnet-backprop', null, {
   lazy: () => import('./spdnet-backprop.jsx').then(m => m.SpdNetBackprop),
+});
+
+// SPDNet eigenvalue-sensitive backpropagation (K-matrix specific animation).
+defineReactElement('spdnet-backprop-spd', null, {
+  lazy: () => import('./spdnet-backprop-spd.jsx').then(m => m.SpdNetBackpropSpd),
 });
 
 // SPD cone for 2×2 matrices — Three.js 3D visualization.
@@ -206,6 +241,11 @@ defineReactElement('hsi-cov', null, {
 // EEG spatial covariance tutorial.
 defineReactElement('eeg-cov', null, {
   lazy: () => import('./eeg-cov.jsx').then(m => m.EegCov),
+});
+
+// GPR pipeline: ResNet + CovPool + SPDNet — overview ribbon + 3 zoom-detail steps.
+defineReactElement('gpr-pipeline', null, {
+  lazy: () => import('./gpr-pipeline.jsx').then(m => m.GprPipeline),
 });
 
 // Three.js islands — lazy loaded (~32MB chunk, only fetched when the tag appears)

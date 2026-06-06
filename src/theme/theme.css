@@ -73,9 +73,45 @@ deck-stage > section {
   padding-top: 28px;
 }
 
+/* ── SPDNet eigenvalue backprop island ──────────────────────── */
+spdnet-backprop-spd {
+  display: block;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── Generic D3 line chart island ───────────────────────────── */
+line-chart {
+  display: block;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── Generic D3 bar chart island ────────────────────────────── */
+bar-chart {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
 /* ── SPDNet arch island ──────────────────────────────────────
    Fills the slide-body div; padding:0 on the parent is set inline. */
 spdnet-arch {
+  display: block;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── GPR pipeline island (ResNet + CovPool + SPDNet) ──────────
+   Fills the slide-body div; padding:0 on the parent is set inline. */
+gpr-pipeline {
   display: block;
   width: 100%;
   height: 100%;
@@ -359,7 +395,8 @@ end-slide::before {
 /* ── Inline citations ────────────────────────────────────────
    Usage: <cite-ref key="smith2024"></cite-ref>
    References defined once in: <script id="deck-refs" type="application/json">{"smith2024":"..."}</script>
-   Numbers are auto-assigned per slide. Full reference appears as footnote above page-footer. */
+   Numbers are global across the deck (first-appearance order). Full reference appears as footnote above page-footer.
+   Add <refs-slide> inside <deck-stage> for a full bibliography slide. */
 cite-ref {
   display: inline;
   font-family: var(--mono);
@@ -375,11 +412,13 @@ cite-ref {
   position: absolute;
   left: var(--d-pad-x);
   right: var(--d-pad-x);
-  bottom: 80px;
+  bottom: 66px;
+  z-index: 20;
+  background: var(--bg);
   display: flex;
   flex-direction: column;
   gap: 5px;
-  padding-top: 10px;
+  padding-top: 8px;
   border-top: 1px solid var(--rule-soft);
 }
 .cite-item {
@@ -396,6 +435,29 @@ cite-ref {
   margin-right: 4px;
 }
 
+refs-slide {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  padding: var(--d-pad-y-top) var(--d-pad-x) var(--d-pad-y-bot);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.refs-slide-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 40px;
+}
+.refs-slide-list .cite-item {
+  font-size: calc(24px * var(--type-scale, 1));
+  color: var(--ink-2);
+}
+.refs-slide-list .cite-item-num {
+  font-size: calc(22px * var(--type-scale, 1));
+}
+
 /* ── Step reveals (Beamer-style pause) ───────────────────────────────────────
    Mark any element with data-step to hide it until navigation reveals it.
    Elements stay in flow (opacity, not display:none) so layout doesn't shift.
@@ -410,6 +472,8 @@ cite-ref {
 }
 @media print {
   [data-step] { opacity: 1 !important; }
+  /* interaction-only affordances are meaningless on paper */
+  .lc-hint { display: none !important; }
 }
 
 /* ── Search modal ─────────────────────────────────────────────────────────── */
