@@ -1,0 +1,401 @@
+  <section-divider
+    label="Introduction"
+    kicker="Overview"
+    blurb="Les matrices de covariance dans la nature et la géométrie associée">
+    <slide-note>Transition vers la première partie.</slide-note>
+  </section-divider>
+
+  <!-- ═══════════════════════════════════════
+       §1.1 · Content slide
+       ═══════════════════════════════════════ -->
+  <section>
+    <slide-header title="Matrices de covariances"></slide-header>
+    <div class="slide-body">
+      <div style="margin-top:3%;margin-left:10%;display:flex;" data-step>
+        <div style="margin-bottom:50px">
+          <img src="./assets/covmatrix.svg" height=400px></img>
+        </div>
+        <div style="margin-top:5%" >
+        <div class="pullquote">
+              les matrices de covariance sont omniprésentes
+        </div>
+        <div class="small" style="margin-top:20px;margin-left:8px;font-size:40px;">
+          — sans doute quelqu'un, quelque part</br>
+            (peut-être Arnaud Mian)
+        </div>
+        </div>
+      </div>
+
+
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §1.1a · EEG — brain-computer interfaces -->
+  <section>
+    <slide-note>L'EEG comme exemple canonique : la covariance spatiale entre canaux encode la topographie des rythmes cérébraux et permet de discriminer les états cognitifs dans les BCI.</slide-note>
+    <slide-header title="EEG — interfaces cerveau-machine"></slide-header>
+    <div class="slide-body">
+      <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:72px;min-height:0;align-items:center;">
+
+        <!-- Left: EEG head topography SVG -->
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px;">
+          <svg viewBox="0 0 500 540" style="width:100%;max-height:580px;height:auto;">
+            <defs>
+              <clipPath id="eeg-clip">
+                <circle cx="250" cy="270" r="210"/>
+              </clipPath>
+              <radialGradient id="eeg-gc3" gradientUnits="userSpaceOnUse" cx="145" cy="270" r="160">
+                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.52"/>
+                <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="eeg-gc4" gradientUnits="userSpaceOnUse" cx="355" cy="270" r="120">
+                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.26"/>
+                <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="eeg-gpz" gradientUnits="userSpaceOnUse" cx="250" cy="348" r="95">
+                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.16"/>
+                <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+
+            <!-- Head fill -->
+            <circle cx="250" cy="270" r="210" fill="var(--bg-2)"/>
+            <!-- Heatmap blobs -->
+            <g clip-path="url(#eeg-clip)">
+              <rect x="0" y="0" width="500" height="540" fill="url(#eeg-gc3)"/>
+              <rect x="0" y="0" width="500" height="540" fill="url(#eeg-gc4)"/>
+              <rect x="0" y="0" width="500" height="540" fill="url(#eeg-gpz)"/>
+            </g>
+            <!-- Head outline -->
+            <circle cx="250" cy="270" r="210" fill="none" stroke="var(--ink-2)" stroke-width="2.5"/>
+            <!-- Nose -->
+            <polygon points="238,68 250,50 262,68" fill="none" stroke="var(--ink-2)" stroke-width="2"/>
+            <!-- Ears -->
+            <path d="M42,255 Q18,270 42,285" fill="none" stroke="var(--ink-2)" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M458,255 Q482,270 458,285" fill="none" stroke="var(--ink-2)" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Cross guide lines -->
+            <line x1="250" y1="62" x2="250" y2="478" stroke="var(--rule-soft)" stroke-width="1" stroke-dasharray="4 5"/>
+            <line x1="42"  y1="270" x2="458" y2="270" stroke="var(--rule-soft)" stroke-width="1" stroke-dasharray="4 5"/>
+
+            <!-- Fp row -->
+            <circle cx="210" cy="102" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="210" y="88" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">Fp1</text>
+            <circle cx="290" cy="102" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="290" y="88" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">Fp2</text>
+
+            <!-- F row -->
+            <circle cx="99"  cy="173" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="99"  y="159" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">F7</text>
+            <circle cx="168" cy="178" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="168" y="164" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">F3</text>
+            <circle cx="250" cy="192" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="250" y="178" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">Fz</text>
+            <circle cx="332" cy="178" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="332" y="164" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">F4</text>
+            <circle cx="401" cy="173" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="401" y="159" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">F8</text>
+
+            <!-- C/T row -->
+            <circle cx="65"  cy="270" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="65"  y="256" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">T7</text>
+            <!-- C3 — highlighted (contralateral motor cortex) -->
+            <circle cx="145" cy="270" r="10" fill="var(--accent)" stroke="var(--bg)" stroke-width="2.5"/>
+            <text x="145" y="254" text-anchor="middle" font-size="13" font-family="var(--mono)" fill="var(--ink)" font-weight="700">C3</text>
+            <!-- Cz -->
+            <circle cx="250" cy="270" r="7" fill="var(--bg)" stroke="var(--ink-2)" stroke-width="2"/>
+            <text x="264" y="266" text-anchor="start" font-size="12" font-family="var(--mono)" fill="var(--ink-2)">Cz</text>
+            <!-- C4 — secondary activation -->
+            <circle cx="355" cy="270" r="9" fill="var(--accent)" stroke="var(--bg)" stroke-width="2.5" opacity="0.55"/>
+            <text x="355" y="254" text-anchor="middle" font-size="13" font-family="var(--mono)" fill="var(--ink)" font-weight="700">C4</text>
+            <circle cx="435" cy="270" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="435" y="256" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">T8</text>
+
+            <!-- P row -->
+            <circle cx="99"  cy="367" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="99"  y="385" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">P7</text>
+            <circle cx="168" cy="362" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="168" y="380" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">P3</text>
+            <circle cx="250" cy="348" r="6" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="266" y="352" text-anchor="start" font-size="12" font-family="var(--mono)" fill="var(--ink-3)">Pz</text>
+            <circle cx="332" cy="362" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="332" y="380" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">P4</text>
+            <circle cx="401" cy="367" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="401" y="385" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">P8</text>
+
+            <!-- O row -->
+            <circle cx="210" cy="438" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="210" y="456" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">O1</text>
+            <circle cx="290" cy="438" r="5.5" fill="var(--bg)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="290" y="456" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">O2</text>
+          </svg>
+          <div style="font-size:14px;font-family:var(--mono);color:var(--ink-3);letter-spacing:0.06em;text-align:center;">
+            Topographie — imagerie motrice (main droite)
+          </div>
+        </div>
+
+        <!-- Right: text -->
+        <div style="display:flex;flex-direction:column;gap:30px;">
+          <p class="lede">
+            L'électroencéphalographie (EEG) mesure l'activité électrique cérébrale via <strong>D électrodes</strong> posées sur le cuir chevelu, avec une résolution temporelle de l'ordre de la milliseconde.
+          </p>
+          <div>
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:10px;">Applications</div>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>Interfaces cerveau-machine (BCI) — imagerie motrice gauche / droite<cite-ref key="barachant2012"></cite-ref></li>
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>Détection de l'épilepsie, surveillance des états cognitifs</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §1.1d · How a covariance is computed — EEG spatial cov -->
+  <section>
+    <slide-note>Pendant pédagogique côté EEG : la covariance spatiale entre canaux. Les D canaux sont mesurés simultanément, on centre chaque canal, puis on construit Σ entrée par entrée. La topographie sur le casque éclaire la signification géométrique de chaque coefficient.</slide-note>
+    <slide-header title="Comment se construit Σ — EEG spatial"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <eeg-cov></eeg-cov>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+
+
+  <!-- §1.1a(bis) · Hyperspectral imagery -->
+  <section>
+    <slide-note>L'imagerie hyperspectrale : le cube de données (x, y, λ) et la covariance spectrale entre bandes comme descripteur de texture et de composition.</slide-note>
+    <slide-header title="Imagerie hyperspectrale"></slide-header>
+    <div class="slide-body">
+      <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:72px;min-height:0;align-items:center;">
+
+        <!-- Left: HSI image -->
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px;">
+          <img src="./assets/image_hsi.png" alt="Image hyperspectrale"
+               style="max-width:100%;max-height:580px;width:auto;height:auto;object-fit:contain;border:1px solid var(--rule-soft);border-radius:4px;"/>
+          <div style="font-size:14px;font-family:var(--mono);color:var(--ink-3);letter-spacing:0.06em;text-align:center;">
+            Composition colorée fausse couleur (bandes RGB sélectionnées). </br> Image credit: Lincoln Laboratory Journal, 4
+          </div>
+        </div>
+
+        <!-- Right: text -->
+        <div style="display:flex;flex-direction:column;gap:30px;">
+          <p class="lede">
+            Un capteur hyperspectral acquiert <strong>des centaines de bandes spectrales</strong> par pixel (λ₁, …, λ_D), formant un cube de données (x, y, λ) à très haute résolution spectrale.
+          </p>
+          <div>
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:10px;">Applications <cite-ref key="Ghamisi2017"></cite-ref> <cite-ref key="hsi_book"></cite-ref>  </div>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>Classification de couverts végétaux </li>
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>Analyse de variétés de fruits/riz</li>
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>Imagerie médicale</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §1.1b · Three domains where SPD matrices appear -->
+  <!-- <section> -->
+  <!--   <slide-note>Trois domaines emblématiques où les matrices SPD apparaissent naturellement : EEG (covariance spatiale entre canaux), imagerie hyperspectrale (covariance entre bandes spectrales), radar (covariance range-Doppler). Dans tous les cas, le second ordre porte une information discriminante absente du premier ordre.</slide-note> -->
+  <!--   <slide-header title="Trois domaines, un même objet"></slide-header> -->
+  <!--   <div class="slide-body"> -->
+  <!--     <p class="lede" style="margin-bottom:24px;max-width:1500px;"> -->
+  <!--       Dans des contextes très différents, le <strong>second ordre</strong> capte la structure pertinente : -->
+  <!--       ce ne sont pas les valeurs des signaux, mais leurs <em>co-variations</em>, qui portent l'information. -->
+  <!--     </p> -->
+  <!--     <div style="flex:1;min-height:0;"> -->
+  <!--       <spd-domains></spd-domains> -->
+  <!--     </div> -->
+  <!--   </div> -->
+  <!--   <slide-footer></slide-footer> -->
+  <!-- </section> -->
+
+  <!-- §1.1c · How a covariance is computed — HSI sliding window -->
+  <section>
+    <slide-note>Démonstration pas-à-pas : on isole une fenêtre glissante sur une image hyperspectrale, on collecte les signatures spectrales des pixels, on les centre, on calcule les produits extérieurs et enfin la covariance. Touches flèches pour avancer.</slide-note>
+    <slide-header title="Comment se construit Σ — hyperspectral"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <hsi-cov></hsi-cov>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §1.1d · Radar SAR — stochastic model and covariance matrix -->
+  <section>
+    <slide-note>Modèle de la donnée SAR : vecteur complexe z_k de p mesures (impulsions / polarisations) par cellule de résolution, K vues indépendantes. La SCM est le descripteur de référence pour la détection et la classification polarimétrique.</slide-note>
+    <slide-header title="Radar SAR — modèle et matrice de covariance"></slide-header>
+    <div class="slide-body">
+      <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:72px;min-height:0;align-items:start;margin-top:12px;">
+
+        <!-- Left: SAR geometry SVG -->
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-start;height:100%;gap:14px;">
+          <svg viewBox="0 0 540 430" style="width:100%;max-height:430px;height:auto;">
+            <defs>
+              <marker id="sar-arr" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto">
+                <polygon points="0 0, 8 3, 0 6" fill="var(--ink-2)"/>
+              </marker>
+            </defs>
+
+            <!-- Flight track -->
+            <line x1="30" y1="62" x2="510" y2="62" stroke="var(--rule)" stroke-width="1.5" stroke-dasharray="10 6"/>
+            <text x="44" y="55" font-size="13" font-family="var(--mono)" fill="var(--ink-3)">trajectoire</text>
+            <!-- Velocity arrow -->
+            <line x1="30" y1="78" x2="95" y2="78" stroke="var(--ink-2)" stroke-width="2" marker-end="url(#sar-arr)"/>
+            <text x="62" y="95" text-anchor="middle" font-size="13" font-family="var(--mono)" fill="var(--ink-2)">v</text>
+
+            <!-- Satellite body -->
+            <rect x="446" y="45" width="28" height="18" rx="2" fill="var(--bg-2)" stroke="var(--ink-2)" stroke-width="1.8"/>
+            <!-- Solar panels -->
+            <rect x="421" y="49" width="22" height="12" rx="1" fill="var(--accent)" fill-opacity="0.4" stroke="var(--accent)" stroke-width="1.2"/>
+            <line x1="443" y1="55" x2="446" y2="55" stroke="var(--ink-2)" stroke-width="1.5"/>
+            <rect x="474" y="49" width="22" height="12" rx="1" fill="var(--accent)" fill-opacity="0.4" stroke="var(--accent)" stroke-width="1.2"/>
+            <line x1="474" y1="55" x2="474" y2="55" stroke="var(--ink-2)" stroke-width="1.5"/>
+            <!-- Antenna pointing down-left -->
+            <line x1="458" y1="63" x2="447" y2="80" stroke="var(--ink)" stroke-width="2.2"/>
+            <circle cx="446" cy="82" r="3.5" fill="var(--ink-2)"/>
+
+            <!-- Nadir line (dashed) -->
+            <line x1="460" y1="63" x2="460" y2="230" stroke="var(--rule-soft)" stroke-width="1" stroke-dasharray="5 5"/>
+            <text x="465" y="155" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">nadir</text>
+
+            <!-- SAR beam edges (side-looking, looking left) -->
+            <line x1="452" y1="68" x2="128" y2="250" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="7 4" opacity="0.75"/>
+            <line x1="455" y1="70" x2="260" y2="250" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="7 4" opacity="0.75"/>
+            <!-- Beam fill -->
+            <polygon points="452,68 128,250 260,250" fill="var(--accent)" fill-opacity="0.07"/>
+
+            <!-- Range labels -->
+            <text x="118" y="266" text-anchor="middle" font-size="12" font-family="var(--mono)" fill="var(--ink-3)">proche</text>
+            <text x="265" y="266" text-anchor="middle" font-size="12" font-family="var(--mono)" fill="var(--ink-3)">lointain</text>
+
+            <!-- Ground strip -->
+            <rect x="30" y="270" width="480" height="105" rx="3" fill="var(--bg-2)" stroke="var(--rule)" stroke-width="1.5"/>
+            <!-- Range grid lines -->
+            <line x1="30" y1="288" x2="510" y2="288" stroke="var(--rule-soft)" stroke-width="0.7"/>
+            <line x1="30" y1="308" x2="510" y2="308" stroke="var(--rule-soft)" stroke-width="0.7"/>
+            <line x1="30" y1="328" x2="510" y2="328" stroke="var(--rule-soft)" stroke-width="0.7"/>
+            <line x1="30" y1="348" x2="510" y2="348" stroke="var(--rule-soft)" stroke-width="0.7"/>
+            <!-- Azimuth grid lines -->
+            <line x1="110" y1="270" x2="110" y2="375" stroke="var(--rule-soft)" stroke-width="0.7"/>
+            <line x1="190" y1="270" x2="190" y2="375" stroke="var(--rule-soft)" stroke-width="0.7"/>
+            <line x1="270" y1="270" x2="270" y2="375" stroke="var(--rule-soft)" stroke-width="0.7"/>
+            <line x1="350" y1="270" x2="350" y2="375" stroke="var(--rule-soft)" stroke-width="0.7"/>
+            <line x1="430" y1="270" x2="430" y2="375" stroke="var(--rule-soft)" stroke-width="0.7"/>
+
+            <!-- Illuminated swath band -->
+            <rect x="98" y="270" width="192" height="105" fill="var(--accent)" fill-opacity="0.07" stroke="none"/>
+
+            <!-- Resolution cell (highlighted) -->
+            <rect x="173" y="296" width="46" height="46" rx="2" fill="var(--accent)" fill-opacity="0.3" stroke="var(--accent)" stroke-width="2.2"/>
+            <text x="196" y="324" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--accent)" font-weight="700">cellule</text>
+
+            <!-- Dashed line from cell to "K observations" box -->
+            <line x1="220" y1="310" x2="306" y2="208" stroke="var(--ink-3)" stroke-width="1" stroke-dasharray="4 3"/>
+
+            <!-- K observations box -->
+            <rect x="308" y="152" width="148" height="92" rx="4" fill="var(--bg-2)" stroke="var(--rule)" stroke-width="1.5"/>
+            <text x="382" y="174" text-anchor="middle" font-size="14" font-family="var(--sans)" fill="var(--ink-2)" font-weight="600">K vues</text>
+            <text x="382" y="196" text-anchor="middle" font-size="13" font-family="var(--mono)" fill="var(--ink-3)">z₁, z₂, …, z_K</text>
+            <text x="382" y="216" text-anchor="middle" font-size="12" font-family="var(--mono)" fill="var(--ink-3)">z_k ∈ ℂᵖ</text>
+            <text x="382" y="234" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">(p mesures / impulsion)</text>
+
+            <!-- Azimuth direction arrow below ground -->
+            <line x1="38" y1="393" x2="128" y2="393" stroke="var(--ink-2)" stroke-width="1.5" marker-end="url(#sar-arr)"/>
+            <text x="83" y="410" text-anchor="middle" font-size="12" font-family="var(--mono)" fill="var(--ink-2)">azimut</text>
+
+            <!-- Range direction arrow below ground -->
+            <line x1="152" y1="393" x2="282" y2="393" stroke="var(--ink-2)" stroke-width="1.5" marker-end="url(#sar-arr)"/>
+            <text x="217" y="410" text-anchor="middle" font-size="12" font-family="var(--mono)" fill="var(--ink-2)">portée</text>
+          </svg>
+          <div style="font-size:14px;font-family:var(--mono);color:var(--ink-3);letter-spacing:0.06em;text-align:center;">
+            Géométrie SAR — acquisition à visée latérale
+          </div>
+        </div>
+
+        <!-- Right: model description + detection + classification -->
+        <div style="display:flex;flex-direction:column;gap:20px;">
+
+          <!-- Signal model -->
+          <div>
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:8px;">Modèle de données</div>
+            <p class="body">
+              Pour chaque cellule de résolution, le radar acquiert <strong>K vues</strong> — vecteurs complexes de <strong>p</strong> mesures (impulsions, polarisations). La <strong>matrice de covariance</strong> résume la structure statistique du clutter et du signal.<cite-ref key="richards2005"></cite-ref><cite-ref key="mian2019"></cite-ref>
+            </p>
+          </div>
+
+          <!-- Detection -->
+          <div>
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:8px;">Détection</div>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;">
+                <span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>
+                Tests de détection adaptative (GLRT) — la covariance modélise le clutter<cite-ref key="richards2005"></cite-ref>
+              </li>
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;">
+                <span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>
+                Détection de changements dans les séries temporelles SAR<cite-ref key="mian2019"></cite-ref>
+              </li>
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;">
+                <span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>
+                Détection robuste d'objets enfouis par radar GPR<cite-ref key="hoarau2017"></cite-ref>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Classification -->
+          <div>
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:8px;">Classification</div>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;">
+                <span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>
+                Segmentation non-supervisée de données PolSAR par modèle de covariance<cite-ref key="rignot1992"></cite-ref>
+              </li>
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;">
+                <span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>
+                Classification polarimétrique par valeurs propres de la covariance<cite-ref key="pallotta2018"></cite-ref>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+
+  <section>
+    <slide-header title="Travailler sur des données de matrices de covariance"></slide-header>
+    <div class="slide-body" >
+      <p style="font-size:31px">Les matrices de covariances ont une structure particulière :</p>
+      <div class="theorem" data-step>
+        <div class="theorem-tag">Définition <span class="theorem-name">Matrice symétrique définie positive</span></div>
+        <div class="theorem-body">
+              Une matrice <span class="math">\boldsymbol{\Sigma}\in\mathbb{R}^d</span> est dite SPD (<em>Symmetric Positive Definite</em>) si  <span class="math">\boldsymbol{\Sigma}=\boldsymbol{\Sigma}^\mathrm{T}</span> et <span class="math">\mathbf{x}^\mathrm{T}\boldsymbol{\Sigma}\mathbf{x} > 0,\, \forall \mathbf{x}\in\mathbb{R}^d</span>.<cite-ref key="bhatia2007"></cite-ref>
+        </div>
+      </div>
+      <p style="font-size:31px" data-step>-> Est-ce que cela pose un problème pour effectuer un traitement ?<cite-ref key="barachant2013"></cite-ref></p>
+
+    </div>
+  </section>
+
+  <!-- §1.1d · SPD cone geometry (Three.js) -->
+  <section>
+    <slide-note>Le cône SPD pour les matrices 2×2 : visualisation 3D dans l'espace (a,b,c). La surface quadrique ac=b² est le bord du cône, les trois matrices sont dans son intérieur.</slide-note>
+    <slide-header title="Le cône S++ — géométrie pour d = 2"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <spd-cone></spd-cone>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+
+

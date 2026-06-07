@@ -1,0 +1,481 @@
+  <section-divider
+    label="Géométrie riemannienne"
+    kicker="Riemannian"
+    blurb="Un tutoriel sur la géométrie riemannienne">
+  </section-divider>
+
+
+
+  <!-- §1.2-readings · Recommended reading for Riemannian geometry -->
+  <section>
+    <slide-header title="Lectures recommandées"></slide-header>
+    <div class="slide-body" style="justify-content:center;align-items:center;">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:52px;max-width:1540px;width:100%;">
+
+        <!-- Absil -->
+        <div style="border-radius:12px;overflow:hidden;box-shadow:0 6px 32px rgba(0,0,0,0.18);">
+          <div style="background:#1b2236;padding:36px 32px 32px;display:flex;flex-direction:column;gap:20px;">
+            <div style="font-family:var(--mono);font-size:13px;letter-spacing:0.13em;color:#7b94c8;text-transform:uppercase;">Géométrie · Optimisation</div>
+            <div style="font-family:var(--sans);font-size:34px;font-weight:700;color:#e8eeff;line-height:1.18;">Optimization Algorithms on Matrix Manifolds</div>
+          </div>
+          <div style="background:var(--bg);padding:22px 32px;border-top:3px solid #3a4f80;">
+            <div style="font-family:var(--sans);font-size:21px;font-weight:600;color:var(--ink);">Absil, Mahony & Sepulchre</div>
+            <div style="font-family:var(--mono);font-size:15px;color:var(--ink-3);margin-top:5px;">2008 · Princeton University Press</div>
+          </div>
+        </div>
+
+        <!-- Boumal -->
+        <div style="border-radius:12px;overflow:hidden;box-shadow:0 6px 32px rgba(0,0,0,0.18);">
+          <div style="background:#1a2b1e;padding:36px 32px 32px;display:flex;flex-direction:column;gap:20px;">
+            <div style="font-family:var(--mono);font-size:13px;letter-spacing:0.13em;color:#6db889;text-transform:uppercase;">Variétés · Introductif</div>
+            <div style="font-family:var(--sans);font-size:34px;font-weight:700;color:#e6f7ec;line-height:1.18;">An Introduction to Optimization on Smooth Manifolds</div>
+          </div>
+          <div style="background:var(--bg);padding:22px 32px;border-top:3px solid #2e6640;">
+            <div style="font-family:var(--sans);font-size:21px;font-weight:600;color:var(--ink);">Boumal</div>
+            <div style="font-family:var(--mono);font-size:15px;color:var(--ink-3);margin-top:5px;">2023 · Cambridge University Press · <em>libre accès</em></div>
+          </div>
+        </div>
+
+        <!-- Higham -->
+        <div style="border-radius:12px;overflow:hidden;box-shadow:0 6px 32px rgba(0,0,0,0.18);">
+          <div style="background:#281818;padding:36px 32px 32px;display:flex;flex-direction:column;gap:20px;">
+            <div style="font-family:var(--mono);font-size:13px;letter-spacing:0.13em;color:#c47a7a;text-transform:uppercase;">Analyse matricielle</div>
+            <div style="font-family:var(--sans);font-size:34px;font-weight:700;color:#fdf0f0;line-height:1.18;">Functions of Matrices: Theory and Computation</div>
+          </div>
+          <div style="background:var(--bg);padding:22px 32px;border-top:3px solid #7a2020;">
+            <div style="font-family:var(--sans);font-size:21px;font-weight:600;color:var(--ink);">Higham</div>
+            <div style="font-family:var(--mono);font-size:15px;color:var(--ink-3);margin-top:5px;">2008 · SIAM</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §1.2 · Riemannian geometry primer (stepped 3D) -->
+  <section>
+    <slide-note>La sphère S² comme variété : espace tangent, géodésiques, exp/log, transport parallèle, métrique, rétraction. Les flèches déplacent la caméra de chapitre en chapitre.</slide-note>
+    <slide-header title="Géométrie riemannienne — la sphère S²"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <riemann-primer></riemann-primer>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §1.3 · Riemannian geometry on a curved terrain (stepped 3D) -->
+  <section>
+    <slide-note>Généralisation : tout ce que l'on a vu sur S² — espace tangent, géodésiques, exp/log, transport parallèle — s'applique à n'importe quelle variété riemannienne (ℳ, g). La surface de terrain illustre le cas général sans symétrie.</slide-note>
+    <slide-header title="Géométrie riemannienne — généralisation"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <riemann-terrain></riemann-terrain>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §1.4-intro · Principe de l'optimisation riemannienne (normal slide) -->
+  <section>
+    <style>
+      .rop-card[data-step] { transition: opacity 0.45s ease, transform 0.45s ease; }
+      .rop-card[data-step]:not([data-step-visible]) { transform: translateY(20px); }
+      .rop-step { display:flex; gap:16px; align-items:baseline; }
+      .rop-step-num { font-family:var(--mono); font-size:19px; font-weight:700; flex-shrink:0; width:28px; line-height:1.5; }
+      .rop-step-body { font-family:var(--sans); font-size:22px; line-height:1.5; color:var(--ink-2); }
+      .rop-step-highlight { border-radius:6px; padding:11px 16px; border-left-width:3px; border-left-style:solid; }
+    </style>
+    <slide-note>Avant l'island interactive : poser le problème d'optimisation sur variété, montrer la faiblesse du gradient ambiant + re-projection, puis introduire la descente riemannienne intrinsèque. Insister sur les trois étapes grad tangent → pas → rétraction.</slide-note>
+    <slide-header title="Optimisation sur variété"></slide-header>
+    <div class="slide-body" style="padding:36px 80px 28px; flex-direction:column; gap:26px;">
+
+      <!-- ── Problem banner (always visible) ─────────────────────────────── -->
+      <div style="display:flex; gap:0; background:var(--bg-2); border:1px solid var(--rule); border-left:4px solid var(--accent); border-radius:10px; overflow:hidden; flex-shrink:0;">
+        <!-- formula cell -->
+        <div style="padding:22px 36px; display:flex; flex-direction:column; justify-content:center; gap:8px; flex-shrink:0;">
+          <div class="eyebrow" style="color:var(--accent); margin-bottom:2px;">Problème</div>
+          <div class="math-display" style="margin:0;">
+            x^\star \;=\; \arg\min_{x \,\in\, \mathcal{M}} f(x)
+          </div>
+        </div>
+        <!-- divider -->
+        <div style="width:1px; background:var(--rule); flex-shrink:0;"></div>
+        <!-- dataset cell -->
+        <div style="padding:22px 36px; display:flex; flex-direction:column; justify-content:center; gap:10px; flex:1;">
+          <div class="eyebrow" style="margin-bottom:0;">Jeu de données</div>
+          <div class="body" style="color:var(--ink-2); font-size:22px;">
+            <span class="math">\{x_1,\ldots,x_N\} \subset \mathcal{M}</span>
+            — points sur une variété
+          </div>
+          <div class="body" style="color:var(--ink-3); font-size:20px;">
+            ex. moyenne de Fréchet&nbsp;:
+            <span class="math">f(x) = \dfrac{1}{N}\displaystyle\sum_{i=1}^N d_{\mathcal{M}}^2\!\left(x,\,x_i\right)</span>
+          </div>
+        </div>
+        <!-- divider -->
+        <div style="width:1px; background:var(--rule); flex-shrink:0;"></div>
+        <!-- manifold cell -->
+        <div style="padding:22px 36px; display:flex; flex-direction:column; justify-content:center; gap:10px; flex-shrink:0;">
+          <div class="eyebrow" style="margin-bottom:0;">Contrainte</div>
+          <div class="math-display" style="margin:0; font-size:28px;">
+            x \in \mathcal{M} \subset \mathbb{R}^n
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Two-column comparison ─────────────────────────────────────────── -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px; align-items:start;">
+
+        <!-- Classic GD -->
+        <div data-step class="rop-card" style="border:1px solid var(--rule); border-radius:10px; padding:18px 24px; display:flex; flex-direction:column; gap:12px;">
+          <div>
+            <div class="eyebrow" style="color:var(--ink-3); margin-bottom:5px;">Approche naïve</div>
+            <div style="font-family:var(--sans); font-size:30px; font-weight:600; letter-spacing:-0.025em; color:var(--ink); line-height:1.05;">Gradient euclidien</div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:11px;">
+            <div class="rop-step">
+              <span class="rop-step-num" style="color:var(--ink-3);">1.</span>
+              <span class="rop-step-body">Calculer <span class="math">\nabla f(x_k) \in \mathbb{R}^{d^2}</span> — gradient ambiant</span>
+            </div>
+            <div class="rop-step">
+              <span class="rop-step-num" style="color:var(--ink-3);">2.</span>
+              <span class="rop-step-body">Effectuer le pas :
+                <span class="math">y = x_k - \alpha\,\nabla f(x_k)</span>
+              </span>
+            </div>
+            <div class="rop-step rop-step-highlight" style="background:rgba(180,40,40,0.07); border-left-color:#b03030;">
+              <span class="rop-step-num" style="color:#b03030;">⚠</span>
+              <span class="rop-step-body" style="color:#b03030;">
+                <span class="math">y \notin \mathcal{M}</span>
+                &nbsp;— re-projeter :
+                <span class="math">x_{k+1} = \mathrm{Proj}_{\mathcal{M}}(y)</span>
+              </span>
+            </div>
+          </div>
+
+          <div style="padding-top:14px; border-top:1px solid var(--rule-soft); display:flex; flex-direction:column; gap:6px;">
+            <div class="small" style="color:var(--ink-3);">· Projection coûteuse à chaque itération</div>
+            <div class="small" style="color:var(--ink-3);">· Ignore la courbure de <span class="math">\mathcal{M}</span></div>
+            <div class="small" style="color:var(--ink-3);">· Convergence dégradée loin de la contrainte</div>
+          </div>
+        </div>
+
+        <!-- Riemannian GD -->
+        <div data-step class="rop-card" style="border:1px solid var(--accent); border-radius:10px; padding:18px 24px; display:flex; flex-direction:column; gap:12px;">
+          <div>
+            <div class="eyebrow" style="color:var(--accent); margin-bottom:5px;">Approche intrinsèque</div>
+            <div style="font-family:var(--sans); font-size:30px; font-weight:600; letter-spacing:-0.025em; color:var(--ink); line-height:1.05;">Gradient riemannien<cite-ref key="absil2008"></cite-ref><cite-ref key="boumal2023"></cite-ref></div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:11px;">
+            <div class="rop-step">
+              <span class="rop-step-num" style="color:var(--accent);">1.</span>
+              <span class="rop-step-body">Projeter dans <span class="math">T_{x_k}\mathcal{M}</span> :
+                <span class="math">\xi_k = \mathrm{grad}_{\mathcal{M}} f(x_k)</span>
+              </span>
+            </div>
+            <div class="rop-step">
+              <span class="rop-step-num" style="color:var(--accent);">2.</span>
+              <span class="rop-step-body">Faire le pas tangent :
+                <span class="math">v_k = {-}\alpha\,\xi_k \;\in\; T_{x_k}\mathcal{M}</span>
+              </span>
+            </div>
+            <div class="rop-step rop-step-highlight" style="background:rgba(5,120,80,0.07); border-left-color:#058050;">
+              <span class="rop-step-num" style="color:#058050;">✓</span>
+              <span class="rop-step-body" style="color:#058050;">
+                Rétracter sur <span class="math">\mathcal{M}</span> :
+                <span class="math">x_{k+1} = R_{x_k}(v_k) \in \mathcal{M}</span>
+              </span>
+            </div>
+          </div>
+
+          <div style="padding-top:14px; border-top:1px solid var(--rule-soft); display:flex; flex-direction:column; gap:6px;">
+            <div class="small" style="color:var(--ink-3);">· Reste sur <span class="math">\mathcal{M}</span> par construction, sans post-traitement</div>
+            <div class="small" style="color:var(--ink-3);">· Exploite la géométrie : pas courts mais pertinents</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §1.4 · Riemannian gradient descent (interactive) -->
+  <section>
+    <slide-note>Descente de gradient riemannienne : gradient euclidien → projection tangente → pas → rétraction/exp. Coûts : Rayleigh, distance², moyenne de Fréchet.</slide-note>
+    <slide-header title="Optimisation riemannienne"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <riemann-descent></riemann-descent>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+
+  <!-- §1.5 · Riemannian toolbox reference table -->
+  <section>
+    <slide-note>Tableau récapitulatif des formules riemanniennes sur les trois variétés utilisées dans la suite : sphère (référence simple), Stiefel (contrainte BiMap), SPD (espace des données). Chaque ligne = un outil ; chaque colonne = une variété.</slide-note>
+    <slide-header title="Boîte à outils riemannienne"></slide-header>
+    <div class="slide-body" style="padding:28px 64px 24px; gap:0;">
+      <style>
+        /* ── manifold card layout ── */
+        .mc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; align-items:start; }
+        .mc-card { border:1px solid var(--rule); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; }
+        .mc-card-head { padding:18px 24px 14px; display:flex; flex-direction:column; gap:6px; }
+        .mc-card-head .mc-name { font-family:var(--sans); font-size:38px; font-weight:700; letter-spacing:-0.02em; line-height:1; }
+        .mc-card-head .mc-def  { font-family:var(--mono); font-size:19px; color:var(--ink-3); line-height:1.4; }
+        .mc-rows { display:flex; flex-direction:column; flex:1; }
+        .mc-row  { padding:12px 24px; border-top:1px solid var(--rule-soft); display:flex; flex-direction:column; gap:4px; }
+        .mc-row:nth-child(even) { background:color-mix(in srgb, var(--bg-2) 55%, var(--bg)); }
+        .mc-row-line { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+        .mc-notation { font-family:var(--mono); font-size:22px; font-weight:600; color:var(--accent); white-space:nowrap; flex-shrink:0; }
+        .mc-eq { font-family:var(--mono); font-size:22px; color:var(--ink-3); flex-shrink:0; }
+        .mc-formula { font-family:var(--mono); font-size:22px; color:var(--ink); line-height:1.5; }
+        .mc-sub { font-family:var(--sans); font-size:15px; color:var(--ink-3); padding-left:2px; }
+        .mc-na  { font-style:italic; color:var(--ink-3); font-size:20px; }
+        .mc-hi .mc-formula { color:var(--accent); font-weight:600; }
+        .mc-hi .mc-notation { color:var(--accent); }
+        .mc-hi .mc-eq { color:var(--accent); }
+        /* accent border per card */
+        .mc-card:nth-child(1) .mc-card-head { background:color-mix(in srgb, var(--bg-2) 80%, var(--bg)); border-bottom:2px solid var(--ink-3); }
+        .mc-card:nth-child(2) .mc-card-head { background:color-mix(in srgb, var(--bg-2) 80%, var(--bg)); border-bottom:2px solid var(--ink-2); }
+        .mc-card:nth-child(3) .mc-card-head { background:color-mix(in srgb, var(--accent) 12%, var(--bg)); border-bottom:2px solid var(--accent); }
+        .mc-card:nth-child(3) .mc-card-head .mc-name { color:var(--accent); }
+      </style>
+
+      <div class="mc-grid">
+
+        <!-- ── Sphère ─────────────────────────────────────────────── -->
+        <div data-step class="mc-card">
+          <div class="mc-card-head">
+            <div class="mc-name">Sphère</div>
+            <div class="mc-def"><span class="math">\mathcal{S}^{n-1} = \{x\in\mathbb{R}^n : \|x\|=1\}</span></div>
+          </div>
+          <div class="mc-rows">
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">T_x\mathcal{M}</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">\{v\in\mathbb{R}^n : x^\top v = 0\}</span></span>
+              </div>
+            </div>
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">\langle u,v\rangle_x</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">u^\top v</span></span>
+              </div>
+              <div class="mc-sub">euclidienne standard</div>
+            </div>
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">\mathrm{Exp}_x(v)</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">\cos\|v\|\cdot x + \sin\|v\|\cdot\dfrac{v}{\|v\|}</span></span>
+              </div>
+            </div>
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">d(x,y)</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">\arccos(x^\top y)</span></span>
+              </div>
+            </div>
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">\mathrm{grad}\,f</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">\nabla\!f - (x^\top\!\nabla\!f)\,x</span></span>
+              </div>
+              <div class="mc-sub">projection orthogonale sur <span class="math">T_x\mathcal{S}^{n-1}</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Stiefel ────────────────────────────────────────────── -->
+        <div data-step class="mc-card">
+          <div class="mc-card-head">
+            <div class="mc-name">Stiefel</div>
+            <div class="mc-def"><span class="math">\mathrm{St}(p,n) = \{X\in\mathbb{R}^{n\times p} : X^\top\!X = I_p\}</span></div>
+          </div>
+          <div class="mc-rows">
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">T_X\mathcal{M}</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">\{\Delta : X^\top\!\Delta + \Delta^\top\!X = 0\}</span></span>
+              </div>
+              <div class="mc-sub"><span class="math">= \{X\Omega + X_\perp B,\;\Omega=-\Omega^\top\}</span></div>
+            </div>
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">\langle U,V\rangle_X</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">\mathrm{tr}\!\bigl(U^\top(I - \tfrac{1}{2}XX^\top)V\bigr)</span></span>
+              </div>
+              <div class="mc-sub">métrique canonique</div>
+            </div>
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">\mathrm{Exp}_X(\Delta)</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">[X,Q]\,\exp_m\!\begin{pmatrix}\Omega & {-}R^\top \\ R & 0\end{pmatrix}\begin{pmatrix}I_p\\0\end{pmatrix}</span></span>
+              </div>
+              <div class="mc-sub"><span class="math">\Omega=X^\top\!\Delta,\;QR=(I-XX^\top)\Delta</span></div>
+            </div>
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">d(X,Y)</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">\|\mathrm{Log}_X(Y)\|_F</span></span>
+              </div>
+              <div class="mc-sub">numérique — pas de forme close</div>
+            </div>
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">\mathrm{grad}\,f</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">\nabla\!f - X\,\mathrm{sym}(X^\top\!\nabla\!f)</span></span>
+              </div>
+              <div class="mc-sub"><span class="math">\mathrm{sym}(A)=\tfrac{1}{2}(A+A^\top)</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SPD ───────────────────────────────────────────────── -->
+        <div data-step class="mc-card">
+          <div class="mc-card-head">
+            <div class="mc-name">SPD</div>
+            <div class="mc-def"><span class="math">\mathcal{S}_{++}^d = \{X\in\mathbb{R}^{d\times d} : X=X^\top,\,X\succ 0\}</span></div>
+          </div>
+          <div class="mc-rows">
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">T_X\mathcal{M}</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">\mathrm{Sym}(d)</span></span>
+              </div>
+              <div class="mc-sub">toute matrice symétrique <span class="math">d\times d</span></div>
+            </div>
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">\langle U,V\rangle_X</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">\mathrm{tr}(X^{-1}U\,X^{-1}V)</span></span>
+              </div>
+              <div class="mc-sub">métrique affine-invariante<cite-ref key="boumal2023"></cite-ref></div>
+            </div>
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">\mathrm{Exp}_X(U)</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">X^{1/2}\exp_m\!\bigl(X^{-1/2}U X^{-1/2}\bigr)X^{1/2}</span></span>
+              </div>
+            </div>
+            <div class="mc-row">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">d(X,Y)</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">\Bigl\|\log_m\!\bigl(X^{-1/2}YX^{-1/2}\bigr)\Bigr\|_F</span></span>
+              </div>
+              <div class="mc-sub"><span class="math">= \sqrt{\sum_i \log^2\!\lambda_i(X^{-1}Y)}</span></div>
+            </div>
+            <div class="mc-row mc-hi">
+              <div class="mc-row-line">
+                <span class="mc-notation"><span class="math">\mathrm{grad}\,f</span></span>
+                <span class="mc-eq">=</span>
+                <span class="mc-formula"><span class="math">X\,\mathrm{sym}(\nabla\!f)\,X</span></span>
+              </div>
+              <div class="mc-sub">conjugaison par <span class="math">X</span> (mét. aff.-inv.)</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!--
+  ═══════════════════════════════════════════════════════════════
+  ANCIEN LAYOUT — tableau dense (commenté, conservé pour référence)
+  ═══════════════════════════════════════════════════════════════
+  <section>
+    <slide-note>Tableau récapitulatif des formules riemanniennes sur les trois variétés utilisées dans la suite : sphère (référence simple), Stiefel (contrainte BiMap), SPD (espace des données). Chaque ligne = un outil ; chaque colonne = une variété.</slide-note>
+    <slide-header title="Boîte à outils riemannienne"></slide-header>
+    <div class="slide-body" style="padding-top:8px;padding-bottom:0;overflow:hidden;">
+      <style>
+        .rt { width:100%; border-collapse:collapse; table-layout:fixed; }
+        .rt thead tr th { padding:10px 18px 9px; font-family:var(--sans); font-weight:700; font-size:15px; text-align:center; border-bottom:2px solid var(--ink); }
+        .rt thead tr th:first-child { background:var(--bg); color:var(--ink-3); font-weight:400; font-size:13px; text-align:left; border-bottom:2px solid var(--ink); }
+        .rt thead tr th:not(:first-child) { background:var(--ink); color:var(--bg); }
+        .rt thead tr th .rt-def { display:block; font-family:var(--mono); font-size:12px; font-weight:400; opacity:0.72; margin-top:3px; }
+        .rt tbody tr td { padding:7px 16px; border-bottom:1px solid var(--rule-soft); vertical-align:middle; line-height:1.55; }
+        .rt tbody tr td:first-child { font-family:var(--sans); font-size:15px; font-weight:700; color:var(--ink-2); background:var(--bg-2); white-space:nowrap; border-right:2px solid var(--rule); }
+        .rt tbody tr td:not(:first-child) { font-family:var(--mono); font-size:14px; color:var(--ink); text-align:center; }
+        .rt tbody tr:nth-child(even) td:not(:first-child) { background:color-mix(in srgb, var(--bg-2) 60%, var(--bg)); }
+        .rt-sub { display:block; font-size:12px; color:var(--ink-3); margin-top:3px; }
+        .rt-na { color:var(--ink-3); font-style:italic; font-size:13px; }
+        .rt-hi { color:var(--accent); font-weight:600; }
+      </style>
+      <table class="rt">
+        <colgroup>
+          <col style="width:170px">
+          <col style="width:calc((100% - 170px)/3)">
+          <col style="width:calc((100% - 170px)/3)">
+          <col style="width:calc((100% - 170px)/3)">
+        </colgroup>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Sphère <span class="rt-def"><span class="math">\mathcal{S}^{n-1} = \{x\in\mathbb{R}^n : \|x\|=1\}</span></span></th>
+            <th>Stiefel <span class="rt-def"><span class="math">\mathrm{St}(p,n) = \{X\in\mathbb{R}^{n\times p} : X^\top\!X = I_p\}</span></span></th>
+            <th>SPD <span class="rt-def"><span class="math">\mathcal{S}_{++}^d = \{X\in\mathbb{R}^{d\times d} : X=X^\top,\,X\succ 0\}</span></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Espace tangent<br><span style="font-weight:400;font-size:12px;color:var(--ink-3);font-family:var(--mono);"><span class="math">T_x\mathcal{M}</span></span></td>
+            <td><span class="math">\{v\in\mathbb{R}^n : x^\top v = 0\}</span></td>
+            <td><span class="math">\{\Delta\in\mathbb{R}^{n\times p} : X^\top\!\Delta + \Delta^\top\!X = 0\}</span><span class="rt-sub"><span class="math">= \{X\Omega + X_\perp B : \Omega = -\Omega^\top\}</span></span></td>
+            <td><span class="math">\mathrm{Sym}(d) = \{S\in\mathbb{R}^{d\times d} : S = S^\top\}</span><span class="rt-sub">toute matrice symétrique</span></td>
+          </tr>
+          <tr>
+            <td>Métrique<br><span style="font-weight:400;font-size:12px;color:var(--ink-3);font-family:var(--mono);"><span class="math">\langle u,v\rangle_x</span></span></td>
+            <td><span class="math">u^\top v</span></td>
+            <td><span class="math">\mathrm{tr}\!\left(U^\top\!\Bigl(I_n - \tfrac{1}{2}XX^\top\Bigr)V\right)</span><span class="rt-sub">métrique canonique</span></td>
+            <td><span class="math">\mathrm{tr}(X^{-1}U\,X^{-1}V)</span><span class="rt-sub">métrique affine-invariante</span></td>
+          </tr>
+          <tr>
+            <td>Exp. géodésique<br><span style="font-weight:400;font-size:12px;color:var(--ink-3);font-family:var(--mono);"><span class="math">\mathrm{Exp}_x(v)</span></span></td>
+            <td><span class="math">\cos\|v\|\cdot x + \sin\|v\|\cdot\dfrac{v}{\|v\|}</span></td>
+            <td><span class="math">[X,\,Q]\,\exp_m\!\begin{pmatrix}\Omega & {-}R^\top \\ R & 0\end{pmatrix}\begin{pmatrix}I_p \\ 0\end{pmatrix}</span><span class="rt-sub"><span class="math">\Omega = X^\top\!\Delta\;\text{(anti-sym.)},\quad QR = (I-XX^\top)\Delta</span></span></td>
+            <td><span class="math">X^{1/2}\exp_m\!\bigl(X^{-1/2}U X^{-1/2}\bigr)X^{1/2}</span></td>
+          </tr>
+          <tr>
+            <td>Logarithme<br><span style="font-weight:400;font-size:12px;color:var(--ink-3);font-family:var(--mono);"><span class="math">\mathrm{Log}_x(y)</span></span></td>
+            <td><span class="math">\dfrac{\arccos(x^\top y)}{\|y-(x^\top y)x\|}\,(y - (x^\top y)\,x)</span></td>
+            <td><span class="rt-na">pas de forme close</span><span class="rt-sub">(Newton–Schulz itératif)</span></td>
+            <td><span class="math">X^{1/2}\log_m\!\bigl(X^{-1/2}Y X^{-1/2}\bigr)X^{1/2}</span></td>
+          </tr>
+          <tr>
+            <td>Distance<br><span style="font-weight:400;font-size:12px;color:var(--ink-3);font-family:var(--mono);"><span class="math">d(x,y)</span></span></td>
+            <td><span class="math">\arccos(x^\top y)</span></td>
+            <td><span class="math">\bigl\|\mathrm{Log}_X(Y)\bigr\|_F</span><span class="rt-sub">(numérique)</span></td>
+            <td><span class="math">\Bigl\|\log_m\!\bigl(X^{-1/2}YX^{-1/2}\bigr)\Bigr\|_F = \sqrt{\textstyle\sum_i \log^2\!\lambda_i(X^{-1}Y)}</span></td>
+          </tr>
+          <tr>
+            <td>Gradient<br><span style="font-weight:400;font-size:12px;color:var(--ink-3);font-family:var(--mono);"><span class="math">\nabla^{\!R}f</span></span></td>
+            <td><span class="math">\nabla\!f - (x^\top\!\nabla\!f)\,x</span><span class="rt-sub">proj. sur <span class="math">T_x\mathcal{S}^{n-1}</span></span></td>
+            <td><span class="math">\nabla\!f - X\,\mathrm{sym}(X^\top\!\nabla\!f)</span><span class="rt-sub"><span class="math">\mathrm{sym}(A)=\tfrac{1}{2}(A+A^\top)</span></span></td>
+            <td><span class="math rt-hi">X\,\mathrm{sym}(\nabla\!f)\,X</span><span class="rt-sub">conjugaison par <span class="math">X</span> (mét. aff.-inv.)</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+  ═══════════════════════════════════════════════════════════════ -->
+
+
+  <!-- ═══════════════════════════════════════
+       §2 · Second section divider
+       ═══════════════════════════════════════ -->

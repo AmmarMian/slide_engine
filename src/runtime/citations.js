@@ -79,14 +79,43 @@ function processCitations() {
     else slide.appendChild(bar);
   });
 
-  // Populate <refs-slide> with the full bibliography.
+  // Populate <refs-slide> with the full bibliography, splitting across
+  // multiple slides if needed.  Per-slide limit is set via the `per-page`
+  // attribute on the element (default 14).
   document.querySelectorAll('deck-stage refs-slide').forEach(slide => {
-    const list = document.createElement('div');
-    list.className = 'refs-slide-list';
-    globalOrder.forEach(key => {
-      list.appendChild(buildCiteItem(globalKeyToNum[key], db[key] || key));
-    });
-    slide.appendChild(list);
+    const perPage = Math.max(1, parseInt(slide.getAttribute('per-page') || '14', 10));
+    const headerHTML = slide.innerHTML; // preserve title / header markup
+
+    const allItems = globalOrder.map(key =>
+      buildCiteItem(globalKeyToNum[key], db[key] || key)
+    );
+    const totalPages = Math.max(1, Math.ceil(allItems.length / perPage));
+
+    let insertAfter = slide;
+
+    for (let page = 0; page < totalPages; page++) {
+      const target = page === 0 ? slide : document.createElement('refs-slide');
+
+      if (page > 0) {
+        target.innerHTML = headerHTML;
+        insertAfter.insertAdjacentElement('afterend', target);
+      }
+
+      if (totalPages > 1) {
+        const pager = document.createElement('span');
+        pager.className = 'refs-slide-page';
+        pager.textContent = `${page + 1} / ${totalPages}`;
+        target.appendChild(pager);
+      }
+
+      const list = document.createElement('div');
+      list.className = 'refs-slide-list';
+      allItems.slice(page * perPage, (page + 1) * perPage)
+              .forEach(item => list.appendChild(item));
+      target.appendChild(list);
+
+      insertAfter = target;
+    }
   });
 }
 

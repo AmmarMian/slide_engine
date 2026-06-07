@@ -2,8 +2,28 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { viteSingleFile } from 'vite-plugin-singlefile';
 import { glob } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { resolve, dirname } from 'node:path';
 import { readFile } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
+
+// ── HTML partials: <!--#include file="./sections/foo.html"--> ─────────────
+function htmlIncludePlugin() {
+  function expand(src, dir) {
+    return src.replace(/<!--#include file="([^"]+)"-->/g, (_, rel) => {
+      const abs = resolve(dir, rel);
+      return expand(readFileSync(abs, 'utf8'), dirname(abs));
+    });
+  }
+  return {
+    name: 'html-include',
+    transformIndexHtml: {
+      order: 'pre',
+      handler(html, ctx) {
+        return expand(html, dirname(ctx.filename));
+      },
+    },
+  };
+}
 
 // Collect all decks/*/index.html as multipage inputs.
 async function getDeckInputs() {
@@ -167,6 +187,7 @@ export default defineConfig(async () => {
   return {
     server: { port: 5174 },
     plugins: [
+      htmlIncludePlugin(),
       react(),
       deckIndexPlugin(allInputs, singleFile),
       ...(singleFile ? [viteSingleFile()] : []),

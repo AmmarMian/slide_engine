@@ -317,14 +317,16 @@ function ExplainPanel({ step }) {
       padding: '28px 56px 24px',
       background: 'var(--bg)',
       borderTop: `1px solid ${RULE_S}`,
-      minHeight: 220,
+      height: 290,
+      flexShrink: 0,
+      overflow: 'hidden',
     }} />
   );
 }
 
 function StepPips({ step, total }) {
   return (
-    <div style={{ display: 'flex', gap: 6, padding: '10px 56px 0', background: 'var(--bg)' }}>
+    <div style={{ display: 'flex', gap: 6, padding: '10px 56px 0', background: 'var(--bg)', flexShrink: 0 }}>
       {Array.from({ length: total }, (_, i) => (
         <div key={i} style={{ flex: 1, height: 3, background: i <= step ? ACCENT : RULE_S, transition: 'background 200ms' }} />
       ))}

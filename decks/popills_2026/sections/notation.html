@@ -1,0 +1,72 @@
+<script id="deck-notation" type="application/json">
+{
+  "title": "Notation",
+  "sections": [
+    {
+      "heading": "Spaces & Matrices",
+      "entries": [
+        { "symbol": "\\mathcal{S}_{++}^d",           "meaning": "Manifold of d×d symmetric positive definite (SPD) matrices" },
+        { "symbol": "\\mathrm{St}(d_{k-1}, d_k)",    "meaning": "Stiefel manifold — semi-orthogonal matrices W with WᵀW = I" },
+        { "symbol": "\\boldsymbol{\\Sigma}",          "meaning": "SPD covariance matrix (generic)" },
+        { "symbol": "X = U \\Lambda U^\\top",         "meaning": "Eigendecomposition of symmetric matrix X" },
+        { "symbol": "\\Lambda = \\mathrm{diag}(\\sigma_1,\\ldots,\\sigma_d)", "meaning": "Diagonal matrix of eigenvalues" },
+        { "symbol": "P_{ij} = 1/(\\sigma_i - \\sigma_j)", "meaning": "Off-diagonal backprop sensitivity (Ionescu 2015)" }
+      ]
+    },
+    {
+      "heading": "Riemannian Geometry",
+      "entries": [
+        { "symbol": "\\nabla^{\\!R} f",              "meaning": "Riemannian gradient of f (projected to tangent space)" },
+        { "symbol": "\\mathrm{Exp}_x(v)",            "meaning": "Exponential map — geodesic from x in direction v" },
+        { "symbol": "\\mathrm{Log}_x(y)",            "meaning": "Logarithm map — tangent vector at x pointing to y" },
+        { "symbol": "d_R(M, \\Sigma)",               "meaning": "Riemannian (geodesic) distance between two SPD matrices" },
+        { "symbol": "T_x \\mathcal{M}",              "meaning": "Tangent space to manifold ℳ at point x" },
+        { "symbol": "\\mathrm{Retr}_x(v)",           "meaning": "Retraction — cheap approximation to Exp" },
+        { "symbol": "\\mathcal{P}_{T_{x}\\mathcal{M}}", "meaning": "Orthogonal projection onto tangent space at x" }
+      ]
+    },
+    {
+      "heading": "SPDNet Layers",
+      "entries": [
+        { "symbol": "\\mathrm{BiMap}_k(X) = W_k X W_k^\\top", "meaning": "Bilinear projection layer k; W_k ∈ St(d_{k-1}, d_k)" },
+        { "symbol": "\\mathrm{ReEig}(X)",            "meaning": "Eigenvalue rectification: replace σᵢ → max(ε, σᵢ)" },
+        { "symbol": "\\mathrm{LogEig}(X)",           "meaning": "Eigenvalue logarithm: replace σᵢ → log(σᵢ); maps to tangent at I" },
+        { "symbol": "\\partial\\mathcal{L}/\\partial X", "meaning": "Gradient of loss w.r.t. SPD matrix X (matrix backprop)" },
+        { "symbol": "\\nabla_{W_k}\\mathcal{L}",     "meaning": "Riemannian gradient of loss w.r.t. layer weight W_k" }
+      ]
+    },
+    {
+      "heading": "ARMAGNAC — Parametric Mean",
+      "entries": [
+        { "symbol": "A = \\tfrac{1}{K}\\sum_k \\Sigma_k",       "meaning": "Arithmetic mean (MLE under Wishart)" },
+        { "symbol": "H = \\bigl[\\tfrac{1}{K}\\sum_k \\Sigma_k^{-1}\\bigr]^{-1}", "meaning": "Harmonic mean (MLE under inverse-Wishart)" },
+        { "symbol": "G = \\arg\\min_M \\sum_k d_R(M,\\Sigma_k)^2", "meaning": "Fréchet (geometric) mean — no closed form" },
+        { "symbol": "A \\#_t B",                     "meaning": "Weighted geometric mean: A^{1/2}(A^{-1/2}BA^{-1/2})^t A^{1/2}" },
+        { "symbol": "\\Phi = H \\#_t A,\\; t\\in[0,1]", "meaning": "ARMAGNAC mean; t=0→H, t=0.5→GAH, t=1→A (t is learned)" },
+        { "symbol": "\\Gamma \\in \\mathcal{S}_{++}^d", "meaning": "Learned SPD bias (affine shift in BatchNorm)" }
+      ]
+    },
+    {
+      "heading": "Federated Learning",
+      "entries": [
+        { "symbol": "x_t",                           "meaning": "Global model at communication round t" },
+        { "symbol": "x^{(i)}_{t,\\tau}",             "meaning": "Local model of client i after τ local SGD epochs" },
+        { "symbol": "S_t \\subseteq [n]",             "meaning": "Set of participating clients at round t" },
+        { "symbol": "\\rho = k/n",                   "meaning": "Client participation rate (k active out of n total)" },
+        { "symbol": "\\mathrm{RFedProj}",            "meaning": "Projected Riemannian federated average: P_ℳ(mean of local models)" },
+        { "symbol": "\\mathrm{RFedRL}",              "meaning": "Retracted-lifted aggregation (tangent-space variant)" }
+      ]
+    },
+    {
+      "heading": "Optimization & Convergence",
+      "entries": [
+        { "symbol": "\\mathcal{L}(\\theta)",          "meaning": "Loss function (scalar training objective)" },
+        { "symbol": "\\alpha",                        "meaning": "Learning rate / step size" },
+        { "symbol": "\\tau",                          "meaning": "Number of local SGD epochs per federated round" },
+        { "symbol": "\\mathcal{O}(1/\\sqrt{T})",     "meaning": "Convergence rate of RFedProj/RFedRL (Theorem 4.6)" },
+        { "symbol": "\\|\\nabla^{\\!R} F(x_t)\\|^2", "meaning": "Squared Riemannian gradient norm (convergence criterion)" }
+      ]
+    }
+  ]
+}
+</script>

@@ -1,0 +1,186 @@
+  <section-divider
+    label="SPDNet fédéré"
+    kicker="Seconde contribution"
+    blurb="Agrégation projetée sur Stiefel — RFedProj / RFedRL">
+  </section-divider>
+
+  <!-- §5.1 · FL motivation + animation -->
+  <section>
+    <slide-note>L'apprentissage fédéré entraîne un modèle partagé sans jamais partager les données. Motivations : confidentialité, contraintes réglementaires, données disséminées. L'animation détaille un round FedAvg : sélection des clients, diffusion du modèle global, entraînement local, remontée des mises à jour, agrégation.</slide-note>
+    <slide-header title="Apprentissage fédéré — le cadre"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <federated-learning></federated-learning>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §5.2 · The aggregation problem on a manifold -->
+  <section>
+    <slide-note>FedAvg moyenne arithmétiquement les poids. Problème : si les poids sont sur Stiefel, la moyenne arithmétique sort de la variété. Il faut donc une opération d'agrégation qui (i) reste sur la variété et (ii) reste peu coûteuse à grande échelle.</slide-note>
+    <slide-header title="Le problème — moyenner sur une variété"></slide-header>
+    <div class="slide-body">
+      <p class="lede" style="margin-bottom:28px;max-width:1500px;">
+        FedAvg<cite-ref key="mcmahan2017"></cite-ref> moyenne arithmétiquement les poids des clients. Sur une variété, cette moyenne <strong>n'est pas un point de la variété</strong>.
+      </p>
+
+      <div class="cols cols-2" style="gap:48px;align-items:start;">
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Approches existantes</div>
+          <div style="display:flex;flex-direction:column;gap:14px;font-size:18px;color:var(--ink-2);">
+            <div style="padding:14px 16px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
+              <strong>Karcher / Fréchet</strong><cite-ref key="karcher1977"></cite-ref> — log → moyenne tangente → exp. Sur Stiefel le log est itératif, l'exp instable.
+            </div>
+            <div style="padding:14px 16px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
+              <strong>Projection + correction de dérive</strong> — <cite-ref key="zhang2024"></cite-ref> : requiert la participation totale.
+            </div>
+            <div style="padding:14px 16px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
+              <strong>Flux de gradients</strong> — <cite-ref key="huang2024"></cite-ref> : verrouille l'optimiseur à SGD.
+            </div>
+          </div>
+        </div>
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Le trou à combler</div>
+          <div class="theorem" style="margin-top:0;">
+            <div class="theorem-tag">Objectif</div>
+            <div class="theorem-body" style="font-size:19px;">
+              Une agrégation qui combine :
+              <ul style="margin-top:10px;padding-left:18px;line-height:1.7;">
+                <li>projections + rétractions <strong>seulement</strong></li>
+                <li><strong>participation partielle</strong></li>
+                <li>plusieurs époques locales</li>
+                <li>indépendante de l'optimiseur client</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §5.2b · 3D federated aggregation visualisation -->
+  <section>
+    <slide-note>Animation 3D : 5 clients partent du même modèle global sur S² (proxy visualisable de Stiefel), dérivent localement, on calcule leur moyenne arithmétique (qui tombe à l'intérieur de la sphère — hors variété), puis on projette de retour sur la sphère = RFedProj. Le round suivant repart de ce nouveau modèle.</slide-note>
+    <slide-header title="Visualisation — RFedProj sur S²"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <fed-aggregation></fed-aggregation>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §5.3 · RFedProj / RFedRL — the two rules -->
+  <section>
+    <slide-note>Nos deux règles d'agrégation : RFedProj projette la moyenne euclidienne des itérés clients sur la variété ; RFedRL projette les déplacements clients sur le tangent, les moyenne, puis rétracte. Théoriquement équivalents en termes de taux ; en pratique différence de F1 &lt; 0,2%.</slide-note>
+    <slide-header title="RFedProj &amp; RFedRL — projections seulement"></slide-header>
+    <div class="slide-body">
+      <div style="display:flex;flex-direction:column;gap:24px;max-width:1500px;margin-top:18px;">
+
+        <div data-step style="padding:24px 28px;background:var(--bg-2);border:1px solid var(--rule);border-radius:6px;">
+          <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:10px;">
+            <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--accent);">RFedProj</div>
+            <div class="small" style="color:var(--ink-3);">le plus simple — pas besoin de mémoriser l'itéré global précédent</div>
+          </div>
+          <div class="math-display" style="margin:8px 0 4px;">
+            x_{t+1} \;=\; P_{\mathcal{M}}\!\left(\tfrac{1}{k}\sum_{i \in S_t} x^{(i)}_{t,\tau}\right)
+          </div>
+          <p class="small" style="font-size:16px;color:var(--ink-3);margin-top:6px;">
+            On moyenne arithmétiquement les sorties locales des <span class="math">k</span> clients participants, puis on projette sur <span class="math">\mathcal{M}</span>.
+          </p>
+        </div>
+
+        <div data-step style="padding:24px 28px;background:var(--bg-2);border:1px solid var(--rule);border-radius:6px;">
+          <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:10px;">
+            <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--accent);">RFedRL</div>
+            <div class="small" style="color:var(--ink-3);">retracted-lifted — relève les déplacements au tangent, moyenne, rétracte</div>
+          </div>
+          <div class="math-display" style="margin:8px 0 4px;">
+            x_{t+1} \;=\; P_{\mathcal{M}}\!\left(x_t \;+\; \tfrac{1}{k}\sum_{i \in S_t} P_{x_t}\!\left(x^{(i)}_{t,\tau} - x_t\right)\right)
+          </div>
+          <p class="small" style="font-size:16px;color:var(--ink-3);margin-top:6px;">
+            Variante géométriquement « plus propre » — équivalente en taux, requiert de stocker <span class="math">x_t</span>.
+          </p>
+        </div>
+
+        <div data-step class="theorem">
+          <div class="theorem-tag">Sur Stiefel</div>
+          <div class="theorem-body" style="font-size:19px;">
+            La projection <span class="math">P_{\mathcal{M}}</span> est le <strong>facteur polaire</strong> <span class="math">\mathrm{uf}(A) = A(A^\top A)^{-1/2}</span> — une SVD réduite suffit. Aucun exp, aucun log.
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §5.4 · Theorem -->
+  <section>
+    <slide-note>Théorème 4.6 : sous lissité Lipschitz des objectifs clients et lissité proximale de la variété, les deux algorithmes convergent en O(1/√T) sous participation partielle, avec un facteur (n-k)/((n-1)k) qui mesure l'effet de la participation. Le résultat est l'analogue strict des garanties FedAvg classiques.</slide-note>
+    <slide-header title="Garantie de convergence"></slide-header>
+    <div class="slide-body">
+      <div class="theorem" data-step style="margin-top:18px;">
+        <div class="theorem-tag">Théorème <span class="theorem-name">RFedProj &amp; RFedRL (sous-mvts compacts)</span></div>
+        <div class="theorem-body" style="font-size:19px;">
+          Sous lissité Lipschitz des objectifs clients et lissité proximale de <span class="math">\mathcal{M}</span> :
+          <div class="math-display" style="margin:14px 0;">
+            \tfrac{1}{T}\sum_{t=1}^T \mathbb{E}\|\mathrm{grad}\,F(x_t)\|^2 \;=\; \mathcal{O}\!\left(\tfrac{1}{\sqrt{T}}\right) + \mathcal{O}\!\left(\tfrac{1}{k\sqrt{T}}\Big(\tfrac{n-k}{n-1}\sigma^2 + \tfrac{\sigma^2_{sg}}{B}\Big)\right)
+          </div>
+        </div>
+      </div>
+
+      <div class="cols cols-2" style="gap:40px;margin-top:28px;">
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:10px;">Lecture du facteur de participation</div>
+          <div style="font-family:var(--mono);font-size:18px;color:var(--ink-2);line-height:1.9;">
+            <div><span class="math">k = n</span> &nbsp;→&nbsp; le facteur s'annule</div>
+            <div><span class="math">k = 1</span> &nbsp;→&nbsp; le facteur vaut 1</div>
+            <div><span class="math">k \ll n</span> &nbsp;→&nbsp; comportement en <span class="math">1/k</span></div>
+          </div>
+        </div>
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:10px;">Lecture</div>
+          <p class="body" style="font-size:19px;color:var(--ink-2);">
+            <strong>Même borne</strong> que FedAvg euclidien — la contrainte géométrique n'ajoute pas de coût asymptotique. Les deux algorithmes ne diffèrent qu'aux termes de courbure d'ordre supérieur, donc <strong>indistinguables en pratique</strong>.
+          </p>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §5.5 · Federated experiments -->
+  <section>
+    <slide-note>Expériences EEG motor imagery — 3 datasets MOABB. SPDNet fédéré (BiMap agrégés par RFedProj, classifieur par FedAvg) vs EEGNet+FedAvg. Mesure : F1 macro, dégradation par rapport au centralisé. Placeholder pour la figure dégradation.</slide-note>
+    <slide-header title="Expériences EEG fédérées"></slide-header>
+    <div class="slide-body">
+      <div class="cols cols-2" style="gap:48px;margin-top:18px;align-items:start;">
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:14px;">Protocole</div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-family:var(--mono);font-size:17px;color:var(--ink-2);">
+            <div><span style="color:var(--ink-3);">Tâche</span> &nbsp;&nbsp; Motor-imagery classification</div>
+            <div><span style="color:var(--ink-3);">Datasets</span> &nbsp;&nbsp; Weibo2014, Schirrmeister2017, PhysionetMI<cite-ref key="jayaram2018"></cite-ref></div>
+            <div><span style="color:var(--ink-3);">Modèles</span> &nbsp;&nbsp; FedSPDNet vs FedEEGNet</div>
+            <div><span style="color:var(--ink-3);">Participation</span> &nbsp;&nbsp; ρ = k/n ∈ {1, 0.8, 0.5, 0.2}</div>
+            <div><span style="color:var(--ink-3);">Rounds</span> &nbsp;&nbsp; T = 150 &nbsp; · &nbsp; τ = 2 époques locales</div>
+            <div><span style="color:var(--ink-3);">Métrique</span> &nbsp;&nbsp; F1 macro · IID + non-IID (par sujet)</div>
+          </div>
+        </div>
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:14px;">Dégradation vs centralisé — à venir</div>
+          <div style="aspect-ratio:16/10;background:var(--bg-2);border:2px dashed var(--rule-soft);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--ink-3);font-family:var(--mono);font-size:14px;letter-spacing:0.05em;text-transform:uppercase;">
+            graphique — à venir
+          </div>
+        </div>
+      </div>
+
+      <div data-step style="margin-top:28px;padding:20px 24px;background:var(--tint);border-left:3px solid var(--accent);font-size:19px;color:var(--ink-2);">
+        <strong>Attendus :</strong> RFedProj ≡ RFedRL à &lt; 0,2 % près. FedSPDNet dégrade <em>moins</em> que FedEEGNet quand la participation chute — interprétation : la géométrie joue un rôle <strong>régularisant</strong> contre la dérive client.
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════
+       §6 · Conclusion
+       ═══════════════════════════════════════ -->

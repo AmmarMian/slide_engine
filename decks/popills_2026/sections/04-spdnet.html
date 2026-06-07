@@ -1,0 +1,542 @@
+  <section-divider
+    label="SPDnet"
+    kicker="SPDnet architecture"
+    blurb="L'architeture originale sur matrices de covariances">
+  </section-divider>
+
+  <!-- §2.0 · SPDNet — problem statement -->
+  <section>
+    <slide-note>Problème : comment passer des matrices SPD à un classifieur ? Deux approches naïves — vec(Σ) et vech(Σ) — aplatissent la matrice en vecteur et ignorent la géométrie de la variété S++_d.</slide-note>
+    <slide-header title="SPDNet — Problématique"></slide-header>
+    <div class="slide-body" style="gap:24px;">
+
+      <!-- Pipeline diagram -->
+      <div style="display:flex;align-items:center;justify-content:center;gap:0;flex-shrink:0;padding:8px 0;">
+
+        <!-- Input matrix heatmap -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+          <svg viewBox="0 0 104 104" style="width:108px;height:108px;">
+            <!-- 4×4 SPD heatmap, stride 26 -->
+            <rect x="0"  y="0"  width="24" height="24" fill="var(--accent)" fill-opacity="0.92" rx="2"/>
+            <rect x="26" y="0"  width="24" height="24" fill="var(--accent)" fill-opacity="0.52" rx="2"/>
+            <rect x="52" y="0"  width="24" height="24" fill="var(--accent)" fill-opacity="0.28" rx="2"/>
+            <rect x="78" y="0"  width="24" height="24" fill="var(--accent)" fill-opacity="0.11" rx="2"/>
+            <rect x="0"  y="26" width="24" height="24" fill="var(--accent)" fill-opacity="0.52" rx="2"/>
+            <rect x="26" y="26" width="24" height="24" fill="var(--accent)" fill-opacity="0.85" rx="2"/>
+            <rect x="52" y="26" width="24" height="24" fill="var(--accent)" fill-opacity="0.44" rx="2"/>
+            <rect x="78" y="26" width="24" height="24" fill="var(--accent)" fill-opacity="0.20" rx="2"/>
+            <rect x="0"  y="52" width="24" height="24" fill="var(--accent)" fill-opacity="0.28" rx="2"/>
+            <rect x="26" y="52" width="24" height="24" fill="var(--accent)" fill-opacity="0.44" rx="2"/>
+            <rect x="52" y="52" width="24" height="24" fill="var(--accent)" fill-opacity="0.88" rx="2"/>
+            <rect x="78" y="52" width="24" height="24" fill="var(--accent)" fill-opacity="0.46" rx="2"/>
+            <rect x="0"  y="78" width="24" height="24" fill="var(--accent)" fill-opacity="0.11" rx="2"/>
+            <rect x="26" y="78" width="24" height="24" fill="var(--accent)" fill-opacity="0.20" rx="2"/>
+            <rect x="52" y="78" width="24" height="24" fill="var(--accent)" fill-opacity="0.46" rx="2"/>
+            <rect x="78" y="78" width="24" height="24" fill="var(--accent)" fill-opacity="0.80" rx="2"/>
+            <rect x="0"  y="0"  width="102" height="102" fill="none" stroke="var(--rule)" stroke-width="1.5" rx="3"/>
+          </svg>
+          <div style="font-family:var(--mono);font-size:17px;color:var(--ink-3);text-align:center;">
+            <span class="math">\boldsymbol{\Sigma}_i \in \mathcal{S}_{++}^d</span>
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <div style="font-size:40px;color:var(--ink-2);padding:0 32px;flex-shrink:0;line-height:1;margin-bottom:28px;">→</div>
+
+        <!-- f box -->
+        <div style="border:2px solid var(--accent);border-radius:12px;padding:18px 40px;text-align:center;flex-shrink:0;margin-bottom:28px;">
+          <div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Classifieur</div>
+          <div style="font-family:var(--sans);font-size:28px;font-weight:600;color:var(--ink);">f(<span class="math">\boldsymbol{\Sigma}</span> ; <span class="math">\theta</span>)</div>
+        </div>
+
+        <!-- Arrow -->
+        <div style="font-size:40px;color:var(--ink-2);padding:0 32px;flex-shrink:0;line-height:1;margin-bottom:28px;">→</div>
+
+        <!-- Bar chart output -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+          <svg viewBox="0 0 170 108" style="width:170px;height:108px;">
+            <line x1="22" y1="2"  x2="22"  y2="92" stroke="var(--rule)" stroke-width="1.5"/>
+            <line x1="22" y1="92" x2="166" y2="92" stroke="var(--rule)" stroke-width="1.5"/>
+            <rect x="26"  y="6"  width="26" height="86" fill="var(--accent)" rx="2" opacity="0.85"/>
+            <rect x="62"  y="64" width="26" height="28" fill="var(--ink-3)" rx="2" opacity="0.5"/>
+            <rect x="98"  y="40" width="26" height="52" fill="var(--ink-3)" rx="2" opacity="0.5"/>
+            <rect x="134" y="78" width="26" height="14" fill="var(--ink-3)" rx="2" opacity="0.5"/>
+            <text x="39"  y="106" text-anchor="middle" font-size="12" font-family="var(--mono)" fill="var(--ink-3)">C₁</text>
+            <text x="75"  y="106" text-anchor="middle" font-size="12" font-family="var(--mono)" fill="var(--ink-3)">C₂</text>
+            <text x="111" y="106" text-anchor="middle" font-size="12" font-family="var(--mono)" fill="var(--ink-3)">C₃</text>
+            <text x="147" y="106" text-anchor="middle" font-size="12" font-family="var(--mono)" fill="var(--ink-3)">C₄</text>
+          </svg>
+          <div style="font-family:var(--mono);font-size:17px;color:var(--ink-3);text-align:center;">
+            <span class="math">p(\mathrm{classe} \mid \boldsymbol{\Sigma})</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Two naive approach cards -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:start;">
+
+        <!-- vec(Σ) -->
+        <div data-step style="border:1px solid var(--rule);border-radius:10px;padding:22px 28px;display:flex;flex-direction:column;gap:12px;">
+          <div>
+            <div class="eyebrow" style="color:var(--ink-3);margin-bottom:6px;">Première idée</div>
+            <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--ink);">vec(<span class="math">\boldsymbol{\Sigma}</span>)<span class="math">\;\in\;\mathbb{R}^{d^2}</span></div>
+          </div>
+          <p class="body">Empiler toutes les entrées colonne par colonne — <strong>d²</strong> composantes.</p>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px;">
+            <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:#b03030;flex-shrink:0;">⚠</span><span>Symétrie ignorée : <span class="math">\Sigma_{ij}=\Sigma_{ji}</span> dupliqués — dimension <span class="math">d^2</span> non-minimale</span></li>
+            <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:#b03030;flex-shrink:0;">⚠</span><span>Contrainte <span class="math">\boldsymbol{\Sigma}\succ 0</span> perdue dans <span class="math">\mathbb{R}^{d^2}</span></span></li>
+          </ul>
+        </div>
+
+        <!-- vech(Σ) -->
+        <div data-step style="border:1px solid var(--rule);border-left:3px solid var(--accent);border-radius:10px;padding:22px 28px;display:flex;flex-direction:column;gap:12px;">
+          <div>
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Idée affinée</div>
+            <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--ink);">vech(<span class="math">\boldsymbol{\Sigma}</span>)<span class="math">\;\in\;\mathbb{R}^{d(d+1)/2}</span></div>
+          </div>
+          <p class="body">Triangle supérieur uniquement — <strong>d(d+1)/2</strong> composantes, sans redondance.</p>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px;">
+            <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:var(--ink-3);flex-shrink:0;">·</span><span>Plus économique en dimension</span></li>
+            <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:#b03030;flex-shrink:0;">⚠</span><span>La contrainte <span class="math">\boldsymbol{\Sigma}\succ 0</span> reste ignorée dans <span class="math">\mathbb{R}^{d(d+1)/2}</span></span></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Problem statement -->
+      <div data-step style="border:1px solid #b03030;border-left:4px solid #b03030;border-radius:8px;padding:14px 24px;background:rgba(176,48,48,0.05);flex-shrink:0;">
+        <div class="eyebrow" style="color:#b03030;margin-bottom:5px;">Problème fondamental</div>
+        <p class="body">Ni vec ni vech n'exploite la structure géométrique de <span class="math">\mathcal{S}_{++}^d</span> : les distances euclidiennes dans <span class="math">\mathbb{R}^m</span> ne correspondent pas aux distances géodésiques entre matrices.</p>
+      </div>
+
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       §2.1 · SPDNet interactive architecture
+       ═══════════════════════════════════════ -->
+  <section>
+    <slide-note>Architecture de SPDNet : vue globale puis zoom sur chaque couche avec les flèches. BiMap = projection bilinéaire WXWᵀ. ReEig = rectification des valeurs propres max(ε,λ), analogue du ReLU. LogEig = logarithme matriciel, passage vers l'espace tangent en I. Insister : seules les BiMap ont des paramètres, et ils vivent sur Stiefel.</slide-note>
+    <slide-header title="SPDNet — Architecture"></slide-header>
+    <div class="slide-body" style="padding:0 0 110px;overflow:hidden;">
+      <spdnet-arch></spdnet-arch>
+    </div>
+    <!-- cite-refs placed here so citations.js picks them up at DOMContentLoaded -->
+    <span style="display:none"><cite-ref key="huang2017"></cite-ref></span>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §2.2 · What is actually learned: BiMap weights on Stiefel -->
+  <section>
+    <slide-note>Avant de plonger dans la rétropropagation : il faut identifier ce qui est optimisé. Seules les couches BiMap portent des paramètres, et ces paramètres sont contraints à vivre sur la variété de Stiefel — d'où la nécessité de l'optimisation riemannienne.</slide-note>
+    <slide-header title="Qu'est-ce qui est optimisé ?"></slide-header>
+    <div class="slide-body">
+      <div class="cols cols-2" style="gap:64px;align-items:start;margin-top:24px;">
+        <div>
+          <div class="eyebrow" style="margin-bottom:12px;">Couches sans paramètre</div>
+          <div style="display:flex;flex-direction:column;gap:18px;">
+            <div data-step style="border-left:3px solid var(--rule);padding:14px 18px;background:var(--bg-2);">
+              <div style="font-family:var(--mono);font-size:20px;font-weight:600;color:var(--ink-2);">ReEig</div>
+              <div class="body" style="font-size:18px;color:var(--ink-3);margin-top:4px;">rectification spectrale — non paramétrique</div>
+            </div>
+            <div data-step style="border-left:3px solid var(--rule);padding:14px 18px;background:var(--bg-2);">
+              <div style="font-family:var(--mono);font-size:20px;font-weight:600;color:var(--ink-2);">LogEig</div>
+              <div class="body" style="font-size:18px;color:var(--ink-3);margin-top:4px;">passage tangent en <span class="math">I</span> — non paramétrique</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Couches paramétrées</div>
+          <div data-step style="border-left:3px solid var(--accent);padding:18px 20px;background:var(--bg-2);">
+            <div style="font-family:var(--mono);font-size:22px;font-weight:600;color:var(--ink);">BiMap<sub style="font-size:14px;color:var(--ink-3);">k</sub></div>
+            <div class="math-display" style="margin:12px 0 8px;">
+              X_k = W_k\,X_{k-1}\,W_k^\top
+            </div>
+            <div class="body" style="font-size:18px;color:var(--ink-2);">
+              <span class="math">W_k \in \mathrm{St}(d_{k-1}, d_k)</span> — colonnes orthonormées<cite-ref key="absil2008"></cite-ref>
+            </div>
+          </div>
+          <div data-step class="theorem" style="margin-top:24px;">
+            <div class="theorem-tag">Conséquence</div>
+            <div class="theorem-body" style="font-size:20px;">
+              Le gradient doit être <strong>tangent à Stiefel</strong>, et la mise à jour doit <strong>y rester</strong> — d'où l'optimisation riemannienne.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §2.3 · Matrix backpropagation primer -->
+  <section>
+    <slide-note>La rétropropagation matricielle (Ionescu et al. 2015) fournit les gradients à travers des opérations comme SVD et eigendecomp. Brooks et al. (2019) propose une variante stable nécessaire pour les couches SPD.</slide-note>
+    <slide-header title="Rétropropagation matricielle"></slide-header>
+    <div class="slide-body">
+      <p class="lede" style="margin-bottom:24px;max-width:1500px;">
+        ReEig et LogEig reposent sur une <strong>décomposition spectrale</strong> :
+        la rétropropagation standard (chain-rule scalaire) ne suffit pas.
+      </p>
+
+      <div class="cols cols-2" style="gap:56px;align-items:start;margin-top:8px;">
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:14px;">Le cadre matriciel</div>
+          <div class="body" style="font-size:20px;margin-bottom:14px;">
+            Soit <span class="math">f(X) = U\,g(\Sigma)\,U^\top</span> avec <span class="math">X = U\Sigma U^\top</span>.
+            Le différentiel de <span class="math">\mathcal{L}</span> par rapport à <span class="math">X</span> s'écrit<cite-ref key="ionescu2015"></cite-ref> :
+          </div>
+          <div class="math-display">
+            \frac{\partial \mathcal{L}}{\partial X} = U\left( P \odot (U^\top \tfrac{\partial \mathcal{L}}{\partial U}) + \mathrm{diag}\!\left(\tfrac{\partial \mathcal{L}}{\partial \Sigma}\right)\right) U^\top
+          </div>
+          <div class="small" style="color:var(--ink-3);margin-top:10px;font-size:16px;">
+            où <span class="math">P_{ij} = 1/(\sigma_i - \sigma_j)</span> pour <span class="math">i\neq j</span>, et <span class="math">\odot</span> le produit de Hadamard.
+          </div>
+        </div>
+
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:14px;">Le piège numérique</div>
+          <div class="body" style="font-size:20px;">
+            Les coefficients <span class="math">1/(\sigma_i - \sigma_j)</span> explosent quand deux valeurs propres se rapprochent.
+          </div>
+          <div class="theorem" style="margin-top:20px;">
+            <div class="theorem-tag"><cite-ref key="brooks2019"></cite-ref> <span class="theorem-name">NeurIPS 2019</span></div>
+            <div class="theorem-body" style="font-size:18px;">
+              Reformulation symétrique évitant les divisions instables — désormais la norme dans les implémentations SPDNet modernes.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §2.4 · Forward + backward propagation through SPDNet -->
+  <section>
+    <slide-note>Animation pas-à-pas : (1) architecture, (2) passe avant — particule orange traverse le réseau, (3) perte calculée, (4) rétropropagation — flèches rouges remontent à travers chaque couche, (5) on a un gradient euclidien à chaque BiMap (hors variété), (6) projection + rétraction pour retomber sur Stiefel.</slide-note>
+    <slide-header title="Passe avant &amp; rétropropagation"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <spdnet-backprop></spdnet-backprop>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §2.4b · SPDNet eigenvalue-sensitive backpropagation (K-matrix animation) -->
+  <!-- <section> -->
+  <!--   <slide-note>Animation spécifique SPDNet : 8 phases — vue d'ensemble, BiMap avant, ReEig avant (eigendecomposition), LogEig avant, perte, LogEig arrière (K-matrix — pièce maîtresse), ReEig arrière, BiMap arrière. La phase LogEig arrière montre la matrice K et le produit de Hadamard K⊙G qui maintient le gradient sur la variété SPD.</slide-note> -->
+  <!--   <slide-header title="Rétropropagation SPDNet — matrice de sensibilité K"></slide-header> -->
+  <!--   <div class="slide-body" style="padding:0;overflow:hidden;"> -->
+  <!--     <spdnet-backprop-spd></spdnet-backprop-spd> -->
+  <!--   </div> -->
+  <!--   <slide-footer></slide-footer> -->
+  <!-- </section> -->
+
+  <!-- §2.5 · Full SPDNet training step summary -->
+  <section>
+    <slide-note>Récapitulatif : la formation d'un SPDNet combine rétropropagation matricielle pour traverser les couches non-linéaires + optimisation riemannienne pour les paramètres contraints.</slide-note>
+    <slide-header title="Une itération d'entraînement, vue d'ensemble"></slide-header>
+    <div class="slide-body">
+      <div style="display:flex;flex-direction:column;gap:20px;max-width:1500px;margin-top:24px;">
+        <div data-step style="display:flex;align-items:center;gap:32px;">
+          <div style="flex-shrink:0;width:50px;height:50px;border-radius:50%;background:var(--accent);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:22px;">1</div>
+          <div>
+            <div style="font-family:var(--sans);font-size:24px;font-weight:600;color:var(--ink);">Passe avant</div>
+            <div class="body" style="font-size:19px;color:var(--ink-2);">BiMap, ReEig, LogEig à travers les <span class="math">K</span> couches, puis classifieur en sortie.</div>
+          </div>
+        </div>
+        <div data-step style="display:flex;align-items:center;gap:32px;">
+          <div style="flex-shrink:0;width:50px;height:50px;border-radius:50%;background:var(--accent);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:22px;">2</div>
+          <div>
+            <div style="font-family:var(--sans);font-size:24px;font-weight:600;color:var(--ink);">Rétropropagation <em>matricielle</em></div>
+            <div class="body" style="font-size:19px;color:var(--ink-2);">Gradients à travers SVD/eigendecomp via la formulation Brooks ; produit le gradient euclidien <span class="math">\nabla_{W_k}\mathcal{L}</span> pour chaque BiMap.</div>
+          </div>
+        </div>
+        <div data-step style="display:flex;align-items:center;gap:32px;">
+          <div style="flex-shrink:0;width:50px;height:50px;border-radius:50%;background:var(--accent);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:22px;">3</div>
+          <div>
+            <div style="font-family:var(--sans);font-size:24px;font-weight:600;color:var(--ink);">Mise à jour <em>riemannienne</em></div>
+            <div class="body" style="font-size:19px;color:var(--ink-2);">Pour chaque <span class="math">W_k</span> : projection tangente + rétraction polaire — c'est la seule étape spécifique à la géométrie.</div>
+          </div>
+        </div>
+        <div data-step class="theorem" style="margin-top:18px;">
+          <div class="theorem-tag">À retenir</div>
+          <div class="theorem-body" style="font-size:21px;">
+            La contrainte géométrique n'apparaît qu'à l'étape 3, et avec un <strong>coût quasi linéaire</strong> en la dimension. C'est ce qui rendra possible le passage au cadre distribué.
+          </div>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       §2.6+ · GPR application (sits inside the SPDNet section)
+       ═══════════════════════════════════════ -->
+
+  <!-- §2.5a · GPR — referenced works -->
+  <section>
+    <slide-note>Travaux sur lesquels s'appuient les résultats GPR présentés dans cette section.</slide-note>
+    <slide-header title="GPR — travaux de référence"></slide-header>
+    <div class="slide-body" style="justify-content:center;align-items:center;">
+      <div style="max-width:1400px;width:100%;display:flex;flex-direction:column;gap:24px;">
+        <p class="lede" style="text-align:left;">Les résultats présentés dans cette section s'appuient sur les travaux suivants :</p>
+        <div style="border:1.5px solid var(--rule);border-radius:12px;overflow:hidden;">
+          <div style="padding:10px 28px;background:var(--bg-2);border-bottom:1px solid var(--rule);">
+            <div class="eyebrow" style="color:var(--accent);">Publications</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0;">
+            <div style="padding:22px 28px;border-bottom:1px solid var(--rule-soft);display:flex;gap:20px;align-items:baseline;">
+              <div style="font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:700;flex-shrink:0;width:60px;">JSTARS<br>2025</div>
+              <p class="body">Jafuno, D., Mian, A., Ginolhac, G. & Stelzenmuller, N. Classification of Buried Objects From Ground Penetrating Radar Images by Using Second-Order Deep Learning Models. <em>IEEE JSTARS</em>, 2025, 18, 3185–3197.</p>
+            </div>
+            <div style="padding:22px 28px;border-bottom:1px solid var(--rule-soft);display:flex;gap:20px;align-items:baseline;">
+              <div style="font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:700;flex-shrink:0;width:60px;">IGARSS<br>2022</div>
+              <p class="body">Gallet, M., Mian, A., Ginolhac, G. & Stelzenmuller, N. Classification of GPR Signals via Covariance Pooling on CNN Features within a Riemannian Framework. <em>IGARSS</em>, Kuala Lumpur, 2022.</p>
+            </div>
+            <div style="padding:22px 28px;display:flex;gap:20px;align-items:baseline;">
+              <div style="font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:700;flex-shrink:0;width:60px;">IGARSS<br>2024</div>
+              <p class="body">Jafuno, D., Mian, A., Ginolhac, G. & Stelzenmuller, N. Buried Object Classification from GPR Data by Using Second Order Deep Learning Models. <em>IGARSS</em>, 2024, pp. 6513–6516.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §2.5b · GPR — A-scan and B-scan formation -->
+  <section>
+    <slide-note>Le principe physique du GPR : l'antenne émet une impulsion électromagnétique, qui se réfléchit sur les objets enfouis. Un A-scan est la trace temporelle reçue pour une position d'antenne. En déplaçant l'antenne, on assemble les A-scans en un B-scan 2D où chaque objet produit une signature hyperbolique caractéristique.</slide-note>
+    <slide-header title="GPR — formation du A-scan et du B-scan"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <gpr-scan></gpr-scan>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §2.6 · GPR motivation -->
+  <section>
+    <slide-note>Le radar GPR fournit des B-scans bruités à faible rapport signal-sur-bruit. Les objets enterrés y apparaissent comme des hyperboles. Tâche : classifier l'objet à partir d'une vignette d'hyperbole détectée. Deux écueils : les CNN superficiels manquent de représentation riche ; les gros modèles CV ont trop de paramètres pour le peu de données étiquetées disponibles.</slide-note>
+    <slide-header title="GPR - Difficultés"></slide-header>
+    <div class="slide-body" style="gap:20px;">
+
+      <!-- Full-width B-scan image -->
+      <div data-step style="flex-shrink:0;">
+        <img src="./assets/gpr/b-scan.png" alt="B-scan GPR typique"
+          style="width:100%;height:auto;display:block;border:1px solid var(--rule-soft);border-radius:4px;"/>
+        <div class="figcaption" style="margin-top:6px;">B-scan GPR typique : chaque objet enfoui produit une hyperbole caractéristique.</div>
+      </div>
+
+      <!-- Two columns below -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;">
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;">Le signal</div>
+          <p class="body" style="font-size:21px;color:var(--ink-2);">
+            On déplace l'antenne le long du sol — chaque objet enterré produit une <strong>hyperbole</strong> caractéristique. Faible SNR, fortes variations selon le sol et la fréquence d'acquisition.
+          </p>
+        </div>
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;">Les contraintes</div>
+          <div style="display:flex;flex-direction:column;gap:12px;font-size:20px;color:var(--ink-2);">
+            <div>• <strong>Peu d'étiquettes</strong> : labellisation par expert géophysicien</div>
+            <div>• <strong>Bruit d'étiquetage</strong> : classes ambigües au-delà du métal/non-métal</div>
+            <div>• <strong>Hétérogénéité</strong> : sable humide, sable sec, gravier — multiples fréquences radar</div>
+          </div>
+          <div class="theorem" style="margin-top:22px;">
+            <div class="theorem-tag">Tension</div>
+            <div class="theorem-body" style="font-size:19px;">
+              Modèles riches ↔ peu de paramètres : exactement le compromis que les <em>statistiques d'ordre deux</em> savent résoudre.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §3.2 · GPR pipeline -->
+  <section>
+    <slide-note>Le pipeline complet : ResNet-34 tronqué (L=8 couches) → covariance pooling (estime la covariance entre canaux convolutionnels) → SPDNet (BiMap+ReEig empilés) → LogEig + dropout + dense + softmax. Tout est entraîné de bout en bout. Deux variantes selon que l'on prend la dernière sortie de bloc (RCNet, d=64) ou la concaténation des 32 premières couches (SRCNet, d=256).</slide-note>
+    <slide-header title="Pipeline : ResNet + covariance + SPDNet"></slide-header>
+    <div class="slide-body" style="padding:0 0 96px;overflow:hidden;">
+      <gpr-pipeline></gpr-pipeline>
+    </div>
+    <!-- cite-refs placed here so citations.js picks them up at DOMContentLoaded -->
+    <span style="display:none"><cite-ref key="he2016"></cite-ref><cite-ref key="li2017mpncov"></cite-ref><cite-ref key="li2018isqrt"></cite-ref><cite-ref key="ionescu2015"></cite-ref></span>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §3.3 · Dataset -->
+
+  <!-- §3.3b · Dataset details + experimental protocol -->
+  <section>
+    <slide-note>Détails du jeu de données Géolithe et protocole expérimental : baselines, 100 graines aléatoires, deux stress-tests (fraction d'entraînement, bruit d'étiquetage).</slide-note>
+    <slide-header title="Données &amp; protocole expérimental"></slide-header>
+    <div class="slide-body">
+      <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:80px;min-height:0;align-items:start;padding-top:12px;">
+
+        <!-- Left: Data details -->
+        <div style="display:flex;flex-direction:column;gap:32px;">
+          <div>
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:18px;">Données — Géolithe</div>
+            <div style="display:flex;flex-direction:column;gap:15px;font-family:var(--mono);font-size:21px;color:var(--ink-2);">
+              <div style="display:flex;">
+                <span style="color:var(--ink-3);flex-shrink:0;min-width:250px;">Fournisseur</span>
+                <span>Géolithe, labellisé par experts géophysiciens</span>
+              </div>
+              <div style="display:flex;">
+                <span style="color:var(--ink-3);flex-shrink:0;min-width:250px;">B-scans</span>
+                <span>732 · taille moy. ~(4 000, 800) px</span>
+              </div>
+              <div style="display:flex;">
+                <span style="color:var(--ink-3);flex-shrink:0;min-width:250px;">Fréquences radar</span>
+                <span>200 / 350 MHz</span>
+              </div>
+              <div style="display:flex;">
+                <span style="color:var(--ink-3);flex-shrink:0;min-width:250px;">Élévation antenne</span>
+                <span>0 / 25 / 50 / 75 / 100 / 150 cm</span>
+              </div>
+              <div style="display:flex;">
+                <span style="color:var(--ink-3);flex-shrink:0;min-width:250px;">Types de sol</span>
+                <span>sable, sable humide, gravier, gravier sec</span>
+              </div>
+              <div style="display:flex;border-top:1px solid var(--rule-soft);padding-top:15px;">
+                <span style="color:var(--ink-3);flex-shrink:0;min-width:250px;">Vignettes</span>
+                <span>1 584 × (60 × 112) px</span>
+              </div>
+              <div style="display:flex;">
+                <span style="color:var(--ink-3);flex-shrink:0;min-width:250px;">Split</span>
+                <span>1 108 train / 238 val / 238 test</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Classes box -->
+          <div style="background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:10px;padding:22px 28px;">
+            <div style="font-family:var(--sans);font-size:20px;font-weight:600;color:var(--ink);margin-bottom:14px;letter-spacing:-0.01em;">Classes (4)</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;row-gap:12px;column-gap:24px;font-family:var(--mono);font-size:20px;color:var(--ink-2);">
+              <div>· <strong>Métal</strong> — hyperbole nette</div>
+              <div>· <strong>Non-métal</strong> — signature diffuse</div>
+              <div>· <strong>Abri en bois</strong> — hyperboles multiples</div>
+              <div>· <strong>Vide</strong> — bruit pur (contrôle)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Protocol -->
+        <div style="display:flex;flex-direction:column;gap:0;">
+          <div class="eyebrow" style="color:var(--accent);margin-bottom:22px;">Protocole expérimental</div>
+
+          <!-- Baselines — always visible -->
+          <div>
+            <div style="font-family:var(--mono);font-size:14px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;">Baselines</div>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:14px;">
+              <li style="display:flex;gap:14px;align-items:baseline;font-family:var(--sans);font-size:26px;color:var(--ink);">
+                <span style="color:var(--accent);flex-shrink:0;font-family:var(--mono);font-size:22px;">·</span>
+                CNN GPR superficiel (3 couches)<cite-ref key="almaimani18"></cite-ref>
+              </li>
+              <li style="display:flex;gap:14px;align-items:baseline;font-family:var(--sans);font-size:26px;color:var(--ink);">
+                <span style="color:var(--accent);flex-shrink:0;font-family:var(--mono);font-size:22px;">·</span>
+                ResNet-34 fine-tuné (init ImageNet)
+              </li>
+              <li style="display:flex;gap:14px;align-items:baseline;font-family:var(--sans);font-size:26px;color:var(--ink);">
+                <span style="color:var(--accent);flex-shrink:0;font-family:var(--mono);font-size:22px;">·</span>
+                ResNet-34 ré-entraîné (init aléatoire)
+              </li>
+            </ul>
+          </div>
+
+          <!-- Paramètres — step 1 -->
+          <div data-step style="border-top:1px solid var(--rule-soft);margin-top:32px;padding-top:28px;">
+            <div style="font-family:var(--mono);font-size:14px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;">Paramètres</div>
+            <div style="font-family:var(--mono);font-size:22px;color:var(--ink-2);display:flex;flex-direction:column;gap:10px;">
+              <div>
+                <span style="color:var(--ink-3);">Graines</span> &thinsp;100
+                &ensp;·&ensp;
+                <span style="color:var(--ink-3);">batch</span> &thinsp;64
+                &ensp;·&ensp;
+                <span style="color:var(--ink-3);">lr</span> &thinsp;10⁻²
+              </div>
+              <div><span style="color:var(--ink-3);">Arrêt précoce</span> &thinsp;10 itérations sans progrès</div>
+            </div>
+          </div>
+
+          <!-- Stress-tests — step 2 -->
+          <div data-step style="border-top:1px solid var(--rule-soft);margin-top:32px;padding-top:28px;">
+            <div style="font-family:var(--mono);font-size:14px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:18px;">Stress-tests</div>
+            <div style="display:flex;flex-direction:column;gap:22px;">
+              <div style="display:flex;gap:18px;align-items:flex-start;">
+                <span style="font-family:var(--mono);font-size:20px;color:var(--accent);font-weight:700;flex-shrink:0;padding-top:3px;">(i)</span>
+                <div>
+                  <div style="font-family:var(--sans);font-size:26px;color:var(--ink);">Variation de la <strong>fraction d'entraînement</strong></div>
+                  <div style="font-family:var(--sans);font-size:20px;color:var(--ink-3);margin-top:5px;">→ régime peu de données</div>
+                </div>
+              </div>
+              <div style="display:flex;gap:18px;align-items:flex-start;">
+                <span style="font-family:var(--mono);font-size:20px;color:var(--accent);font-weight:700;flex-shrink:0;padding-top:3px;">(ii)</span>
+                <div>
+                  <div style="font-family:var(--sans);font-size:26px;color:var(--ink);">Variation du <strong>pourcentage d'étiquettes corrompues</strong></div>
+                  <div style="font-family:var(--sans);font-size:20px;color:var(--ink-3);margin-top:5px;">→ robustesse au bruit</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §3.4 · Results — accuracy vs train ratio -->
+  <section>
+    <slide-note>Précision test en fonction de la fraction d'entraînement (régime peu de données). Moyenne et bande sur les graines. RCNet/SRCNet (rouge/violet) dominent surtout en régime pauvre : à 10–30 % d'entraînement l'écart sur les CNN et ResNet est net. À mesure que les données abondent, tout le monde converge.</slide-note>
+    <slide-header title="Résultats — précision vs fraction d'entraînement"></slide-header>
+    <div class="slide-body" style="padding:0;display:flex;flex-direction:column;gap:6px;">
+      <p class="small" style="margin:0;color:var(--ink-3);">
+        CNN1 : CNN GPR de référence<cite-ref key="almaimani18"></cite-ref> · RCNet / SRCNet : nos modèles à covariance d'ordre deux.
+      </p>
+      <div style="flex:1;min-height:0;padding-bottom:58px;">
+        <line-chart
+          xlabel="Fraction d'entraînement"
+          ylabel="Précision test (%)"
+          series='[{"name":"CNN1","color":"#1f77b4","values":[[0.1,58.7831],[0.2,62.8812],[0.3,69.5266],[0.4,67.3161],[0.5,73.0066],[0.6,74.8013],[0.7,75.861],[0.8,75.7294],[0.9,79.4375]],"band":[[0.1,55.813,61.437],[0.2,60.714,65.004],[0.3,67.03,71.899],[0.4,65.3295,69.561],[0.5,69.44,76.26],[0.6,71.2745,77.92],[0.7,72.69,78.99],[0.8,71.6055,79.87],[0.9,75,83.8125]]},{"name":"ResNet-34 ré-entr.","color":"#ff7f0e","values":[[0.1,61.9877],[0.2,68.1817],[0.3,73.0271],[0.4,73.5888],[0.5,79.5588],[0.6,80.1898],[0.7,82.224],[0.8,83.2017],[0.9,83.5875]],"band":[[0.1,58.053,65.92],[0.2,63.394,70.82],[0.3,69.883,76.049],[0.4,70.5585,75.84],[0.5,76.77,81.82],[0.6,77.904,82.9855],[0.7,79.41,85.311],[0.8,80.5,86.16],[0.9,78.75,87.5]]},{"name":"ResNet-34 fine-tuné","color":"#2ca02c","values":[[0.1,56.7362],[0.2,62.022],[0.3,69.8792],[0.4,68.5811],[0.5,73.9601],[0.6,76.552],[0.7,80.7078],[0.8,80.6733],[0.9,83.4625]],"band":[[0.1,45.538,65.255],[0.2,51.037,69.0975],[0.3,62.637,76.778],[0.4,59.4395,76.68],[0.5,65.3495,80.6105],[0.6,70.03,81.437],[0.7,74.727,84.471],[0.8,76.1,85.53],[0.9,77.4375,88.75]]},{"name":"RCNet (nous)","color":"#d62728","width":3.2,"values":[[0.1,65.5798],[0.2,74.5222],[0.3,77.4314],[0.4,76.9068],[0.5,79.7613],[0.6,79.1387],[0.7,83.7906],[0.8,82.5161],[0.9,82.8125]],"band":[[0.1,64.373,66.76],[0.2,73.174,75.71],[0.3,76.031,78.74],[0.4,75.21,78.15],[0.5,78.527,81.0725],[0.6,77.904,80.76],[0.7,82.35,85.29],[0.8,79.839,84.91],[0.9,80,85.0625]]},{"name":"SRCNet (nous)","color":"#9467bd","width":3.2,"values":[[0.1,62.2788],[0.2,74.2267],[0.3,76.0494],[0.4,74.3658],[0.5,79.8134],[0.6,80.124],[0.7,83.0808],[0.8,84.3251],[0.9,82.4145]],"band":[[0.1,60.863,63.677],[0.2,73.014,75.574],[0.3,74.77,77.309],[0.4,72.48,76.2705],[0.5,78.255,81.5825],[0.6,77.6,82.02],[0.7,81.09,84.891],[0.8,81.13,86.8215],[0.9,78.6875,86.25]]}]'
+        ></line-chart>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §3.5 · Results — robustness to label noise -->
+  <section>
+    <slide-note>Robustesse au bruit d'étiquetage : à 70 % d'entraînement, on corrompt une fraction croissante des étiquettes. Le CNN de référence s'effondre dès 10 % (descend vers le hasard ~25 % à 4 classes). ResNet décroît régulièrement. RCNet/SRCNet restent quasi plats — la représentation de covariance amortit fortement le bruit d'étiquetage. C'est le message clé de robustesse.</slide-note>
+    <slide-header title="Robustesse — précision vs étiquettes corrompues"></slide-header>
+    <div class="slide-body" style="padding:0;display:flex;flex-direction:column;gap:6px;">
+      <p class="small" style="margin:0;color:var(--ink-3);">
+        À 70 % d'entraînement, fraction croissante d'étiquettes corrompues. RCNet (rouge) reste quasi plat ; le CNN de référence s'effondre vers le hasard.
+      </p>
+      <div style="flex:1;min-height:0;padding-bottom:8px;">
+        <line-chart
+          xlabel="Taux d'étiquettes corrompues"
+          ylabel="Précision test (%)"
+          series='[{"name":"CNN1","color":"#1f77b4","values":[[0,75.861],[0.05,68.2164],[0.1,54.1439],[0.15,43.0423],[0.2,37.8234],[0.25,37.6888],[0.3,38.7267],[0.35,35.9367],[0.4,38.9949]],"band":[[0,72.69,78.99],[0.05,62.5885,73.971],[0.1,24.79,69.75],[0.15,24.79,66.39],[0.2,24.349,66.432],[0.25,24.79,63.051],[0.3,24.79,63.471],[0.35,24.769,59.681],[0.4,25.21,59.681]]},{"name":"ResNet-34 ré-entr.","color":"#ff7f0e","values":[[0,82.224],[0.05,78.8766],[0.1,75.7854],[0.15,72.1859],[0.2,70.548],[0.25,65.128],[0.3,62.1303],[0.35,58.2417],[0.4,54.3723]],"band":[[0,79.41,85.311],[0.05,75.609,81.51],[0.1,71.85,79.431],[0.15,67.209,76.47],[0.2,65.088,75.63],[0.25,59.24,71.451],[0.3,58.358,67.23],[0.35,53.738,63.891],[0.4,48.74,60.122]]},{"name":"ResNet-34 fine-tuné","color":"#2ca02c","values":[[0,80.7078],[0.05,76.5372],[0.1,71.308],[0.15,66.5977],[0.2,65.409],[0.25,63.7401],[0.3,60.8194],[0.35,56.7257],[0.4,53.8139]],"band":[[0,74.727,84.471],[0.05,69.309,81.111],[0.1,64.269,78.171],[0.15,58.358,75.651],[0.2,58.4,73.551],[0.25,56.279,70.611],[0.3,51.68,68.07],[0.35,45.779,64.752],[0.4,41.936,61.8025]]},{"name":"RCNet (nous)","color":"#d62728","width":3.2,"values":[[0,83.7906],[0.05,83.505],[0.1,82.077],[0.15,81.258],[0.2,80.9136],[0.25,79.7754],[0.3,79.578],[0.35,77.9022],[0.4,76.2348]],"band":[[0,82.35,85.29],[0.05,81.51,85.29],[0.1,80.25,84.03],[0.15,79.41,83.19],[0.2,78.99,82.77],[0.25,78.15,81.531],[0.3,77.31,81.51],[0.35,76.029,79.851],[0.4,73.95,78.171]]},{"name":"SRCNet (nous)","color":"#9467bd","width":3.2,"values":[[0,83.0808],[0.05,81.7704],[0.1,79.9392],[0.15,77.1042],[0.2,77.6082],[0.25,74.727],[0.3,72.5294],[0.35,69.5064],[0.4,68.1698]],"band":[[0,81.09,84.891],[0.05,79.809,83.631],[0.1,77.31,82.371],[0.15,73.53,79.431],[0.2,73.95,80.25],[0.25,71.43,77.331],[0.3,69.75,76.05],[0.35,65.529,72.27],[0.4,65.13,71.451]]}]'
+        ></line-chart>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §3.6 · SPD paper landscape — interactive knowledge graph -->
+  <section>
+    <slide-note>Carte des contributions autour de SPDNet. Cercle = fondateur, rectangle = amélioration de couche, rectangle arrondi = architecture. Appuyer sur B pour mettre en évidence la normalisation par batch (SPDNet-BN, Kobler 2022, et ce travail). Cliquer sur un nœud pour afficher les détails.</slide-note>
+    <slide-header title="Paysage des réseaux SPD — carte des contributions"></slide-header>
+    <div class="slide-body" style="padding:0 32px 4px;">
+      <spd-paper-graph style="flex:1;min-height:0;"></spd-paper-graph>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       §4 · Contribution 1 — BatchNorm SPD paramétrique (ARMAGNAC)
+       ═══════════════════════════════════════ -->

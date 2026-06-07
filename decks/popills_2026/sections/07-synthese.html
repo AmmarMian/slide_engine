@@ -1,0 +1,88 @@
+  <section-divider
+    label="Synthèse"
+    kicker="Ce que la géométrie apporte"
+    blurb="">
+  </section-divider>
+
+  <!-- §6.1 · Synthesis -->
+  <section>
+    <slide-note>Synthèse : la structure géométrique des données SPD induit des problèmes d'optimisation non-triviaux à toutes les échelles — de la rétropropagation dans le réseau jusqu'à l'agrégation distribuée. Et à chaque échelle, la même idée : remplacer les opérations coûteuses (Fréchet, exp/log) par des projections / rétractions peu chères.</slide-note>
+    <slide-header title="Une même idée à toutes les échelles"></slide-header>
+    <div class="slide-body">
+      <div style="display:flex;flex-direction:column;gap:18px;max-width:1500px;margin-top:24px;">
+
+        <div data-step style="display:flex;gap:24px;align-items:baseline;padding:18px 24px;border-left:3px solid var(--accent);background:var(--bg-2);">
+          <div style="flex-shrink:0;width:160px;font-family:var(--mono);font-size:15px;letter-spacing:0.05em;text-transform:uppercase;color:var(--accent);">Échelle locale</div>
+          <div style="flex:1;font-size:20px;color:var(--ink-2);">
+            <strong>Rétropropagation matricielle</strong> + projection / rétraction sur Stiefel — coût quasi linéaire en <span class="math">d</span>.
+          </div>
+        </div>
+
+        <div data-step style="display:flex;gap:24px;align-items:baseline;padding:18px 24px;border-left:3px solid var(--accent);background:var(--bg-2);">
+          <div style="flex-shrink:0;width:160px;font-family:var(--mono);font-size:15px;letter-spacing:0.05em;text-transform:uppercase;color:var(--accent);">BatchNorm</div>
+          <div style="flex:1;font-size:20px;color:var(--ink-2);">
+            <strong>Moyennes alternatives</strong> + paramètre appris (ARMAGNAC) en lieu et place de la moyenne de Fréchet itérative.
+          </div>
+        </div>
+
+        <div data-step style="display:flex;gap:24px;align-items:baseline;padding:18px 24px;border-left:3px solid var(--accent);background:var(--bg-2);">
+          <div style="flex-shrink:0;width:160px;font-family:var(--mono);font-size:15px;letter-spacing:0.05em;text-transform:uppercase;color:var(--accent);">Distribué</div>
+          <div style="flex:1;font-size:20px;color:var(--ink-2);">
+            <strong>Agrégation projetée</strong> (RFedProj / RFedRL) en lieu et place de Karcher fédéré.
+          </div>
+        </div>
+
+        <div data-step class="theorem" style="margin-top:16px;">
+          <div class="theorem-tag">Message principal</div>
+          <div class="theorem-body" style="font-size:21px;">
+            La structure géométrique <em>n'est pas un obstacle</em> à l'optimisation — à chaque échelle on peut la respecter en n'utilisant que des projections / rétractions <strong>peu coûteuses</strong>. La performance et la robustesse suivent.
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §6.2 · Outlook -->
+  <section>
+    <slide-note>Perspectives : extension non compacte (variété SPD elle-même), confidentialité différentielle dans le cadre fédéré (DP-RFedProj), optimiseurs adaptatifs (Adam riemannien), applications hyperspectral / radar avec géométrie en grande dimension.</slide-note>
+    <slide-header title="Perspectives"></slide-header>
+    <div class="slide-body">
+      <div class="cols cols-2" style="gap:48px;margin-top:24px;">
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Théorie</div>
+          <ul style="font-size:20px;color:var(--ink-2);line-height:1.8;padding-left:18px;">
+            <li>Variétés <strong>non compactes</strong> — la variété SPD elle-même</li>
+            <li>Optimiseurs <strong>adaptatifs</strong> (Adam riemannien) avec garanties</li>
+            <li>Différentialité de la moyenne <strong>ARMAGNAC</strong> en limite</li>
+          </ul>
+        </div>
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Pratique</div>
+          <ul style="font-size:20px;color:var(--ink-2);line-height:1.8;padding-left:18px;">
+            <li>Extension à la <strong>confidentialité différentielle</strong> (DP-RFedProj)</li>
+            <li>Déploiement multi-sites <strong>BCI</strong> / clinique</li>
+            <li>Imagerie <strong>hyperspectrale</strong> et radar en très grande dimension</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+
+
+  <!-- ═══════════════════════════════════════
+       End
+       ═══════════════════════════════════════ -->
+  <refs-slide per-page="14">
+    <p class="h1">Références</p>
+  </refs-slide>
+
+  <end-slide
+    heading="MERCI"
+    kicker="questions bienvenues"
+    contact="ammar.mian at univ-smb.fr">
+  </end-slide>
+
