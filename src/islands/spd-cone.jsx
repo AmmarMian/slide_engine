@@ -196,6 +196,13 @@ export function SpdCone() {
     controlsRef.current = controls;
     controls.update();
 
+    // ── Theme change ──────────────────────────────────────────────────────
+    const onTheme = () => {
+      const p = getPalette();
+      scene.background = new THREE.Color(p.bgNum);
+    };
+    document.documentElement.addEventListener('deck-theme-change', onTheme);
+
     // ── Render loop ────────────────────────────────────────────────────────
     let raf;
     const animate = () => {
@@ -211,6 +218,7 @@ export function SpdCone() {
       renderer.dispose();
       controls.dispose();
       labels.destroy();
+      document.documentElement.removeEventListener('deck-theme-change', onTheme);
     };
   }, []);
 

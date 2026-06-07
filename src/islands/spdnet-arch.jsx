@@ -269,107 +269,213 @@ function DiagramReEig() {
   );
 }
 
-function DiagramBN() {
-  // 2D surface patch — bilinear blending of top/bottom bezier curves
-  // gives a "tablecloth draped over a curved manifold" feel.
-  //
-  // Parametric surface: P(u,v) = (1-v)·Top(u) + v·Bot(u)
-  // Iso-v lines at v ∈ {0.25, 0.5, 0.75} are quadratic beziers.
-  // Iso-u lines (meridians) collapse to straight vertical lines.
-  //
-  // Top bezier: (50,76) →ctrl(200,42)→ (350,73)
-  // Bot bezier: (50,128) →ctrl(200,153)→ (350,128)
+export function BnDiagram() {
+  // from/to track the two phases being interpolated; t is linear 0→1.
+  const [from, setFrom] = useState(0);
+  const [to,   setTo]   = useState(0);
+  const [t,    setT]    = useState(1);
+  const toRef  = useRef(0);
+  const rafRef = useRef(null);
 
-  const batchPts = [[118, 100], [178, 66], [270, 77], [308, 111], [150, 120]];
-  const M = [215, 95];
+  function ease(x) { return x < 0.5 ? 2*x*x : -1+(4-2*x)*x; }
+  function lerpE(a, b, x) { const e = ease(x); return a.map((v,i) => v+(b[i]-v)*e); }
+
+  // [cx, cy, rx, ry, deg]
+  // Phase 0 & 1: same raw scatter — mean appears as a separate overlay in phase 1
+  // Phase 2: whitened.  Avg position ≈ (230,175) = identity centre.
+  //          Avg rx≈16, avg ry≈16  →  geometric mean ≈ I (circle)
+  // Phase 3: rebiased.  Avg position ≈ (228,172) = Γ centre.
+  //          Avg rx≈11, avg ry≈24, avg deg≈32  →  geometric mean ≈ Γ
+  const RAW = [[138,175,33,16,28],[188,145,20,13,-18],[255,158,28,19,46],[162,202,17,11,5],[235,195,24,15,-30],[290,170,19,15,12]];
+  const CFGS = [
+    RAW, // phase 0: raw batch
+    RAW, // phase 1: same positions; mean overlay appears separately
+    // phase 2: whitened — avg cx≈230, cy≈175, rx≈16, ry≈16  →  geom. mean ≈ I
+    [[185,160,22,12,15],[225,148,13,22,-8],[265,163,20,15,42],[192,192,11,20,2],[244,196,18,11,-28],[270,175,10,16,8]],
+    // phase 3: rebiased — avg cx≈228, cy≈172, rx≈11, ry≈24, deg≈32  →  geom. mean ≈ Γ
+    [[188,158,16,30,28],[225,145,9,25,30],[262,160,13,22,42],[195,192,7,26,24],[242,196,11,20,38],[268,172,9,21,32]],
+  ];
+
+  const MEAN  = [211, 176, 24, 15,  7]; // approx geometric mean of raw batch
+  const IDENT = [230, 175, 16, 16,  0]; // identity = circle
+  const GAMMA = [228, 172, 11, 24, 34]; // learned Γ
+
+  function startTransition(curr, next) {
+    cancelAnimationFrame(rafRef.current);
+    toRef.current = next;
+    setFrom(curr);
+    setTo(next);
+    setT(0);
+    const t0 = performance.now(), DUR = 820;
+    function tick(now) {
+      const raw = Math.min((now - t0) / DUR, 1);
+      setT(raw);
+      if (raw < 1) rafRef.current = requestAnimationFrame(tick);
+    }
+    rafRef.current = requestAnimationFrame(tick);
+  }
+
+  const svgRef = useRef(null);
+
+  useEffect(() => {
+    function onKey(e) {
+      if (!svgRef.current?.closest('[data-deck-active]')) return;
+      const curr = toRef.current;
+      const fwd = e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown';
+      const bwd = e.key === 'ArrowLeft'  || e.key === 'PageUp';
+      if (fwd && curr < 3) { e.stopPropagation(); startTransition(curr, curr + 1); }
+      if (bwd && curr > 0) { e.stopPropagation(); startTransition(curr, curr - 1); }
+    }
+    // capture phase so we intercept before deck-stage's bubble-phase listener
+    window.addEventListener('keydown', onKey, true);
+    return () => { window.removeEventListener('keydown', onKey, true); cancelAnimationFrame(rafRef.current); };
+  }, []);
+
+  function handleClick(e) {
+    e.stopPropagation();
+    const curr = toRef.current;
+    if (curr < 3) startTransition(curr, curr + 1);
+  }
+
+  const ellipses = CFGS[from].map((e, i) => lerpE(e, CFGS[to][i], t));
+
+  // markerOp: 1 when stable at targetPhase; fades in/out during transitions
+  function markerOp(target) {
+    if (to === target) return ease(t);            // fading in (or stable when t=1)
+    if (from === target && from !== to) return 1 - ease(t); // fading out
+    return 0;
+  }
+  const meanOp  = markerOp(1);
+  const identOp = markerOp(2);
+  const gammaOp = markerOp(3);
+  const geodOp  = meanOp;
+
+  const STEPS = [
+    { label: 'Batch',       sub: 'Σᵢ brut'    },
+    { label: 'Moy. géom.',  sub: 'M_B'         },
+    { label: 'Blanchiment', sub: 'M⁻½ΣᵢM⁻½'   },
+    { label: 'Re-biais',    sub: 'Γ½Σ̂ᵢΓ½'      },
+  ];
+  const BW = 96, GAP = 22, X0 = 10;
+  const boxX = STEPS.map((_, i) => X0 + i * (BW + GAP));
+
+  const CAPTIONS = [
+    'Batch brut — Σᵢ dispersées sur 𝒮₊ᵈ',
+    'Moyenne géométrique M_B (Fréchet)',
+    'Blanchiment : Σ̂ᵢ = M_B⁻½ Σᵢ M_B⁻½  →  centrées autour de I',
+    'Re-biais : Yᵢ = Γ½ Σ̂ᵢ Γ½  →  centrées autour de Γ',
+  ];
 
   return (
-    <svg viewBox="0 0 400 300" width="100%" height="100%" style={{ display: 'block' }}>
+    <svg ref={svgRef} viewBox="0 0 480 308" width="100%" height="100%"
+      style={{ display:'block', cursor: to < 3 ? 'pointer' : 'default' }}
+      onClick={handleClick}>
       <defs>
-        <marker id="sbn" viewBox="0 0 10 10" refX={9} refY={5}
-          markerWidth={5} markerHeight={5} orient="auto">
-          <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--ink)" />
+        <marker id="bnarr0" viewBox="0 0 8 8" refX={7} refY={4}
+          markerWidth={4} markerHeight={4} orient="auto">
+          <path d="M 0 1 L 7 4 L 0 7 z" fill="var(--rule)" />
+        </marker>
+        <marker id="bnarr1" viewBox="0 0 8 8" refX={7} refY={4}
+          markerWidth={4} markerHeight={4} orient="auto">
+          <path d="M 0 1 L 7 4 L 0 7 z" fill="var(--accent)" />
         </marker>
       </defs>
 
-      {/* Surface fill */}
-      <path d="M 50 76 Q 200 42 350 73 L 350 128 Q 200 153 50 128 Z"
-        fill="var(--bg-2)" stroke="none" />
-
-      {/* Iso-v parametric lines (constant v — like latitude curves) */}
-      <path d="M 50 89 Q 200 65 350 88.75"
-        fill="none" stroke="var(--ink-3)" strokeWidth={0.65} opacity={0.75} />
-      <path d="M 50 102 Q 200 97.5 350 100.5"
-        fill="none" stroke="var(--ink-3)" strokeWidth={0.65} opacity={0.75} />
-      <path d="M 50 115 Q 200 130 350 113.25"
-        fill="none" stroke="var(--ink-3)" strokeWidth={0.65} opacity={0.75} />
-
-      {/* Iso-u meridian lines (constant u — straight in this parameterisation) */}
-      {[[110, 67, 138], [170, 62, 142], [230, 61, 142], [290, 67, 138]].map(([x, y1, y2], i) => (
-        <line key={i} x1={x} y1={y1} x2={x} y2={y2}
-          stroke="var(--ink-3)" strokeWidth={0.65} opacity={0.75} />
-      ))}
-
-      {/* Surface border */}
-      <path d="M 50 76 Q 200 42 350 73" fill="none" stroke="var(--ink)" strokeWidth={1.4} />
-      <path d="M 50 128 Q 200 153 350 128" fill="none" stroke="var(--ink)" strokeWidth={1.4} />
-      <line x1={50} y1={76} x2={50} y2={128} stroke="var(--ink)" strokeWidth={1.4} />
-      <line x1={350} y1={73} x2={350} y2={128} stroke="var(--ink)" strokeWidth={1.4} />
-
-      {/* Geodesic lines from batch points to M */}
-      {batchPts.map(([x, y], i) => (
-        <line key={i} x1={x} y1={y} x2={M[0]} y2={M[1]}
-          stroke="var(--ink-3)" strokeWidth={0.9} strokeDasharray="3 2" />
-      ))}
-
-      {/* Batch points */}
-      {batchPts.map(([x, y], i) => (
-        <circle key={i} cx={x} cy={y} r={5}
-          fill="var(--bg-2)" stroke="var(--ink)" strokeWidth={1.3} />
-      ))}
-
-      {/* Fréchet mean */}
-      <circle cx={M[0]} cy={M[1]} r={11} fill="var(--ink)" />
-      <text x={M[0]} y={M[1] + 4}
-        fontFamily="var(--mono)" fontSize={11} fontWeight={700}
-        fill="var(--bg)" textAnchor="middle">M</text>
-
-      {/* "Fréchet mean" callout — below and right of M, clear of the surface */}
-      <line x1={M[0] + 11} y1={M[1] + 5} x2={M[0] + 30} y2={M[1] + 28}
-        stroke="var(--ink-3)" strokeWidth={0.8} />
-      <text x={M[0] + 32} y={M[1] + 30}
-        fontFamily="var(--mono)" fontSize={11} fill="var(--ink-3)">moyenne de Fréchet</text>
-
-      {/* Surface label */}
-      <text x={200} y={170}
-        fontFamily="var(--mono)" fontSize={11} fill="var(--ink-3)" textAnchor="middle">
-        (Sym⁺_d, d_R) — variété SPD
-      </text>
-
-      {/* ── M → I → G chain ── */}
-      <g transform="translate(18, 190)">
-        {[['M', 'moy. batch'], ['I', 'identité'], ['G', 'appris']].map(([lbl, sub], i) => (
-          <React.Fragment key={lbl}>
-            <circle cx={i * 118 + 46} cy={28} r={22}
-              fill="var(--bg-2)" stroke="var(--ink)" strokeWidth={1.5} />
-            <text x={i * 118 + 46} y={33}
-              fontFamily="var(--mono)" fontSize={14} fontWeight={700}
-              fill="var(--ink)" textAnchor="middle">{lbl}</text>
-            <text x={i * 118 + 46} y={60}
-              fontFamily="var(--sans)" fontSize={10}
-              fill="var(--ink-3)" textAnchor="middle">{sub}</text>
-            {i < 2 && (
-              <path d={`M ${i * 118 + 70} 28 H ${i * 118 + 118}`}
-                stroke="var(--ink)" strokeWidth={1.3} fill="none"
-                markerEnd="url(#sbn)" />
+      {/* ── Flowchart ── */}
+      {STEPS.map((s, i) => {
+        const x     = boxX[i];
+        const active = i === to;
+        const done   = i < to;
+        return (
+          <React.Fragment key={i}>
+            {i > 0 && (
+              <line x1={boxX[i-1]+BW} y1={30} x2={x-1} y2={30}
+                stroke={done ? 'var(--accent)' : 'var(--rule)'}
+                strokeWidth={1.5}
+                markerEnd={`url(#${done ? 'bnarr1' : 'bnarr0'})`} />
             )}
+            <rect x={x} y={8} width={BW} height={44} rx={6}
+              fill={active ? 'var(--accent)' : 'var(--bg-2)'}
+              stroke={active ? 'none' : done ? 'var(--accent)' : 'var(--rule)'}
+              strokeWidth={1} />
+            <text x={x+BW/2} y={27}
+              fontFamily="var(--sans)" fontSize={11} fontWeight={active ? 700 : 500}
+              fill={active ? 'var(--bg)' : done ? 'var(--accent)' : 'var(--ink)'}
+              textAnchor="middle">{s.label}</text>
+            <text x={x+BW/2} y={41}
+              fontFamily="var(--mono)" fontSize={9}
+              fill={active ? 'rgba(255,255,255,0.72)' : 'var(--ink-3)'}
+              textAnchor="middle">{s.sub}</text>
           </React.Fragment>
-        ))}
-        <text x={182} y={76}
-          fontFamily="var(--mono)" fontSize={10} fill="var(--ink-3)" textAnchor="middle">
-          transport parallèle
-        </text>
-      </g>
+        );
+      })}
+
+      {/* ── Manifold surface hint ── */}
+      <path d="M 32 240 Q 240 195 448 236 L 448 270 Q 240 278 32 274 Z"
+        fill="var(--bg-2)" stroke="none" opacity={0.5} />
+      <path d="M 32 240 Q 240 195 448 236"
+        fill="none" stroke="var(--rule-soft)" strokeWidth={1} />
+      <text x={240} y={262} fontFamily="var(--mono)" fontSize={9}
+        fill="var(--ink-3)" textAnchor="middle" opacity={0.55}>𝒮₊ᵈ</text>
+
+      {/* ── Geodesic lines → M_B (visible in phase 1) ── */}
+      {geodOp > 0.01 && ellipses.map(([cx,cy], i) => (
+        <line key={i} x1={cx} y1={cy} x2={MEAN[0]} y2={MEAN[1]}
+          stroke="var(--accent)" strokeWidth={0.9} strokeDasharray="4 3"
+          opacity={geodOp * 0.55} />
+      ))}
+
+      {/* ── Ellipses ── */}
+      {ellipses.map(([cx,cy,rx,ry,deg], i) => (
+        <ellipse key={i} cx={cx} cy={cy} rx={rx} ry={ry}
+          transform={`rotate(${deg},${cx},${cy})`}
+          fill="var(--bg)" stroke="var(--ink)" strokeWidth={1.7} />
+      ))}
+
+      {/* ── Mean M_B overlay ── */}
+      {meanOp > 0.01 && <>
+        <ellipse cx={MEAN[0]} cy={MEAN[1]} rx={MEAN[2]} ry={MEAN[3]}
+          transform={`rotate(${MEAN[4]},${MEAN[0]},${MEAN[1]})`}
+          fill="var(--accent)" stroke="none" opacity={0.18 * meanOp} />
+        <ellipse cx={MEAN[0]} cy={MEAN[1]} rx={MEAN[2]} ry={MEAN[3]}
+          transform={`rotate(${MEAN[4]},${MEAN[0]},${MEAN[1]})`}
+          fill="none" stroke="var(--accent)" strokeWidth={2.2} opacity={meanOp} />
+        <text x={MEAN[0]+MEAN[2]+7} y={MEAN[1]+4}
+          fontFamily="var(--mono)" fontSize={11} fill="var(--accent)"
+          opacity={meanOp}>M_B</text>
+      </>}
+
+      {/* ── Identity circle I ── */}
+      {identOp > 0.01 && <>
+        <circle cx={IDENT[0]} cy={IDENT[1]} r={IDENT[2]}
+          fill="none" stroke="var(--ink-2)" strokeWidth={2}
+          strokeDasharray="5 3" opacity={identOp} />
+        <text x={IDENT[0]+IDENT[2]+7} y={IDENT[1]+4}
+          fontFamily="var(--mono)" fontSize={11} fill="var(--ink-2)"
+          opacity={identOp}>I</text>
+      </>}
+
+      {/* ── Learned bias Γ ── */}
+      {gammaOp > 0.01 && <>
+        <ellipse cx={GAMMA[0]} cy={GAMMA[1]} rx={GAMMA[2]} ry={GAMMA[3]}
+          transform={`rotate(${GAMMA[4]},${GAMMA[0]},${GAMMA[1]})`}
+          fill="var(--accent)" stroke="none" opacity={0.18 * gammaOp} />
+        <ellipse cx={GAMMA[0]} cy={GAMMA[1]} rx={GAMMA[2]} ry={GAMMA[3]}
+          transform={`rotate(${GAMMA[4]},${GAMMA[0]},${GAMMA[1]})`}
+          fill="none" stroke="var(--accent)" strokeWidth={2.2}
+          strokeDasharray="6 3" opacity={gammaOp} />
+        <text x={GAMMA[0]+GAMMA[3]+7} y={GAMMA[1]+4}
+          fontFamily="var(--mono)" fontSize={11} fill="var(--accent)"
+          opacity={gammaOp}>Γ</text>
+      </>}
+
+      {/* ── Caption ── */}
+      <text x={228} y={299} fontFamily="var(--mono)" fontSize={9.5}
+        fill="var(--ink-3)" textAnchor="middle">{CAPTIONS[to]}</text>
+
+      {/* ── Key hint ── */}
+      {to < 3 && <text x={468} y={299} fontFamily="var(--mono)" fontSize={9}
+        fill="var(--ink-3)" textAnchor="end" opacity={0.4}>→ suite</text>}
     </svg>
   );
 }

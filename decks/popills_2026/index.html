@@ -42,7 +42,20 @@
       "li2017mpncov": "Li, P., Xie, J., Wang, Q. & Zuo, W. (2017). Is Second-order Information Helpful for Large-scale Visual Recognition? ICCV.",
       "li2018isqrt": "Li, P., Xie, J., Wang, Q. & Gao, Z. (2018). Towards Faster Training of Global Covariance Pooling Networks by Iterative Matrix Square Root Normalization. CVPR.",
       "he2016": "He, K., Zhang, X., Ren, S. & Sun, J. (2016). Deep Residual Learning for Image Recognition. CVPR.",
-      "ioffe2015": "Ioffe, S. & Szegedy, C. (2015). Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift. ICML."
+      "ioffe2015": "Ioffe, S. & Szegedy, C. (2015). Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift. ICML.",
+      "mian2019": "Mian, A. (2019). Contributions to SAR Image Time Series Analysis. Thèse de doctorat, Université Paris-Saclay.",
+      "richards2005": "Richards, M. A., Scheer, J. A. & Holm, W. A. (2005). Fundamentals of Radar Signal Processing. McGraw-Hill.",
+      "hoarau2017": "Hoarau, Q., Ginolhac, G., Atto, A. M. et al. (2017). Robust adaptive detection of buried pipes using GPR. Signal Processing, 132, 293–307.",
+      "pallotta2018": "Pallotta, L. & Orlando, D. (2018). Polarimetric covariance eigenvalues classification in SAR images. IEEE Geoscience and Remote Sensing Letters, 16(5), 746–750.",
+      "rignot1992": "Rignot, E., Chellappa, R. & Dubois, P. (1992). Unsupervised segmentation of polarimetric SAR data using the covariance matrix. IEEE Transactions on Geoscience and Remote Sensing, 30(4), 697–705.",
+      "bn_spd_preprint": "Mian, A. et al. On batch normalization for SPDnet. Submitted to Elsevier Signal Processing.",
+      "laprade2024": "Laprade, N. et al. (2024). HyperLeaf2024 — A Hyperspectral Imaging Dataset for Classification and Regression. CVPR Workshops (FGVC11).",
+      "fabiyi2020": "Fabiyi, S. D. et al. (2020). Varietal Classification of Rice Seeds using RGB and Hyperspectral Images. IEEE Access, 8, 22493–22505.",
+      "muller2007hdm": "Müller, M. et al. (2007). Documentation Mocap Database HDM05. Technical Report CG-2007-2, Universität Bonn.",
+      "chen2024hdm": "Chen, Z. et al. (2024). SPD matrix representations for action recognition. (pre-computed matrices for HDM05).",
+      "jafuno2025": "Jafuno, D., Mian, A., Ginolhac, G. & Stelzenmuller, N. (2025). Classification of Buried Objects From GPR Images by Using Second-Order Deep Learning Models. IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing, 18, 3185–3197.",
+      "gallet2022": "Gallet, M., Mian, A., Ginolhac, G. & Stelzenmuller, N. (2022). Classification of GPR Signals via Covariance Pooling on CNN Features within a Riemannian Framework. IGARSS, Kuala Lumpur.",
+      "jafuno2024": "Jafuno, D., Mian, A., Ginolhac, G. & Stelzenmuller, N. (2024). Buried Object Classification from GPR Data by using Second Order Deep Learning Models. IGARSS 2024, pp. 6513–6516."
     }
   </script>
 
@@ -539,6 +552,150 @@
     <slide-footer></slide-footer>
   </section>
 
+  <!-- §1.1d · Radar SAR — stochastic model and covariance matrix -->
+  <section>
+    <slide-note>Modèle de la donnée SAR : vecteur complexe z_k de p mesures (impulsions / polarisations) par cellule de résolution, K vues indépendantes. La SCM est le descripteur de référence pour la détection et la classification polarimétrique.</slide-note>
+    <slide-header title="Radar SAR — modèle et matrice de covariance"></slide-header>
+    <div class="slide-body">
+      <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:72px;min-height:0;align-items:start;margin-top:12px;">
+
+        <!-- Left: SAR geometry SVG -->
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-start;height:100%;gap:14px;">
+          <svg viewBox="0 0 540 430" style="width:100%;max-height:430px;height:auto;">
+            <defs>
+              <marker id="sar-arr" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto">
+                <polygon points="0 0, 8 3, 0 6" fill="var(--ink-2)"/>
+              </marker>
+            </defs>
+
+            <!-- Flight track -->
+            <line x1="30" y1="62" x2="510" y2="62" stroke="var(--rule)" stroke-width="1.5" stroke-dasharray="10 6"/>
+            <text x="44" y="55" font-size="13" font-family="var(--mono)" fill="var(--ink-3)">trajectoire</text>
+            <!-- Velocity arrow -->
+            <line x1="30" y1="78" x2="95" y2="78" stroke="var(--ink-2)" stroke-width="2" marker-end="url(#sar-arr)"/>
+            <text x="62" y="95" text-anchor="middle" font-size="13" font-family="var(--mono)" fill="var(--ink-2)">v</text>
+
+            <!-- Satellite body -->
+            <rect x="446" y="45" width="28" height="18" rx="2" fill="var(--bg-2)" stroke="var(--ink-2)" stroke-width="1.8"/>
+            <!-- Solar panels -->
+            <rect x="421" y="49" width="22" height="12" rx="1" fill="var(--accent)" fill-opacity="0.4" stroke="var(--accent)" stroke-width="1.2"/>
+            <line x1="443" y1="55" x2="446" y2="55" stroke="var(--ink-2)" stroke-width="1.5"/>
+            <rect x="474" y="49" width="22" height="12" rx="1" fill="var(--accent)" fill-opacity="0.4" stroke="var(--accent)" stroke-width="1.2"/>
+            <line x1="474" y1="55" x2="474" y2="55" stroke="var(--ink-2)" stroke-width="1.5"/>
+            <!-- Antenna pointing down-left -->
+            <line x1="458" y1="63" x2="447" y2="80" stroke="var(--ink)" stroke-width="2.2"/>
+            <circle cx="446" cy="82" r="3.5" fill="var(--ink-2)"/>
+
+            <!-- Nadir line (dashed) -->
+            <line x1="460" y1="63" x2="460" y2="230" stroke="var(--rule-soft)" stroke-width="1" stroke-dasharray="5 5"/>
+            <text x="465" y="155" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">nadir</text>
+
+            <!-- SAR beam edges (side-looking, looking left) -->
+            <line x1="452" y1="68" x2="128" y2="250" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="7 4" opacity="0.75"/>
+            <line x1="455" y1="70" x2="260" y2="250" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="7 4" opacity="0.75"/>
+            <!-- Beam fill -->
+            <polygon points="452,68 128,250 260,250" fill="var(--accent)" fill-opacity="0.07"/>
+
+            <!-- Range labels -->
+            <text x="118" y="266" text-anchor="middle" font-size="12" font-family="var(--mono)" fill="var(--ink-3)">proche</text>
+            <text x="265" y="266" text-anchor="middle" font-size="12" font-family="var(--mono)" fill="var(--ink-3)">lointain</text>
+
+            <!-- Ground strip -->
+            <rect x="30" y="270" width="480" height="105" rx="3" fill="var(--bg-2)" stroke="var(--rule)" stroke-width="1.5"/>
+            <!-- Range grid lines -->
+            <line x1="30" y1="288" x2="510" y2="288" stroke="var(--rule-soft)" stroke-width="0.7"/>
+            <line x1="30" y1="308" x2="510" y2="308" stroke="var(--rule-soft)" stroke-width="0.7"/>
+            <line x1="30" y1="328" x2="510" y2="328" stroke="var(--rule-soft)" stroke-width="0.7"/>
+            <line x1="30" y1="348" x2="510" y2="348" stroke="var(--rule-soft)" stroke-width="0.7"/>
+            <!-- Azimuth grid lines -->
+            <line x1="110" y1="270" x2="110" y2="375" stroke="var(--rule-soft)" stroke-width="0.7"/>
+            <line x1="190" y1="270" x2="190" y2="375" stroke="var(--rule-soft)" stroke-width="0.7"/>
+            <line x1="270" y1="270" x2="270" y2="375" stroke="var(--rule-soft)" stroke-width="0.7"/>
+            <line x1="350" y1="270" x2="350" y2="375" stroke="var(--rule-soft)" stroke-width="0.7"/>
+            <line x1="430" y1="270" x2="430" y2="375" stroke="var(--rule-soft)" stroke-width="0.7"/>
+
+            <!-- Illuminated swath band -->
+            <rect x="98" y="270" width="192" height="105" fill="var(--accent)" fill-opacity="0.07" stroke="none"/>
+
+            <!-- Resolution cell (highlighted) -->
+            <rect x="173" y="296" width="46" height="46" rx="2" fill="var(--accent)" fill-opacity="0.3" stroke="var(--accent)" stroke-width="2.2"/>
+            <text x="196" y="324" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--accent)" font-weight="700">cellule</text>
+
+            <!-- Dashed line from cell to "K observations" box -->
+            <line x1="220" y1="310" x2="306" y2="208" stroke="var(--ink-3)" stroke-width="1" stroke-dasharray="4 3"/>
+
+            <!-- K observations box -->
+            <rect x="308" y="152" width="148" height="92" rx="4" fill="var(--bg-2)" stroke="var(--rule)" stroke-width="1.5"/>
+            <text x="382" y="174" text-anchor="middle" font-size="14" font-family="var(--sans)" fill="var(--ink-2)" font-weight="600">K vues</text>
+            <text x="382" y="196" text-anchor="middle" font-size="13" font-family="var(--mono)" fill="var(--ink-3)">z₁, z₂, …, z_K</text>
+            <text x="382" y="216" text-anchor="middle" font-size="12" font-family="var(--mono)" fill="var(--ink-3)">z_k ∈ ℂᵖ</text>
+            <text x="382" y="234" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-3)">(p mesures / impulsion)</text>
+
+            <!-- Azimuth direction arrow below ground -->
+            <line x1="38" y1="393" x2="128" y2="393" stroke="var(--ink-2)" stroke-width="1.5" marker-end="url(#sar-arr)"/>
+            <text x="83" y="410" text-anchor="middle" font-size="12" font-family="var(--mono)" fill="var(--ink-2)">azimut</text>
+
+            <!-- Range direction arrow below ground -->
+            <line x1="152" y1="393" x2="282" y2="393" stroke="var(--ink-2)" stroke-width="1.5" marker-end="url(#sar-arr)"/>
+            <text x="217" y="410" text-anchor="middle" font-size="12" font-family="var(--mono)" fill="var(--ink-2)">portée</text>
+          </svg>
+          <div style="font-size:14px;font-family:var(--mono);color:var(--ink-3);letter-spacing:0.06em;text-align:center;">
+            Géométrie SAR — acquisition à visée latérale
+          </div>
+        </div>
+
+        <!-- Right: model description + detection + classification -->
+        <div style="display:flex;flex-direction:column;gap:20px;">
+
+          <!-- Signal model -->
+          <div>
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:8px;">Modèle de données</div>
+            <p class="body">
+              Pour chaque cellule de résolution, le radar acquiert <strong>K vues</strong> — vecteurs complexes de <strong>p</strong> mesures (impulsions, polarisations). La <strong>matrice de covariance</strong> résume la structure statistique du clutter et du signal.<cite-ref key="richards2005"></cite-ref><cite-ref key="mian2019"></cite-ref>
+            </p>
+          </div>
+
+          <!-- Detection -->
+          <div>
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:8px;">Détection</div>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;">
+                <span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>
+                Tests de détection adaptative (GLRT) — la covariance modélise le clutter<cite-ref key="richards2005"></cite-ref>
+              </li>
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;">
+                <span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>
+                Détection de changements dans les séries temporelles SAR<cite-ref key="mian2019"></cite-ref>
+              </li>
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;">
+                <span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>
+                Détection robuste d'objets enfouis par radar GPR<cite-ref key="hoarau2017"></cite-ref>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Classification -->
+          <div>
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:8px;">Classification</div>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;">
+                <span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>
+                Segmentation non-supervisée de données PolSAR par modèle de covariance<cite-ref key="rignot1992"></cite-ref>
+              </li>
+              <li class="body" style="display:flex;gap:14px;align-items:baseline;">
+                <span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>
+                Classification polarimétrique par valeurs propres de la covariance<cite-ref key="pallotta2018"></cite-ref>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
 
   <section>
     <slide-header title="Travailler sur des données de matrices de covariance"></slide-header>
@@ -574,6 +731,53 @@
   </section-divider>
 
 
+
+  <!-- §1.2-readings · Recommended reading for Riemannian geometry -->
+  <section>
+    <slide-header title="Lectures recommandées"></slide-header>
+    <div class="slide-body" style="justify-content:center;align-items:center;">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:52px;max-width:1540px;width:100%;">
+
+        <!-- Absil -->
+        <div style="border-radius:12px;overflow:hidden;box-shadow:0 6px 32px rgba(0,0,0,0.18);">
+          <div style="background:#1b2236;padding:36px 32px 32px;display:flex;flex-direction:column;gap:20px;">
+            <div style="font-family:var(--mono);font-size:13px;letter-spacing:0.13em;color:#7b94c8;text-transform:uppercase;">Géométrie · Optimisation</div>
+            <div style="font-family:var(--sans);font-size:34px;font-weight:700;color:#e8eeff;line-height:1.18;">Optimization Algorithms on Matrix Manifolds</div>
+          </div>
+          <div style="background:var(--bg);padding:22px 32px;border-top:3px solid #3a4f80;">
+            <div style="font-family:var(--sans);font-size:21px;font-weight:600;color:var(--ink);">Absil, Mahony & Sepulchre</div>
+            <div style="font-family:var(--mono);font-size:15px;color:var(--ink-3);margin-top:5px;">2008 · Princeton University Press</div>
+          </div>
+        </div>
+
+        <!-- Boumal -->
+        <div style="border-radius:12px;overflow:hidden;box-shadow:0 6px 32px rgba(0,0,0,0.18);">
+          <div style="background:#1a2b1e;padding:36px 32px 32px;display:flex;flex-direction:column;gap:20px;">
+            <div style="font-family:var(--mono);font-size:13px;letter-spacing:0.13em;color:#6db889;text-transform:uppercase;">Variétés · Introductif</div>
+            <div style="font-family:var(--sans);font-size:34px;font-weight:700;color:#e6f7ec;line-height:1.18;">An Introduction to Optimization on Smooth Manifolds</div>
+          </div>
+          <div style="background:var(--bg);padding:22px 32px;border-top:3px solid #2e6640;">
+            <div style="font-family:var(--sans);font-size:21px;font-weight:600;color:var(--ink);">Boumal</div>
+            <div style="font-family:var(--mono);font-size:15px;color:var(--ink-3);margin-top:5px;">2023 · Cambridge University Press · <em>libre accès</em></div>
+          </div>
+        </div>
+
+        <!-- Higham -->
+        <div style="border-radius:12px;overflow:hidden;box-shadow:0 6px 32px rgba(0,0,0,0.18);">
+          <div style="background:#281818;padding:36px 32px 32px;display:flex;flex-direction:column;gap:20px;">
+            <div style="font-family:var(--mono);font-size:13px;letter-spacing:0.13em;color:#c47a7a;text-transform:uppercase;">Analyse matricielle</div>
+            <div style="font-family:var(--sans);font-size:34px;font-weight:700;color:#fdf0f0;line-height:1.18;">Functions of Matrices: Theory and Computation</div>
+          </div>
+          <div style="background:var(--bg);padding:22px 32px;border-top:3px solid #7a2020;">
+            <div style="font-family:var(--sans);font-size:21px;font-weight:600;color:var(--ink);">Higham</div>
+            <div style="font-family:var(--mono);font-size:15px;color:var(--ink-3);margin-top:5px;">2008 · SIAM</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
 
   <!-- §1.2 · Riemannian geometry primer (stepped 3D) -->
   <section>
@@ -644,13 +848,13 @@
       </div>
 
       <!-- ── Two-column comparison ─────────────────────────────────────────── -->
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px; flex:1; min-height:0;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px; align-items:start;">
 
         <!-- Classic GD -->
-        <div data-step class="rop-card" style="border:1px solid var(--rule); border-radius:10px; padding:28px 34px; display:flex; flex-direction:column; gap:18px;">
+        <div data-step class="rop-card" style="border:1px solid var(--rule); border-radius:10px; padding:18px 24px; display:flex; flex-direction:column; gap:12px;">
           <div>
             <div class="eyebrow" style="color:var(--ink-3); margin-bottom:5px;">Approche naïve</div>
-            <div style="font-family:var(--sans); font-size:38px; font-weight:600; letter-spacing:-0.025em; color:var(--ink); line-height:1.05;">Gradient euclidien</div>
+            <div style="font-family:var(--sans); font-size:30px; font-weight:600; letter-spacing:-0.025em; color:var(--ink); line-height:1.05;">Gradient euclidien</div>
           </div>
 
           <div style="display:flex; flex-direction:column; gap:11px;">
@@ -674,7 +878,7 @@
             </div>
           </div>
 
-          <div style="margin-top:auto; padding-top:14px; border-top:1px solid var(--rule-soft); display:flex; flex-direction:column; gap:6px;">
+          <div style="padding-top:14px; border-top:1px solid var(--rule-soft); display:flex; flex-direction:column; gap:6px;">
             <div class="small" style="color:var(--ink-3);">· Projection coûteuse à chaque itération</div>
             <div class="small" style="color:var(--ink-3);">· Ignore la courbure de <span class="math">\mathcal{M}</span></div>
             <div class="small" style="color:var(--ink-3);">· Convergence dégradée loin de la contrainte</div>
@@ -682,10 +886,10 @@
         </div>
 
         <!-- Riemannian GD -->
-        <div data-step class="rop-card" style="border:1px solid var(--accent); border-radius:10px; padding:28px 34px; display:flex; flex-direction:column; gap:18px;">
+        <div data-step class="rop-card" style="border:1px solid var(--accent); border-radius:10px; padding:18px 24px; display:flex; flex-direction:column; gap:12px;">
           <div>
             <div class="eyebrow" style="color:var(--accent); margin-bottom:5px;">Approche intrinsèque</div>
-            <div style="font-family:var(--sans); font-size:38px; font-weight:600; letter-spacing:-0.025em; color:var(--ink); line-height:1.05;">Gradient riemannien<cite-ref key="absil2008"></cite-ref><cite-ref key="boumal2023"></cite-ref></div>
+            <div style="font-family:var(--sans); font-size:30px; font-weight:600; letter-spacing:-0.025em; color:var(--ink); line-height:1.05;">Gradient riemannien<cite-ref key="absil2008"></cite-ref><cite-ref key="boumal2023"></cite-ref></div>
           </div>
 
           <div style="display:flex; flex-direction:column; gap:11px;">
@@ -710,7 +914,7 @@
             </div>
           </div>
 
-          <div style="margin-top:auto; padding-top:14px; border-top:1px solid var(--rule-soft); display:flex; flex-direction:column; gap:6px;">
+          <div style="padding-top:14px; border-top:1px solid var(--rule-soft); display:flex; flex-direction:column; gap:6px;">
             <div class="small" style="color:var(--ink-3);">· Reste sur <span class="math">\mathcal{M}</span> par construction, sans post-traitement</div>
             <div class="small" style="color:var(--ink-3);">· Exploite la géométrie : pas courts mais pertinents</div>
           </div>
@@ -739,7 +943,7 @@
     <div class="slide-body" style="padding:28px 64px 24px; gap:0;">
       <style>
         /* ── manifold card layout ── */
-        .mc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; flex:1; min-height:0; }
+        .mc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; align-items:start; }
         .mc-card { border:1px solid var(--rule); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; }
         .mc-card-head { padding:18px 24px 14px; display:flex; flex-direction:column; gap:6px; }
         .mc-card-head .mc-name { font-family:var(--sans); font-size:38px; font-weight:700; letter-spacing:-0.02em; line-height:1; }
@@ -883,7 +1087,7 @@
                 <span class="mc-eq">=</span>
                 <span class="mc-formula"><span class="math">\mathrm{tr}(X^{-1}U\,X^{-1}V)</span></span>
               </div>
-              <div class="mc-sub">métrique affine-invariante<cite-ref key="pennec2006"></cite-ref></div>
+              <div class="mc-sub">métrique affine-invariante<cite-ref key="boumal2023"></cite-ref></div>
             </div>
             <div class="mc-row">
               <div class="mc-row-line">
@@ -1007,6 +1211,116 @@
     blurb="L'architeture originale sur matrices de covariances">
   </section-divider>
 
+  <!-- §2.0 · SPDNet — problem statement -->
+  <section>
+    <slide-note>Problème : comment passer des matrices SPD à un classifieur ? Deux approches naïves — vec(Σ) et vech(Σ) — aplatissent la matrice en vecteur et ignorent la géométrie de la variété S++_d.</slide-note>
+    <slide-header title="SPDNet — Problématique"></slide-header>
+    <div class="slide-body" style="gap:24px;">
+
+      <!-- Pipeline diagram -->
+      <div style="display:flex;align-items:center;justify-content:center;gap:0;flex-shrink:0;padding:8px 0;">
+
+        <!-- Input matrix heatmap -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+          <svg viewBox="0 0 104 104" style="width:108px;height:108px;">
+            <!-- 4×4 SPD heatmap, stride 26 -->
+            <rect x="0"  y="0"  width="24" height="24" fill="var(--accent)" fill-opacity="0.92" rx="2"/>
+            <rect x="26" y="0"  width="24" height="24" fill="var(--accent)" fill-opacity="0.52" rx="2"/>
+            <rect x="52" y="0"  width="24" height="24" fill="var(--accent)" fill-opacity="0.28" rx="2"/>
+            <rect x="78" y="0"  width="24" height="24" fill="var(--accent)" fill-opacity="0.11" rx="2"/>
+            <rect x="0"  y="26" width="24" height="24" fill="var(--accent)" fill-opacity="0.52" rx="2"/>
+            <rect x="26" y="26" width="24" height="24" fill="var(--accent)" fill-opacity="0.85" rx="2"/>
+            <rect x="52" y="26" width="24" height="24" fill="var(--accent)" fill-opacity="0.44" rx="2"/>
+            <rect x="78" y="26" width="24" height="24" fill="var(--accent)" fill-opacity="0.20" rx="2"/>
+            <rect x="0"  y="52" width="24" height="24" fill="var(--accent)" fill-opacity="0.28" rx="2"/>
+            <rect x="26" y="52" width="24" height="24" fill="var(--accent)" fill-opacity="0.44" rx="2"/>
+            <rect x="52" y="52" width="24" height="24" fill="var(--accent)" fill-opacity="0.88" rx="2"/>
+            <rect x="78" y="52" width="24" height="24" fill="var(--accent)" fill-opacity="0.46" rx="2"/>
+            <rect x="0"  y="78" width="24" height="24" fill="var(--accent)" fill-opacity="0.11" rx="2"/>
+            <rect x="26" y="78" width="24" height="24" fill="var(--accent)" fill-opacity="0.20" rx="2"/>
+            <rect x="52" y="78" width="24" height="24" fill="var(--accent)" fill-opacity="0.46" rx="2"/>
+            <rect x="78" y="78" width="24" height="24" fill="var(--accent)" fill-opacity="0.80" rx="2"/>
+            <rect x="0"  y="0"  width="102" height="102" fill="none" stroke="var(--rule)" stroke-width="1.5" rx="3"/>
+          </svg>
+          <div style="font-family:var(--mono);font-size:17px;color:var(--ink-3);text-align:center;">
+            <span class="math">\boldsymbol{\Sigma}_i \in \mathcal{S}_{++}^d</span>
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <div style="font-size:40px;color:var(--ink-2);padding:0 32px;flex-shrink:0;line-height:1;margin-bottom:28px;">→</div>
+
+        <!-- f box -->
+        <div style="border:2px solid var(--accent);border-radius:12px;padding:18px 40px;text-align:center;flex-shrink:0;margin-bottom:28px;">
+          <div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Classifieur</div>
+          <div style="font-family:var(--sans);font-size:28px;font-weight:600;color:var(--ink);">f(<span class="math">\boldsymbol{\Sigma}</span> ; <span class="math">\theta</span>)</div>
+        </div>
+
+        <!-- Arrow -->
+        <div style="font-size:40px;color:var(--ink-2);padding:0 32px;flex-shrink:0;line-height:1;margin-bottom:28px;">→</div>
+
+        <!-- Bar chart output -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+          <svg viewBox="0 0 170 108" style="width:170px;height:108px;">
+            <line x1="22" y1="2"  x2="22"  y2="92" stroke="var(--rule)" stroke-width="1.5"/>
+            <line x1="22" y1="92" x2="166" y2="92" stroke="var(--rule)" stroke-width="1.5"/>
+            <rect x="26"  y="6"  width="26" height="86" fill="var(--accent)" rx="2" opacity="0.85"/>
+            <rect x="62"  y="64" width="26" height="28" fill="var(--ink-3)" rx="2" opacity="0.5"/>
+            <rect x="98"  y="40" width="26" height="52" fill="var(--ink-3)" rx="2" opacity="0.5"/>
+            <rect x="134" y="78" width="26" height="14" fill="var(--ink-3)" rx="2" opacity="0.5"/>
+            <text x="39"  y="106" text-anchor="middle" font-size="12" font-family="var(--mono)" fill="var(--ink-3)">C₁</text>
+            <text x="75"  y="106" text-anchor="middle" font-size="12" font-family="var(--mono)" fill="var(--ink-3)">C₂</text>
+            <text x="111" y="106" text-anchor="middle" font-size="12" font-family="var(--mono)" fill="var(--ink-3)">C₃</text>
+            <text x="147" y="106" text-anchor="middle" font-size="12" font-family="var(--mono)" fill="var(--ink-3)">C₄</text>
+          </svg>
+          <div style="font-family:var(--mono);font-size:17px;color:var(--ink-3);text-align:center;">
+            <span class="math">p(\mathrm{classe} \mid \boldsymbol{\Sigma})</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Two naive approach cards -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:start;">
+
+        <!-- vec(Σ) -->
+        <div data-step style="border:1px solid var(--rule);border-radius:10px;padding:22px 28px;display:flex;flex-direction:column;gap:12px;">
+          <div>
+            <div class="eyebrow" style="color:var(--ink-3);margin-bottom:6px;">Première idée</div>
+            <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--ink);">vec(<span class="math">\boldsymbol{\Sigma}</span>)<span class="math">\;\in\;\mathbb{R}^{d^2}</span></div>
+          </div>
+          <p class="body">Empiler toutes les entrées colonne par colonne — <strong>d²</strong> composantes.</p>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px;">
+            <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:#b03030;flex-shrink:0;">⚠</span><span>Symétrie ignorée : <span class="math">\Sigma_{ij}=\Sigma_{ji}</span> dupliqués — dimension <span class="math">d^2</span> non-minimale</span></li>
+            <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:#b03030;flex-shrink:0;">⚠</span><span>Contrainte <span class="math">\boldsymbol{\Sigma}\succ 0</span> perdue dans <span class="math">\mathbb{R}^{d^2}</span></span></li>
+          </ul>
+        </div>
+
+        <!-- vech(Σ) -->
+        <div data-step style="border:1px solid var(--rule);border-left:3px solid var(--accent);border-radius:10px;padding:22px 28px;display:flex;flex-direction:column;gap:12px;">
+          <div>
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Idée affinée</div>
+            <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--ink);">vech(<span class="math">\boldsymbol{\Sigma}</span>)<span class="math">\;\in\;\mathbb{R}^{d(d+1)/2}</span></div>
+          </div>
+          <p class="body">Triangle supérieur uniquement — <strong>d(d+1)/2</strong> composantes, sans redondance.</p>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px;">
+            <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:var(--ink-3);flex-shrink:0;">·</span><span>Plus économique en dimension</span></li>
+            <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:#b03030;flex-shrink:0;">⚠</span><span>La contrainte <span class="math">\boldsymbol{\Sigma}\succ 0</span> reste ignorée dans <span class="math">\mathbb{R}^{d(d+1)/2}</span></span></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Problem statement -->
+      <div data-step style="border:1px solid #b03030;border-left:4px solid #b03030;border-radius:8px;padding:14px 24px;background:rgba(176,48,48,0.05);flex-shrink:0;">
+        <div class="eyebrow" style="color:#b03030;margin-bottom:5px;">Problème fondamental</div>
+        <p class="body">Ni vec ni vech n'exploite la structure géométrique de <span class="math">\mathcal{S}_{++}^d</span> : les distances euclidiennes dans <span class="math">\mathbb{R}^m</span> ne correspondent pas aux distances géodésiques entre matrices.</p>
+      </div>
+
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
   <!-- ═══════════════════════════════════════
        §2.1 · SPDNet interactive architecture
        ═══════════════════════════════════════ -->
@@ -1116,14 +1430,14 @@
   </section>
 
   <!-- §2.4b · SPDNet eigenvalue-sensitive backpropagation (K-matrix animation) -->
-  <section>
-    <slide-note>Animation spécifique SPDNet : 8 phases — vue d'ensemble, BiMap avant, ReEig avant (eigendecomposition), LogEig avant, perte, LogEig arrière (K-matrix — pièce maîtresse), ReEig arrière, BiMap arrière. La phase LogEig arrière montre la matrice K et le produit de Hadamard K⊙G qui maintient le gradient sur la variété SPD.</slide-note>
-    <slide-header title="Rétropropagation SPDNet — matrice de sensibilité K"></slide-header>
-    <div class="slide-body" style="padding:0;overflow:hidden;">
-      <spdnet-backprop-spd></spdnet-backprop-spd>
-    </div>
-    <slide-footer></slide-footer>
-  </section>
+  <!-- <section> -->
+  <!--   <slide-note>Animation spécifique SPDNet : 8 phases — vue d'ensemble, BiMap avant, ReEig avant (eigendecomposition), LogEig avant, perte, LogEig arrière (K-matrix — pièce maîtresse), ReEig arrière, BiMap arrière. La phase LogEig arrière montre la matrice K et le produit de Hadamard K⊙G qui maintient le gradient sur la variété SPD.</slide-note> -->
+  <!--   <slide-header title="Rétropropagation SPDNet — matrice de sensibilité K"></slide-header> -->
+  <!--   <div class="slide-body" style="padding:0;overflow:hidden;"> -->
+  <!--     <spdnet-backprop-spd></spdnet-backprop-spd> -->
+  <!--   </div> -->
+  <!--   <slide-footer></slide-footer> -->
+  <!-- </section> -->
 
   <!-- §2.5 · Full SPDNet training step summary -->
   <section>
@@ -1167,20 +1481,67 @@
        §2.6+ · GPR application (sits inside the SPDNet section)
        ═══════════════════════════════════════ -->
 
+  <!-- §2.5a · GPR — referenced works -->
+  <section>
+    <slide-note>Travaux sur lesquels s'appuient les résultats GPR présentés dans cette section.</slide-note>
+    <slide-header title="GPR — travaux de référence"></slide-header>
+    <div class="slide-body" style="justify-content:center;align-items:center;">
+      <div style="max-width:1400px;width:100%;display:flex;flex-direction:column;gap:24px;">
+        <p class="lede" style="text-align:left;">Les résultats présentés dans cette section s'appuient sur les travaux suivants :</p>
+        <div style="border:1.5px solid var(--rule);border-radius:12px;overflow:hidden;">
+          <div style="padding:10px 28px;background:var(--bg-2);border-bottom:1px solid var(--rule);">
+            <div class="eyebrow" style="color:var(--accent);">Publications</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0;">
+            <div style="padding:22px 28px;border-bottom:1px solid var(--rule-soft);display:flex;gap:20px;align-items:baseline;">
+              <div style="font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:700;flex-shrink:0;width:60px;">JSTARS<br>2025</div>
+              <p class="body">Jafuno, D., Mian, A., Ginolhac, G. & Stelzenmuller, N. Classification of Buried Objects From Ground Penetrating Radar Images by Using Second-Order Deep Learning Models. <em>IEEE JSTARS</em>, 2025, 18, 3185–3197.</p>
+            </div>
+            <div style="padding:22px 28px;border-bottom:1px solid var(--rule-soft);display:flex;gap:20px;align-items:baseline;">
+              <div style="font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:700;flex-shrink:0;width:60px;">IGARSS<br>2022</div>
+              <p class="body">Gallet, M., Mian, A., Ginolhac, G. & Stelzenmuller, N. Classification of GPR Signals via Covariance Pooling on CNN Features within a Riemannian Framework. <em>IGARSS</em>, Kuala Lumpur, 2022.</p>
+            </div>
+            <div style="padding:22px 28px;display:flex;gap:20px;align-items:baseline;">
+              <div style="font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:700;flex-shrink:0;width:60px;">IGARSS<br>2024</div>
+              <p class="body">Jafuno, D., Mian, A., Ginolhac, G. & Stelzenmuller, N. Buried Object Classification from GPR Data by Using Second Order Deep Learning Models. <em>IGARSS</em>, 2024, pp. 6513–6516.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §2.5b · GPR — A-scan and B-scan formation -->
+  <section>
+    <slide-note>Le principe physique du GPR : l'antenne émet une impulsion électromagnétique, qui se réfléchit sur les objets enfouis. Un A-scan est la trace temporelle reçue pour une position d'antenne. En déplaçant l'antenne, on assemble les A-scans en un B-scan 2D où chaque objet produit une signature hyperbolique caractéristique.</slide-note>
+    <slide-header title="GPR — formation du A-scan et du B-scan"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <gpr-scan></gpr-scan>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
   <!-- §2.6 · GPR motivation -->
   <section>
     <slide-note>Le radar GPR fournit des B-scans bruités à faible rapport signal-sur-bruit. Les objets enterrés y apparaissent comme des hyperboles. Tâche : classifier l'objet à partir d'une vignette d'hyperbole détectée. Deux écueils : les CNN superficiels manquent de représentation riche ; les gros modèles CV ont trop de paramètres pour le peu de données étiquetées disponibles.</slide-note>
-    <slide-header title="GPR — pourquoi c'est difficile"></slide-header>
-    <div class="slide-body">
-      <div class="cols cols-2" style="gap:56px;margin-top:16px;">
+    <slide-header title="GPR - Difficultés"></slide-header>
+    <div class="slide-body" style="gap:20px;">
+
+      <!-- Full-width B-scan image -->
+      <div data-step style="flex-shrink:0;">
+        <img src="./assets/gpr/b-scan.png" alt="B-scan GPR typique"
+          style="width:100%;height:auto;display:block;border:1px solid var(--rule-soft);border-radius:4px;"/>
+        <div class="figcaption" style="margin-top:6px;">B-scan GPR typique : chaque objet enfoui produit une hyperbole caractéristique.</div>
+      </div>
+
+      <!-- Two columns below -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;">
         <div data-step>
           <div class="eyebrow" style="margin-bottom:12px;">Le signal</div>
           <p class="body" style="font-size:21px;color:var(--ink-2);">
-            Un B-scan radar : on déplace l'antenne le long du sol, chaque objet enterré produit une <strong>hyperbole</strong> caractéristique. Faible SNR, fortes variations selon le sol et la fréquence d'acquisition.
+            On déplace l'antenne le long du sol — chaque objet enterré produit une <strong>hyperbole</strong> caractéristique. Faible SNR, fortes variations selon le sol et la fréquence d'acquisition.
           </p>
-          <div style="margin-top:18px;padding:16px;background:var(--bg-2);border-left:3px solid var(--accent);font-family:var(--mono);font-size:17px;color:var(--ink-3);">
-            B-scan typique : 4000 × 800 px → 1 584 vignettes 60 × 112 px
-          </div>
         </div>
         <div data-step>
           <div class="eyebrow" style="margin-bottom:12px;">Les contraintes</div>
@@ -1214,43 +1575,72 @@
   </section>
 
   <!-- §3.3 · Dataset -->
+
+  <!-- §3.3b · Dataset details + experimental protocol -->
   <section>
-    <slide-note>Jeu de données fourni par Géolithe : 732 B-scans, conditions d'acquisition variées (fréquence, hauteur d'antenne, type de sol). Après détection des hyperboles : 1584 vignettes 60×112 px, quatre classes. La classe "vide" est constituée de bruit pur — un test important pour la robustesse.</slide-note>
-    <slide-header title="Données Géolithe — 4 classes"></slide-header>
+    <slide-note>Détails du jeu de données Géolithe et protocole expérimental : baselines, 100 graines aléatoires, deux stress-tests (fraction d'entraînement, bruit d'étiquetage).</slide-note>
+    <slide-header title="Données & protocole expérimental"></slide-header>
     <div class="slide-body">
-      <div class="cols cols-2" style="gap:56px;margin-top:24px;align-items:start;">
-        <div data-step>
-          <div class="eyebrow" style="margin-bottom:14px;">Acquisition</div>
-          <div style="display:flex;flex-direction:column;gap:10px;font-size:18px;color:var(--ink-2);font-family:var(--mono);">
-            <div><span style="color:var(--ink-3);">B-scans</span> &nbsp;&nbsp; 732</div>
-            <div><span style="color:var(--ink-3);">Fréquences</span> &nbsp;&nbsp; 200 / 350 MHz</div>
-            <div><span style="color:var(--ink-3);">Hauteurs antenne</span> &nbsp;&nbsp; 0–150 cm</div>
-            <div><span style="color:var(--ink-3);">Sols</span> &nbsp;&nbsp; sable, sable humide, gravier, gravier sec</div>
-            <div><span style="color:var(--ink-3);">Vignettes finales</span> &nbsp;&nbsp; 1 584 × (60 × 112)</div>
-            <div><span style="color:var(--ink-3);">Split</span> &nbsp;&nbsp; 1108 / 238 / 238</div>
+      <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:56px;min-height:0;align-items:start;margin-top:8px;">
+
+        <!-- Left: Data details -->
+        <div style="display:flex;flex-direction:column;gap:18px;">
+          <div>
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:10px;">Données — Géolithe</div>
+            <div style="display:flex;flex-direction:column;gap:7px;font-family:var(--mono);font-size:17px;color:var(--ink-2);">
+              <div><span style="color:var(--ink-3);display:inline-block;width:220px;">Fournisseur</span>Géolithe, labellisé par experts géophysiciens</div>
+              <div><span style="color:var(--ink-3);display:inline-block;width:220px;">B-scans</span>732 · taille moy. ~(4 000, 800) px</div>
+              <div><span style="color:var(--ink-3);display:inline-block;width:220px;">Fréquences radar</span>200 / 350 MHz</div>
+              <div><span style="color:var(--ink-3);display:inline-block;width:220px;">Élévation antenne</span>0 / 25 / 50 / 75 / 100 / 150 cm</div>
+              <div><span style="color:var(--ink-3);display:inline-block;width:220px;">Types de sol</span>sable, sable humide, gravier, gravier sec</div>
+              <div style="margin-top:4px;padding-top:10px;border-top:1px solid var(--rule-soft);">
+                <span style="color:var(--ink-3);display:inline-block;width:220px;">Vignettes</span>1 584 × (60 × 112) px
+              </div>
+              <div><span style="color:var(--ink-3);display:inline-block;width:220px;">Split</span>1 108 train / 238 val / 238 test</div>
+            </div>
           </div>
-        </div>
-        <div data-step>
-          <div class="eyebrow" style="margin-bottom:14px;">Les quatre classes</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-            <div style="padding:18px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
-              <div style="font-family:var(--sans);font-size:20px;font-weight:600;color:var(--ink);">Métal</div>
-              <div class="small" style="color:var(--ink-3);margin-top:4px;">hyperbole nette, forte réflectivité</div>
-            </div>
-            <div style="padding:18px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
-              <div style="font-family:var(--sans);font-size:20px;font-weight:600;color:var(--ink);">Non-métal</div>
-              <div class="small" style="color:var(--ink-3);margin-top:4px;">signature plus diffuse</div>
-            </div>
-            <div style="padding:18px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
-              <div style="font-family:var(--sans);font-size:20px;font-weight:600;color:var(--ink);">Abri en bois</div>
-              <div class="small" style="color:var(--ink-3);margin-top:4px;">structure creuse, hyperboles multiples</div>
-            </div>
-            <div style="padding:18px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
-              <div style="font-family:var(--sans);font-size:20px;font-weight:600;color:var(--ink);">Vide</div>
-              <div class="small" style="color:var(--ink-3);margin-top:4px;">bruit pur — contrôle</div>
+          <div style="background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:8px;padding:14px 18px;">
+            <div style="font-family:var(--sans);font-size:16px;font-weight:600;color:var(--ink);margin-bottom:6px;">Classes (4)</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-family:var(--mono);font-size:15px;color:var(--ink-2);">
+              <div>· <strong>Métal</strong> — hyperbole nette</div>
+              <div>· <strong>Non-métal</strong> — signature diffuse</div>
+              <div>· <strong>Abri en bois</strong> — hyperboles multiples</div>
+              <div>· <strong>Vide</strong> — bruit pur (contrôle)</div>
             </div>
           </div>
         </div>
+
+        <!-- Right: Protocol -->
+        <div style="display:flex;flex-direction:column;gap:18px;">
+          <div>
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:10px;">Protocole expérimental</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div>
+                <div class="small" style="color:var(--ink-3);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.08em;">Baselines</div>
+                <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px;">
+                  <li class="body" style="display:flex;gap:10px;align-items:baseline;"><span style="color:var(--accent);flex-shrink:0;">·</span>CNN GPR superficiel (3 couches)<cite-ref key="almaimani18"></cite-ref></li>
+                  <li class="body" style="display:flex;gap:10px;align-items:baseline;"><span style="color:var(--accent);flex-shrink:0;">·</span>ResNet-34 fine-tuné (init ImageNet)</li>
+                  <li class="body" style="display:flex;gap:10px;align-items:baseline;"><span style="color:var(--accent);flex-shrink:0;">·</span>ResNet-34 ré-entraîné (init aléatoire)</li>
+                </ul>
+              </div>
+              <div style="border-top:1px solid var(--rule-soft);padding-top:10px;">
+                <div class="small" style="color:var(--ink-3);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.08em;">Paramètres</div>
+                <div style="font-family:var(--mono);font-size:16px;color:var(--ink-2);display:flex;flex-direction:column;gap:5px;">
+                  <div><span style="color:var(--ink-3);">Graines</span> &nbsp;100 · <span style="color:var(--ink-3);">batch</span> &nbsp;64 · <span style="color:var(--ink-3);">lr</span> &nbsp;10⁻²</div>
+                  <div><span style="color:var(--ink-3);">Arrêt précoce</span> &nbsp;10 itérations sans progrès</div>
+                </div>
+              </div>
+              <div style="border-top:1px solid var(--rule-soft);padding-top:10px;">
+                <div class="small" style="color:var(--ink-3);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.08em;">Stress-tests</div>
+                <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px;">
+                  <li class="body" style="display:flex;gap:10px;align-items:baseline;"><span style="color:var(--accent);flex-shrink:0;">(i)</span>Variation de la <strong>fraction d'entraînement</strong> — régime peu de données</li>
+                  <li class="body" style="display:flex;gap:10px;align-items:baseline;"><span style="color:var(--accent);flex-shrink:0;">(ii)</span>Variation du <strong>pourcentage d'étiquettes corrompues</strong> — robustesse au bruit</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
     <slide-footer></slide-footer>
@@ -1294,197 +1684,897 @@
     <slide-footer></slide-footer>
   </section>
 
+  <!-- §3.6 · SPD paper landscape — interactive knowledge graph -->
+  <section>
+    <slide-note>Carte des contributions autour de SPDNet. Cercle = fondateur, rectangle = amélioration de couche, rectangle arrondi = architecture. Appuyer sur B pour mettre en évidence la normalisation par batch (SPDNet-BN, Kobler 2022, et ce travail). Cliquer sur un nœud pour afficher les détails.</slide-note>
+    <slide-header title="Paysage des réseaux SPD — carte des contributions"></slide-header>
+    <div class="slide-body" style="padding:0 32px 4px;">
+      <spd-paper-graph style="flex:1;min-height:0;"></spd-paper-graph>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
   <!-- ═══════════════════════════════════════
-       §4 · Contribution 1 — ARMAGNAC : BatchNorm paramétrique
+       §4 · Contribution 1 — BatchNorm SPD paramétrique (ARMAGNAC)
        ═══════════════════════════════════════ -->
   <section-divider
-    label="ARMAGNAC"
+    label="BatchNorm SPD"
     kicker="Première contribution"
-    blurb="Une batch-normalisation SPD paramétrique, à moyenne apprise">
+    blurb="Une batch-normalisation paramétrique pour réseaux SPD">
   </section-divider>
 
-  <!-- §4.0 · SPDNet architecture with BN highlighted — context before the BN slides -->
+  <!-- §4.intro-a · Classical BatchNorm reminder -->
   <section>
-    <style>
-      .spda-block { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; border-radius:8px; border:1.5px solid var(--rule); background:var(--bg-2); padding:18px 22px; flex-shrink:0; }
-      .spda-block.accent { border-color:var(--accent); background:color-mix(in srgb, var(--accent) 8%, var(--bg-2)); }
-      .spda-label { font-family:var(--sans); font-size:28px; font-weight:700; color:var(--ink); }
-      .spda-eq { font-family:var(--mono); font-size:14px; color:var(--ink-3); white-space:nowrap; }
-      .spda-arrow { font-size:28px; color:var(--ink-3); flex-shrink:0; align-self:center; }
-      .spda-group { display:flex; align-items:center; gap:0; border:1.5px dashed var(--rule); border-radius:10px; padding:18px 22px; position:relative; }
-      .spda-group-label { position:absolute; bottom:-28px; left:50%; transform:translateX(-50%); font-family:var(--mono); font-size:18px; color:var(--ink-3); white-space:nowrap; }
-    </style>
-    <slide-note>Avant les détails de la BN SPD : montrer où elle s'insère dans SPDNet. Le bloc BN est répété à l'intérieur de la boucle ×k, entre ReEig et la sortie de chaque couche BiMap+ReEig.</slide-note>
-    <slide-header title="BatchNorm dans SPDNet — où ?"></slide-header>
-    <div class="slide-body" style="justify-content:center; align-items:center; gap:52px;">
-
-      <!-- Pipeline diagram -->
-      <div style="display:flex; align-items:center; gap:10px;">
-
-        <!-- Input -->
-        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; flex-shrink:0;">
-          <div style="display:flex; flex-direction:column; gap:0; position:relative; width:72px; height:72px;">
-            <div style="position:absolute; left:10px; top:10px; width:55px; height:55px; background:var(--bg-2); border:1.5px solid var(--ink);"></div>
-            <div style="position:absolute; left:5px; top:5px; width:55px; height:55px; background:var(--bg-2); border:1.5px solid var(--ink);"></div>
-            <div style="position:absolute; left:0; top:0; width:55px; height:55px; background:var(--bg-2); border:1.5px solid var(--ink);"></div>
-          </div>
-          <div style="font-family:var(--mono); font-size:15px; color:var(--ink-3); margin-top:8px;">Σ ∈ 𝒮₊₊</div>
-        </div>
-
-        <div class="spda-arrow">→</div>
-
-        <!-- ×k group: BiMap + ReEig + BN -->
-        <div class="spda-group" style="gap:10px;">
-          <div class="spda-block">
-            <div class="spda-label">BiMap</div>
-            <div class="spda-eq">WXWᵀ</div>
-          </div>
-          <div class="spda-arrow" style="font-size:22px; padding:0 4px;">→</div>
-          <div class="spda-block">
-            <div class="spda-label">ReEig</div>
-            <div class="spda-eq">max(ε,λ)</div>
-          </div>
-          <div class="spda-arrow" style="font-size:22px; padding:0 4px;">→</div>
-          <!-- BN block — highlighted -->
-          <div class="spda-block accent">
-            <div class="spda-label" style="color:var(--accent);">BN</div>
-            <div class="spda-eq" style="color:var(--accent); font-weight:600;">M⁻½ X M⁻½</div>
-          </div>
-          <div class="spda-group-label">× k</div>
-        </div>
-
-        <div class="spda-arrow">→</div>
-
-        <div class="spda-block">
-          <div class="spda-label">LogEig</div>
-          <div class="spda-eq">log(λ)</div>
-        </div>
-
-        <div class="spda-arrow">→</div>
-
-        <div class="spda-block">
-          <div class="spda-label">vec</div>
-        </div>
-
-        <div class="spda-arrow">→</div>
-
-        <div class="spda-block">
-          <div class="spda-label">FC</div>
-        </div>
-
-        <div class="spda-arrow">→</div>
-
-        <div class="spda-block">
-          <div class="spda-label">Softmax</div>
-        </div>
-
-        <div class="spda-arrow">→</div>
-        <div style="font-family:var(--mono); font-size:40px; color:var(--ink); flex-shrink:0;">ŷ</div>
-
-      </div>
-
-      <!-- Callout -->
-      <div style="max-width:1400px; padding:22px 32px; background:var(--bg-2); border-left:4px solid var(--accent); border-radius:8px; display:flex; gap:32px; align-items:center;">
-        <div style="font-size:48px; flex-shrink:0;">📌</div>
-        <div>
-          <div class="eyebrow" style="color:var(--accent); margin-bottom:8px;">Enjeu</div>
-          <p class="body" style="font-size:22px; color:var(--ink-2); margin:0;">
-            Le bloc <strong>BN</strong> recentre le batch autour d'une <strong>moyenne sur la variété</strong>
-            <span class="math">\mathcal{S}_{++}^d</span>.
-            Quel mean choisir ? La moyenne de Fréchet est l'idéal géométrique
-            — mais n'a <strong>pas de forme close</strong> et coûte cher.
-            ARMAGNAC apprend à <strong>interpoler</strong> entre deux moyennes à forme close.
-          </p>
-        </div>
-      </div>
-
-    </div>
-    <slide-footer></slide-footer>
-  </section>
-
-  <!-- §4.1 · BatchNorm on SPD: the block + where the mean shows up -->
-  <section>
-    <slide-note>BatchNorm SPD : recentrer le batch autour de l'identité via une moyenne sur la variété, puis re-biaiser avec un paramètre SPD appris Γ. Le verrou : quel mean choisit-on ? Le mean géométrique (Fréchet) est l'idéal géométrique, mais demande une itération à point fixe coûteuse.</slide-note>
-    <slide-header title="BatchNorm sur SPD — la recette"></slide-header>
+    <slide-note>Rappel : la BatchNorm euclidienne (Ioffe & Szegedy 2015) centre et norme chaque batch puis réapplique une mise à l'échelle et un biais appris. L'idée clé : stabiliser les distributions internes au réseau pendant l'entraînement.</slide-note>
+    <slide-header title="BatchNorm — rappel euclidien"></slide-header>
     <div class="slide-body">
-      <p class="lede" style="margin-bottom:24px;max-width:1500px;">
-        On insère un bloc de BatchNorm SPD<cite-ref key="brooks2019"></cite-ref> entre les couches BiMap+ReEig. Il recentre le batch autour de l'identité — via une <strong>moyenne sur la variété</strong> — puis re-biaise avec un paramètre SPD appris.
-      </p>
+      <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:72px;min-height:0;align-items:center;">
 
-      <div class="cols cols-2" style="gap:48px;align-items:start;margin-top:12px;">
-        <div data-step>
-          <div class="eyebrow" style="margin-bottom:12px;">Entraînement</div>
-          <div class="math-display">
-            \{\Sigma\}_b \;\leftarrow\; \Gamma\, M_b^{-1/2}\,\{\Sigma\}_b\, M_b^{-1/2}\,\Gamma
+        <!-- Left: visual -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:20px;">
+          <svg viewBox="0 0 420 300" style="width:100%;max-height:320px;height:auto;">
+            <!-- Before: path endpoints at y=230 so fill touches axis -->
+            <text x="60" y="22" font-family="var(--mono)" font-size="13" fill="var(--ink-3)">avant</text>
+            <path d="M 20 230 Q 75 62 130 230" fill="var(--accent)" fill-opacity="0.18" stroke="var(--accent)" stroke-width="1.8"/>
+            <line x1="75" y1="68" x2="75" y2="230" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <text x="75" y="250" text-anchor="middle" font-family="var(--mono)" font-size="12" fill="var(--accent)">μ_B</text>
+            <line x1="15" y1="230" x2="195" y2="230" stroke="var(--rule)" stroke-width="1.2"/>
+
+            <!-- Arrow -->
+            <text x="210" y="140" text-anchor="middle" font-family="var(--sans)" font-size="32" fill="var(--ink-2)">→</text>
+
+            <!-- After: endpoints at y=230; ±1σ ticks at x=272/328 aligned with labels -->
+            <text x="280" y="22" font-family="var(--mono)" font-size="13" fill="var(--ink-3)">après normalisation</text>
+            <path d="M 245 230 Q 300 30 355 230" fill="var(--accent)" fill-opacity="0.18" stroke="var(--accent)" stroke-width="1.8"/>
+            <line x1="300" y1="38" x2="300" y2="230" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <text x="300" y="250" text-anchor="middle" font-family="var(--mono)" font-size="12" fill="var(--accent)">0</text>
+            <line x1="272" y1="228" x2="272" y2="236" stroke="var(--ink-3)" stroke-width="1.3"/>
+            <line x1="328" y1="228" x2="328" y2="236" stroke="var(--ink-3)" stroke-width="1.3"/>
+            <text x="272" y="252" text-anchor="middle" font-family="var(--mono)" font-size="11" fill="var(--ink-3)">−1</text>
+            <text x="328" y="252" text-anchor="middle" font-family="var(--mono)" font-size="11" fill="var(--ink-3)">+1</text>
+            <line x1="235" y1="230" x2="410" y2="230" stroke="var(--rule)" stroke-width="1.2"/>
+          </svg>
+          <div style="font-size:14px;font-family:var(--mono);color:var(--ink-3);text-align:center;">Centrage et normalisation du batch</div>
+        </div>
+
+        <!-- Right: formulas + explanation -->
+        <div style="display:flex;flex-direction:column;gap:20px;">
+          <p class="lede">Pour un batch <span class="math">\{x_i\}</span>, la BatchNorm euclidienne centre, norme, puis rééchelonne avec des paramètres appris.<cite-ref key="ioffe2015"></cite-ref></p>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div class="theorem" style="padding:14px 20px;">
+              <div class="theorem-body" style="display:flex;flex-direction:column;gap:8px;">
+                <div><span class="math">\hat x_i = \dfrac{x_i - \mu_B}{\sigma_B}</span> &nbsp;<span style="font-family:var(--mono);font-size:15px;color:var(--ink-3);">— normaliser</span></div>
+                <div><span class="math">y_i = \gamma\,\hat x_i + \beta</span> &nbsp;<span style="font-family:var(--mono);font-size:15px;color:var(--ink-3);">— remettre à l'échelle</span></div>
+              </div>
+            </div>
           </div>
-          <p class="body" style="font-size:17px;color:var(--ink-3);margin-top:8px;">
-            <span class="math">M_b</span> = moyenne du batch ; <span class="math">\Gamma \in \mathcal{S}^{++}</span> = biais appris ; on entretient une moyenne globale <span class="math">R</span> par momentum <span class="math">\gamma</span>.
-          </p>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
+            <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>Stabilise les distributions internes au réseau</li>
+            <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>Permet des taux d'apprentissage plus élevés</li>
+            <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span><span class="math">\gamma, \beta \in \mathbb{R}</span> — paramètres appris</li>
+          </ul>
         </div>
 
-        <div data-step>
-          <div class="eyebrow" style="margin-bottom:12px;">Inférence</div>
-          <div class="math-display">
-            \Sigma \;\leftarrow\; \Gamma\, R^{-1/2}\,\Sigma\, R^{-1/2}\,\Gamma
-          </div>
-          <p class="body" style="font-size:17px;color:var(--ink-3);margin-top:8px;">
-            La moyenne <span class="math">R</span> du training remplace <span class="math">M_b</span> — analogie directe avec BatchNorm euclidienne.<cite-ref key="ioffe2015"></cite-ref>
-          </p>
-        </div>
-      </div>
-
-      <div data-step class="theorem" style="margin-top:28px;max-width:1500px;">
-        <div class="theorem-tag">Le verrou</div>
-        <div class="theorem-body" style="font-size:20px;">
-          Tout repose sur le choix de <span class="math">M_b</span>. Le candidat « naturel » — la <strong>moyenne géométrique de Fréchet</strong> — n'a pas de forme close et exige une itération à point fixe avec eigen-décompositions à chaque passe.
-        </div>
       </div>
     </div>
     <slide-footer></slide-footer>
   </section>
 
-  <!-- §4.2 · Hierarchy of means: A, H, GAH, geometric -->
+  <!-- §4.intro-b · SPD BatchNorm — Brooks 2019 -->
   <section>
-    <slide-note>Hiérarchie des moyennes SPD : arithmétique (MLE Wishart), harmonique (MLE inverse-Wishart), GAH = moyenne géométrique de A et H = minimiseur de la KL symétrisée. La moyenne géométrique est l'idéal mais coûte cher. GAH est un compromis bon marché — mais figé à mi-chemin entre A et H.</slide-note>
-    <slide-header title="Quelle moyenne ?"></slide-header>
+    <slide-note>Extension de la BN aux matrices SPD : remplacer la moyenne scalaire par la moyenne de Fréchet sur la variété, recentrer par transport parallèle (congruence M^{-1/2} · M^{-1/2}), puis re-biaiser avec un paramètre SPD appris Γ. Brooks NeurIPS 2019.</slide-note>
+    <slide-header title="BatchNorm SPD — Brooks et al."></slide-header>
     <div class="slide-body">
-      <div style="display:flex;flex-direction:column;gap:14px;margin-top:16px;max-width:1620px;">
+      <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:72px;min-height:0;align-items:center;">
 
-        <div data-step style="display:grid;grid-template-columns:180px 1fr 1.3fr;gap:32px;align-items:center;padding:18px 24px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:6px;">
-          <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--ink-2);text-align:center;">Arithmétique</div>
-          <div><span class="math">A = \tfrac{1}{K}\sum_k \Sigma_k</span></div>
-          <div class="small" style="font-size:16px;color:var(--ink-3);">forme close · MLE sous Wishart · <span class="math">\arg\min \sum_k D_{KL}(A, \Sigma_k)</span></div>
+        <!-- Left: BN diagram island -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:16px;height:100%;">
+          <div style="flex:1;width:100%;min-height:0;">
+            <bn-diagram></bn-diagram>
+          </div>
         </div>
 
-        <div data-step style="display:grid;grid-template-columns:180px 1fr 1.3fr;gap:32px;align-items:center;padding:18px 24px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:6px;">
-          <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--ink-2);text-align:center;">Harmonique</div>
-          <div><span class="math">H = \left(\tfrac{1}{K}\sum_k \Sigma_k^{-1}\right)^{-1}</span></div>
-          <div class="small" style="font-size:16px;color:var(--ink-3);">forme close · MLE sous Wishart inverse · <span class="math">\arg\min \sum_k D_{KL}(\Sigma_k, H)</span></div>
+        <!-- Right: formulas -->
+        <div style="display:flex;flex-direction:column;gap:20px;">
+          <p class="lede">On transpose l'idée sur la variété <span class="math">\mathcal{S}_{++}^d</span> : remplacer la moyenne scalaire par la <strong>moyenne de Fréchet</strong>, et la soustraction par une <strong>congruence</strong>.<cite-ref key="brooks2019"></cite-ref></p>
+          <div class="theorem" style="padding:14px 20px;">
+            <div class="theorem-body" style="display:flex;flex-direction:column;gap:10px;">
+              <div><span class="math">M_B = \arg\min_M \sum_i d_R^2(M,\Sigma_i)</span></div>
+              <div><span class="math">\hat\Sigma_i = M_B^{-1/2}\,\Sigma_i\,M_B^{-1/2}</span> &nbsp;<span style="font-family:var(--mono);font-size:14px;color:var(--ink-3);">— recentrage</span></div>
+              <div><span class="math">Y_i = \Gamma^{1/2}\,\hat\Sigma_i\,\Gamma^{1/2}</span> &nbsp;<span style="font-family:var(--mono);font-size:14px;color:var(--ink-3);">— biais appris <span class="math">\Gamma\in\mathcal{S}_{++}^d</span></span></div>
+            </div>
+          </div>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
+            <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span>Reste intrinsèquement sur la variété</li>
+            <li class="body" style="display:flex;gap:14px;align-items:baseline;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">·</span><span class="math">\Gamma \in \mathcal{S}_{++}^d</span> — analogue de <span class="math">(\gamma, \beta)</span> sur le cône</li>
+          </ul>
         </div>
 
-        <div data-step style="display:grid;grid-template-columns:180px 1fr 1.3fr;gap:32px;align-items:center;padding:18px 24px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:6px;">
-          <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--ink-2);text-align:center;">GAH</div>
-          <div><span class="math">\Theta = A \,\#_{1/2}\, H</span></div>
-          <div class="small" style="font-size:16px;color:var(--ink-3);">forme close · minimiseur de la <strong>KL symétrisée</strong> · poids fixé à <span class="math">\tfrac{1}{2}</span></div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §4.intro-c · Step 1 — cheaper closed-form means -->
+  <section>
+    <slide-note>Étape 1 : remplacer la moyenne de Fréchet par des moyennes à forme close. Arithmétique = MLE Wishart, harmonique = MLE inverse-Wishart, GAH = interpolation géodésique à t=0.5. Chacune est exacte et différentiable, mais fixe une hypothèse sur la distribution des données.</slide-note>
+    <slide-header title="Étape 1 — moyennes à forme close"></slide-header>
+    <div class="slide-body" style="gap:28px;">
+
+      <!-- Paper credit -->
+      <div style="display:flex;align-items:center;gap:14px;background:var(--bg-2);border:1px solid var(--rule);border-radius:8px;padding:10px 20px;flex-shrink:0;">
+        <div style="font-family:var(--mono);font-size:12px;letter-spacing:0.08em;color:var(--accent);text-transform:uppercase;flex-shrink:0;">Article soumis</div>
+        <div style="width:1px;height:24px;background:var(--rule);flex-shrink:0;"></div>
+        <div style="font-family:var(--sans);font-size:16px;color:var(--ink-2);">« On batch normalization for SPDnet » — <em>Elsevier Signal Processing</em> (soumis)<cite-ref key="bn_spd_preprint"></cite-ref></div>
+      </div>
+
+      <!-- Problem reminder -->
+      <div style="border:1px solid #b03030;border-left:4px solid #b03030;border-radius:8px;padding:12px 24px;background:rgba(176,48,48,0.05);flex-shrink:0;">
+        <p class="body">La moyenne de Fréchet <span class="math">M_B = \arg\min \sum_i d_R^2(M,\Sigma_i)</span> n'a <strong>pas de forme close</strong> — coûteuse en forward et en backward. Peut-on la remplacer ?</p>
+      </div>
+
+      <!-- Three means -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px;align-items:start;">
+
+        <!-- Arithmetic -->
+        <div data-step style="border:1px solid var(--rule);border-radius:10px;padding:20px 24px;display:flex;flex-direction:column;gap:12px;">
+          <div>
+            <div class="eyebrow" style="color:var(--ink-3);margin-bottom:6px;">Arithmétique</div>
+            <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--ink);"><span class="math">A</span></div>
+          </div>
+          <div class="display-math"><span class="math">A = \tfrac{1}{N}\sum_{i=1}^N \Sigma_i</span></div>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px;">
+            <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:var(--accent);flex-shrink:0;">·</span>Forme close, gradient exact</li>
+            <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:var(--accent);flex-shrink:0;">·</span>MLE distribution Wishart</li>
+            <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:var(--ink-3);flex-shrink:0;">·</span>Biais vers les grandes valeurs propres</li>
+          </ul>
         </div>
 
-        <div data-step style="display:grid;grid-template-columns:180px 1fr 1.3fr;gap:32px;align-items:center;padding:18px 24px;background:var(--bg-2);border:1px solid var(--accent);border-radius:6px;">
-          <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--accent);text-align:center;">Géométrique</div>
-          <div><span class="math">G = \arg\min_M \sum_k d_R(M, \Sigma_k)^2</span></div>
-          <div class="small" style="font-size:16px;color:var(--ink-3);">idéal géométrique<cite-ref key="karcher1977"></cite-ref><cite-ref key="pennec2006"></cite-ref> · <strong>pas de forme close</strong> · point fixe + eig à chaque passe</div>
+        <!-- Harmonic -->
+        <div data-step style="border:1px solid var(--rule);border-radius:10px;padding:20px 24px;display:flex;flex-direction:column;gap:12px;">
+          <div>
+            <div class="eyebrow" style="color:var(--ink-3);margin-bottom:6px;">Harmonique</div>
+            <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--ink);"><span class="math">H</span></div>
+          </div>
+          <div class="display-math"><span class="math">H = \Bigl(\tfrac{1}{N}\sum_{i=1}^N \Sigma_i^{-1}\Bigr)^{-1}</span></div>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px;">
+            <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:var(--accent);flex-shrink:0;">·</span>Forme close, gradient exact</li>
+            <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:var(--accent);flex-shrink:0;">·</span>MLE distribution inverse-Wishart</li>
+            <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:var(--ink-3);flex-shrink:0;">·</span>Biais vers les petites valeurs propres</li>
+          </ul>
+        </div>
+
+        <!-- GAH -->
+        <div data-step style="border:1px solid var(--rule);border-radius:10px;padding:20px 24px;display:flex;flex-direction:column;gap:12px;">
+          <div>
+            <div class="eyebrow" style="color:var(--ink-3);margin-bottom:6px;">GAH</div>
+            <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--ink);"><span class="math">H \#_{1/2} A</span></div>
+          </div>
+          <div class="display-math"><span class="math">H^{1/2}\!\bigl(H^{-1/2}AH^{-1/2}\bigr)^{1/2}\!H^{1/2}</span></div>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px;">
+            <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:var(--accent);flex-shrink:0;">·</span>Interpolation géodésique à <span class="math">t=\tfrac{1}{2}</span></li>
+            <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:var(--accent);flex-shrink:0;">·</span>Forme close, différentiable</li>
+            <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:var(--ink-3);flex-shrink:0;">·</span>Choix de <span class="math">t</span> fixé a priori</li>
+          </ul>
         </div>
 
       </div>
 
-      <div data-step class="theorem" style="margin-top:24px;max-width:1620px;">
-        <div class="theorem-tag">Question</div>
-        <div class="theorem-body" style="font-size:20px;">
-          GAH est un bon compromis cheap, mais fixe le poids à <span class="math">\tfrac{1}{2}</span>. Pourquoi ne pas <strong>apprendre</strong> ce poids à partir des données ?
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §4.step1b · Backpropagation diagram — forward + backward through BN -->
+  <section>
+    <slide-note>Contribution 2 : dériver le gradient analytique de la couche BN SPD. Le forward est en haut (Σᵢ → moyenne G → normalisation → Δᵢ → biais → Λᵢ). Le backward est en bas (dℓ/dΛᵢ → chaînes de règle) avec accumulation sur les deux chemins. La forme close du gradient évite de stocker les étapes intermédiaires et améliore la stabilité numérique.</slide-note>
+    <slide-header title="Étape 2 — rétropropagation analytique de la BN"></slide-header>
+    <div class="slide-body" style="gap:32px;">
+
+      <!-- Forward + backward diagram -->
+      <div style="flex:1;min-height:0;display:flex;align-items:center;justify-content:center;">
+        <svg viewBox="0 0 1560 420" width="100%" style="max-height:420px;overflow:visible;">
+          <defs>
+            <marker id="bpArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M 0 1 L 9 5 L 0 9 z" fill="var(--ink)"/>
+            </marker>
+            <marker id="bpArrFwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M 0 1 L 9 5 L 0 9 z" fill="var(--ink)"/>
+            </marker>
+            <marker id="bpArrBwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M 0 1 L 9 5 L 0 9 z" fill="var(--accent)"/>
+            </marker>
+          </defs>
+
+          <!-- ── FORWARD ROW (y=100) ── -->
+
+          <!-- {Σᵢ} input -->
+          <text x="60" y="108" font-family="var(--sans)" font-size="22" font-weight="600" fill="var(--ink)" text-anchor="middle"><tspan font-family="var(--mono)">{</tspan><tspan font-family="var(--sans)">Σ</tspan><tspan font-family="var(--mono)" font-size="16" dy="4">i</tspan><tspan font-family="var(--mono)" font-size="22" dy="-4">}</tspan></text>
+
+          <!-- fork up to Mean -->
+          <path d="M 100 100 L 130 100 L 130 50 L 200 50" stroke="var(--ink)" stroke-width="1.6" fill="none" marker-end="url(#bpArrFwd)"/>
+          <!-- fork straight to Normalize -->
+          <path d="M 100 100 L 430 100" stroke="var(--ink)" stroke-width="1.6" fill="none" marker-end="url(#bpArrFwd)"/>
+
+          <!-- Mean box -->
+          <rect x="200" y="28" width="150" height="44" rx="8" fill="var(--bg-2)" stroke="var(--accent)" stroke-width="2"/>
+          <text x="275" y="55" font-family="var(--sans)" font-size="18" font-weight="700" fill="var(--accent)" text-anchor="middle">Moyenne</text>
+
+          <!-- G label + arrow down to Normalize -->
+          <text x="410" y="44" font-family="var(--sans)" font-size="22" font-style="italic" fill="var(--ink)" text-anchor="middle">G</text>
+          <path d="M 380 50 L 410 50 L 410 72" stroke="var(--ink)" stroke-width="1.6" fill="none" marker-end="url(#bpArrFwd)"/>
+          <!-- G arrow right continues to normalize -->
+          <path d="M 350 50 L 430 50" stroke="var(--ink)" stroke-width="1.6" fill="none"/>
+          <path d="M 490 50 L 510 50 L 510 78" stroke="var(--ink)" stroke-width="1.6" fill="none" marker-end="url(#bpArrFwd)"/>
+
+          <!-- Normalize box -->
+          <rect x="430" y="72" width="210" height="56" rx="8" fill="var(--bg-2)" stroke="var(--rule)" stroke-width="1.8"/>
+          <text x="535" y="97" font-family="var(--sans)" font-size="16" font-weight="700" fill="var(--ink)" text-anchor="middle">Normaliser</text>
+          <text x="535" y="118" font-family="var(--mono)" font-size="13" fill="var(--ink-3)" text-anchor="middle">G⁻¹ᐟ²ΣᵢG⁻¹ᐟ²</text>
+
+          <!-- arrow → {Δᵢ} -->
+          <path d="M 640 100 L 710 100" stroke="var(--ink)" stroke-width="1.6" fill="none" marker-end="url(#bpArrFwd)"/>
+          <text x="730" y="108" font-family="var(--sans)" font-size="22" font-weight="600" fill="var(--ink)" text-anchor="middle"><tspan font-family="var(--mono)">{</tspan><tspan>Δ</tspan><tspan font-family="var(--mono)" font-size="16" dy="4">i</tspan><tspan font-family="var(--mono)" font-size="22" dy="-4">}</tspan></text>
+
+          <!-- Γ drops down -->
+          <text x="960" y="44" font-family="var(--sans)" font-size="22" font-style="italic" fill="var(--ink)" text-anchor="middle">Γ</text>
+          <path d="M 960 50 L 960 72" stroke="var(--ink)" stroke-width="1.6" fill="none" marker-end="url(#bpArrFwd)"/>
+
+          <!-- arrow → Add bias box -->
+          <path d="M 770 100 L 850 100" stroke="var(--ink)" stroke-width="1.6" fill="none" marker-end="url(#bpArrFwd)"/>
+
+          <!-- Add bias box -->
+          <rect x="850" y="72" width="200" height="56" rx="8" fill="var(--bg-2)" stroke="var(--rule)" stroke-width="1.8"/>
+          <text x="950" y="97" font-family="var(--sans)" font-size="16" font-weight="700" fill="var(--ink)" text-anchor="middle">Biais appris</text>
+          <text x="950" y="118" font-family="var(--mono)" font-size="13" fill="var(--ink-3)" text-anchor="middle">Γ¹ᐟ²ΔᵢΓ¹ᐟ²</text>
+
+          <!-- arrow → {Λᵢ} -->
+          <path d="M 1050 100 L 1130 100" stroke="var(--ink)" stroke-width="1.6" fill="none" marker-end="url(#bpArrFwd)"/>
+          <text x="1155" y="108" font-family="var(--sans)" font-size="22" font-weight="600" fill="var(--ink)" text-anchor="middle"><tspan font-family="var(--mono)">{</tspan><tspan>Λ</tspan><tspan font-family="var(--mono)" font-size="16" dy="4">i</tspan><tspan font-family="var(--mono)" font-size="22" dy="-4">}</tspan></text>
+
+          <!-- ── SEPARATOR ── -->
+          <line x1="30" y1="170" x2="1500" y2="170" stroke="var(--rule-soft)" stroke-width="1" stroke-dasharray="6 4"/>
+          <text x="780" y="165" font-family="var(--mono)" font-size="11" fill="var(--ink-3)" text-anchor="middle" opacity="0.5">backward ↓</text>
+
+          <!-- ── BACKWARD ROW (y=260 main, y=340 G-path) ── -->
+
+          <!-- ∂ℓ/∂Λᵢ -->
+          <text x="1400" y="268" font-family="var(--mono)" font-size="16" fill="var(--accent)" text-anchor="middle">∂ℓ/∂Λᵢ</text>
+
+          <!-- → ∂ℓ_Λ/∂Δᵢ -->
+          <path d="M 1330 260 L 1230 260" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="6 3" fill="none" marker-end="url(#bpArrBwd)"/>
+          <text x="1175" y="268" font-family="var(--mono)" font-size="15" fill="var(--accent)" text-anchor="middle">∂ℓ_Λ/∂Δᵢ</text>
+
+          <!-- ∂ℓ_Λ/∂Γ drops down -->
+          <path d="M 1175 275 L 1175 330" stroke="var(--accent)" stroke-width="1.4" stroke-dasharray="4 3" fill="none" marker-end="url(#bpArrBwd)"/>
+          <text x="1175" y="350" font-family="var(--mono)" font-size="15" fill="var(--accent)" text-anchor="middle">∂ℓ_Λ/∂Γ</text>
+
+          <!-- → ∂ℓ_δ/∂Σᵢ -->
+          <path d="M 1100 260 L 960 260" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="6 3" fill="none" marker-end="url(#bpArrBwd)"/>
+          <text x="900" y="268" font-family="var(--mono)" font-size="15" fill="var(--accent)" text-anchor="middle">∂ℓ_δ/∂Σᵢ</text>
+
+          <!-- ∂ℓ_δ/∂G drops down -->
+          <path d="M 900 275 L 900 330" stroke="var(--accent)" stroke-width="1.4" stroke-dasharray="4 3" fill="none" marker-end="url(#bpArrBwd)"/>
+          <text x="900" y="350" font-family="var(--mono)" font-size="15" fill="var(--accent)" text-anchor="middle">∂ℓ_δ/∂G</text>
+
+          <!-- ∂ℓ_G/∂Σᵢ (via G path) -->
+          <path d="M 820 340 L 680 340" stroke="var(--accent)" stroke-width="1.4" stroke-dasharray="4 3" fill="none" marker-end="url(#bpArrBwd)"/>
+          <text x="620" y="350" font-family="var(--mono)" font-size="15" fill="var(--accent)" text-anchor="middle">∂ℓ_G/∂Σᵢ</text>
+
+          <!-- sum ⊕ -->
+          <circle cx="320" cy="260" r="18" fill="var(--bg-2)" stroke="var(--accent)" stroke-width="1.8"/>
+          <text x="320" y="267" font-family="var(--sans)" font-size="22" fill="var(--accent)" text-anchor="middle">⊕</text>
+
+          <!-- → ∂ℓ/∂Σᵢ final -->
+          <path d="M 302 260 L 180 260" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="6 3" fill="none" marker-end="url(#bpArrBwd)"/>
+          <text x="100" y="268" font-family="var(--mono)" font-size="15" fill="var(--accent)" text-anchor="middle">∂ℓ/∂Σᵢ</text>
+
+          <!-- ∂ℓ_δ/∂Σᵢ → ⊕ -->
+          <path d="M 820 260 L 340 260" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="6 3" fill="none" marker-end="url(#bpArrBwd)"/>
+
+          <!-- ∂ℓ_G/∂Σᵢ → ⊕ (from below) -->
+          <path d="M 580 340 L 320 340 L 320 278" stroke="var(--accent)" stroke-width="1.4" stroke-dasharray="4 3" fill="none" marker-end="url(#bpArrBwd)"/>
+
+          <!-- Forward label -->
+          <text x="30" y="30" font-family="var(--mono)" font-size="12" fill="var(--ink-3)" opacity="0.6">forward →</text>
+        </svg>
+      </div>
+
+      <!-- Callout: why manual backprop matters -->
+      <div style="flex-shrink:0;border:1px solid var(--accent);border-left:4px solid var(--accent);border-radius:8px;padding:14px 24px;background:color-mix(in srgb,var(--accent) 6%,var(--bg));display:flex;gap:20px;align-items:flex-start;">
+        <div style="font-size:26px;flex-shrink:0;margin-top:2px;">⚡</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="font-family:var(--sans);font-size:18px;font-weight:700;color:var(--accent);">Pourquoi dériver le gradient manuellement ?</div>
+          <div style="display:flex;gap:32px;flex-wrap:wrap;">
+            <span class="body"><strong>Mémoire :</strong> l'autograd stocke tous les intermédiaires du forward — notre formule fermée n'en requiert aucun.</span>
+            <span class="body"><strong>Stabilité numérique :</strong> les chaînes de règle analytiques évitent l'accumulation d'erreurs d'arrondi propre aux graphes de calcul profonds.</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §4.step1c · Placeholder — manual backprop vs autograd comparison -->
+  <section>
+    <slide-note>Placeholder : comparaison gradient manuel vs autograd. Métriques cibles — temps de backward, pic mémoire GPU, et éventuellement erreur numérique sur les gradients.</slide-note>
+    <slide-header title="Gradient manuel vs autograd — comparaison"></slide-header>
+    <div class="slide-body" style="align-items:center;justify-content:center;">
+      <div style="border:2px dashed var(--rule);border-radius:16px;padding:60px 80px;display:flex;flex-direction:column;align-items:center;gap:24px;max-width:900px;width:100%;">
+        <div style="font-family:var(--mono);font-size:13px;letter-spacing:0.12em;color:var(--ink-3);text-transform:uppercase;">Placeholder — figure à venir</div>
+        <div style="font-family:var(--sans);font-size:28px;font-weight:700;color:var(--ink);text-align:center;">Temps de backward · Pic mémoire GPU</div>
+        <div style="display:flex;gap:48px;margin-top:8px;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+            <div style="width:120px;height:80px;background:var(--bg-2);border:1.5px solid var(--rule);border-radius:8px;display:flex;align-items:center;justify-content:center;">
+              <span style="font-family:var(--mono);font-size:12px;color:var(--ink-3);">autograd</span>
+            </div>
+            <div style="font-family:var(--mono);font-size:12px;color:var(--ink-3);">référence</div>
+          </div>
+          <div style="font-family:var(--sans);font-size:32px;color:var(--ink-3);align-self:center;">vs</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+            <div style="width:120px;height:80px;background:color-mix(in srgb,var(--accent) 10%,var(--bg));border:1.5px solid var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;">
+              <span style="font-family:var(--mono);font-size:12px;color:var(--accent);">manuel</span>
+            </div>
+            <div style="font-family:var(--mono);font-size:12px;color:var(--accent);">ce travail</div>
+          </div>
+        </div>
+        <div style="font-family:var(--mono);font-size:13px;color:var(--ink-3);text-align:center;margin-top:8px;">batch size · taille de matrice · nombre de couches</div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §4.intro-setup · Experimental setup -->
+  <section>
+    <slide-note>Environnement matériel, architecture SPDNet fixe, optimiseur et protocole d'évaluation communs aux trois datasets.</slide-note>
+    <slide-header title="Protocole expérimental"></slide-header>
+    <div class="slide-body" style="gap:20px;">
+
+      <!-- Architecture pipeline — full width, prominent -->
+      <div style="flex-shrink:0;background:var(--bg-2);border:1px solid var(--rule);border-radius:12px;padding:20px 32px;">
+        <div class="eyebrow" style="color:var(--accent);margin-bottom:14px;">Architecture — 2 blocs [BiMap → ReEig → BN] + LogEig + FC</div>
+        <div style="display:flex;align-items:center;gap:0;flex-wrap:nowrap;overflow:hidden;">
+          <!-- Input -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;">
+            <div style="width:52px;height:52px;border:1.5px solid var(--rule);border-radius:6px;background:var(--bg);display:flex;align-items:center;justify-content:center;">
+              <svg width="28" height="28" viewBox="0 0 28 28"><rect x="2" y="2" width="24" height="24" rx="2" fill="none" stroke="var(--ink-3)" stroke-width="1.5"/><line x1="2" y1="10" x2="26" y2="10" stroke="var(--ink-3)" stroke-width="0.8"/><line x1="2" y1="18" x2="26" y2="18" stroke="var(--ink-3)" stroke-width="0.8"/><line x1="10" y1="2" x2="10" y2="26" stroke="var(--ink-3)" stroke-width="0.8"/><line x1="18" y1="2" x2="18" y2="26" stroke="var(--ink-3)" stroke-width="0.8"/></svg>
+            </div>
+            <span style="font-family:var(--mono);font-size:12px;color:var(--ink-3);">Σ ∈ S++</span>
+          </div>
+          <div style="color:var(--rule);font-size:28px;padding:0 8px;flex-shrink:0;">→</div>
+          <!-- ×2 block -->
+          <div style="border:1.5px dashed var(--rule);border-radius:10px;padding:10px 16px;display:flex;align-items:center;gap:6px;flex-shrink:0;position:relative;">
+            <span style="position:absolute;top:-11px;right:10px;font-family:var(--mono);font-size:11px;color:var(--ink-3);background:var(--bg-2);padding:0 4px;">× 2</span>
+            <div style="background:var(--bg);border:1px solid var(--rule);border-radius:6px;padding:8px 14px;font-family:var(--mono);font-size:15px;font-weight:600;color:var(--ink-2);">BiMap</div>
+            <div style="color:var(--ink-3);font-size:18px;">→</div>
+            <div style="background:var(--bg);border:1px solid var(--rule);border-radius:6px;padding:8px 14px;font-family:var(--mono);font-size:15px;font-weight:600;color:var(--ink-2);">ReEig</div>
+            <div style="color:var(--ink-3);font-size:18px;">→</div>
+            <div style="background:color-mix(in srgb,var(--accent) 10%,var(--bg));border:2px solid var(--accent);border-radius:6px;padding:8px 18px;font-family:var(--mono);font-size:15px;font-weight:700;color:var(--accent);">BN</div>
+          </div>
+          <div style="color:var(--rule);font-size:28px;padding:0 8px;flex-shrink:0;">→</div>
+          <div style="background:var(--bg);border:1px solid var(--rule);border-radius:6px;padding:8px 14px;font-family:var(--mono);font-size:15px;font-weight:600;color:var(--ink-2);flex-shrink:0;">LogEig</div>
+          <div style="color:var(--rule);font-size:28px;padding:0 8px;flex-shrink:0;">→</div>
+          <div style="background:var(--bg);border:1px solid var(--rule);border-radius:6px;padding:8px 14px;font-family:var(--mono);font-size:15px;font-weight:600;color:var(--ink-2);flex-shrink:0;">FC</div>
+          <div style="color:var(--rule);font-size:28px;padding:0 8px;flex-shrink:0;">→</div>
+          <!-- Output -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;">
+            <div style="height:52px;display:flex;align-items:center;gap:3px;">
+              <div style="width:8px;height:42px;background:var(--accent);border-radius:2px;opacity:0.9;"></div>
+              <div style="width:8px;height:28px;background:var(--accent);border-radius:2px;opacity:0.6;"></div>
+              <div style="width:8px;height:36px;background:var(--accent);border-radius:2px;opacity:0.75;"></div>
+              <div style="width:8px;height:16px;background:var(--accent);border-radius:2px;opacity:0.4;"></div>
+            </div>
+            <span style="font-family:var(--mono);font-size:12px;color:var(--ink-3);">p(classe)</span>
+          </div>
+        </div>
+        <div style="font-family:var(--mono);font-size:13px;color:var(--ink-3);margin-top:10px;">Taille cachée : 0.9× entrée → 0.75× précédent · Bias Γ via softplus · W via orthogonal (Householder)</div>
+      </div>
+
+      <!-- Three info columns -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;align-items:start;">
+
+        <!-- Hardware -->
+        <div style="background:var(--bg-2);border:1px solid var(--rule);border-radius:10px;padding:18px 22px;display:flex;flex-direction:column;gap:10px;">
+          <div class="eyebrow" style="color:var(--accent);">Environnement</div>
+          <div style="display:flex;flex-direction:column;gap:7px;">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--rule-soft);padding-bottom:6px;">
+              <span style="font-family:var(--mono);font-size:13px;color:var(--ink-3);">GPU</span>
+              <span style="font-family:var(--sans);font-size:15px;font-weight:500;color:var(--ink-2);text-align:right;">RTX A6000 Ada</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--rule-soft);padding-bottom:6px;">
+              <span style="font-family:var(--mono);font-size:13px;color:var(--ink-3);">CPU</span>
+              <span style="font-family:var(--sans);font-size:15px;font-weight:500;color:var(--ink-2);">Xeon 5220R @ 2.2 GHz</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--rule-soft);padding-bottom:6px;">
+              <span style="font-family:var(--mono);font-size:13px;color:var(--ink-3);">Stack</span>
+              <span style="font-family:var(--sans);font-size:15px;font-weight:500;color:var(--ink-2);">PyTorch · Ubuntu 20.04</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;">
+              <span style="font-family:var(--mono);font-size:13px;color:var(--ink-3);">Code</span>
+              <span style="font-family:var(--mono);font-size:12px;color:var(--accent);">github/AmmarMian/…</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Training -->
+        <div style="background:var(--bg-2);border:1px solid var(--rule);border-radius:10px;padding:18px 22px;display:flex;flex-direction:column;gap:10px;">
+          <div class="eyebrow" style="color:var(--accent);">Entraînement</div>
+          <div style="display:flex;flex-direction:column;gap:7px;">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--rule-soft);padding-bottom:6px;">
+              <span style="font-family:var(--mono);font-size:13px;color:var(--ink-3);">Loss / Opt.</span>
+              <span style="font-family:var(--sans);font-size:15px;font-weight:500;color:var(--ink-2);">Cross-entropie · SGD</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--rule-soft);padding-bottom:6px;">
+              <span style="font-family:var(--mono);font-size:13px;color:var(--ink-3);">Scheduler</span>
+              <span style="font-family:var(--sans);font-size:15px;font-weight:500;color:var(--ink-2);">Plateau p=3, ×0.5, wu=8</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--rule-soft);padding-bottom:6px;">
+              <span style="font-family:var(--mono);font-size:13px;color:var(--ink-3);">Max epochs</span>
+              <span style="font-family:var(--sans);font-size:15px;font-weight:500;color:var(--ink-2);">200 · early stop p=20</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;">
+              <span style="font-family:var(--mono);font-size:13px;color:var(--ink-3);">Seeds · Métrique</span>
+              <span style="font-family:var(--sans);font-size:15px;font-weight:500;color:var(--ink-2);">5 · F1-score</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Methods -->
+        <div style="background:var(--bg-2);border:1px solid var(--rule);border-radius:10px;padding:18px 22px;display:flex;flex-direction:column;gap:10px;">
+          <div class="eyebrow" style="color:var(--accent);">Méthodes comparées</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule-soft);padding-bottom:6px;">
+              <span style="font-family:var(--mono);font-size:14px;font-weight:600;color:var(--ink-2);">Geometric</span>
+              <span style="font-family:var(--mono);font-size:12px;color:var(--ink-3);">O(TKp³) itératif</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule-soft);padding-bottom:6px;">
+              <span style="font-family:var(--mono);font-size:14px;font-weight:600;color:var(--ink-2);">Log-Euclidean</span>
+              <span style="font-family:var(--mono);font-size:12px;color:var(--ink-3);">O(Kp³)</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule-soft);padding-bottom:6px;">
+              <span style="font-family:var(--mono);font-size:14px;font-weight:600;color:var(--ink-2);">Arithmetic</span>
+              <span style="font-family:var(--mono);font-size:12px;color:var(--ink-3);">O(Kp²)</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule-soft);padding-bottom:6px;">
+              <span style="font-family:var(--mono);font-size:14px;font-weight:600;color:var(--ink-2);">Harmonic</span>
+              <span style="font-family:var(--mono);font-size:12px;color:var(--ink-3);">O(Kp³)</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule-soft);padding-bottom:6px;">
+              <span style="font-family:var(--mono);font-size:14px;font-weight:600;color:var(--ink-2);">GAH</span>
+              <span style="font-family:var(--mono);font-size:12px;color:var(--ink-3);">O(Kp³)</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-family:var(--mono);font-size:14px;color:var(--ink-3);">No BN</span>
+              <span style="font-family:var(--mono);font-size:12px;color:var(--ink-3);">référence</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §4.6 · Computation time — Taille du batch (CPU + CUDA) -->
+  <section>
+    <slide-note>Effet de la taille de batch sur le temps de calcul. CPU : matrice 64×64 fixée. CUDA : même expérience sur GPU. Géométrique explose linéairement ; Arithmétique quasi-constante dans les deux cas.</slide-note>
+    <slide-header title="Complexité — effet de la taille du batch"></slide-header>
+    <div class="slide-body" style="padding:0 32px 0;overflow:hidden;">
+      <div style="flex:1;display:flex;flex-direction:row;min-height:0;gap:32px;">
+        <div style="flex:1;min-height:0;">
+          <line-chart
+            xlabel="CPU · Taille du batch  (d=64)"
+            ylabel="Temps (s)"
+            xmode="log" ymode="log"
+            width="920" height="840"
+            series='[{"name":"arithmétique","color":"#1f77b4","values":[[1,4.68e-5],[2,4.81e-5],[4,4.67e-5],[8,4.77e-5],[16,1.80e-5],[32,1.77e-5],[64,1.96e-5],[128,2.22e-5]],"band":[[1,4.55e-5,4.92e-5],[2,4.75e-5,5.05e-5],[4,4.60e-5,4.90e-5],[8,4.59e-5,5.00e-5],[16,1.65e-5,1.75e-5],[32,1.68e-5,1.80e-5],[64,1.83e-5,1.98e-5],[128,2.07e-5,2.26e-5]]},{"name":"géométrique","color":"#ff7f0e","values":[[1,4.93e-3],[2,6.80e-3],[4,9.60e-3],[8,1.527e-2],[16,2.644e-2],[32,4.917e-2],[64,9.454e-2],[128,0.1873]],"band":[[1,3.98e-3,5.38e-3],[2,6.69e-3,7.47e-3],[4,9.46e-3,1.031e-2],[8,1.502e-2,1.613e-2],[16,2.612e-2,2.709e-2],[32,4.858e-2,5.015e-2],[64,9.421e-2,9.537e-2],[128,0.1853,0.1901]]},{"name":"harmonique","color":"#2ca02c","values":[[1,3.04e-4],[2,3.86e-4],[4,5.49e-4],[8,8.60e-4],[16,1.034e-3],[32,1.466e-3],[64,2.802e-3],[128,5.513e-3]],"band":[[1,2.98e-4,3.14e-4],[2,3.81e-4,4.00e-4],[4,5.35e-4,5.58e-4],[8,8.45e-4,8.66e-4],[16,7.70e-4,1.48e-3],[32,1.447e-3,1.506e-3],[64,2.763e-3,2.857e-3],[128,5.41e-3,5.73e-3]]},{"name":"GAH","color":"#d62728","values":[[1,6.12e-4],[2,7.31e-4],[4,8.29e-4],[8,1.006e-3],[16,1.369e-3],[32,2.087e-3],[64,3.470e-3],[128,6.150e-3]],"band":[[1,5.95e-4,6.39e-4],[2,7.06e-4,7.57e-4],[4,7.99e-4,8.54e-4],[8,9.79e-4,1.034e-3],[16,1.340e-3,1.392e-3],[32,2.051e-3,2.128e-3],[64,3.41e-3,3.61e-3],[128,6.064e-3,6.387e-3]]},{"name":"log-euclidien","color":"#9467bd","values":[[1,4.67e-4],[2,6.89e-4],[4,1.092e-3],[8,1.884e-3],[16,3.506e-3],[32,6.644e-3],[64,1.315e-2],[128,2.578e-2]],"band":[[1,4.39e-4,4.93e-4],[2,6.63e-4,7.11e-4],[4,1.055e-3,1.148e-3],[8,1.830e-3,1.936e-3],[16,3.433e-3,3.612e-3],[32,6.479e-3,6.772e-3],[64,1.290e-2,1.334e-2],[128,2.556e-2,2.605e-2]]}]'
+          ></line-chart>
+        </div>
+        <div style="flex:1;min-height:0;">
+          <line-chart
+            xlabel="CUDA · Taille du batch  (d=64)"
+            ylabel="Temps (s)"
+            xmode="log" ymode="log"
+            width="920" height="840"
+            series='[{"name":"arithmétique","color":"#1f77b4","values":[[1,1.889e-5],[2,1.875e-5],[4,1.881e-5],[8,1.918e-5],[16,1.920e-5],[32,5.953e-5],[64,5.899e-5],[128,5.979e-5]],"band":[[1,1.801e-5,1.947e-5],[2,1.809e-5,1.918e-5],[4,1.785e-5,2.070e-5],[8,1.776e-5,1.917e-5],[16,1.781e-5,1.991e-5],[32,5.788e-5,5.997e-5],[64,5.782e-5,6.013e-5],[128,5.753e-5,5.965e-5]]},{"name":"géométrique","color":"#ff7f0e","values":[[1,1.943e-2],[2,2.856e-2],[4,4.179e-2],[8,6.830e-2],[16,1.232e-1],[32,2.314e-1],[64,4.538e-1],[128,8.958e-1]],"band":[[1,1.821e-2,2.005e-2],[2,2.788e-2,3.000e-2],[4,4.104e-2,4.289e-2],[8,6.710e-2,6.921e-2],[16,1.225e-1,1.245e-1],[32,2.304e-1,2.328e-1],[64,4.517e-1,4.556e-1],[128,8.938e-1,8.979e-1]]},{"name":"harmonique","color":"#2ca02c","values":[[1,4.691e-4],[2,6.656e-4],[4,5.930e-4],[8,6.202e-4],[16,6.672e-4],[32,7.000e-4],[64,7.630e-4],[128,9.391e-4]],"band":[[1,3.904e-4,4.174e-4],[2,5.811e-4,8.070e-4],[4,5.822e-4,6.157e-4],[8,5.871e-4,7.413e-4],[16,6.304e-4,7.540e-4],[32,6.597e-4,8.792e-4],[64,7.263e-4,9.652e-4],[128,8.926e-4,1.096e-3]]},{"name":"GAH","color":"#d62728","values":[[1,2.489e-3],[2,3.634e-3],[4,3.504e-3],[8,3.573e-3],[16,3.576e-3],[32,3.641e-3],[64,3.640e-3],[128,3.808e-3]],"band":[[1,2.417e-3,2.665e-3],[2,3.508e-3,4.018e-3],[4,3.392e-3,3.901e-3],[8,3.453e-3,4.013e-3],[16,3.415e-3,4.007e-3],[32,3.527e-3,4.075e-3],[64,3.506e-3,4.108e-3],[128,3.681e-3,4.264e-3]]},{"name":"log-euclidien","color":"#9467bd","values":[[1,3.031e-3],[2,4.378e-3],[4,7.151e-3],[8,1.279e-2],[16,2.414e-2],[32,4.684e-2],[64,9.258e-2],[128,1.829e-1]],"band":[[1,2.923e-3,3.463e-3],[2,4.270e-3,4.859e-3],[4,6.964e-3,7.824e-3],[8,1.249e-2,1.377e-2],[16,2.363e-2,2.544e-2],[32,4.590e-2,4.791e-2],[64,9.161e-2,9.308e-2],[128,1.816e-1,1.835e-1]]}]'
+          ></line-chart>
         </div>
       </div>
     </div>
     <slide-footer></slide-footer>
   </section>
+
+  <!-- §4.7 · Computation time — Dimension matricielle (CPU + CUDA) -->
+  <section>
+    <slide-note>Effet de la dimension de la matrice sur le temps de calcul. CPU : batch 64 fixé. CUDA : même expérience sur GPU. Géométrique explose avec la dimension ; Arithmétique reste quasi-constante.</slide-note>
+    <slide-header title="Complexité — effet de la dimension matricielle"></slide-header>
+    <div class="slide-body" style="padding:0 32px 0;overflow:hidden;">
+      <div style="flex:1;display:flex;flex-direction:row;min-height:0;gap:32px;">
+        <div style="flex:1;min-height:0;">
+          <line-chart
+            xlabel="CPU · Dimension matricielle  (K=64)"
+            ylabel="Temps (s)"
+            xmode="log" ymode="log"
+            width="920" height="840"
+            series='[{"name":"arithmétique","color":"#1f77b4","values":[[32,1.029e-5],[64,1.364e-5],[128,2.421e-5],[256,9.306e-5],[512,2.406e-4]],"band":[[32,9.910e-6,1.049e-5],[64,1.262e-5,1.376e-5],[128,2.329e-5,2.453e-5],[256,8.915e-5,9.702e-5],[512,2.317e-4,2.373e-4]]},{"name":"géométrique","color":"#ff7f0e","values":[[32,6.761e-3],[64,1.623e-2],[128,8.300e-2],[256,3.413e-1],[512,1.163e0]],"band":[[32,6.682e-3,7.054e-3],[64,1.606e-2,1.656e-2],[128,6.930e-2,9.115e-2],[256,3.356e-1,3.461e-1],[512,1.075e0,1.288e0]]},{"name":"harmonique","color":"#2ca02c","values":[[32,1.667e-4],[64,6.059e-4],[128,2.716e-3],[256,1.084e-2],[512,4.131e-2]],"band":[[32,1.630e-4,1.693e-4],[64,5.997e-4,6.226e-4],[128,2.663e-3,2.930e-3],[256,9.937e-3,1.106e-2],[512,4.010e-2,4.875e-2]]},{"name":"GAH","color":"#d62728","values":[[32,6.363e-4],[64,1.518e-3],[128,6.392e-3],[256,1.784e-2],[512,6.435e-2]],"band":[[32,6.137e-4,6.566e-4],[64,1.061e-3,1.681e-3],[128,6.293e-3,7.178e-3],[256,1.395e-2,2.149e-2],[512,6.220e-2,6.590e-2]]},{"name":"log-euclidien","color":"#9467bd","values":[[32,1.983e-3],[64,4.484e-3],[128,1.766e-2],[256,6.086e-2],[512,2.247e-1]],"band":[[32,1.953e-3,2.039e-3],[64,4.416e-3,4.706e-3],[128,1.740e-2,1.840e-2],[256,5.212e-2,6.369e-2],[512,1.906e-1,2.317e-1]]}]'
+          ></line-chart>
+        </div>
+        <div style="flex:1;min-height:0;">
+          <line-chart
+            xlabel="CUDA · Dimension matricielle  (K=64)"
+            ylabel="Temps (s)"
+            xmode="log" ymode="log"
+            width="920" height="840"
+            series='[{"name":"arithmétique","color":"#1f77b4","values":[[32,1.891e-5],[64,1.865e-5],[128,7.174e-5],[256,6.893e-5],[512,1.129e-4]],"band":[[32,1.792e-5,1.985e-5],[64,1.780e-5,2.054e-5],[128,5.785e-5,7.812e-5],[256,5.988e-5,1.482e-4],[512,8.451e-5,2.778e-4]]},{"name":"géométrique","color":"#ff7f0e","values":[[32,4.416e-3],[64,0.10746],[128,0.25529],[256,0.70374],[512,2.09746]],"band":[[32,4.071e-3,5.512e-3],[64,0.10512,0.11027],[128,0.25044,0.26203],[256,0.69436,0.71391],[512,2.06858,2.17870]]},{"name":"harmonique","color":"#2ca02c","values":[[32,2.654e-4],[64,4.105e-4],[128,7.470e-4],[256,1.748e-3],[512,5.830e-3]],"band":[[32,2.529e-4,2.842e-4],[64,3.736e-4,6.070e-4],[128,7.101e-4,8.285e-4],[256,1.679e-3,2.073e-3],[512,5.692e-3,6.312e-3]]},{"name":"GAH","color":"#d62728","values":[[32,1.071e-3],[64,1.807e-3],[128,3.655e-3],[256,1.041e-2],[512,3.140e-2]],"band":[[32,1.015e-3,1.246e-3],[64,1.735e-3,2.062e-3],[128,3.546e-3,4.058e-3],[256,9.851e-3,1.136e-2],[512,3.002e-2,3.313e-2]]},{"name":"log-euclidien","color":"#9467bd","values":[[32,5.533e-4],[64,2.311e-2],[128,5.276e-2],[256,1.432e-1],[512,4.201e-1]],"band":[[32,4.954e-4,7.523e-4],[64,2.123e-2,2.854e-2],[128,4.925e-2,5.907e-2],[256,1.366e-1,1.609e-1],[512,4.103e-1,4.818e-1]]}]'
+          ></line-chart>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §4.intro-datasets · Three datasets -->
+  <section>
+    <slide-note>Trois jeux de données couvrant des domaines variés : capture de mouvement (HDM05), hyperspectral végétal (HyperLeaf), hyperspectral riz (Rices90). Condition numbers croissants : 10⁵ → 10⁶ → 10⁷.</slide-note>
+    <slide-header title="Jeux de données"></slide-header>
+    <div class="slide-body" style="margin-top:8px;">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:start;">
+
+        <!-- HDM05 -->
+        <div data-step style="background:var(--bg-2);border:1px solid var(--rule);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;">
+          <img src="./assets/hdm05.jpg" alt="HDM05 sample"
+            style="width:100%;height:160px;object-fit:cover;object-position:center;display:block;" />
+          <div style="padding:18px 22px 14px;border-bottom:1px solid var(--rule);">
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:4px;">HDM05 · Müller et al. 2007<cite-ref key="muller2007hdm"></cite-ref></div>
+            <div style="font-family:var(--sans);font-size:24px;font-weight:600;color:var(--ink);line-height:1.15;">Reconnaissance d'actions</div>
+            <div style="font-family:var(--mono);font-size:13px;color:var(--ink-3);margin-top:3px;">Motion capture (mocap)</div>
+          </div>
+          <!-- Stat blocks -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--rule);">
+            <div style="padding:12px 14px;border-right:1px solid var(--rule);text-align:center;">
+              <div style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--ink);line-height:1;">2 086</div>
+              <div style="font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:2px;">matrices</div>
+            </div>
+            <div style="padding:12px 14px;border-right:1px solid var(--rule);text-align:center;">
+              <div style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--ink);line-height:1;">93²</div>
+              <div style="font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:2px;">taille SPD</div>
+            </div>
+            <div style="padding:12px 14px;text-align:center;">
+              <div style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--ink);line-height:1;">117</div>
+              <div style="font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:2px;">classes</div>
+            </div>
+          </div>
+          <!-- Details -->
+          <div style="padding:14px 22px;flex:1;display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:14px;">
+              <span style="color:var(--ink-3);">Split</span><span style="color:var(--ink-2);">50 / 25 / 25 %</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:14px;">
+              <span style="color:var(--ink-3);">Cond. number</span><span style="color:var(--ink-2);">9.1 × 10⁵</span>
+            </div>
+            <div style="margin-top:6px;padding-top:8px;border-top:1px solid var(--rule-soft);">
+              <p class="small" style="color:var(--ink-3);line-height:1.5;margin:0;">SPD pré-calculées via Chen et al. 2024 depuis séquences mocap. Fort condition number — scénario difficile.</p>
+            </div>
+          </div>
+          <!-- Condition number bar -->
+          <div style="padding:8px 22px 12px;display:flex;align-items:center;gap:10px;">
+            <span style="font-family:var(--mono);font-size:11px;color:var(--ink-3);">κ</span>
+            <div style="flex:1;height:4px;background:var(--rule-soft);border-radius:2px;">
+              <div style="width:20%;height:100%;background:var(--accent);border-radius:2px;opacity:0.6;"></div>
+            </div>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--ink-3);">~10⁵</span>
+          </div>
+        </div>
+
+        <!-- HyperLeaf -->
+        <div data-step style="background:var(--bg-2);border:1px solid var(--rule);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;">
+          <img src="./assets/hyperleaf.png" alt="HyperLeaf sample"
+            style="width:100%;height:160px;object-fit:cover;object-position:center;display:block;" />
+          <div style="padding:18px 22px 14px;border-bottom:1px solid var(--rule);">
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:4px;">HyperLeaf · Laprade CVPR 2024<cite-ref key="laprade2024"></cite-ref></div>
+            <div style="font-family:var(--sans);font-size:24px;font-weight:600;color:var(--ink);line-height:1.15;">Classification de blé</div>
+            <div style="font-family:var(--mono);font-size:13px;color:var(--ink-3);margin-top:3px;">Imagerie hyperspectrale foliaire</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--rule);">
+            <div style="padding:12px 14px;border-right:1px solid var(--rule);text-align:center;">
+              <div style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--ink);line-height:1;">2 410</div>
+              <div style="font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:2px;">images</div>
+            </div>
+            <div style="padding:12px 14px;border-right:1px solid var(--rule);text-align:center;">
+              <div style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--ink);line-height:1;">204²</div>
+              <div style="font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:2px;">taille SPD</div>
+            </div>
+            <div style="padding:12px 14px;text-align:center;">
+              <div style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--ink);line-height:1;">4</div>
+              <div style="font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:2px;">variétés</div>
+            </div>
+          </div>
+          <div style="padding:14px 22px;flex:1;display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:14px;">
+              <span style="color:var(--ink-3);">Variétés</span><span style="color:var(--ink-2);">Heerup · Kvium · Rembrandt · Sheriff</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:14px;">
+              <span style="color:var(--ink-3);">Cond. number</span><span style="color:var(--ink-2);">6.0 × 10⁶</span>
+            </div>
+            <div style="margin-top:6px;padding-top:8px;border-top:1px solid var(--rule-soft);">
+              <p class="small" style="color:var(--ink-3);line-height:1.5;margin:0;">204 bandes spectrales. Covariance inter-bandes encode la texture spectrale — discriminante entre variétés morphologiquement similaires.</p>
+            </div>
+          </div>
+          <div style="padding:8px 22px 12px;display:flex;align-items:center;gap:10px;">
+            <span style="font-family:var(--mono);font-size:11px;color:var(--ink-3);">κ</span>
+            <div style="flex:1;height:4px;background:var(--rule-soft);border-radius:2px;">
+              <div style="width:55%;height:100%;background:var(--accent);border-radius:2px;opacity:0.6;"></div>
+            </div>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--ink-3);">~10⁶</span>
+          </div>
+        </div>
+
+        <!-- Rices90 -->
+        <div data-step style="background:var(--bg-2);border:1px solid var(--rule);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;">
+          <img src="./assets/rices90.png" alt="Rices90 sample"
+            style="width:100%;height:160px;object-fit:cover;object-position:center;display:block;" />
+          <div style="padding:18px 22px 14px;border-bottom:1px solid var(--rule);">
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:4px;">Rices90 · Fabiyi IEEE Access 2020<cite-ref key="fabiyi2020"></cite-ref></div>
+            <div style="font-family:var(--sans);font-size:24px;font-weight:600;color:var(--ink);line-height:1.15;">Classification de riz</div>
+            <div style="font-family:var(--mono);font-size:13px;color:var(--ink-3);margin-top:3px;">Hyperspectral VIS/NIR · Specim V10E</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--rule);">
+            <div style="padding:12px 14px;border-right:1px solid var(--rule);text-align:center;">
+              <div style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--ink);line-height:1;">8 640</div>
+              <div style="font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:2px;">graines</div>
+            </div>
+            <div style="padding:12px 14px;border-right:1px solid var(--rule);text-align:center;">
+              <div style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--ink);line-height:1;">256²</div>
+              <div style="font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:2px;">taille SPD</div>
+            </div>
+            <div style="padding:12px 14px;text-align:center;">
+              <div style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--ink);line-height:1;">10</div>
+              <div style="font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:2px;">classes (/ 90)</div>
+            </div>
+          </div>
+          <div style="padding:14px 22px;flex:1;display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:14px;">
+              <span style="color:var(--ink-3);">Spectre</span><span style="color:var(--ink-2);">385–1 000 nm · 256 bandes</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:14px;">
+              <span style="color:var(--ink-3);">Cond. number</span><span style="color:var(--ink-2);">1.2 × 10⁷</span>
+            </div>
+            <div style="margin-top:6px;padding-top:8px;border-top:1px solid var(--rule-soft);">
+              <p class="small" style="color:var(--ink-3);line-height:1.5;margin:0;">ROI extraite automatiquement, covariance spectrale calculée par graine. Condition number le plus élevé — test de robustesse maximal.</p>
+            </div>
+          </div>
+          <div style="padding:8px 22px 12px;display:flex;align-items:center;gap:10px;">
+            <span style="font-family:var(--mono);font-size:11px;color:var(--ink-3);">κ</span>
+            <div style="flex:1;height:4px;background:var(--rule-soft);border-radius:2px;">
+              <div style="width:90%;height:100%;background:var(--accent);border-radius:2px;opacity:0.6;"></div>
+            </div>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--ink-3);">~10⁷</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §4.results-hdm05 · Results — HDM05 -->
+  <section>
+    <slide-note>HDM05 : 2086 matrices SPD 93×93, 117 classes d'actions. GAH atteint le meilleur F1 (+5% vs No BN) avec un temps 2.7× plus rapide que Geometric. Arithmetic est la seule méthode sous No BN — inadaptée à ce dataset à fort condition number.</slide-note>
+    <slide-header title="HDM05 — Reconnaissance d'actions"></slide-header>
+    <div class="slide-body" style="gap:10px;">
+      <div style="font-family:var(--mono);font-size:14px;color:var(--ink-3);flex-shrink:0;">2 086 matrices · SPD 93×93 · 117 classes · cond. number ~10⁵</div>
+      <div style="flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:32px;min-height:0;">
+        <div style="display:flex;flex-direction:column;min-height:0;">
+          <div class="eyebrow" style="margin-bottom:5px;">F1 Score (%) ↑</div>
+          <div style="flex:1;min-height:0;">
+            <bar-chart ylabel="F1 (%)" ymin="55" ymax="72"
+              data='[{"label":"GAH","value":66.9,"err":1.7,"emphasis":true},{"label":"Géom.","value":66.6,"err":1.6},{"label":"Harm.","value":66.3,"err":0.6},{"label":"Log Euc.","value":64.4,"err":4.3},{"label":"sans BN","value":61.8,"err":1.1,"muted":true},{"label":"Arith.","value":58.5,"err":3.4}]'>
+            </bar-chart>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;min-height:0;">
+          <div class="eyebrow" style="margin-bottom:5px;">Temps (min) ↓</div>
+          <div style="flex:1;min-height:0;">
+            <bar-chart ylabel="Temps (min)" ymin="0" ymax="390"
+              data='[{"label":"GAH","value":122.3,"err":34.8,"emphasis":true},{"label":"Géom.","value":326.3,"err":52.1},{"label":"Harm.","value":75.7,"err":24.1},{"label":"Log Euc.","value":117.9,"err":50.2},{"label":"sans BN","value":58.2,"err":5.7,"muted":true},{"label":"Arith.","value":147.7,"err":33.6}]'>
+            </bar-chart>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;min-height:0;">
+          <div class="eyebrow" style="margin-bottom:5px;">Nb epochs ↓</div>
+          <div style="flex:1;min-height:0;">
+            <bar-chart ylabel="Epochs" ymin="55" ymax="105"
+              data='[{"label":"GAH","value":80.6,"err":11.7,"emphasis":true},{"label":"Géom.","value":71.2,"err":6.2},{"label":"Harm.","value":65.6,"err":6.9},{"label":"Log Euc.","value":65.4,"err":8.3},{"label":"sans BN","value":68.8,"err":3.1,"muted":true},{"label":"Arith.","value":89.2,"err":10.8}]'>
+            </bar-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §4.intro-d · Results — HyperLeaf -->
+  <section>
+    <slide-note>HyperLeaf : Harmonic et Arithmetic meilleurs en F1 (~93.5%), +10% vs No BN. Geometric la moins performante et 5× plus lente. Résultats : 5 seeds.</slide-note>
+    <slide-header title="HyperLeaf — Feuilles de blé"></slide-header>
+    <div class="slide-body" style="gap:10px;">
+      <div style="font-family:var(--mono);font-size:14px;color:var(--ink-3);flex-shrink:0;">2 410 images · SPD 204×204 · 4 variétés de blé · cond. number ~10⁶</div>
+      <div style="flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:32px;min-height:0;">
+        <div style="display:flex;flex-direction:column;min-height:0;">
+          <div class="eyebrow" style="margin-bottom:5px;">F1 Score (%) ↑</div>
+          <div style="flex:1;min-height:0;">
+            <bar-chart ylabel="F1 (%)" ymin="78" ymax="97"
+              data='[{"label":"Harm.","value":93.6,"err":3.7,"emphasis":true},{"label":"Arith.","value":93.5,"err":2.0},{"label":"GAH","value":92.9,"err":1.4},{"label":"Log Euc.","value":89.9,"err":3.2},{"label":"Géom.","value":88.4,"err":3.4},{"label":"sans BN","value":82.9,"err":2.5,"muted":true}]'>
+            </bar-chart>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;min-height:0;">
+          <div class="eyebrow" style="margin-bottom:5px;">Temps (min) ↓</div>
+          <div style="flex:1;min-height:0;">
+            <bar-chart ylabel="Temps (min)" ymin="0" ymax="630"
+              data='[{"label":"Harm.","value":93.3,"err":24.0,"emphasis":true},{"label":"Arith.","value":92.8,"err":15.0},{"label":"GAH","value":144.8,"err":30.5},{"label":"Log Euc.","value":175.5,"err":45.9},{"label":"Géom.","value":489.1,"err":134.5},{"label":"sans BN","value":133.6,"err":47.2,"muted":true}]'>
+            </bar-chart>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;min-height:0;">
+          <div class="eyebrow" style="margin-bottom:5px;">Nb epochs ↓</div>
+          <div style="flex:1;min-height:0;">
+            <bar-chart ylabel="Epochs" ymin="60" ymax="100"
+              data='[{"label":"Harm.","value":83.8,"err":10.4,"emphasis":true},{"label":"Arith.","value":87.4,"err":5.7},{"label":"GAH","value":83.0,"err":4.1},{"label":"Log Euc.","value":77.0,"err":6.4},{"label":"Géom.","value":71.6,"err":6.0},{"label":"sans BN","value":69.0,"err":9.1,"muted":true}]'>
+            </bar-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §4.intro-d2 · Results — Rices90 -->
+  <section>
+    <slide-note>Rices90 : Log-Euclidean meilleur F1 (84.2%), GAH meilleur compromis F1/epochs/temps. Toutes les méthodes BN +8 à +15% vs No BN. Geometric ~4× plus lente.</slide-note>
+    <slide-header title="Rices90 — Graines de riz"></slide-header>
+    <div class="slide-body" style="gap:10px;">
+      <div style="font-family:var(--mono);font-size:14px;color:var(--ink-3);flex-shrink:0;">8 640 graines · SPD 256×256 · 10 classes · cond. number ~10⁷</div>
+      <div style="flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:32px;min-height:0;">
+        <div style="display:flex;flex-direction:column;min-height:0;">
+          <div class="eyebrow" style="margin-bottom:5px;">F1 Score (%) ↑</div>
+          <div style="flex:1;min-height:0;">
+            <bar-chart ylabel="F1 (%)" ymin="64" ymax="90"
+              data='[{"label":"Log Euc.","value":84.2,"err":2.9,"emphasis":true},{"label":"Géom.","value":82.9,"err":4.3},{"label":"Harm.","value":81.7,"err":4.6},{"label":"GAH","value":81.1,"err":3.5},{"label":"Arith.","value":76.8,"err":5.0},{"label":"sans BN","value":69.2,"err":3.5,"muted":true}]'>
+            </bar-chart>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;min-height:0;">
+          <div class="eyebrow" style="margin-bottom:5px;">Temps (min) ↓</div>
+          <div style="flex:1;min-height:0;">
+            <bar-chart ylabel="Temps (min)" ymin="0" ymax="370"
+              data='[{"label":"Log Euc.","value":124.3,"err":21.3,"emphasis":true},{"label":"Géom.","value":304.2,"err":53.3},{"label":"Harm.","value":90.8,"err":18.9},{"label":"GAH","value":84.3,"err":15.2},{"label":"Arith.","value":78.2,"err":15.4},{"label":"sans BN","value":123.2,"err":6.5,"muted":true}]'>
+            </bar-chart>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;min-height:0;">
+          <div class="eyebrow" style="margin-bottom:5px;">Nb epochs ↓</div>
+          <div style="flex:1;min-height:0;">
+            <bar-chart ylabel="Epochs" ymin="88" ymax="118"
+              data='[{"label":"Log Euc.","value":101.6,"err":3.9,"emphasis":true},{"label":"Géom.","value":100.6,"err":4.0},{"label":"Harm.","value":110.4,"err":5.9},{"label":"GAH","value":93.6,"err":4.4},{"label":"Arith.","value":97.8,"err":8.4},{"label":"sans BN","value":107.0,"err":7.6,"muted":true}]'>
+            </bar-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §4.results-synthesis · Cross-dataset synthesis -->
+  <section>
+    <slide-note>Synthèse transversale : GAH recommandé comme meilleur compromis sur les trois datasets. La moyenne géométrique n'est optimale ni en F1 ni en temps. Le condition number croissant change le classement des méthodes.</slide-note>
+    <slide-header title="Synthèse — comparaison transversale"></slide-header>
+    <div class="slide-body" style="gap:24px;">
+
+      <!-- Summary table -->
+      <div style="flex-shrink:0;overflow:hidden;border:1px solid var(--rule);border-radius:10px;">
+        <div style="display:grid;grid-template-columns:1.4fr repeat(3,1fr);background:var(--bg-2);border-bottom:2px solid var(--rule);">
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:13px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.08em;"></div>
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:13px;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;border-left:1px solid var(--rule);">HDM05</div>
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:13px;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;border-left:1px solid var(--rule);">HyperLeaf</div>
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:13px;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;border-left:1px solid var(--rule);">Rices90</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1.4fr repeat(3,1fr);">
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:15px;color:var(--ink-3);">Taille SPD</div>
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:15px;color:var(--ink-2);border-left:1px solid var(--rule-soft);">93×93</div>
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:15px;color:var(--ink-2);border-left:1px solid var(--rule-soft);">204×204</div>
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:15px;color:var(--ink-2);border-left:1px solid var(--rule-soft);">256×256</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1.4fr repeat(3,1fr);background:var(--bg-2);">
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:15px;color:var(--ink-3);">Cond. number</div>
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:15px;color:var(--ink-2);border-left:1px solid var(--rule-soft);">~10⁵</div>
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:15px;color:var(--ink-2);border-left:1px solid var(--rule-soft);">~10⁶</div>
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:15px;color:var(--ink-2);border-left:1px solid var(--rule-soft);">~10⁷</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1.4fr repeat(3,1fr);">
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:15px;color:var(--ink-3);">Meilleur F1</div>
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:15px;font-weight:700;color:var(--accent);border-left:1px solid var(--rule-soft);">GAH</div>
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:15px;font-weight:700;color:var(--accent);border-left:1px solid var(--rule-soft);">Harmonic</div>
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:15px;font-weight:700;color:var(--accent);border-left:1px solid var(--rule-soft);">Log-Euc.</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1.4fr repeat(3,1fr);background:var(--bg-2);">
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:15px;color:var(--ink-3);">Plus rapide (BN)</div>
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:15px;color:var(--ink-2);border-left:1px solid var(--rule-soft);">Harmonic</div>
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:15px;color:var(--ink-2);border-left:1px solid var(--rule-soft);">Arithmetic</div>
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:15px;color:var(--ink-2);border-left:1px solid var(--rule-soft);">Arithmetic</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1.4fr repeat(3,1fr);">
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:15px;color:var(--ink-3);">Meilleur compromis</div>
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:15px;font-weight:700;color:var(--ink);border-left:1px solid var(--rule-soft);">GAH</div>
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:15px;font-weight:700;color:var(--ink);border-left:1px solid var(--rule-soft);">GAH / Harm.</div>
+          <div style="padding:10px 18px;font-family:var(--mono);font-size:15px;font-weight:700;color:var(--ink);border-left:1px solid var(--rule-soft);">GAH</div>
+        </div>
+      </div>
+
+      <!-- Takeaways -->
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;align-items:start;">
+        <div style="display:flex;gap:12px;align-items:baseline;">
+          <span style="font-family:var(--mono);font-size:18px;color:var(--accent);flex-shrink:0;font-weight:700;">1.</span>
+          <p class="body">La <strong>moyenne géométrique</strong> n'est optimale ni en F1 ni en temps malgré ses propriétés théoriques — systématiquement 3–5× plus lente.</p>
+        </div>
+        <div style="display:flex;gap:12px;align-items:baseline;">
+          <span style="font-family:var(--mono);font-size:18px;color:var(--accent);flex-shrink:0;font-weight:700;">2.</span>
+          <p class="body"><strong>GAH</strong> est la recommandation principale : seule méthode avec invariance par congruence + inversion, bien plus rapide que Geometric.</p>
+        </div>
+        <div style="display:flex;gap:12px;align-items:baseline;">
+          <span style="font-family:var(--mono);font-size:18px;color:var(--accent);flex-shrink:0;font-weight:700;">3.</span>
+          <p class="body"><strong>Harmonic</strong> excelle sur les données à fort condition number — alternative sérieuse sur HyperLeaf et Rices90.</p>
+        </div>
+        <div style="display:flex;gap:12px;align-items:baseline;">
+          <span style="font-family:var(--mono);font-size:18px;color:var(--accent);flex-shrink:0;font-weight:700;">4.</span>
+          <p class="body"><strong>Arithmetic</strong> est à éviter sur HDM05 (seule méthode sous No BN), mais compétitive sur données hyperspectrales.</p>
+        </div>
+      </div>
+
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §4.intro-e · Step 2 — ARMAGNAC teaser -->
+  <section>
+    <slide-note>Transition vers ARMAGNAC : aucune des trois moyennes ne gagne systématiquement. L'idée : apprendre le paramètre d'interpolation t qui choisit automatiquement la bonne moyenne pour les données.</slide-note>
+    <slide-header title="Étape 2 — apprendre la bonne moyenne"></slide-header>
+    <div class="slide-body" style="justify-content:center;align-items:center;gap:40px;">
+
+      <p class="lede" style="text-align:center;max-width:1300px;">Aucune des trois moyennes ne domine universellement.<br>Et si on <strong>apprenait</strong> laquelle utiliser ?</p>
+
+      <div style="display:flex;align-items:center;justify-content:center;gap:0;">
+        <!-- H box -->
+        <div style="border:1px solid var(--rule);border-radius:10px;padding:18px 32px;text-align:center;">
+          <div class="eyebrow" style="color:var(--ink-3);margin-bottom:4px;">Harmonique</div>
+          <div style="font-family:var(--mono);font-size:28px;font-weight:700;color:var(--ink);"><span class="math">H</span></div>
+          <div style="font-family:var(--mono);font-size:13px;color:var(--ink-3);margin-top:4px;"><span class="math">t = 0</span></div>
+        </div>
+        <!-- geodesic line with t slider -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:0 24px;">
+          <div style="font-family:var(--mono);font-size:14px;color:var(--ink-3);">géodésique</div>
+          <div style="position:relative;width:300px;height:4px;background:var(--rule);border-radius:2px;">
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:16px;height:16px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);box-shadow:0 0 0 2px var(--accent);"></div>
+          </div>
+          <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--accent);"><span class="math">t \in [0,1]</span> — appris</div>
+        </div>
+        <!-- A box -->
+        <div style="border:1px solid var(--rule);border-radius:10px;padding:18px 32px;text-align:center;">
+          <div class="eyebrow" style="color:var(--ink-3);margin-bottom:4px;">Arithmétique</div>
+          <div style="font-family:var(--mono);font-size:28px;font-weight:700;color:var(--ink);"><span class="math">A</span></div>
+          <div style="font-family:var(--mono);font-size:13px;color:var(--ink-3);margin-top:4px;"><span class="math">t = 1</span></div>
+        </div>
+      </div>
+
+      <div style="border:1px solid var(--accent);border-left:4px solid var(--accent);border-radius:8px;padding:14px 28px;background:color-mix(in srgb,var(--accent) 6%,var(--bg));max-width:1000px;width:100%;flex-shrink:0;">
+        <p class="body"><strong>ARMAGNAC</strong> : <span class="math">\Phi(t) = H \#_t A</span> — un seul paramètre scalaire appris par descente de gradient, forme close garantie pour tout <span class="math">t</span>.</p>
+      </div>
+
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+
 
   <!-- §4.3 · ARMAGNAC — the method -->
   <section>
@@ -1593,77 +2683,6 @@
     <slide-footer></slide-footer>
   </section>
 
-  <!-- §4.5 · Real data results -->
-  <section>
-    <slide-note>HyperLeaf (4 variétés × 3 niveaux de fertilisation, 600 échantillons, covariances 204×204) et Rices90 (4 variétés de riz, 384 échantillons, covariances 256×256). Architecture : un bloc SPD + FC. ARMAGNAC apprend t ≈ 0.5 dans les deux cas — proche de GAH mais avec une variance plus basse et de meilleurs scores. La moyenne géométrique gagne légèrement sur Rices90 mais coûte ~9× plus cher à entraîner. Placeholder pour le graphique.</slide-note>
-    <slide-header title="Imagerie hyperspectrale — HyperLeaf &amp; Rices90"></slide-header>
-    <div class="slide-body">
-      <div class="cols cols-2" style="gap:36px;margin-top:12px;align-items:stretch;flex:1;min-height:0;">
-        <div data-step style="display:flex;flex-direction:column;min-height:0;">
-          <div class="eyebrow" style="margin-bottom:6px;">HyperLeaf</div>
-          <div style="font-family:var(--mono);font-size:15px;color:var(--ink-3);margin-bottom:8px;">4 variétés × 3 fertilisations · 600 échantillons · covariances 204×204</div>
-          <div style="flex:1;min-height:0;">
-            <bar-chart
-              ylabel="Précision (%)"
-              ymin="70" ymax="86"
-              data='[{"label":"ARMAGNAC","value":80.6,"err":4.2,"emphasis":true},{"label":"Arith.","value":78.8},{"label":"Géom.","value":78.7},{"label":"Harm.","value":77.0},{"label":"GAH","value":75.3},{"label":"sans BN","value":73.5,"muted":true}]'
-            ></bar-chart>
-          </div>
-        </div>
-
-        <div data-step style="display:flex;flex-direction:column;min-height:0;">
-          <div class="eyebrow" style="margin-bottom:6px;">Rices90</div>
-          <div style="font-family:var(--mono);font-size:15px;color:var(--ink-3);margin-bottom:8px;">4 variétés de riz · 384 échantillons · covariances 256×256 · <span style="color:var(--ink-2);">Géométrique ~9× plus cher</span></div>
-          <div style="flex:1;min-height:0;">
-            <bar-chart
-              ylabel="Précision (%)"
-              ymin="80" ymax="98"
-              data='[{"label":"ARMAGNAC","value":91.3,"err":4.0,"emphasis":true},{"label":"Arith.","value":91.8},{"label":"Géom.","value":93.7,"err":2.8,"color":"ink"},{"label":"Harm.","value":87.9},{"label":"GAH","value":89.0},{"label":"sans BN","value":85.3,"muted":true}]'
-            ></bar-chart>
-          </div>
-        </div>
-      </div>
-
-      <div data-step style="margin-top:24px;padding:18px 22px;background:var(--tint);border-left:3px solid var(--accent);font-size:19px;color:var(--ink-2);line-height:1.55;max-width:1620px;">
-        <strong>Lecture :</strong> ARMAGNAC apprend <span class="math">t \approx 0{,}5</span> dans les deux cas — proche de GAH, mais avec une <strong>variance plus basse</strong> et un meilleur score moyen. La moyenne géométrique gagne légèrement sur Rices90, au prix d'un entraînement <strong>~9× plus long</strong>.
-      </div>
-    </div>
-    <slide-footer></slide-footer>
-  </section>
-
-
-  <!-- §4.6 · Computation time comparison (CPU) -->
-  <section>
-    <slide-note>Temps de calcul CPU pour les 5 moyennes en fonction de la taille de batch. La moyenne arithmétique est O(d²) donc quasi-constante ; la géométrique (itérative) explose linéairement. GAH / harmonique / log-euclidienne sont dans un régime intermédiaire raisonnable. Message clé : ARMAGNAC hérite du coût de A et H — bien moins cher que la géométrique.</slide-note>
-    <slide-header title="Complexité computationnelle — CPU"></slide-header>
-    <div class="slide-body" style="padding:0 0 8px;">
-      <line-chart
-        xlabel="Taille du batch"
-        ylabel="Temps (s)"
-        xmode="log"
-        ymode="log"
-        series='[{"name":"arithmétique","color":"#1f77b4","values":[[1,4.68e-5],[2,4.81e-5],[4,4.67e-5],[8,4.77e-5],[16,1.80e-5],[32,1.77e-5],[64,1.96e-5],[128,2.22e-5]],"band":[[1,4.55e-5,4.92e-5],[2,4.75e-5,5.05e-5],[4,4.60e-5,4.90e-5],[8,4.59e-5,5.00e-5],[16,1.65e-5,1.75e-5],[32,1.68e-5,1.80e-5],[64,1.83e-5,1.98e-5],[128,2.07e-5,2.26e-5]]},{"name":"géométrique","color":"#ff7f0e","values":[[1,4.93e-3],[2,6.80e-3],[4,9.60e-3],[8,1.527e-2],[16,2.644e-2],[32,4.917e-2],[64,9.454e-2],[128,0.1873]],"band":[[1,3.98e-3,5.38e-3],[2,6.69e-3,7.47e-3],[4,9.46e-3,1.031e-2],[8,1.502e-2,1.613e-2],[16,2.612e-2,2.709e-2],[32,4.858e-2,5.015e-2],[64,9.421e-2,9.537e-2],[128,0.1853,0.1901]]},{"name":"harmonique","color":"#2ca02c","values":[[1,3.04e-4],[2,3.86e-4],[4,5.49e-4],[8,8.60e-4],[16,1.034e-3],[32,1.466e-3],[64,2.802e-3],[128,5.513e-3]],"band":[[1,2.98e-4,3.14e-4],[2,3.81e-4,4.00e-4],[4,5.35e-4,5.58e-4],[8,8.45e-4,8.66e-4],[16,7.70e-4,1.48e-3],[32,1.447e-3,1.506e-3],[64,2.763e-3,2.857e-3],[128,5.41e-3,5.73e-3]]},{"name":"GAH","color":"#d62728","values":[[1,6.12e-4],[2,7.31e-4],[4,8.29e-4],[8,1.006e-3],[16,1.369e-3],[32,2.087e-3],[64,3.470e-3],[128,6.150e-3]],"band":[[1,5.95e-4,6.39e-4],[2,7.06e-4,7.57e-4],[4,7.99e-4,8.54e-4],[8,9.79e-4,1.034e-3],[16,1.340e-3,1.392e-3],[32,2.051e-3,2.128e-3],[64,3.41e-3,3.61e-3],[128,6.064e-3,6.387e-3]]},{"name":"log-euclidien","color":"#9467bd","values":[[1,4.67e-4],[2,6.89e-4],[4,1.092e-3],[8,1.884e-3],[16,3.506e-3],[32,6.644e-3],[64,1.315e-2],[128,2.578e-2]],"band":[[1,4.39e-4,4.93e-4],[2,6.63e-4,7.11e-4],[4,1.055e-3,1.148e-3],[8,1.830e-3,1.936e-3],[16,3.433e-3,3.612e-3],[32,6.479e-3,6.772e-3],[64,1.290e-2,1.334e-2],[128,2.556e-2,2.605e-2]]}]'
-      ></line-chart>
-    </div>
-    <slide-footer></slide-footer>
-  </section>
-
-
-  <!-- §4.7 · Computation time comparison (CUDA) -->
-  <section>
-    <slide-note>Même comparaison sur GPU (CUDA) en fonction de la dimension matricielle. La moyenne arithmétique reste quasi-constante (opérations matrice creuses, très rapide sur GPU). La géométrique explose à partir de d=64 et dépasse 2 s à d=512. GAH / harmonique / log-euclidien occupent le milieu de tableau — ARMAGNAC hérite des coûts de A et H.</slide-note>
-    <slide-header title="Complexité computationnelle — CUDA"></slide-header>
-    <div class="slide-body" style="padding:0 0 8px;">
-      <line-chart
-        xlabel="Dimension matricielle"
-        ylabel="Temps (s)"
-        xmode="log"
-        ymode="log"
-        series='[{"name":"arithmétique","color":"#1f77b4","values":[[32,1.891e-5],[64,1.865e-5],[128,7.174e-5],[256,6.893e-5],[512,1.129e-4]],"band":[[32,1.792e-5,1.985e-5],[64,1.780e-5,2.054e-5],[128,5.785e-5,7.812e-5],[256,5.988e-5,1.482e-4],[512,8.451e-5,2.778e-4]]},{"name":"géométrique","color":"#ff7f0e","values":[[32,4.416e-3],[64,0.10746],[128,0.25529],[256,0.70374],[512,2.09746]],"band":[[32,4.071e-3,5.512e-3],[64,0.10512,0.11027],[128,0.25044,0.26203],[256,0.69436,0.71391],[512,2.06858,2.17870]]},{"name":"harmonique","color":"#2ca02c","values":[[32,2.654e-4],[64,4.105e-4],[128,7.470e-4],[256,1.748e-3],[512,5.830e-3]],"band":[[32,2.529e-4,2.842e-4],[64,3.736e-4,6.070e-4],[128,7.101e-4,8.285e-4],[256,1.679e-3,2.073e-3],[512,5.692e-3,6.312e-3]]},{"name":"GAH","color":"#d62728","values":[[32,1.071e-3],[64,1.807e-3],[128,3.655e-3],[256,1.041e-2],[512,3.140e-2]],"band":[[32,1.015e-3,1.246e-3],[64,1.735e-3,2.062e-3],[128,3.546e-3,4.058e-3],[256,9.851e-3,1.136e-2],[512,3.002e-2,3.313e-2]]},{"name":"log-euclidien","color":"#9467bd","values":[[32,5.533e-4],[64,2.311e-2],[128,5.276e-2],[256,1.432e-1],[512,4.201e-1]],"band":[[32,4.954e-4,7.523e-4],[64,2.123e-2,2.854e-2],[128,4.925e-2,5.907e-2],[256,1.366e-1,1.609e-1],[512,4.103e-1,4.818e-1]]}]'
-      ></line-chart>
-    </div>
-    <slide-footer></slide-footer>
-  </section>
 
 
   <!-- ═══════════════════════════════════════

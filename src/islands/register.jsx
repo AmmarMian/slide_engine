@@ -233,9 +233,24 @@ defineReactElement('armagnac-t', null, {
   lazy: () => import('./armagnac-t.jsx').then(m => m.ArmagnacT),
 });
 
+// BatchNorm SPD — Fréchet mean diagram (batch points on manifold → M → I → Γ).
+defineReactElement('bn-diagram', null, {
+  lazy: () => import('./spdnet-arch.jsx').then(m => m.BnDiagram),
+});
+
 // Hyperspectral sliding-window covariance tutorial.
 defineReactElement('hsi-cov', null, {
   lazy: () => import('./hsi-cov.jsx').then(m => m.HsiCov),
+});
+
+// GPR A-scan / B-scan formation animation.
+defineReactElement('gpr-scan', null, {
+  lazy: () => import('./gpr-scan.jsx').then(m => m.GprScan),
+});
+
+// SPD paper relationship graph.
+defineReactElement('spd-paper-graph', null, {
+  lazy: () => import('./spd-paper-graph.jsx').then(m => m.SpdPaperGraph),
 });
 
 // EEG spatial covariance tutorial.
