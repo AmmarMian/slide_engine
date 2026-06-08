@@ -138,10 +138,10 @@ const ch2 = {
     ctx.group.add(dotP);
 
     const pp = T.surfacePoint(stateP.x, stateP.y);
-    const lblP  = lbl(ctx, 'p', pp.clone().add(new THREE.Vector3(0.03, 0.07, 0)), { accent: true });
+    const lblP = lbl(ctx, 'p', pp.clone().add(new THREE.Vector3(0.03, 0.07, 0)), { accent: true });
     const lblRU = lbl(ctx, 'r<sub>u</sub>', pp.clone().addScaledVector(ru, 0.62).add(new THREE.Vector3(0, 0.06, 0.02)), { tangent: true });
     const lblRV = lbl(ctx, 'r<sub>v</sub>', pp.clone().addScaledVector(rv, 0.62).add(new THREE.Vector3(0.02, 0.04, 0.04)), { tangent: true });
-    const lblN  = lbl(ctx, 'n', pp.clone().addScaledVector(n, 0.55).add(new THREE.Vector3(0.04, 0.05, 0.0)), { geo: true });
+    const lblN = lbl(ctx, 'n', pp.clone().addScaledVector(n, 0.55).add(new THREE.Vector3(0.04, 0.05, 0.0)), { geo: true });
 
     function refresh() {
       disc.userData.update(stateP);
@@ -306,7 +306,7 @@ const ch5 = {
     l'espace tangent sur la variété : exp<sub>p</sub>(v) est le point atteint en suivant
     la géodésique depuis p dans la direction v pendant un temps unité. Elle linéarise
     la géométrie autour de tout point de base. Un éventail de géodésiques rayonne depuis p.`,
-  formula: String.raw`\exp_{\mathbf{p}}(\mathbf{v}) = \gamma_{\mathbf{v}}(1),\quad \dot\gamma_{\mathbf{v}}(0) = \mathbf{v},\quad \exp_{\mathbf{p}}(0) = \mathbf{p}`,
+  formula: String.raw`\exp_{\mathbf{p}}(\mathbf{v}) = \gamma_{\mathbf{v}}(1),\quad \dot\gamma_{\mathbf{v}}(0) = \mathbf{v},\\ \exp_{\mathbf{p}}(0) = \mathbf{p}`,
   camera: { pos: [2.2, 2.3, 3.1], target: [-0.15, 0.30, 0.05] },
   pickable: true,
   controlSchema: {
@@ -382,7 +382,7 @@ const ch6 = {
     Il n'existe pas de forme fermée pour une variété ℳ quelconque — une itération de Newton
     par tir la récupère numériquement.`,
   formula: String.raw`\log_{\mathbf{p}}(\mathbf{q}) \in T_{\mathbf{p}}\mathcal{M},\quad
-    d(\mathbf{p},\mathbf{q}) = \bigl\|\log_{\mathbf{p}}(\mathbf{q})\bigr\|_{\mathbf{p}},\quad \exp_{\mathbf{p}}\!\bigl(\log_{\mathbf{p}}(\mathbf{q})\bigr) = \mathbf{q}`,
+    d(\mathbf{p},\mathbf{q}) = \bigl\|\log_{\mathbf{p}}(\mathbf{q})\bigr\|_{\mathbf{p}},\\ \exp_{\mathbf{p}}\!\bigl(\log_{\mathbf{p}}(\mathbf{q})\bigr) = \mathbf{q}`,
   camera: { pos: [2.4, 2.4, 3.3], target: [0.05, 0.25, 0.05] },
   pickable: 'q',
   enter(ctx) {
@@ -439,8 +439,8 @@ const ch7 = {
     R<sub>p</sub> : T<sub>p</sub>ℳ → ℳ qui coïncide avec exp<sub>p</sub> au premier ordre
     en 0. Sur cette surface, une rétraction bon marché est « avancer dans ℝ³, projeter sur ℳ »
     (retomber à la hauteur h). Comparez les deux extrémités.`,
-  formula: String.raw`R_p(0) = p,\quad \mathrm{d}R_p|_0 = \mathrm{id},\quad
-    R_p(v) = \exp_p(v) + O(\|v\|^2)`,
+  formula: String.raw`R_p(0) = p,\quad \mathrm{d}R_p|_0 = \mathrm{id},\\
+R_p(v) = \exp_p(v) + O(\|v\|^2)`,
   camera: { pos: [2.2, 2.3, 3.1], target: [-0.15, 0.30, 0.05] },
   pickable: true,
   controlSchema: {
@@ -522,31 +522,31 @@ const ch8 = {
   enter(ctx) {
     const palette = ctx.palette;
     const stateP = ctx.p.clone(), stateQ = ctx.q.clone();
-    const dotP   = pointMarker(stateP, palette.p, palette);         ctx.group.add(dotP);
-    const dotQ   = pointMarker(stateQ, palette.q, palette);         ctx.group.add(dotQ);
+    const dotP = pointMarker(stateP, palette.p, palette); ctx.group.add(dotP);
+    const dotQ = pointMarker(stateQ, palette.q, palette); ctx.group.add(dotQ);
     const dotNow = pointMarker(stateP, palette.transport, palette, 0.028); ctx.group.add(dotNow);
-    const lblP   = lbl(ctx, 'p',    new THREE.Vector3(), { accent: true });
-    const lblQ   = lbl(ctx, 'q',    new THREE.Vector3(), { q: true });
-    const lblW   = lbl(ctx, 'W₁(0)', new THREE.Vector3(), { transport: true, small: true });
-    const lblW2  = lbl(ctx, 'W₂(0)', new THREE.Vector3(), { q: true,        small: true });
-    const lblWt  = lbl(ctx, 'W₁(t)', new THREE.Vector3(), { transport: true, small: true });
-    const lblWt2 = lbl(ctx, 'W₂(t)', new THREE.Vector3(), { q: true,        small: true });
+    const lblP = lbl(ctx, 'p', new THREE.Vector3(), { accent: true });
+    const lblQ = lbl(ctx, 'q', new THREE.Vector3(), { q: true });
+    const lblW = lbl(ctx, 'W₁(0)', new THREE.Vector3(), { transport: true, small: true });
+    const lblW2 = lbl(ctx, 'W₂(0)', new THREE.Vector3(), { q: true, small: true });
+    const lblWt = lbl(ctx, 'W₁(t)', new THREE.Vector3(), { transport: true, small: true });
+    const lblWt2 = lbl(ctx, 'W₂(t)', new THREE.Vector3(), { q: true, small: true });
     let geo = buildPolyline({ points: [new THREE.Vector3()], color: palette.geodesic, opacity: 0.85 });
     ctx.group.add(geo);
-    let initialArrow  = tangentArrow(stateP, new THREE.Vector3(0.1, 0, 0), palette.transport);
+    let initialArrow = tangentArrow(stateP, new THREE.Vector3(0.1, 0, 0), palette.transport);
     let initialArrow2 = tangentArrow(stateP, new THREE.Vector3(0.1, 0, 0), palette.q);
-    let movingArrow   = tangentArrow(stateP, new THREE.Vector3(0.1, 0, 0), palette.transport);
-    let movingArrow2  = tangentArrow(stateP, new THREE.Vector3(0.1, 0, 0), palette.q);
+    let movingArrow = tangentArrow(stateP, new THREE.Vector3(0.1, 0, 0), palette.transport);
+    let movingArrow2 = tangentArrow(stateP, new THREE.Vector3(0.1, 0, 0), palette.q);
     ctx.group.add(initialArrow); ctx.group.add(initialArrow2);
-    ctx.group.add(movingArrow);  ctx.group.add(movingArrow2);
+    ctx.group.add(movingArrow); ctx.group.add(movingArrow2);
     let ghost = tangentArrow(stateQ, new THREE.Vector3(0.1, 0, 0), palette.ink3Num);
     ctx.group.add(ghost);
     let cachedPath = null, cachedW = null, cachedW2 = null, cachedPts = null, cachedDt = null;
 
     function recompute() {
-      const v   = T.logMap(stateP, stateQ);
+      const v = T.logMap(stateP, stateQ);
       const duv = T.worldToParam(stateP, v);
-      const r   = T.traceGeodesic(stateP, duv, 1, 96);
+      const r = T.traceGeodesic(stateP, duv, 1, 96);
       cachedPath = r.path; cachedDt = r.dt; cachedPts = r.points;
       const initParam = new THREE.Vector2(duv.x, duv.y);
       const W0 = new THREE.Vector2(-initParam.y, initParam.x);
@@ -561,16 +561,16 @@ const ch8 = {
 
     function draw(t) {
       const idx = Math.min(cachedPath.length - 1, Math.round(t * (cachedPath.length - 1)));
-      const ss  = cachedPath[idx];
-      const ww  = cachedW[idx];
+      const ss = cachedPath[idx];
+      const ww = cachedW[idx];
       const ww2 = cachedW2[idx];
-      const pos    = T.surfacePoint(ss.u, ss.v).addScaledVector(T.normalAt(ss.u, ss.v), 0.006);
-      const wWorld  = T.paramToWorld(new THREE.Vector2(ss.u, ss.v), new THREE.Vector2(ww.Wu,  ww.Wv));
+      const pos = T.surfacePoint(ss.u, ss.v).addScaledVector(T.normalAt(ss.u, ss.v), 0.006);
+      const wWorld = T.paramToWorld(new THREE.Vector2(ss.u, ss.v), new THREE.Vector2(ww.Wu, ww.Wv));
       const wWorld2 = T.paramToWorld(new THREE.Vector2(ss.u, ss.v), new THREE.Vector2(ww2.Wu, ww2.Wv));
-      movingArrow.userData.update(pos,  wWorld.clone(),  wWorld.length());
+      movingArrow.userData.update(pos, wWorld.clone(), wWorld.length());
       movingArrow2.userData.update(pos, wWorld2.clone(), wWorld2.length());
       dotNow.position.copy(pos);
-      lblWt.update(pos.clone().addScaledVector(wWorld,  0.55).add(new THREE.Vector3( 0.03,  0.06, 0)));
+      lblWt.update(pos.clone().addScaledVector(wWorld, 0.55).add(new THREE.Vector3(0.03, 0.06, 0)));
       lblWt2.update(pos.clone().addScaledVector(wWorld2, 0.55).add(new THREE.Vector3(-0.03, -0.06, 0)));
     }
 
@@ -586,13 +586,13 @@ const ch8 = {
       recompute();
       const lifted = cachedPts.map(pp => new THREE.Vector3(pp.x, pp.y + 0.004, pp.z));
       geo.userData.update(lifted);
-      const W0  = cachedW[0];
+      const W0 = cachedW[0];
       const W02 = cachedW2[0];
-      const w0World  = T.paramToWorld(stateP, new THREE.Vector2(W0.Wu,  W0.Wv));
+      const w0World = T.paramToWorld(stateP, new THREE.Vector2(W0.Wu, W0.Wv));
       const w02World = T.paramToWorld(stateP, new THREE.Vector2(W02.Wu, W02.Wv));
-      initialArrow.userData.update(pLift,  w0World.clone(),  w0World.length());
+      initialArrow.userData.update(pLift, w0World.clone(), w0World.length());
       initialArrow2.userData.update(pLift, w02World.clone(), w02World.length());
-      lblW.update(pLift.clone().addScaledVector(w0World,  0.55).add(new THREE.Vector3( 0.03,  0.06, 0)));
+      lblW.update(pLift.clone().addScaledVector(w0World, 0.55).add(new THREE.Vector3(0.03, 0.06, 0)));
       lblW2.update(pLift.clone().addScaledVector(w02World, 0.55).add(new THREE.Vector3(-0.03, -0.06, 0)));
       ghost.userData.update(qLift, w0World.clone(), w0World.length());
       draw(t);
