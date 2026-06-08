@@ -160,7 +160,7 @@ export function BarChart({
           .attr('x', d => x(d.label) + x.bandwidth() / 2)
           .attr('y', d => y(d.value + (d.err || 0)) - 12)
           .attr('text-anchor', 'middle')
-          .attr('font-family', mono()).attr('font-size', 19).attr('font-weight', 700)
+          .attr('font-family', mono()).attr('font-size', 32).attr('font-weight', 700)
           .attr('fill', d => d.emphasis ? accent() : ink())
           .attr('opacity', 0).text(d => d3.format('.1f')(d.value))
           .transition().duration(300).attr('opacity', 1);

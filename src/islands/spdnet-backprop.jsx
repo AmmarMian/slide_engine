@@ -52,65 +52,65 @@ const FWD_LABELS = [
 const STEP_HTML = [
   // 0 — Architecture overview
   `<div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Étape 0 / 5 — Architecture</div>
-   <h2 style="margin:0 0 14px;font-size:30px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Réseau profond générique</h2>
-   <p style="margin:0;font-size:19px;color:var(--ink-2);line-height:1.5;">
-     Une chaîne de couches paramétrées : chaque <span class="math">f_k</span> prend l'activation précédente <span class="math">X_{k-1}</span> et un paramètre <span class="math">\\boldsymbol{\\theta}_k</span>, et produit <span class="math">X_k = f_k(X_{k-1}; \\boldsymbol{\\theta}_k)</span>. Le réseau termine en sortie <span class="math">\\hat{\\mathbf{y}}</span> puis en perte scalaire <span class="math">\\mathcal{L}(\\hat{\\mathbf{y}}, \\mathbf{y})</span>.
+   <h2 style="margin:0 0 14px;font-size:40px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Réseau profond générique</h2>
+   <p style="margin:0;font-size:25px;color:var(--ink-2);line-height:1.5;">
+     Une chaîne de couches paramétrées : chaque <span class="math">f_k</span> prend l'activation précédente <span class="math">\\mathbf{X}_{k-1}</span> et un paramètre <span class="math">\\boldsymbol{\\theta}_k</span>, et produit <span class="math">\\mathbf{X}_k = f_k(\\mathbf{X}_{k-1}; \\boldsymbol{\\theta}_k)</span>. Le réseau termine en sortie <span class="math">\\hat{\\mathbf{y}}</span> puis en perte scalaire <span class="math">\\mathcal{L}(\\hat{\\mathbf{y}}, \\mathbf{y})</span>.
    </p>`,
 
   // 1 — Forward pass
   `<div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Étape 1 / 5 — Passe avant</div>
-   <h2 style="margin:0 0 14px;font-size:30px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Propagation des activations</h2>
+   <h2 style="margin:0 0 14px;font-size:40px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Propagation des activations</h2>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;">
      <div>
-       <div class="math-display" style="margin:0;font-size:22px;">X_k = f_k(X_{k-1}; \\boldsymbol{\\theta}_k)</div>
-       <p style="font-size:17px;color:var(--ink-3);margin:10px 0 0;">On <strong>met en cache</strong> chaque <span class="math">X_k</span> : il sera nécessaire pour la passe arrière.</p>
+       <div class="math-display" style="margin:0;font-size:28px;">\\mathbf{X}_k = f_k(\\mathbf{X}_{k-1}; \\boldsymbol{\\theta}_k)</div>
+       <p style="font-size:22px;color:var(--ink-3);margin:10px 0 0;">On <strong>met en cache</strong> chaque <span class="math">\\mathbf{X}_k</span> : il sera nécessaire pour la passe arrière.</p>
      </div>
      <div>
-       <div class="math-display" style="margin:0;font-size:22px;">\\hat{\\mathbf{y}} = f_\\ell(X_{\\ell-1}; \\boldsymbol{\\theta}_\\ell), \\quad \\mathcal{L} = \\mathcal{L}(\\hat{\\mathbf{y}}, \\mathbf{y})</div>
+       <div class="math-display" style="margin:0;font-size:28px;">\\hat{\\mathbf{y}} = f_\\ell(\\mathbf{X}_{\\ell-1}; \\boldsymbol{\\theta}_\\ell), \\quad \\mathcal{L} = \\mathcal{L}(\\hat{\\mathbf{y}}, \\mathbf{y})</div>
      </div>
    </div>`,
 
   // 2 — Loss reached, dL/dŷ
   `<div class="eyebrow" style="color:${RED};margin-bottom:6px;">Étape 2 / 5 — Perte</div>
-   <h2 style="margin:0 0 14px;font-size:30px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Point de départ du gradient</h2>
-   <p style="margin:0;font-size:19px;color:var(--ink-2);line-height:1.6;">
+   <h2 style="margin:0 0 14px;font-size:40px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Point de départ du gradient</h2>
+   <p style="margin:0;font-size:25px;color:var(--ink-2);line-height:1.6;">
      La perte est scalaire, sa dérivée vis-à-vis de la prédiction est explicite :
    </p>
-   <div class="math-display" style="margin:14px 0 0;font-size:22px;">\\frac{\\partial \\mathcal{L}}{\\partial \\hat{\\mathbf{y}}} \\quad\\longrightarrow\\quad \\nabla f_\\ell</div>
-   <p style="margin:14px 0 0;font-size:17px;color:var(--ink-3);">Ce gradient amorce la <strong style="color:${RED};">remontée</strong> par la règle de la chaîne.</p>`,
+   <div class="math-display" style="margin:14px 0 0;font-size:28px;">\\frac{\\partial \\mathcal{L}}{\\partial \\hat{\\mathbf{y}}} \\quad\\longrightarrow\\quad \\nabla f_\\ell</div>
+   <p style="margin:14px 0 0;font-size:22px;color:var(--ink-3);">Ce gradient amorce la <strong style="color:${RED};">remontée</strong> par la règle de la chaîne.</p>`,
 
   // 3 — Backward pass (chain rule)
   `<div class="eyebrow" style="color:${RED};margin-bottom:6px;">Étape 3 / 5 — Rétropropagation</div>
-   <h2 style="margin:0 0 14px;font-size:30px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Règle de la chaîne, couche par couche</h2>
-   <p style="margin:0 0 12px;font-size:18px;color:var(--ink-2);line-height:1.5;">
+   <h2 style="margin:0 0 14px;font-size:40px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Règle de la chaîne, couche par couche</h2>
+   <p style="margin:0 0 12px;font-size:24px;color:var(--ink-2);line-height:1.5;">
      Chaque bloc <span class="math">\\nabla f_k</span> combine le gradient entrant et l'activation cachée :
    </p>
-   <div class="math-display" style="margin:0;font-size:22px;">\\frac{\\partial \\mathcal{L}}{\\partial X_{k-1}} = \\frac{\\partial \\mathcal{L}}{\\partial X_k} \\cdot \\frac{\\partial f_k}{\\partial X_{k-1}}\\bigg|_{X_{k-1},\\,\\boldsymbol{\\theta}_k}</div>
-   <p style="margin:14px 0 0;font-size:17px;color:var(--ink-3);">Spécifique SPDNet : eig &amp; log nécessitent la <strong>rétropropagation matricielle</strong> (Ionescu / Brooks).</p>`,
+   <div class="math-display" style="margin:0;font-size:28px;">\\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{X}_{k-1}} = \\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{X}_k} \\cdot \\frac{\\partial f_k}{\\partial \\mathbf{X}_{k-1}}\\bigg|_{\\mathbf{X}_{k-1},\\,\\boldsymbol{\\theta}_k}</div>
+   <p style="margin:14px 0 0;font-size:22px;color:var(--ink-3);">Spécifique SPDNet : eig &amp; log nécessitent la <strong>rétropropagation matricielle</strong> (Ionescu / Brooks).</p>`,
 
   // 4 — Parameter gradients
   `<div class="eyebrow" style="color:${RED};margin-bottom:6px;">Étape 4 / 5 — Gradients de paramètres</div>
-   <h2 style="margin:0 0 14px;font-size:30px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Vers chaque <span class="math">\\boldsymbol{\\theta}_k</span></h2>
+   <h2 style="margin:0 0 14px;font-size:40px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Vers chaque <span class="math">\\boldsymbol{\\theta}_k</span></h2>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;">
      <div>
-       <div class="math-display" style="margin:0;font-size:22px;">\\frac{\\partial \\mathcal{L}}{\\partial \\boldsymbol{\\theta}_k} = \\frac{\\partial \\mathcal{L}}{\\partial X_k} \\cdot \\frac{\\partial f_k}{\\partial \\boldsymbol{\\theta}_k}</div>
+       <div class="math-display" style="margin:0;font-size:28px;">\\frac{\\partial \\mathcal{L}}{\\partial \\boldsymbol{\\theta}_k} = \\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{X}_k} \\cdot \\frac{\\partial f_k}{\\partial \\boldsymbol{\\theta}_k}</div>
      </div>
-     <div style="padding:14px 18px;background:var(--bg-2);border-left:3px solid ${RED};border-radius:0 6px 6px 0;font-size:17px;color:var(--ink-2);line-height:1.5;">
+     <div style="padding:14px 18px;background:var(--bg-2);border-left:3px solid ${RED};border-radius:0 6px 6px 0;font-size:22px;color:var(--ink-2);line-height:1.5;">
        Mais pour SPDNet, certains <span class="math">\\boldsymbol{\\theta}_k = W_k</span> vivent sur <span class="math">\\mathrm{St}(d_{k-1}, d_k)</span> : le gradient ainsi obtenu est <strong>euclidien</strong>, ignorant la contrainte.
      </div>
    </div>`,
 
   // 5 — Riemannian step
   `<div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Étape 5 / 5 — Mise à jour riemannienne</div>
-   <h2 style="margin:0 0 14px;font-size:30px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Projection + rétraction sur Stiefel</h2>
+   <h2 style="margin:0 0 14px;font-size:40px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Projection + rétraction sur Stiefel</h2>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center;">
      <div>
-       <div style="font-size:14px;color:var(--ink-3);letter-spacing:0.06em;text-transform:uppercase;font-family:var(--mono);margin-bottom:6px;">1. Projection tangente</div>
-       <div class="math-display" style="margin:0 0 14px;font-size:20px;">\\xi = \\nabla_{W_k}\\mathcal{L} - W_k\\,\\mathrm{sym}(W_k^\\top \\nabla_{W_k}\\mathcal{L})</div>
-       <div style="font-size:14px;color:var(--ink-3);letter-spacing:0.06em;text-transform:uppercase;font-family:var(--mono);margin-bottom:6px;">2. Rétraction polaire</div>
-       <div class="math-display" style="margin:0;font-size:20px;">W_k^+ = \\mathrm{uf}(W_k - \\eta\\,\\xi)</div>
+       <div style="font-size:18px;color:var(--ink-3);letter-spacing:0.06em;text-transform:uppercase;font-family:var(--mono);margin-bottom:6px;">1. Projection tangente</div>
+       <div class="math-display" style="margin:0 0 14px;font-size:26px;">\\xi = \\nabla_{W_k}\\mathcal{L} - W_k\\,\\mathrm{sym}(W_k^\\top \\nabla_{W_k}\\mathcal{L})</div>
+       <div style="font-size:18px;color:var(--ink-3);letter-spacing:0.06em;text-transform:uppercase;font-family:var(--mono);margin-bottom:6px;">2. Rétraction polaire</div>
+       <div class="math-display" style="margin:0;font-size:26px;">W_k^+ = \\mathrm{uf}(W_k - \\eta\\,\\xi)</div>
      </div>
-     <div style="padding:16px 20px;background:var(--bg-2);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;font-size:17px;color:var(--ink-2);line-height:1.55;">
+     <div style="padding:16px 20px;background:var(--bg-2);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;font-size:22px;color:var(--ink-2);line-height:1.55;">
        Coût dominant : une <strong>SVD réduite</strong> par couche BiMap.
        <br/><br/>
        Pas d'exp, pas de log — c'est ce qui rendra possible le passage au cadre distribué.
@@ -119,32 +119,30 @@ const STEP_HTML = [
 ];
 
 // ── Subscript text helper ────────────────────────────────────────────────
-function MathLabel({ x, y, base, sub, fill, fontSize = 24, fontWeight = 500, italic = true, anchor = 'middle' }) {
+function MathLabel({ x, y, base, sub, fill, fontSize = 32, fontWeight = 500, italic = true, anchor = 'middle' }) {
   return (
     <text x={x} y={y} textAnchor={anchor} fill={fill}
           fontFamily="var(--serif), Georgia, serif"
-          fontSize={fontSize}
+          style={{ fontSize: `calc(${fontSize}px * var(--type-scale, 1))`, transition: 'fill 280ms' }}
           fontWeight={fontWeight}
-          fontStyle={italic ? 'italic' : 'normal'}
-          style={{ transition: 'fill 280ms' }}>
+          fontStyle={italic ? 'italic' : 'normal'}>
       {base}
       {sub != null && (
-        <tspan dy="6" dx="1" fontSize={fontSize * 0.62} fontStyle="italic">{sub}</tspan>
+        <tspan dy="6" dx="1" style={{ fontSize: `calc(${fontSize * 0.62}px * var(--type-scale, 1))` }} fontStyle="italic">{sub}</tspan>
       )}
     </text>
   );
 }
 
 // Bold mathematical label (for X_k, ŷ, y) — uses tspan for subscript.
-function BoldMathLabel({ x, y, base, sub, fill, fontSize = 26, anchor = 'middle' }) {
+function BoldMathLabel({ x, y, base, sub, fill, fontSize = 34, anchor = 'middle' }) {
   return (
     <text x={x} y={y} textAnchor={anchor} fill={fill}
           fontFamily="var(--serif), Georgia, serif"
-          fontSize={fontSize} fontWeight={700} fontStyle="normal"
-          style={{ transition: 'fill 280ms' }}>
+          style={{ fontSize: `calc(${fontSize}px * var(--type-scale, 1))`, transition: 'fill 280ms' }} fontWeight={700} fontStyle="normal">
       {base}
       {sub != null && (
-        <tspan dy="6" dx="1" fontSize={fontSize * 0.62} fontStyle="italic" fontWeight={500}>{sub}</tspan>
+        <tspan dy="6" dx="1" style={{ fontSize: `calc(${fontSize * 0.62}px * var(--type-scale, 1))` }} fontStyle="italic" fontWeight={500}>{sub}</tspan>
       )}
     </text>
   );
@@ -213,13 +211,12 @@ function FwdBox({ x, y, sub, active, reached, isLoss }) {
       {isLoss ? (
         <text x={x} y={y + 14} textAnchor="middle"
               fontFamily="var(--serif), Georgia, serif"
-              fontStyle="italic" fontSize="42" fontWeight={500}
-              fill={active ? RED : INK}
-              style={{ transition: 'fill 280ms' }}>
+              fontStyle="italic" style={{ fontSize: 'calc(56px * var(--type-scale, 1))', transition: 'fill 280ms' }} fontWeight={500}
+              fill={active ? RED : INK}>
           ℒ
         </text>
       ) : (
-        <MathLabel x={x} y={y + 12} base="f" sub={sub} fill={active ? ACCENT : INK} fontSize={36} />
+        <MathLabel x={x} y={y + 12} base="f" sub={sub} fill={active ? ACCENT : INK} fontSize={48} />
       )}
     </g>
   );
@@ -239,11 +236,10 @@ function BwdBox({ x, y, sub, active }) {
             style={{ transition: 'stroke 280ms, stroke-width 280ms' }} />
       <text x={x} y={y + 14} textAnchor="middle"
             fontFamily="var(--serif), Georgia, serif"
-            fontSize="34" fill={color}
-            style={{ transition: 'fill 280ms' }}>
+            style={{ fontSize: 'calc(46px * var(--type-scale, 1))', transition: 'fill 280ms' }} fill={color}>
         <tspan fontStyle="normal">∇</tspan>
         <tspan dx="2" fontStyle="italic">f</tspan>
-        <tspan dy="8" dx="1" fontSize="22" fontStyle="italic">{sub}</tspan>
+        <tspan dy="8" dx="1" style={{ fontSize: 'calc(30px * var(--type-scale, 1))' }} fontStyle="italic">{sub}</tspan>
       </text>
     </g>
   );
@@ -265,9 +261,9 @@ function HArrow({ x1, x2, y, color, width = 2, dashed = false, drawn = true, lab
       />
       {label && (
         labelBold
-          ? <BoldMathLabel x={(x1 + x2) / 2} y={y + labelDy} base={labelBase || label} sub={labelSub} fill={labelColor || color} fontSize={22} />
+          ? <BoldMathLabel x={(x1 + x2) / 2} y={y + labelDy} base={labelBase || label} sub={labelSub} fill={labelColor || color} fontSize={30} />
           : <text x={(x1 + x2) / 2} y={y + labelDy} textAnchor="middle"
-                  fontFamily="var(--serif), Georgia, serif" fontSize="20"
+                  fontFamily="var(--serif), Georgia, serif" fontSize="28"
                   fontStyle="italic" fill={labelColor || color}>
               {label}
             </text>
@@ -294,7 +290,7 @@ function VArrow({ x, y1, y2, color, drawn = true, label, labelOffset = 0, opacit
           <div xmlns="http://www.w3.org/1999/xhtml" style={{
             fontFamily: 'var(--serif), Georgia, serif',
             fontStyle: 'italic',
-            fontSize: '18px',
+            fontSize: '26px',
             textAlign: 'center',
             color: color,
             whiteSpace: 'nowrap',
@@ -425,7 +421,7 @@ export function SpdNetBackprop() {
 
           {/* ── Forward row: arrows + boxes + labels ──────────────────────────── */}
           {/* X (input) label */}
-          <BoldMathLabel x={110} y={FWD_Y + 9} base="X" fill={INK} fontSize={32} />
+          <BoldMathLabel x={110} y={FWD_Y + 9} base="X" fill={INK} fontSize={44} />
 
           {/* Arrow X → f1 */}
           <HArrow x1={150} x2={320 - BOX_W / 2 - 6} y={FWD_Y} color={step >= 1 ? ACCENT : INK2} />
@@ -434,35 +430,35 @@ export function SpdNetBackprop() {
           <FwdBox x={FWD[0].x} y={FWD_Y} sub={FWD[0].sub} active={step >= 1} reached={step >= 1} />
 
           {/* Arrow f1 → X1 label → ... */}
-          <BoldMathLabel x={460} y={FWD_Y - 14} base="X" sub="1" fill={step >= 1 ? ACCENT : INK} fontSize={22} />
+          <BoldMathLabel x={460} y={FWD_Y - 14} base="X" sub="1" fill={step >= 1 ? ACCENT : INK} fontSize={30} />
           <HArrow x1={FWD[0].x + BOX_W / 2 + 6} x2={560} y={FWD_Y} color={step >= 1 ? ACCENT : INK2} />
 
           {/* ... (dots between f1 and f_{ℓ-1}) */}
           <text x={620} y={FWD_Y + 8} textAnchor="middle" fontFamily="var(--serif), Georgia, serif" fontSize="32" fill={INK2}>···</text>
 
           {/* Arrow ... → f_{ℓ-1} */}
-          <BoldMathLabel x={760} y={FWD_Y - 14} base="X" sub="ℓ−2" fill={step >= 1 ? ACCENT : INK} fontSize={22} />
+          <BoldMathLabel x={760} y={FWD_Y - 14} base="X" sub="ℓ−2" fill={step >= 1 ? ACCENT : INK} fontSize={30} />
           <HArrow x1={680} x2={FWD[1].x - BOX_W / 2 - 6} y={FWD_Y} color={step >= 1 ? ACCENT : INK2} />
 
           {/* f_{ℓ-1} box */}
           <FwdBox x={FWD[1].x} y={FWD_Y} sub={FWD[1].sub} active={step >= 1} reached={step >= 1} />
 
           {/* Arrow f_{ℓ-1} → f_ℓ */}
-          <BoldMathLabel x={1050} y={FWD_Y - 14} base="X" sub="ℓ−1" fill={step >= 1 ? ACCENT : INK} fontSize={22} />
+          <BoldMathLabel x={1050} y={FWD_Y - 14} base="X" sub="ℓ−1" fill={step >= 1 ? ACCENT : INK} fontSize={30} />
           <HArrow x1={FWD[1].x + BOX_W / 2 + 6} x2={FWD[2].x - BOX_W / 2 - 6} y={FWD_Y} color={step >= 1 ? ACCENT : INK2} />
 
           {/* f_ℓ box */}
           <FwdBox x={FWD[2].x} y={FWD_Y} sub={FWD[2].sub} active={step >= 1} reached={step >= 1} />
 
           {/* Arrow f_ℓ → ŷ */}
-          <BoldMathLabel x={1400} y={FWD_Y - 14} base={'ŷ'} fill={step >= 1 ? ACCENT : INK} fontSize={22} />
+          <BoldMathLabel x={1400} y={FWD_Y - 14} base={'ŷ'} fill={step >= 1 ? ACCENT : INK} fontSize={30} />
           <HArrow x1={FWD[2].x + BOX_W / 2 + 6} x2={LOSS_X - BOX_W / 2 - 6} y={FWD_Y} color={step >= 1 ? ACCENT : INK2} />
 
           {/* ℒ box */}
           <FwdBox x={LOSS_X} y={FWD_Y} isLoss active={step >= 2} reached={step >= 2} />
 
           {/* y label feeding into ℒ from above */}
-          <BoldMathLabel x={LOSS_X + 90} y={FWD_Y - 80} base="y" fill={INK} fontSize={28} />
+          <BoldMathLabel x={LOSS_X + 90} y={FWD_Y - 80} base="y" fill={INK} fontSize={38} />
           <VArrow x={LOSS_X + 90} y1={FWD_Y - 70} y2={FWD_Y - BOX_H / 2 - 4} color={INK2} />
 
           {/* ── θ inputs (vertical arrows up to each f box) ──────────────────── */}
@@ -475,7 +471,7 @@ export function SpdNetBackprop() {
                 color={step >= 1 ? ACCENT : INK2}
               />
               <BoldMathLabel x={F.x} y={FWD_Y + BOX_H / 2 + 116}
-                             base="θ" sub={F.sub} fill={step >= 1 ? ACCENT : INK} fontSize={24} />
+                             base="θ" sub={F.sub} fill={step >= 1 ? ACCENT : INK} fontSize={32} />
             </g>
           ))}
 
@@ -517,7 +513,7 @@ export function SpdNetBackprop() {
               <foreignObject x={LOSS_X - 90} y={(FWD_Y + BWD_Y) / 2 - 40} width="200" height="48">
                 <div xmlns="http://www.w3.org/1999/xhtml" style={{
                   fontFamily: 'var(--serif), Georgia, serif',
-                  fontStyle: 'italic', fontSize: '20px',
+                  fontStyle: 'italic', fontSize: '28px',
                   color: RED, textAlign: 'center', whiteSpace: 'nowrap',
                 }}>
                   ∂ℒ / ∂<span style={{ fontWeight: 700, fontStyle: 'normal' }}>ŷ</span>
@@ -540,7 +536,7 @@ export function SpdNetBackprop() {
               <foreignObject x={(FWD[1].x + FWD[2].x) / 2 - 110} y={BWD_Y - 50} width="220" height="36">
                 <div xmlns="http://www.w3.org/1999/xhtml" style={{
                   fontFamily: 'var(--serif), Georgia, serif',
-                  fontStyle: 'italic', fontSize: '20px',
+                  fontStyle: 'italic', fontSize: '28px',
                   color: RED, textAlign: 'center', whiteSpace: 'nowrap',
                   opacity: bwdProgress,
                   transition: 'opacity 600ms ease-out 200ms',
@@ -562,7 +558,7 @@ export function SpdNetBackprop() {
               <foreignObject x={680} y={BWD_Y - 50} width="220" height="36">
                 <div xmlns="http://www.w3.org/1999/xhtml" style={{
                   fontFamily: 'var(--serif), Georgia, serif',
-                  fontStyle: 'italic', fontSize: '20px',
+                  fontStyle: 'italic', fontSize: '28px',
                   color: RED, textAlign: 'center', whiteSpace: 'nowrap',
                   opacity: bwdProgress,
                   transition: 'opacity 600ms ease-out 350ms',
@@ -591,7 +587,7 @@ export function SpdNetBackprop() {
               <foreignObject x={130} y={BWD_Y - 50} width="200" height="36">
                 <div xmlns="http://www.w3.org/1999/xhtml" style={{
                   fontFamily: 'var(--serif), Georgia, serif',
-                  fontStyle: 'italic', fontSize: '20px',
+                  fontStyle: 'italic', fontSize: '28px',
                   color: RED, textAlign: 'center', whiteSpace: 'nowrap',
                   opacity: bwdProgress,
                   transition: 'opacity 600ms ease-out 450ms',
@@ -615,7 +611,7 @@ export function SpdNetBackprop() {
               <foreignObject x={F.x - 90} y={BWD_Y + BOX_H / 2 + 90} width="180" height="34">
                 <div xmlns="http://www.w3.org/1999/xhtml" style={{
                   fontFamily: 'var(--serif), Georgia, serif',
-                  fontStyle: 'italic', fontSize: '20px',
+                  fontStyle: 'italic', fontSize: '28px',
                   color: RED, textAlign: 'center', whiteSpace: 'nowrap',
                   opacity: bwdProgress,
                   transition: 'opacity 600ms ease-out 350ms',

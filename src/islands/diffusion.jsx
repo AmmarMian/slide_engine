@@ -12,10 +12,10 @@ export function HeroRow({ state = HERO_COLS.length, highlight = -1, compact = fa
     : { val: 28, pad: '12px 14px', hdr: 24, gap: 6 };
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontFamily: 'var(--mono)' }}>
-      {label && <div className="label" style={{ fontSize: 24, color: 'var(--ink-3)' }}>{label}</div>}
+      {label && <div className="label" style={{ fontSize: 'calc(24px * var(--type-scale, 1))', color: 'var(--ink-3)' }}>{label}</div>}
       <div style={{ display: 'grid', gridTemplateColumns: `repeat(${HERO_COLS.length}, 1fr)`, gap: sz.gap, border: '1.5px solid var(--ink)', background: 'var(--ink)', padding: 1.5 }}>
         {headers && HERO_COLS.map((c, ci) => (
-          <div key={'h' + ci} style={{ background: 'var(--bg)', padding: sz.pad, fontSize: sz.hdr, color: 'var(--ink-3)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>{c}</div>
+          <div key={'h' + ci} style={{ background: 'var(--bg)', padding: sz.pad, fontSize: `calc(${sz.hdr}px * var(--type-scale, 1))`, color: 'var(--ink-3)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>{c}</div>
         ))}
         {HERO_VALUES.map((v, ci) => {
           const resolved = ci < state, isHl = ci === highlight && resolved;
@@ -23,7 +23,7 @@ export function HeroRow({ state = HERO_COLS.length, highlight = -1, compact = fa
             <div key={'v' + ci} style={{
               background: isHl ? 'var(--accent)' : resolved ? 'var(--bg)' : 'var(--bg-2)',
               color: isHl ? '#fff' : resolved ? 'var(--ink)' : 'var(--ink-3)',
-              padding: sz.pad, fontSize: sz.val,
+              padding: sz.pad, fontSize: `calc(${sz.val}px * var(--type-scale, 1))`,
               textAlign: ci === 0 || ci === HERO_COLS.length - 1 ? 'right' : 'left',
               fontVariantNumeric: 'tabular-nums', transition: 'background 220ms, color 220ms',
               fontWeight: isHl ? 600 : 500,
@@ -51,7 +51,7 @@ export function DiffusionStripContent({ steps }) {
               <ellipse cx={50} cy={50} rx={Math.max(0, 36 - i * 6)} ry={Math.max(0, 26 - i * 4)}
                 fill="var(--accent)" opacity={Math.max(0, 0.45 - noise * 0.5)} />
             </svg>
-            <div style={{ position: 'absolute', bottom: 8, left: 10, fontFamily: 'var(--mono)', fontSize: 24, color: 'var(--ink-3)' }}>
+            <div style={{ position: 'absolute', bottom: 8, left: 10, fontFamily: 'var(--mono)', fontSize: 'calc(24px * var(--type-scale, 1))', color: 'var(--ink-3)' }}>
               t = {Math.round(noise * 1000)}
             </div>
           </div>
@@ -80,7 +80,7 @@ export function DiffusionScrubberContent() {
                 fill="var(--ink)" opacity={Math.max(0, 0.65 - t * 0.55)} />
             </svg>
           </div>
-          <div className="mono" style={{ fontSize: 24, color: 'var(--ink-3)' }}>
+          <div className="mono" style={{ fontSize: 'calc(24px * var(--type-scale, 1))', color: 'var(--ink-3)' }}>
             x_t = √(α̅_t) · x_0 + √(1 − α̅_t) · ε,&nbsp; ε ~ 𝒩(0, I)
           </div>
         </div>
@@ -89,19 +89,19 @@ export function DiffusionScrubberContent() {
           <div style={{ height: 240, display: 'flex', alignItems: 'center' }}>
             <div style={{ width: '100%' }}><HeroRow state={discreteState} headers={true} /></div>
           </div>
-          <div className="mono" style={{ fontSize: 24, color: 'var(--ink-3)' }}>
+          <div className="mono" style={{ fontSize: 'calc(24px * var(--type-scale, 1))', color: 'var(--ink-3)' }}>
             x_t ~ Cat(x_t; Q&#773;_t · e<sub>x_0</sub>),&nbsp; absorbing [MASK]
           </div>
         </div>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 24, paddingTop: 6 }}>
-        <div className="mono" style={{ color: 'var(--ink)', minWidth: 130, fontSize: 22 }}>t = {String(tRaw).padStart(4, ' ')}</div>
+        <div className="mono" style={{ color: 'var(--ink)', minWidth: 130, fontSize: 'calc(22px * var(--type-scale, 1))' }}>t = {String(tRaw).padStart(4, ' ')}</div>
         <div style={{ flex: 1, position: 'relative', height: 28, display: 'flex', alignItems: 'center' }}>
           <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: 2, background: 'var(--rule-soft)', transform: 'translateY(-50%)' }} />
           <input type="range" min="0" max="1000" value={tRaw} onChange={e => setT(+e.target.value)}
             style={{ position: 'relative', zIndex: 1, width: '100%', accentColor: 'var(--ink)', cursor: 'ew-resize' }} />
         </div>
-        <div className="mono" style={{ color: 'var(--ink-3)', minWidth: 130, fontSize: 22, textAlign: 'right' }}>x_0 ⟶ x_T</div>
+        <div className="mono" style={{ color: 'var(--ink-3)', minWidth: 130, fontSize: 'calc(22px * var(--type-scale, 1))', textAlign: 'right' }}>x_0 ⟶ x_T</div>
       </div>
     </div>
   );
@@ -128,7 +128,7 @@ export function AlgorithmStepperContent() {
       appearance: 'none', border: '1.5px solid var(--ink)',
       background: primary ? 'var(--ink)' : 'transparent',
       color: primary ? 'var(--bg)' : 'var(--ink)',
-      fontFamily: 'var(--mono)', fontSize: 18, fontWeight: 600,
+      fontFamily: 'var(--mono)', fontSize: 'calc(18px * var(--type-scale, 1))', fontWeight: 600,
       letterSpacing: '0.04em', textTransform: 'uppercase',
       padding: '10px 16px', cursor: disabled ? 'not-allowed' : 'pointer',
       opacity: disabled ? 0.35 : 1, transition: 'opacity 140ms',
@@ -155,9 +155,9 @@ export function AlgorithmStepperContent() {
         <Line n={7}><b>return</b>&nbsp; <KatexSpan>x_0</KatexSpan></Line>
       </div>
       <div style={{ borderTop: '1px solid var(--rule)', padding: '14px 32px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <div className="label" style={{ fontSize: 16 }}>Live trace</div>
+        <div className="label" style={{ fontSize: 'calc(16px * var(--type-scale, 1))' }}>Live trace</div>
         <HeroRow state={step} highlight={highlight} headers={true} />
-        <div className="mono" style={{ fontSize: 20, color: 'var(--ink-2)', minHeight: 24 }}>{status}</div>
+        <div className="mono" style={{ fontSize: 'calc(20px * var(--type-scale, 1))', color: 'var(--ink-2)', minHeight: 24 }}>{status}</div>
         <div style={{ display: 'flex', gap: 10, marginTop: 2, flexWrap: 'wrap' }}>
           <Btn onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0}>← Back</Btn>
           <Btn primary onClick={() => setStep(s => Math.min(N, s + 1))} disabled={step >= N}>Step →</Btn>

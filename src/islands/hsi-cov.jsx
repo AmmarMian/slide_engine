@@ -122,41 +122,35 @@ function pixelToRGB(sig) {
 // ── Step content ─────────────────────────────────────────────────────────
 const STEP_HTML = [
   // 0 — Image + fenêtre
-  `<div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Étape 0 / 5</div>
-   <h2 style="margin:0 0 14px;font-size:30px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Une image, des signatures</h2>
-   <p style="margin:0;font-size:18px;color:var(--ink-2);line-height:1.55;">
+  `<div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Étape 0 / 4</div>
+   <h2 style="margin:0 0 14px;font-size:40px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Une image, des signatures</h2>
+   <p style="margin:0;font-size:24px;color:var(--ink-2);line-height:1.55;">
      Chaque pixel porte une <strong>signature spectrale</strong> de dimension D. Une <strong>fenêtre glissante</strong> de taille n × n collecte un voisinage de pixels — on va calculer la covariance de leurs signatures.
    </p>`,
 
   // 1 — Collecte les signatures
-  `<div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Étape 1 / 5</div>
-   <h2 style="margin:0 0 14px;font-size:30px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Collecter les vecteurs</h2>
-   <div class="math-display" style="margin:0 0 12px;font-size:22px;">\\{ \\mathbf{x}_1, \\ldots, \\mathbf{x}_N\\} \\;\\subset\\; \\mathbb{R}^D, \\quad N = n^2</div>
-   <p style="margin:0;font-size:17px;color:var(--ink-3);">Les courbes en haut à droite — une signature par pixel de la fenêtre.</p>`,
+  `<div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Étape 1 / 4</div>
+   <h2 style="margin:0 0 14px;font-size:40px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Collecter les vecteurs</h2>
+   <div class="math-display" style="margin:0 0 12px;font-size:28px;">\\{ \\mathbf{x}_1, \\ldots, \\mathbf{x}_N\\} \\;\\subset\\; \\mathbb{R}^D, \\quad N = n^2</div>
+   <p style="margin:0;font-size:22px;color:var(--ink-3);">Les courbes en haut à droite — une signature par pixel de la fenêtre.</p>`,
 
   // 2 — Mean (centrage)
-  `<div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Étape 2 / 5</div>
-   <h2 style="margin:0 0 14px;font-size:30px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Centrer autour de la moyenne</h2>
-   <div class="math-display" style="margin:0 0 12px;font-size:22px;">\\bar{\\mathbf{x}} = \\tfrac{1}{N} \\sum_{i=1}^N \\mathbf{x}_i, \\qquad \\tilde{\\mathbf{x}}_i = \\mathbf{x}_i - \\bar{\\mathbf{x}}</div>
-   <p style="margin:0;font-size:17px;color:var(--ink-3);">La moyenne (trait épais accent) sert de centre — chaque signature devient un <em>écart</em>.</p>`,
+  `<div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Étape 2 / 4</div>
+   <h2 style="margin:0 0 14px;font-size:40px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Centrer autour de la moyenne</h2>
+   <div class="math-display" style="margin:0 0 12px;font-size:28px;">\\bar{\\mathbf{x}} = \\tfrac{1}{N} \\sum_{i=1}^N \\mathbf{x}_i, \\qquad \\tilde{\\mathbf{x}}_i = \\mathbf{x}_i - \\bar{\\mathbf{x}}</div>
+   <p style="margin:0;font-size:22px;color:var(--ink-3);">La moyenne (trait épais accent) sert de centre — chaque signature devient un <em>écart</em>.</p>`,
 
-  // 3 — Outer products
-  `<div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Étape 3 / 5</div>
-   <h2 style="margin:0 0 14px;font-size:30px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Produits extérieurs</h2>
-   <div class="math-display" style="margin:0 0 12px;font-size:22px;">\\tilde{\\mathbf{x}}_i \\, \\tilde{\\mathbf{x}}_i^{\\!\\top} \\;\\in\\; \\mathbb{R}^{D \\times D}</div>
-   <p style="margin:0;font-size:17px;color:var(--ink-3);">Chaque écart vectoriel produit une matrice de rang 1 — la heatmap s'accumule.</p>`,
+  // 3 — Final covariance (formerly step 4)
+  `<div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Étape 3 / 4</div>
+   <h2 style="margin:0 0 14px;font-size:40px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Covariance finale</h2>
+   <div class="math-display" style="margin:0 0 12px;font-size:28px;">\\hat{\\Sigma} \\;=\\; \\tfrac{1}{N-1} \\sum_{i=1}^N \\tilde{\\mathbf{x}}_i \\tilde{\\mathbf{x}}_i^{\\!\\top}</div>
+   <p style="margin:0;font-size:22px;color:var(--ink-3);">Une matrice SPD de taille D × D, capturant les co-variations entre bandes spectrales.</p>`,
 
-  // 4 — Final covariance
-  `<div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Étape 4 / 5</div>
-   <h2 style="margin:0 0 14px;font-size:30px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Moyenner — covariance</h2>
-   <div class="math-display" style="margin:0 0 12px;font-size:22px;">\\hat{\\boldsymbol{\\Sigma}} \\;=\\; \\tfrac{1}{N-1} \\sum_{i=1}^N \\tilde{\\mathbf{x}}_i \\tilde{\\mathbf{x}}_i^{\\!\\top}</div>
-   <p style="margin:0;font-size:17px;color:var(--ink-3);">Une matrice SPD de taille D × D, capturant les co-variations entre bandes spectrales.</p>`,
-
-  // 5 — Sliding
-  `<div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Étape 5 / 5</div>
-   <h2 style="margin:0 0 14px;font-size:30px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Glisser sur toute l'image</h2>
-   <p style="margin:0;font-size:18px;color:var(--ink-2);line-height:1.55;">
-     La fenêtre balaye l'image : on obtient <strong>une matrice SPD par position</strong>. C'est l'entrée typique d'un SPDNet en imagerie hyperspectrale.
+  // 4 — Sliding (formerly step 5)
+  `<div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Étape 4 / 4</div>
+   <h2 style="margin:0 0 14px;font-size:40px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Glisser sur toute l'image</h2>
+   <p style="margin:0;font-size:24px;color:var(--ink-2);line-height:1.55;">
+     La fenêtre balaye l'image : on obtient <strong>une matrice SPD par position</strong>.
    </p>`,
 ];
 
@@ -238,7 +232,7 @@ function SignaturePlot({ vecs, meanVec, showMean, centered: showCentered }) {
       {/* axes */}
       <line x1={pad.l} y1={pad.t} x2={pad.l} y2={pad.t + ih} stroke={RULE_S} strokeWidth="1" />
       <line x1={pad.l} y1={pad.t + ih} x2={W - pad.r} y2={pad.t + ih} stroke={RULE_S} strokeWidth="1" />
-      <text x={pad.l + iw / 2} y={H - 6} textAnchor="middle" fontFamily="var(--mono)" fontSize="11" fill={INK3}>bande spectrale</text>
+      <text x={pad.l + iw / 2} y={H - 6} textAnchor="middle" fontFamily="var(--mono)" style={{ fontSize: 'calc(15px * var(--type-scale, 1))' }} fill={INK3}>bande spectrale</text>
       {/* lines */}
       {dataSet.map((v, i) => {
         const path = v.map((vi, k) => `${k === 0 ? 'M' : 'L'} ${xOf(k).toFixed(1)} ${yOf(vi).toFixed(1)}`).join(' ');
@@ -266,7 +260,7 @@ function CovHeatmap({ M, label }) {
   for (let i = 0; i < D; i++) for (let j = 0; j < D; j++) absMax = Math.max(absMax, Math.abs(M[i][j]));
   return (
     <svg viewBox={`0 0 ${totalW} ${totalH}`} style={{ display: 'block', width: '100%', height: '100%' }}>
-      {label && <text x={totalW / 2} y={14} textAnchor="middle" fontFamily="var(--mono)" fontSize="11" fill={INK3} letterSpacing="0.05em">{label}</text>}
+      {label && <text x={totalW / 2} y={14} textAnchor="middle" fontFamily="var(--mono)" style={{ fontSize: 'calc(15px * var(--type-scale, 1))' }} fill={INK3} letterSpacing="0.05em">{label}</text>}
       {M.flatMap((row, i) => row.map((v, j) => {
         const n = v / absMax;
         const op = Math.min(1, Math.abs(n));
@@ -291,8 +285,6 @@ export function HsiCov() {
   const [winX, setWinX] = useState(3);
   const [winY, setWinY] = useState(4);
   const [sliding, setSliding] = useState(false);
-  // Outer-product accumulator (progressive build)
-  const [accIdx, setAccIdx] = useState(0);
   const MAX_STEP = STEP_HTML.length - 1;
 
   const WIN = 4;
@@ -304,32 +296,12 @@ export function HsiCov() {
   const c = useMemo(() => centered(vecs, m), [vecs, m]);
   const fullCov = useMemo(() => covariance(vecs), [vecs]);
 
-  // Progressive cov build during step 3 (outer products)
-  const partialCov = useMemo(() => {
-    if (step < 3) return null;
-    if (step >= 4) return fullCov;
-    const acc = Array.from({ length: D }, () => new Array(D).fill(0));
-    const k = Math.min(accIdx, c.length);
-    for (let i = 0; i < k; i++) addInto(acc, outerProduct(c[i]));
-    return divideBy(acc, Math.max(1, vecs.length - 1));
-  }, [step, accIdx, c, fullCov, vecs.length, D]);
+  // Show full covariance when step >= 3
+  const showFullCov = step >= 3;
 
-  // Drive outer-product accumulation when step === 3
+  // Sliding animation during step 4
   useEffect(() => {
-    if (step !== 3) return;
-    setAccIdx(0);
-    let i = 0;
-    const interval = setInterval(() => {
-      i++;
-      setAccIdx(i);
-      if (i >= c.length) clearInterval(interval);
-    }, 80);
-    return () => clearInterval(interval);
-  }, [step, c.length]);
-
-  // Sliding animation during step 5
-  useEffect(() => {
-    if (step !== 5) { setSliding(false); return; }
+    if (step !== 4) { setSliding(false); return; }
     setSliding(true);
     let x = 0, y = 0, dir = 1;
     const interval = setInterval(() => {
@@ -343,9 +315,9 @@ export function HsiCov() {
     return () => { clearInterval(interval); setSliding(false); };
   }, [step]);
 
-  // Reset window position when leaving step 5
+  // Reset window position when leaving step 4
   useEffect(() => {
-    if (step !== 5 && step >= 1) { setWinX(3); setWinY(4); }
+    if (step !== 4 && step >= 1) { setWinX(3); setWinY(4); }
   }, [step]);
 
   // Keyboard control
@@ -377,9 +349,8 @@ export function HsiCov() {
 
   const showSignatures = step >= 1;
   const showMean = step >= 2 && step < 3;
-  const showCentered = step >= 3;
-  const showCov = step >= 3;
-  const fullCovOnly = step >= 4;
+  const showCentered = step >= 2;
+  const showCov = step >= 2;
 
   return (
     <div ref={containerRef} style={{
@@ -409,7 +380,7 @@ export function HsiCov() {
           <div style={{
             display: 'flex', alignItems: 'center', gap: 14,
             padding: '10px 14px', background: BG2, borderRadius: 6,
-            fontFamily: 'var(--mono)', fontSize: 13, color: INK3,
+            fontFamily: 'var(--mono)', fontSize: 'calc(16px * var(--type-scale, 1))', color: INK3,
           }}>
             <span style={{ display: 'inline-block', width: 12, height: 12, background: ACCENT, borderRadius: 2 }} />
             <span>Fenêtre {WIN}×{WIN} → N = {WIN * WIN} vecteurs · position ({winX},{winY})</span>
@@ -435,11 +406,11 @@ export function HsiCov() {
           {/* Cov matrix */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1.0, minHeight: 0 }}>
             <div className="eyebrow" style={{ color: INK3 }}>
-              {step < 3 ? 'Covariance Σ ∈ ℝ^{D×D}' : (fullCovOnly ? 'Σ — finale' : `Σ — accumulation (${accIdx}/${c.length})`)}
+              Covariance Σ {'∈'} ℝ<sup>D×D</sup>
             </div>
             <div style={{ flex: 1, minHeight: 0, background: BG, borderRadius: 4, border: `1px solid ${RULE_S}`, overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 8 }}>
-              {showCov ? <CovHeatmap M={partialCov} /> : (
-                <div style={{ color: INK3, fontFamily: 'var(--mono)', fontSize: 13, padding: 18, textAlign: 'center' }}>en attente — étapes à venir</div>
+              {showCov ? <CovHeatmap M={fullCov} /> : (
+                <div style={{ color: INK3, fontFamily: 'var(--mono)', fontSize: 'calc(18px * var(--type-scale, 1))', padding: 18, textAlign: 'center' }}>en attente — étapes à venir</div>
               )}
             </div>
           </div>

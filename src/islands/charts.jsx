@@ -37,13 +37,13 @@ export function NLLChart({ variant = 'swiss' }) {
         <line key={t} x1={PAD.l} y1={sy(t)} x2={W - PAD.r} y2={sy(t)} stroke="var(--rule-soft)" strokeWidth="1" />
       ))}
       {yTicks.map((t) => (
-        <text key={t} x={PAD.l - 12} y={sy(t) + 5} textAnchor="end" fontFamily="var(--mono)" fontSize="20" fill="var(--ink-3)">{t.toFixed(1)}</text>
+        <text key={t} x={PAD.l - 12} y={sy(t) + 5} textAnchor="end" fontFamily="var(--mono)" style={{ fontSize: 'calc(20px * var(--type-scale, 1))' }} fill="var(--ink-3)">{t.toFixed(1)}</text>
       ))}
       {xs.map((x) => (
-        <text key={x} x={sx(x)} y={H - PAD.b + 28} textAnchor="middle" fontFamily="var(--mono)" fontSize="20" fill="var(--ink-3)">{x}</text>
+        <text key={x} x={sx(x)} y={H - PAD.b + 28} textAnchor="middle" fontFamily="var(--mono)" style={{ fontSize: 'calc(20px * var(--type-scale, 1))' }} fill="var(--ink-3)">{x}</text>
       ))}
-      <text x={PAD.l + innerW / 2} y={H - 8} textAnchor="middle" fontFamily="var(--mono)" fontSize="22" fill="var(--ink-3)" letterSpacing="0.04em">DIFFUSION STEPS T</text>
-      <text x={24} y={PAD.t + innerH / 2} textAnchor="middle" fontFamily="var(--mono)" fontSize="22" fill="var(--ink-3)" letterSpacing="0.04em"
+      <text x={PAD.l + innerW / 2} y={H - 8} textAnchor="middle" fontFamily="var(--mono)" style={{ fontSize: 'calc(22px * var(--type-scale, 1))' }} fill="var(--ink-3)" letterSpacing="0.04em">DIFFUSION STEPS T</text>
+      <text x={24} y={PAD.t + innerH / 2} textAnchor="middle" fontFamily="var(--mono)" style={{ fontSize: 'calc(22px * var(--type-scale, 1))' }} fill="var(--ink-3)" letterSpacing="0.04em"
             transform={`rotate(-90, 24, ${PAD.t + innerH / 2})`}>TEST NLL</text>
       {series.map((s, si) => (
         <g key={si}>
@@ -55,12 +55,12 @@ export function NLLChart({ variant = 'swiss' }) {
                     fill={si === 0 ? s.color : 'var(--bg)'} stroke={s.color} strokeWidth={si === 0 ? 0 : 1.6} />
           ))}
           <text x={sx(xs[xs.length - 1]) + 14} y={sy(s.vals[s.vals.length - 1]) + 5}
-                fontFamily="var(--mono)" fontSize="20" fill={s.color}>{s.name}</text>
+                fontFamily="var(--mono)" style={{ fontSize: 'calc(20px * var(--type-scale, 1))' }} fill={s.color}>{s.name}</text>
         </g>
       ))}
       <line x1={sx(200)} y1={PAD.t} x2={sx(200)} y2={H - PAD.b}
             stroke="var(--ink)" strokeWidth="1" strokeDasharray="4 4" opacity="0.4" />
-      <text x={sx(200)} y={PAD.t - 8} textAnchor="middle" fontFamily="var(--mono)" fontSize="18"
+      <text x={sx(200)} y={PAD.t - 8} textAnchor="middle" fontFamily="var(--mono)" style={{ fontSize: 'calc(18px * var(--type-scale, 1))' }}
             fill="var(--ink-3)">T* = 200</text>
     </ChartFrame>
   );
@@ -104,7 +104,7 @@ export function DistChart({ variant = 'swiss' }) {
         return (
           <g key={ci} transform={`translate(${ox}, 0)`}>
             <text x={PAD.l + innerW / 2} y={16} textAnchor="middle"
-                  fontFamily="var(--mono)" fontSize="22" fill="var(--ink-3)" letterSpacing="0.04em">{col.name.toUpperCase()}</text>
+                  fontFamily="var(--mono)" style={{ fontSize: 'calc(22px * var(--type-scale, 1))' }} fill="var(--ink-3)" letterSpacing="0.04em">{col.name.toUpperCase()}</text>
             <line x1={PAD.l} y1={H - PAD.b} x2={PAD.l + innerW} y2={H - PAD.b} stroke="var(--ink)" strokeWidth="1.2" />
             <line x1={PAD.l} y1={PAD.t} x2={PAD.l} y2={H - PAD.b} stroke="var(--ink)" strokeWidth="1.2" />
             {col.real.map((v, i) => (
@@ -117,14 +117,14 @@ export function DistChart({ variant = 'swiss' }) {
             ))}
             {col.type === 'categorical' && col.labels?.map((l, i) => (
               <text key={'l' + i} x={bx(i) + bw / 2} y={H - PAD.b + 22}
-                    textAnchor="middle" fontFamily="var(--mono)" fontSize="16" fill="var(--ink-3)">{l}</text>
+                    textAnchor="middle" fontFamily="var(--mono)" style={{ fontSize: 'calc(16px * var(--type-scale, 1))' }} fill="var(--ink-3)">{l}</text>
             ))}
             {ci === 0 && (
               <g>
                 <rect x={PAD.l} y={PAD.t - 4} width={14} height={12} fill="var(--ink)" opacity="0.25" />
-                <text x={PAD.l + 20} y={PAD.t + 6} fontFamily="var(--mono)" fontSize="18" fill="var(--ink-3)">real</text>
+                <text x={PAD.l + 20} y={PAD.t + 6} fontFamily="var(--mono)" style={{ fontSize: 'calc(18px * var(--type-scale, 1))' }} fill="var(--ink-3)">real</text>
                 <rect x={PAD.l + 72} y={PAD.t - 4} width={14} height={12} fill="none" stroke="var(--accent)" strokeWidth="2" />
-                <text x={PAD.l + 92} y={PAD.t + 6} fontFamily="var(--mono)" fontSize="18" fill="var(--ink-3)">synth</text>
+                <text x={PAD.l + 92} y={PAD.t + 6} fontFamily="var(--mono)" style={{ fontSize: 'calc(18px * var(--type-scale, 1))' }} fill="var(--ink-3)">synth</text>
               </g>
             )}
           </g>
@@ -139,19 +139,19 @@ export function ArchDiagram() {
   return (
     <svg viewBox="0 0 1600 480" width="100%" height="100%" style={{ display: 'block' }}>
       <g transform="translate(40, 180)">
-        <text x={0} y={-22} fontFamily="var(--mono)" fontSize={20} fill="var(--ink-3)" letterSpacing="0.04em">INPUT</text>
+        <text x={0} y={-22} fontFamily="var(--mono)" style={{ fontSize: 'calc(20px * var(--type-scale, 1))' }} fill="var(--ink-3)" letterSpacing="0.04em">INPUT</text>
         {[0,1,2,3,4].map(i => (
           <g key={i} transform={`translate(0, ${i * 30})`}>
             <rect width={110} height={24} fill="var(--bg-2)" stroke="var(--ink)" strokeWidth={1.2} />
-            <text x={55} y={16} fontFamily="var(--mono)" fontSize={14} fill="var(--ink)" textAnchor="middle">[MASK]</text>
+            <text x={55} y={16} fontFamily="var(--mono)" style={{ fontSize: 'calc(14px * var(--type-scale, 1))' }} fill="var(--ink)" textAnchor="middle">[MASK]</text>
           </g>
         ))}
       </g>
       <path d="M 170 292 H 230" stroke="var(--ink)" strokeWidth={1.4} />
       <g transform="translate(230, 232)">
         <rect width={120} height={120} fill="var(--bg-2)" stroke="var(--ink)" strokeWidth={1.5} />
-        <text x={60} y={58} fontFamily="var(--sans)" fontSize={20} fontWeight={600} fill="var(--ink)" textAnchor="middle">Embed</text>
-        <text x={60} y={82} fontFamily="var(--mono)" fontSize={13} fill="var(--ink-3)" textAnchor="middle">+ time t</text>
+        <text x={60} y={58} fontFamily="var(--sans)" style={{ fontSize: 'calc(20px * var(--type-scale, 1))' }} fontWeight={600} fill="var(--ink)" textAnchor="middle">Embed</text>
+        <text x={60} y={82} fontFamily="var(--mono)" style={{ fontSize: 'calc(13px * var(--type-scale, 1))' }} fill="var(--ink-3)" textAnchor="middle">+ time t</text>
       </g>
       {[0,1,2,3].map(i => (
         <g key={i}>
@@ -159,24 +159,24 @@ export function ArchDiagram() {
           <g transform={`translate(${390 + i * 170}, 202)`}>
             <rect width={150} height={180} fill="var(--bg-2)" stroke="var(--ink)" strokeWidth={1.6} />
             <rect width={150} height={5} y={-5} fill="var(--ink)" />
-            <text x={75} y={82} fontFamily="var(--sans)" fontSize={19} fontWeight={600} fill="var(--ink)" textAnchor="middle">Block {i+1}</text>
-            <text x={75} y={106} fontFamily="var(--mono)" fontSize={12} fill="var(--ink-3)" textAnchor="middle">attn + mlp</text>
+            <text x={75} y={82} fontFamily="var(--sans)" style={{ fontSize: 'calc(19px * var(--type-scale, 1))' }} fontWeight={600} fill="var(--ink)" textAnchor="middle">Block {i+1}</text>
+            <text x={75} y={106} fontFamily="var(--mono)" style={{ fontSize: 'calc(12px * var(--type-scale, 1))' }} fill="var(--ink-3)" textAnchor="middle">attn + mlp</text>
           </g>
         </g>
       ))}
       <path d="M 1070 292 H 1130" stroke="var(--ink)" strokeWidth={1.4} />
       <g transform="translate(1130, 120)">
-        <text x={0} y={-14} fontFamily="var(--mono)" fontSize={18} fill="var(--ink-3)" letterSpacing="0.04em">HEADS</text>
+        <text x={0} y={-14} fontFamily="var(--mono)" style={{ fontSize: 'calc(18px * var(--type-scale, 1))' }} fill="var(--ink-3)" letterSpacing="0.04em">HEADS</text>
         {[0,1,2,3,4].map(i => (
           <g key={i} transform={`translate(0, ${i * 58})`}>
             <rect width={180} height={44} fill="var(--bg-2)" stroke="var(--ink)" strokeWidth={1.2} />
-            <text x={16} y={27} fontFamily="var(--mono)" fontSize={14} fill="var(--ink)">{`col_${i}: K-way`}</text>
+            <text x={16} y={27} fontFamily="var(--mono)" style={{ fontSize: 'calc(14px * var(--type-scale, 1))' }} fill="var(--ink)">{`col_${i}: K-way`}</text>
           </g>
         ))}
       </g>
       <path d="M 1310 292 H 1370" stroke="var(--ink)" strokeWidth={1.4} />
       <g transform="translate(1370, 182)">
-        <text x={0} y={-22} fontFamily="var(--mono)" fontSize={18} fill="var(--ink-3)" letterSpacing="0.04em">x̂₀</text>
+        <text x={0} y={-22} fontFamily="var(--mono)" style={{ fontSize: 'calc(18px * var(--type-scale, 1))' }} fill="var(--ink-3)" letterSpacing="0.04em">x̂₀</text>
         {[0,1,2,3,4].map(i => (
           <g key={i} transform={`translate(0, ${i * 30})`}>
             <rect width={130} height={24} fill="var(--bg-2)" stroke="var(--accent)" strokeWidth={1.4} />

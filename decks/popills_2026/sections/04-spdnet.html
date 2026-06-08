@@ -1,7 +1,7 @@
   <section-divider
     label="SPDnet"
     kicker="SPDnet architecture"
-    blurb="L'architeture originale sur matrices de covariances">
+    blurb="L'architecture originale sur matrices de covariances">
   </section-divider>
 
   <!-- §2.0 · SPDNet — problem statement -->
@@ -35,8 +35,8 @@
             <rect x="78" y="78" width="24" height="24" fill="var(--accent)" fill-opacity="0.80" rx="2"/>
             <rect x="0"  y="0"  width="102" height="102" fill="none" stroke="var(--rule)" stroke-width="1.5" rx="3"/>
           </svg>
-          <div style="font-family:var(--mono);font-size:17px;color:var(--ink-3);text-align:center;">
-            <span class="math">\boldsymbol{\Sigma}_i \in \mathcal{S}_{++}^d</span>
+          <div style="font-family:var(--mono);font-size:26px;color:var(--ink-3);text-align:center;">
+            <span class="math">\Sigma_i \in \mathcal{S}_{++}^d</span>
           </div>
         </div>
 
@@ -46,7 +46,7 @@
         <!-- f box -->
         <div style="border:2px solid var(--accent);border-radius:12px;padding:18px 40px;text-align:center;flex-shrink:0;margin-bottom:28px;">
           <div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Classifieur</div>
-          <div style="font-family:var(--sans);font-size:28px;font-weight:600;color:var(--ink);">f(<span class="math">\boldsymbol{\Sigma}</span> ; <span class="math">\theta</span>)</div>
+          <div style="font-family:var(--sans);font-size:28px;font-weight:600;color:var(--ink);">f(<span class="math">\Sigma</span> ; <span class="math">\theta</span>)</div>
         </div>
 
         <!-- Arrow -->
@@ -66,8 +66,8 @@
             <text x="111" y="106" text-anchor="middle" font-size="12" font-family="var(--mono)" fill="var(--ink-3)">C₃</text>
             <text x="147" y="106" text-anchor="middle" font-size="12" font-family="var(--mono)" fill="var(--ink-3)">C₄</text>
           </svg>
-          <div style="font-family:var(--mono);font-size:17px;color:var(--ink-3);text-align:center;">
-            <span class="math">p(\mathrm{classe} \mid \boldsymbol{\Sigma})</span>
+          <div style="font-family:var(--mono);font-size:26px;color:var(--ink-3);text-align:center;">
+            <span class="math">p(\mathrm{classe} \mid \Sigma)</span>
           </div>
         </div>
 
@@ -80,12 +80,12 @@
         <div data-step style="border:1px solid var(--rule);border-radius:10px;padding:22px 28px;display:flex;flex-direction:column;gap:12px;">
           <div>
             <div class="eyebrow" style="color:var(--ink-3);margin-bottom:6px;">Première idée</div>
-            <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--ink);">vec(<span class="math">\boldsymbol{\Sigma}</span>)<span class="math">\;\in\;\mathbb{R}^{d^2}</span></div>
+            <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--ink);">vec(<span class="math">\Sigma</span>)<span class="math">\;\in\;\mathbb{R}^{d^2}</span></div>
           </div>
           <p class="body">Empiler toutes les entrées colonne par colonne — <strong>d²</strong> composantes.</p>
           <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px;">
             <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:#b03030;flex-shrink:0;">⚠</span><span>Symétrie ignorée : <span class="math">\Sigma_{ij}=\Sigma_{ji}</span> dupliqués — dimension <span class="math">d^2</span> non-minimale</span></li>
-            <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:#b03030;flex-shrink:0;">⚠</span><span>Contrainte <span class="math">\boldsymbol{\Sigma}\succ 0</span> perdue dans <span class="math">\mathbb{R}^{d^2}</span></span></li>
+            <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:#b03030;flex-shrink:0;">⚠</span><span>Contrainte <span class="math">\Sigma\succ 0</span> perdue dans <span class="math">\mathbb{R}^{d^2}</span></span></li>
           </ul>
         </div>
 
@@ -93,12 +93,12 @@
         <div data-step style="border:1px solid var(--rule);border-left:3px solid var(--accent);border-radius:10px;padding:22px 28px;display:flex;flex-direction:column;gap:12px;">
           <div>
             <div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Idée affinée</div>
-            <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--ink);">vech(<span class="math">\boldsymbol{\Sigma}</span>)<span class="math">\;\in\;\mathbb{R}^{d(d+1)/2}</span></div>
+            <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--ink);">vech(<span class="math">\Sigma</span>)<span class="math">\;\in\;\mathbb{R}^{d(d+1)/2}</span></div>
           </div>
           <p class="body">Triangle supérieur uniquement — <strong>d(d+1)/2</strong> composantes, sans redondance.</p>
           <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px;">
             <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:var(--ink-3);flex-shrink:0;">·</span><span>Plus économique en dimension</span></li>
-            <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:#b03030;flex-shrink:0;">⚠</span><span>La contrainte <span class="math">\boldsymbol{\Sigma}\succ 0</span> reste ignorée dans <span class="math">\mathbb{R}^{d(d+1)/2}</span></span></li>
+            <li class="small" style="display:flex;gap:10px;align-items:baseline;"><span style="color:#b03030;flex-shrink:0;">⚠</span><span>La contrainte <span class="math">\Sigma\succ 0</span> reste ignorée dans <span class="math">\mathbb{R}^{d(d+1)/2}</span></span></li>
           </ul>
         </div>
 
@@ -132,38 +132,38 @@
   <section>
     <slide-note>Avant de plonger dans la rétropropagation : il faut identifier ce qui est optimisé. Seules les couches BiMap portent des paramètres, et ces paramètres sont contraints à vivre sur la variété de Stiefel — d'où la nécessité de l'optimisation riemannienne.</slide-note>
     <slide-header title="Qu'est-ce qui est optimisé ?"></slide-header>
-    <div class="slide-body">
-      <div class="cols cols-2" style="gap:64px;align-items:start;margin-top:24px;">
+    <div class="slide-body" style="display:flex;flex-direction:column;gap:32px;align-items:flex-start;">
+      <div class="cols cols-2" style="gap:64px;align-items:start;margin-top:24px;width:100%;">
         <div>
           <div class="eyebrow" style="margin-bottom:12px;">Couches sans paramètre</div>
           <div style="display:flex;flex-direction:column;gap:18px;">
-            <div data-step style="border-left:3px solid var(--rule);padding:14px 18px;background:var(--bg-2);">
-              <div style="font-family:var(--mono);font-size:20px;font-weight:600;color:var(--ink-2);">ReEig</div>
-              <div class="body" style="font-size:18px;color:var(--ink-3);margin-top:4px;">rectification spectrale — non paramétrique</div>
+            <div data-step style="border-left:3px solid var(--rule);padding:18px 22px;background:var(--bg-2);">
+              <div style="font-family:var(--mono);font-size:26px;font-weight:600;color:var(--ink-2);">ReEig</div>
+              <div class="body" style="font-size:22px;color:var(--ink-3);margin-top:6px;">rectification spectrale — non paramétrique</div>
             </div>
-            <div data-step style="border-left:3px solid var(--rule);padding:14px 18px;background:var(--bg-2);">
-              <div style="font-family:var(--mono);font-size:20px;font-weight:600;color:var(--ink-2);">LogEig</div>
-              <div class="body" style="font-size:18px;color:var(--ink-3);margin-top:4px;">passage tangent en <span class="math">I</span> — non paramétrique</div>
+            <div data-step style="border-left:3px solid var(--rule);padding:18px 22px;background:var(--bg-2);">
+              <div style="font-family:var(--mono);font-size:26px;font-weight:600;color:var(--ink-2);">LogEig</div>
+              <div class="body" style="font-size:22px;color:var(--ink-3);margin-top:6px;">passage tangent en <span class="math">I</span> — non paramétrique</div>
             </div>
           </div>
         </div>
         <div>
           <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Couches paramétrées</div>
-          <div data-step style="border-left:3px solid var(--accent);padding:18px 20px;background:var(--bg-2);">
-            <div style="font-family:var(--mono);font-size:22px;font-weight:600;color:var(--ink);">BiMap<sub style="font-size:14px;color:var(--ink-3);">k</sub></div>
-            <div class="math-display" style="margin:12px 0 8px;">
+          <div data-step style="border-left:3px solid var(--accent);padding:20px 24px;background:var(--bg-2);">
+            <div style="font-family:var(--mono);font-size:28px;font-weight:600;color:var(--ink);">BiMap<sub style="font-size:16px;color:var(--ink-3);">k</sub></div>
+            <div class="math-display" style="margin:14px 0 10px;font-size:26px;">
               X_k = W_k\,X_{k-1}\,W_k^\top
             </div>
-            <div class="body" style="font-size:18px;color:var(--ink-2);">
+            <div class="body" style="font-size:22px;color:var(--ink-2);">
               <span class="math">W_k \in \mathrm{St}(d_{k-1}, d_k)</span> — colonnes orthonormées<cite-ref key="absil2008"></cite-ref>
             </div>
           </div>
-          <div data-step class="theorem" style="margin-top:24px;">
-            <div class="theorem-tag">Conséquence</div>
-            <div class="theorem-body" style="font-size:20px;">
-              Le gradient doit être <strong>tangent à Stiefel</strong>, et la mise à jour doit <strong>y rester</strong> — d'où l'optimisation riemannienne.
-            </div>
-          </div>
+        </div>
+      </div>
+      <div data-step class="theorem" style="width:100%; ">
+        <div class="theorem-tag">Conséquence</div>
+        <div class="theorem-body" style="font-size:26px;">
+          Le gradient doit être <strong>tangent à Stiefel</strong>, et la mise à jour doit <strong>y rester</strong> — d'où l'optimisation riemannienne.
         </div>
       </div>
     </div>
@@ -183,26 +183,26 @@
       <div class="cols cols-2" style="gap:56px;align-items:start;margin-top:8px;">
         <div data-step>
           <div class="eyebrow" style="margin-bottom:14px;">Le cadre matriciel</div>
-          <div class="body" style="font-size:20px;margin-bottom:14px;">
+          <div class="body" style="font-size:26px;margin-bottom:14px;">
             Soit <span class="math">f(X) = U\,g(\Sigma)\,U^\top</span> avec <span class="math">X = U\Sigma U^\top</span>.
             Le différentiel de <span class="math">\mathcal{L}</span> par rapport à <span class="math">X</span> s'écrit<cite-ref key="ionescu2015"></cite-ref> :
           </div>
-          <div class="math-display">
+          <div class="math-display" style="font-size:28px;">
             \frac{\partial \mathcal{L}}{\partial X} = U\left( P \odot (U^\top \tfrac{\partial \mathcal{L}}{\partial U}) + \mathrm{diag}\!\left(\tfrac{\partial \mathcal{L}}{\partial \Sigma}\right)\right) U^\top
           </div>
-          <div class="small" style="color:var(--ink-3);margin-top:10px;font-size:16px;">
+          <div class="small" style="color:var(--ink-3);margin-top:10px;font-size:20px;">
             où <span class="math">P_{ij} = 1/(\sigma_i - \sigma_j)</span> pour <span class="math">i\neq j</span>, et <span class="math">\odot</span> le produit de Hadamard.
           </div>
         </div>
 
         <div data-step>
           <div class="eyebrow" style="margin-bottom:14px;">Le piège numérique</div>
-          <div class="body" style="font-size:20px;">
+          <div class="body" style="font-size:26px;">
             Les coefficients <span class="math">1/(\sigma_i - \sigma_j)</span> explosent quand deux valeurs propres se rapprochent.
           </div>
           <div class="theorem" style="margin-top:20px;">
             <div class="theorem-tag"><cite-ref key="brooks2019"></cite-ref> <span class="theorem-name">NeurIPS 2019</span></div>
-            <div class="theorem-body" style="font-size:18px;">
+            <div class="theorem-body" style="font-size:24px;">
               Reformulation symétrique évitant les divisions instables — désormais la norme dans les implémentations SPDNet modernes.
             </div>
           </div>
@@ -237,32 +237,26 @@
     <slide-note>Récapitulatif : la formation d'un SPDNet combine rétropropagation matricielle pour traverser les couches non-linéaires + optimisation riemannienne pour les paramètres contraints.</slide-note>
     <slide-header title="Une itération d'entraînement, vue d'ensemble"></slide-header>
     <div class="slide-body">
-      <div style="display:flex;flex-direction:column;gap:20px;max-width:1500px;margin-top:24px;">
-        <div data-step style="display:flex;align-items:center;gap:32px;">
-          <div style="flex-shrink:0;width:50px;height:50px;border-radius:50%;background:var(--accent);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:22px;">1</div>
+      <div style="display:flex;flex-direction:column;gap:28px;max-width:1500px;margin-top:24px;">
+        <div data-step style="display:flex;align-items:center;gap:40px;">
+          <div style="flex-shrink:0;width:70px;height:70px;border-radius:50%;background:var(--accent);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:32px;">1</div>
           <div>
-            <div style="font-family:var(--sans);font-size:24px;font-weight:600;color:var(--ink);">Passe avant</div>
-            <div class="body" style="font-size:19px;color:var(--ink-2);">BiMap, ReEig, LogEig à travers les <span class="math">K</span> couches, puis classifieur en sortie.</div>
+            <div style="font-family:var(--sans);font-size:34px;font-weight:600;color:var(--ink);">Passe avant</div>
+            <div class="body" style="font-size:26px;color:var(--ink-2);">BiMap, ReEig, LogEig à travers les <span class="math">K</span> couches, puis classifieur en sortie.</div>
           </div>
         </div>
-        <div data-step style="display:flex;align-items:center;gap:32px;">
-          <div style="flex-shrink:0;width:50px;height:50px;border-radius:50%;background:var(--accent);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:22px;">2</div>
+        <div data-step style="display:flex;align-items:center;gap:40px;">
+          <div style="flex-shrink:0;width:70px;height:70px;border-radius:50%;background:var(--accent);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:32px;">2</div>
           <div>
-            <div style="font-family:var(--sans);font-size:24px;font-weight:600;color:var(--ink);">Rétropropagation <em>matricielle</em></div>
-            <div class="body" style="font-size:19px;color:var(--ink-2);">Gradients à travers SVD/eigendecomp via la formulation Brooks ; produit le gradient euclidien <span class="math">\nabla_{W_k}\mathcal{L}</span> pour chaque BiMap.</div>
+            <div style="font-family:var(--sans);font-size:34px;font-weight:600;color:var(--ink);">Rétropropagation <em>matricielle</em></div>
+            <div class="body" style="font-size:26px;color:var(--ink-2);">Gradients à travers SVD/eigendecomp via la formulation Brooks ; produit le gradient euclidien <span class="math">\nabla_{W_k}\mathcal{L}</span> pour chaque BiMap.</div>
           </div>
         </div>
-        <div data-step style="display:flex;align-items:center;gap:32px;">
-          <div style="flex-shrink:0;width:50px;height:50px;border-radius:50%;background:var(--accent);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:22px;">3</div>
+        <div data-step style="display:flex;align-items:center;gap:40px;">
+          <div style="flex-shrink:0;width:70px;height:70px;border-radius:50%;background:var(--accent);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:32px;">3</div>
           <div>
-            <div style="font-family:var(--sans);font-size:24px;font-weight:600;color:var(--ink);">Mise à jour <em>riemannienne</em></div>
-            <div class="body" style="font-size:19px;color:var(--ink-2);">Pour chaque <span class="math">W_k</span> : projection tangente + rétraction polaire — c'est la seule étape spécifique à la géométrie.</div>
-          </div>
-        </div>
-        <div data-step class="theorem" style="margin-top:18px;">
-          <div class="theorem-tag">À retenir</div>
-          <div class="theorem-body" style="font-size:21px;">
-            La contrainte géométrique n'apparaît qu'à l'étape 3, et avec un <strong>coût quasi linéaire</strong> en la dimension. C'est ce qui rendra possible le passage au cadre distribué.
+            <div style="font-family:var(--sans);font-size:34px;font-weight:600;color:var(--ink);">Mise à jour <em>riemannienne</em></div>
+            <div class="body" style="font-size:26px;color:var(--ink-2);">Pour chaque <span class="math">W_k</span> : projection tangente + rétraction polaire — c'est la seule étape spécifique à la géométrie.</div>
           </div>
         </div>
       </div>
@@ -280,7 +274,7 @@
     <slide-header title="GPR — travaux de référence"></slide-header>
     <div class="slide-body" style="justify-content:center;align-items:center;">
       <div style="max-width:1400px;width:100%;display:flex;flex-direction:column;gap:24px;">
-        <p class="lede" style="text-align:left;">Les résultats présentés dans cette section s'appuient sur les travaux suivants :</p>
+        <p class="lede" style="text-align:left;font-size:28px;">Les résultats présentés dans cette section s'appuient sur les travaux suivants :</p>
         <div style="border:1.5px solid var(--rule);border-radius:12px;overflow:hidden;">
           <div style="padding:10px 28px;background:var(--bg-2);border-bottom:1px solid var(--rule);">
             <div class="eyebrow" style="color:var(--accent);">Publications</div>
@@ -288,15 +282,15 @@
           <div style="display:flex;flex-direction:column;gap:0;">
             <div style="padding:22px 28px;border-bottom:1px solid var(--rule-soft);display:flex;gap:20px;align-items:baseline;">
               <div style="font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:700;flex-shrink:0;width:60px;">JSTARS<br>2025</div>
-              <p class="body">Jafuno, D., Mian, A., Ginolhac, G. & Stelzenmuller, N. Classification of Buried Objects From Ground Penetrating Radar Images by Using Second-Order Deep Learning Models. <em>IEEE JSTARS</em>, 2025, 18, 3185–3197.</p>
+              <p class="body" style="font-size:24px;">Jafuno, D., Mian, A., Ginolhac, G. & Stelzenmuller, N. Classification of Buried Objects From Ground Penetrating Radar Images by Using Second-Order Deep Learning Models. <em>IEEE JSTARS</em>, 2025, 18, 3185–3197.</p>
             </div>
             <div style="padding:22px 28px;border-bottom:1px solid var(--rule-soft);display:flex;gap:20px;align-items:baseline;">
               <div style="font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:700;flex-shrink:0;width:60px;">IGARSS<br>2022</div>
-              <p class="body">Gallet, M., Mian, A., Ginolhac, G. & Stelzenmuller, N. Classification of GPR Signals via Covariance Pooling on CNN Features within a Riemannian Framework. <em>IGARSS</em>, Kuala Lumpur, 2022.</p>
+              <p class="body" style="font-size:24px;">Gallet, M., Mian, A., Ginolhac, G. & Stelzenmuller, N. Classification of GPR Signals via Covariance Pooling on CNN Features within a Riemannian Framework. <em>IGARSS</em>, Kuala Lumpur, 2022.</p>
             </div>
             <div style="padding:22px 28px;display:flex;gap:20px;align-items:baseline;">
               <div style="font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:700;flex-shrink:0;width:60px;">IGARSS<br>2024</div>
-              <p class="body">Jafuno, D., Mian, A., Ginolhac, G. & Stelzenmuller, N. Buried Object Classification from GPR Data by Using Second Order Deep Learning Models. <em>IGARSS</em>, 2024, pp. 6513–6516.</p>
+              <p class="body" style="font-size:24px;">Jafuno, D., Mian, A., Ginolhac, G. & Stelzenmuller, N. Buried Object Classification from GPR Data by Using Second Order Deep Learning Models. <em>IGARSS</em>, 2024, pp. 6513–6516.</p>
             </div>
           </div>
         </div>
@@ -328,27 +322,27 @@
         <div class="figcaption" style="margin-top:6px;">B-scan GPR typique : chaque objet enfoui produit une hyperbole caractéristique.</div>
       </div>
 
-      <!-- Two columns below -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;">
-        <div data-step>
-          <div class="eyebrow" style="margin-bottom:12px;">Le signal</div>
-          <p class="body" style="font-size:21px;color:var(--ink-2);">
-            On déplace l'antenne le long du sol — chaque objet enterré produit une <strong>hyperbole</strong> caractéristique. Faible SNR, fortes variations selon le sol et la fréquence d'acquisition.
-          </p>
+      <!-- Full-width content -->
+      <div data-step>
+        <div class="eyebrow" style="margin-bottom:12px;">Le signal</div>
+        <p class="body" style="font-size:26px;color:var(--ink-2);">
+          On déplace l'antenne le long du sol — chaque objet enterré produit une <strong>hyperbole</strong> caractéristique. Faible SNR, fortes variations selon le sol et la fréquence d'acquisition.
+        </p>
+      </div>
+
+      <div data-step>
+        <div class="eyebrow" style="margin-bottom:12px;">Les contraintes</div>
+        <div style="display:flex;flex-direction:column;gap:12px;font-size:24px;color:var(--ink-2);">
+          <div>• <strong>Peu d'étiquettes</strong> : labellisation par expert géophysicien</div>
+          <div>• <strong>Bruit d'étiquetage</strong> : classes ambigües au-delà du métal/non-métal</div>
+          <div>• <strong>Hétérogénéité</strong> : sable humide, sable sec, gravier — multiples fréquences radar</div>
         </div>
-        <div data-step>
-          <div class="eyebrow" style="margin-bottom:12px;">Les contraintes</div>
-          <div style="display:flex;flex-direction:column;gap:12px;font-size:20px;color:var(--ink-2);">
-            <div>• <strong>Peu d'étiquettes</strong> : labellisation par expert géophysicien</div>
-            <div>• <strong>Bruit d'étiquetage</strong> : classes ambigües au-delà du métal/non-métal</div>
-            <div>• <strong>Hétérogénéité</strong> : sable humide, sable sec, gravier — multiples fréquences radar</div>
-          </div>
-          <div class="theorem" style="margin-top:22px;">
-            <div class="theorem-tag">Tension</div>
-            <div class="theorem-body" style="font-size:19px;">
-              Modèles riches ↔ peu de paramètres : exactement le compromis que les <em>statistiques d'ordre deux</em> savent résoudre.
-            </div>
-          </div>
+      </div>
+
+      <div class="theorem" style="width:100%;" data-step>
+        <div class="theorem-tag">Tension</div>
+        <div class="theorem-body" style="font-size:24px;">
+          Modèles riches ↔ peu de paramètres : exactement le compromis que les <em>statistiques d'ordre deux</em> savent résoudre.
         </div>
       </div>
     </div>

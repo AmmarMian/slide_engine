@@ -73,7 +73,7 @@ function Arrow({ x1, y1, x2, y2, color, width = 2.4, dash, opacity = 1, label, l
       <polygon points={`${x2},${y2} ${tipL} ${tipR}`} fill={color} />
       {label && (
         <text x={x2 + labelOffset[0]} y={y2 + labelOffset[1]}
-              fontFamily="var(--mono)" fontSize="20" fontWeight="500"
+              fontFamily="var(--mono)" style={{ fontSize: 'calc(20px * var(--type-scale, 1))' }} fontWeight="500"
               fill={labelColor || color}>
           {label}
         </text>
@@ -90,7 +90,7 @@ function ExplainPanel({ step }) {
     // KaTeX is idempotent (data-rendered guard); re-running is cheap.
     renderMath();
   }, [step]);
-  return <div ref={ref} style={{ fontSize: 22, lineHeight: 1.6, color: INK2, flex: 1 }} />;
+  return <div ref={ref} style={{ fontSize: 'calc(22px * var(--type-scale, 1))', lineHeight: 1.6, color: INK2, flex: 1 }} />;
 }
 
 // ── Main island ───────────────────────────────────────────────────────────

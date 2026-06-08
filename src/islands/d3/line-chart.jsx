@@ -24,6 +24,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 
+// Module-level counter so each mounted instance gets a unique clip-path ID.
+// Chrome resolves url(#id) document-wide; a shared id causes every chart after
+// the first to be clipped by the wrong rect and appear blank.
+let _lcInstanceId = 0;
+
 export function LineChart({
   title   = '',
   xlabel  = '',
@@ -35,6 +40,7 @@ export function LineChart({
   height  = 680,
 }) {
   const svgRef  = useRef(null);
+  const [clipId]    = useState(() => `lc-clip-${++_lcInstanceId}`);
   const [themeTick, setThemeTick] = useState(0);
 
   // Re-draw when the deck theme changes so CSS vars (grid, palette) are re-read.
@@ -49,7 +55,7 @@ export function LineChart({
     // Right margin grows with the longest series name so direct end-of-line
     // labels never clip (mono ≈ 11px/char at the 19px label size).
     const maxLabelLen = series.reduce((m, s) => Math.max(m, (s.name || '').length), 0);
-    const PAD = { t: title ? 52 : 28, r: Math.min(360, Math.max(160, 30 + maxLabelLen * 11)), b: 80, l: 90 };
+    const PAD = { t: title ? 52 : 28, r: Math.min(440, Math.max(180, 30 + maxLabelLen * 16)), b: 80, l: 90 };
     const W = width, H = height;
     const iW = W - PAD.l - PAD.r;
     const iH = H - PAD.t - PAD.b;
@@ -145,11 +151,11 @@ export function LineChart({
     // ── Static chrome (drawn once) ───────────────────────────────────────────
     if (xlabel) svg.append('text')
       .attr('x', PAD.l + iW / 2).attr('y', H - 8).attr('text-anchor', 'middle')
-      .attr('font-family', mono()).attr('font-size', 21).attr('fill', ink3())
+      .attr('font-family', mono()).attr('font-size', 28).attr('fill', ink3())
       .attr('letter-spacing', '0.05em').text(xlabel.toUpperCase());
     if (ylabel) svg.append('text')
       .attr('x', 20).attr('y', PAD.t + iH / 2).attr('text-anchor', 'middle')
-      .attr('font-family', mono()).attr('font-size', 21).attr('fill', ink3())
+      .attr('font-family', mono()).attr('font-size', 28).attr('fill', ink3())
       .attr('letter-spacing', '0.05em')
       .attr('transform', `rotate(-90, 20, ${PAD.t + iH / 2})`).text(ylabel.toUpperCase());
     if (title) svg.append('text')
@@ -158,7 +164,7 @@ export function LineChart({
       .attr('fill', ink()).text(title);
 
     // ── Layers ───────────────────────────────────────────────────────────────
-    svg.append('defs').append('clipPath').attr('id', 'lc-clip').append('rect')
+    svg.append('defs').append('clipPath').attr('id', clipId).append('rect')
       .attr('x', PAD.l).attr('y', PAD.t).attr('width', iW).attr('height', iH);
 
     const gGrid  = svg.append('g');
@@ -188,7 +194,7 @@ export function LineChart({
     const styleAxis = (g) => {
       g.select('.domain').attr('stroke', ink()).attr('stroke-width', 1.4);
       g.selectAll('.tick line').remove();
-      g.selectAll('.tick text').attr('font-family', mono()).attr('font-size', 19).attr('fill', ink3());
+      g.selectAll('.tick text').attr('font-family', mono()).attr('font-size', 26).attr('fill', ink3());
     };
 
     const drawGrid = (xs, ys) => {
@@ -266,7 +272,7 @@ export function LineChart({
             .attr('fill', 'none').attr('stroke', l.color).attr('stroke-width', 1).attr('stroke-opacity', 0.45);
         gLabels.append('circle').attr('cx', lx + 3).attr('cy', l.y).attr('r', 3.5).attr('fill', l.color);
         gLabels.append('text').attr('x', lx + 14).attr('y', l.y + 6)
-          .attr('font-family', mono()).attr('font-size', 19).attr('font-weight', 600)
+          .attr('font-family', mono()).attr('font-size', 26).attr('font-weight', 600)
           .attr('fill', l.color).text(l.name);
       });
     };
@@ -426,7 +432,9 @@ export function LineChart({
       const { slide, previousSlide } = e.detail;
       const myHost = svgRef.current?.closest('line-chart');
       if (!myHost) return;
-      if (slide?.contains(myHost)) animate();
+      // rAF defers until Chrome has finished laying out the newly-visible SVG,
+      // so getTotalLength() returns the real path length instead of 0.
+      if (slide?.contains(myHost)) requestAnimationFrame(animate);
       else if (previousSlide?.contains(myHost)) reset();
     };
     stage.addEventListener('slidechange', onSlideChange);

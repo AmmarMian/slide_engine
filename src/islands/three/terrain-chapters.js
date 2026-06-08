@@ -38,30 +38,66 @@ function tangentArrow(uv, w, color, scale = 1) {
 const ch1 = {
   id: 'manifold',
   eyebrow: 'Variété',
-  title: 'Toute variété riemannienne',
-  body: `Tout ce que nous avons vu sur S² se généralise. Une <em>variété riemannienne</em>
-    (ℳ, g) est un espace lisse localement homéomorphe à ℝⁿ, muni d'un
-    <em>produit intérieur variant continûment</em> g sur chaque espace tangent. Ce
-    terrain — avec collines, vallées, cols — en est un exemple parmi une infinité.
-    Aucune symétrie n'est supposée.`,
-  formula: String.raw`(\mathcal{M},\, g),\quad \dim \mathcal{M} = n,\\
-    g_p : T_p\mathcal{M} \times T_p\mathcal{M} \to \mathbb{R}`,
+  title: 'Variété lisse &amp; atlas',
+  body: `Une <em>variété lisse</em> ℳ est un espace qui ressemble localement à ℝⁿ
+    en chaque point. Une <em>carte locale</em> φ : U ⊂ ℳ → ℝⁿ donne des coordonnées
+    dans un voisinage ouvert U. Un <em>atlas</em> est un recouvrement de ℳ par de
+    telles cartes. Ici les lignes de coordonnées (u, v) forment une carte
+    couvrant tout le terrain. Aucune structure métrique n'est encore supposée.`,
+  formula: String.raw`\mathcal{M} \text{ variété lisse},\quad \dim\mathcal{M} = n \\
+    \varphi : U \subset \mathcal{M} \;\xrightarrow{\sim}\; V \subset \mathbb{R}^{n}`,
   camera: { pos: [3.6, 2.8, 4.2], target: [0, 0.15, 0] },
   enter(ctx) {
+    // faint ambient axes
     const ax = (from, to) => {
       const g = new THREE.BufferGeometry().setFromPoints([from, to]);
       return new THREE.Line(g, new THREE.LineBasicMaterial({
-        color: ctx.palette.grid, transparent: true, opacity: 0.25,
+        color: ctx.palette.grid, transparent: true, opacity: 0.18,
       }));
     };
     ctx.group.add(ax(new THREE.Vector3(0, 0, 0), new THREE.Vector3(2.4, 0, 0)));
     ctx.group.add(ax(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 1.4, 0)));
     ctx.group.add(ax(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 2.4)));
-    lbl(ctx, 'u', new THREE.Vector3(2.50, 0, 0), { dim: true });
-    lbl(ctx, 'h', new THREE.Vector3(0, 1.45, 0), { dim: true });
-    lbl(ctx, 'v', new THREE.Vector3(0, 0, 2.50), { dim: true });
-    lbl(ctx, 'ℳ', new THREE.Vector3(-0.7, T.h(-0.7, -0.55) + 0.42, -0.55),
-      { italic: true, accent: true });
+
+    // coordinate grid on the terrain — u-lines (v = const) and v-lines (u = const)
+    const U0 = -0.55, U1 = 0.55, V0 = -0.45, V1 = 0.55, NU = 7, NV = 7, NSEG = 48;
+    // u-lines (green family)
+    for (let j = 0; j <= NV; j++) {
+      const v = V0 + j * (V1 - V0) / NV;
+      const pts = [];
+      for (let i = 0; i <= NSEG; i++) {
+        const u = U0 + i * (U1 - U0) / NSEG;
+        const p = T.surfacePoint(u, v);
+        pts.push(p.clone().addScaledVector(T.normalAt(u, v), 0.006));
+      }
+      ctx.group.add(buildPolyline({
+        points: pts,
+        color: ctx.palette.geodesic,
+        opacity: (j === 0 || j === NV) ? 0.65 : 0.28,
+      }));
+    }
+    // v-lines (tangent family)
+    for (let i = 0; i <= NU; i++) {
+      const u = U0 + i * (U1 - U0) / NU;
+      const pts = [];
+      for (let j = 0; j <= NSEG; j++) {
+        const v = V0 + j * (V1 - V0) / NSEG;
+        const p = T.surfacePoint(u, v);
+        pts.push(p.clone().addScaledVector(T.normalAt(u, v), 0.006));
+      }
+      ctx.group.add(buildPolyline({
+        points: pts,
+        color: ctx.palette.tangent,
+        opacity: (i === 0 || i === NU) ? 0.65 : 0.28,
+      }));
+    }
+
+    // labels — use T.h() + explicit y-offset so positions are always above terrain
+    const uC = (U0 + U1) / 2, vC = (V0 + V1) / 2;
+    lbl(ctx, 'U', new THREE.Vector3(uC, T.h(uC, vC) + 0.52, vC), { accent: true, italic: true });
+    lbl(ctx, 'ℳ', new THREE.Vector3(-0.7, T.h(-0.7, -0.55) + 0.42, -0.55), { italic: true, accent: true });
+    lbl(ctx, 'φ(u, v)', new THREE.Vector3(U1 + 0.05, T.h(U1, vC) + 0.30, vC), { tangent: true, small: true });
+
     return { autoRotate: 0.03 };
   },
 };
@@ -78,8 +114,8 @@ const ch2 = {
     vitesses des courbes lisses passant par p. Gradients, directions de descente
     et mises à jour y vivent tous. Les vecteurs de base r<sub>u</sub>, r<sub>v</sub>
     engendrent T<sub>p</sub>ℳ pour cette surface.`,
-  formula: String.raw`T_p\mathcal{M} \;=\; \bigl\{\, \dot\gamma(0) : \gamma \;\text{smooth},\;
-    \gamma(0) = p \bigr\}`,
+  formula: String.raw`T_{\mathbf{p}}\mathcal{M} \;=\; \bigl\{\, \dot\gamma(0) : \gamma \;\text{smooth},\;
+    \gamma(0) = \mathbf{p} \bigr\}`,
   camera: { pos: [2.4, 2.1, 2.9], target: [-0.3, 0.3, 0] },
   pickable: true,
   enter(ctx) {
@@ -137,8 +173,8 @@ const ch3 = {
     angles entre vecteurs tangents et distances géodésiques. La métrique varie de
     point en point — c'est ce qui rend la géométrie non trivialement courbée.
     L'ellipse unité-g (orange) diffère du cercle euclidien (gris).`,
-  formula: String.raw`g_p(u,u) > 0 \;\; \forall\, u \ne 0,\\
-    \|v\|_p = \sqrt{g_p(v,v)},\qquad g_p \in C^\infty`,
+  formula: String.raw`g_{\mathbf{p}}(\mathbf{u},\mathbf{u}) > 0 \;\; \forall\, \mathbf{u} \ne 0,\\
+    \|\mathbf{v}\|_{\mathbf{p}} = \sqrt{g_{\mathbf{p}}(\mathbf{v},\mathbf{v})},\qquad g_{\mathbf{p}} \in C^\infty`,
   camera: { pos: [2.5, 2.2, 2.8], target: [-0.2, 0.25, 0.05] },
   pickable: true,
   enter(ctx) {
@@ -270,7 +306,7 @@ const ch5 = {
     l'espace tangent sur la variété : exp<sub>p</sub>(v) est le point atteint en suivant
     la géodésique depuis p dans la direction v pendant un temps unité. Elle linéarise
     la géométrie autour de tout point de base. Un éventail de géodésiques rayonne depuis p.`,
-  formula: String.raw`\exp_p(v) = \gamma_v(1),\quad \dot\gamma_v(0) = v,\quad \exp_p(0) = p`,
+  formula: String.raw`\exp_{\mathbf{p}}(\mathbf{v}) = \gamma_{\mathbf{v}}(1),\quad \dot\gamma_{\mathbf{v}}(0) = \mathbf{v},\quad \exp_{\mathbf{p}}(0) = \mathbf{p}`,
   camera: { pos: [2.2, 2.3, 3.1], target: [-0.15, 0.30, 0.05] },
   pickable: true,
   controlSchema: {
@@ -345,8 +381,8 @@ const ch6 = {
     de p vers q en temps unité. Sa norme est égale à la distance géodésique d(p, q).
     Il n'existe pas de forme fermée pour une variété ℳ quelconque — une itération de Newton
     par tir la récupère numériquement.`,
-  formula: String.raw`\log_p(q) \in T_p\mathcal{M},\quad
-    d(p,q) = \bigl\|\log_p(q)\bigr\|_p,\quad \exp_p\!\bigl(\log_p(q)\bigr) = q`,
+  formula: String.raw`\log_{\mathbf{p}}(\mathbf{q}) \in T_{\mathbf{p}}\mathcal{M},\quad
+    d(\mathbf{p},\mathbf{q}) = \bigl\|\log_{\mathbf{p}}(\mathbf{q})\bigr\|_{\mathbf{p}},\quad \exp_{\mathbf{p}}\!\bigl(\log_{\mathbf{p}}(\mathbf{q})\bigr) = \mathbf{q}`,
   camera: { pos: [2.4, 2.4, 3.3], target: [0.05, 0.25, 0.05] },
   pickable: 'q',
   enter(ctx) {
@@ -483,13 +519,9 @@ const ch8 = {
     \bigl\|W(t)\bigr\|_{\gamma(t)} = \mathrm{const}`,
   camera: { pos: [2.7, 2.4, 3.4], target: [0.05, 0.30, 0.10] },
   pickable: 'q',
-  controlSchema: {
-    t: { label: 'avancement', min: 0, max: 1, step: 0.005, value: 1.0 },
-  },
   enter(ctx) {
     const palette = ctx.palette;
     const stateP = ctx.p.clone(), stateQ = ctx.q.clone();
-    const params = { t: 1.0 };
     const dotP   = pointMarker(stateP, palette.p, palette);         ctx.group.add(dotP);
     const dotQ   = pointMarker(stateQ, palette.q, palette);         ctx.group.add(dotQ);
     const dotNow = pointMarker(stateP, palette.transport, palette, 0.028); ctx.group.add(dotNow);
@@ -507,7 +539,6 @@ const ch8 = {
     let movingArrow2  = tangentArrow(stateP, new THREE.Vector3(0.1, 0, 0), palette.q);
     ctx.group.add(initialArrow); ctx.group.add(initialArrow2);
     ctx.group.add(movingArrow);  ctx.group.add(movingArrow2);
-    // ghost arrow at q — shows the "naively placed" initial vector for contrast
     let ghost = tangentArrow(stateQ, new THREE.Vector3(0.1, 0, 0), palette.ink3Num);
     ctx.group.add(ghost);
     let cachedPath = null, cachedW = null, cachedW2 = null, cachedPts = null, cachedDt = null;
@@ -517,44 +548,19 @@ const ch8 = {
       const duv = T.worldToParam(stateP, v);
       const r   = T.traceGeodesic(stateP, duv, 1, 96);
       cachedPath = r.path; cachedDt = r.dt; cachedPts = r.points;
-      // W0 perpendicular to geodesic direction in param space
       const initParam = new THREE.Vector2(duv.x, duv.y);
       const W0 = new THREE.Vector2(-initParam.y, initParam.x);
       const gn = T.gNorm(stateP, W0);
       W0.multiplyScalar(0.55 / Math.max(gn, 1e-6));
       cachedW = T.parallelTransport(cachedPath, cachedDt, W0);
-      // W02 along geodesic direction in param space (≈ 90° from W0 in param space)
       const W02 = new THREE.Vector2(initParam.x, initParam.y);
       const gn2 = T.gNorm(stateP, W02);
       W02.multiplyScalar(0.45 / Math.max(gn2, 1e-6));
       cachedW2 = T.parallelTransport(cachedPath, cachedDt, W02);
     }
 
-    function refresh() {
-      const pW = T.surfacePoint(stateP.x, stateP.y);
-      const qW = T.surfacePoint(stateQ.x, stateQ.y);
-      const nP = T.normalAt(stateP.x, stateP.y), nQ = T.normalAt(stateQ.x, stateQ.y);
-      const pLift = pW.clone().addScaledVector(nP, 0.005);
-      const qLift = qW.clone().addScaledVector(nQ, 0.005);
-      dotP.position.copy(pLift); dotQ.position.copy(qLift);
-      lblP.update(pLift.clone().add(new THREE.Vector3(0.03, 0.08, 0)));
-      lblQ.update(qLift.clone().add(new THREE.Vector3(0.03, 0.08, 0)));
-      recompute();
-      const lifted = cachedPts.map(pp => new THREE.Vector3(pp.x, pp.y + 0.004, pp.z));
-      geo.userData.update(lifted);
-
-      // initial arrows at p
-      const W0  = cachedW[0];
-      const W02 = cachedW2[0];
-      const w0World  = T.paramToWorld(stateP, new THREE.Vector2(W0.Wu,  W0.Wv));
-      const w02World = T.paramToWorld(stateP, new THREE.Vector2(W02.Wu, W02.Wv));
-      initialArrow.userData.update(pLift,  w0World.clone(),  w0World.length());
-      initialArrow2.userData.update(pLift, w02World.clone(), w02World.length());
-      lblW.update(pLift.clone().addScaledVector(w0World,  0.55).add(new THREE.Vector3( 0.03,  0.06, 0)));
-      lblW2.update(pLift.clone().addScaledVector(w02World, 0.55).add(new THREE.Vector3(-0.03, -0.06, 0)));
-
-      // moving arrows at current t
-      const idx = Math.min(cachedPath.length - 1, Math.round(params.t * (cachedPath.length - 1)));
+    function draw(t) {
+      const idx = Math.min(cachedPath.length - 1, Math.round(t * (cachedPath.length - 1)));
       const ss  = cachedPath[idx];
       const ww  = cachedW[idx];
       const ww2 = cachedW2[idx];
@@ -566,97 +572,55 @@ const ch8 = {
       dotNow.position.copy(pos);
       lblWt.update(pos.clone().addScaledVector(wWorld,  0.55).add(new THREE.Vector3( 0.03,  0.06, 0)));
       lblWt2.update(pos.clone().addScaledVector(wWorld2, 0.55).add(new THREE.Vector3(-0.03, -0.06, 0)));
-      // ghost shows naively placed initial vector at q for contrast
-      ghost.userData.update(qLift, w0World.clone(), w0World.length());
     }
-    refresh();
-    return {
-      onPick(uv) { stateQ.copy(uv); ctx.q.copy(uv); refresh(); },
-      onControl(name, value) { params[name] = value; refresh(); },
-    };
-  },
-};
 
-// ===========================================================================
-// CH 9 — Courbure
-// ===========================================================================
-const ch9 = {
-  id: 'curvature',
-  eyebrow: 'Courbure',
-  title: 'Courbure K',
-  body: `Le tenseur de courbure de Riemann est l'invariant intrinsèque mesurant
-    l'écart à la platitude. Les géodésiques <em>convergent</em> là où K > 0 (sommets,
-    fonds de vallée) et <em>divergent</em> là où K < 0 (cols). Le terrain est recoloré
-    selon K — chaud = positif, froid = négatif. L'holonomie d'une petite boucle vaut
-    ∫K dA (Gauss–Bonnet en miniature).`,
-  formula: String.raw`K = \frac{R_{1212}}{g_{11}g_{22}-g_{12}^{2}},\\
-    \iint_D K\,\mathrm{d}A = 2\pi - \oint_{\partial D}\kappa_g\,\mathrm{d}s`,
-  camera: { pos: [2.5, 2.9, 3.6], target: [0.0, 0.20, 0.05] },
-  pickable: true,
-  wantCurvatureSurface: true,
-  enter(ctx) {
-    const palette = ctx.palette;
-    const stateP = ctx.p.clone();
-    const dotP = pointMarker(stateP, palette.p, palette); ctx.group.add(dotP);
-    const lblP = lbl(ctx, 'p', new THREE.Vector3(), { accent: true });
-    const lblK = lbl(ctx, '', new THREE.Vector3(), { small: true, dim: true });
-    const radius = 0.30;
-    const loop = buildPolyline({ points: [new THREE.Vector3()], color: palette.transport, opacity: 0.9 });
-    ctx.group.add(loop);
-    const arrowStart = tangentArrow(stateP, new THREE.Vector3(0.1, 0, 0), palette.transport);
-    const arrowEnd   = tangentArrow(stateP, new THREE.Vector3(0.1, 0, 0), palette.tangent);
-    ctx.group.add(arrowStart); ctx.group.add(arrowEnd);
-    const lblHol = lbl(ctx, '', new THREE.Vector3(), { transport: true, small: true });
-
-    function refresh() {
-      const p = T.surfacePoint(stateP.x, stateP.y);
-      const n = T.normalAt(stateP.x, stateP.y);
-      const pLift = p.clone().addScaledVector(n, 0.006);
-      dotP.position.copy(pLift);
+    function refresh(t = 0) {
+      const pW = T.surfacePoint(stateP.x, stateP.y);
+      const qW = T.surfacePoint(stateQ.x, stateQ.y);
+      const nP = T.normalAt(stateP.x, stateP.y), nQ = T.normalAt(stateQ.x, stateQ.y);
+      const pLift = pW.clone().addScaledVector(nP, 0.005);
+      const qLift = qW.clone().addScaledVector(nQ, 0.005);
+      dotP.position.copy(pLift); dotQ.position.copy(qLift);
       lblP.update(pLift.clone().add(new THREE.Vector3(0.03, 0.08, 0)));
-      const K = T.gaussCurvature(stateP.x, stateP.y);
-      lblK.setText(`K(p) = ${K.toFixed(3)}`);
-      lblK.update(pLift.clone().add(new THREE.Vector3(0.0, 0.55, 0.05)));
-      const r = radius;
-      const corners = [
-        new THREE.Vector2(stateP.x + r, stateP.y + 0),
-        new THREE.Vector2(stateP.x + 0, stateP.y + r),
-        new THREE.Vector2(stateP.x - r, stateP.y + 0),
-        new THREE.Vector2(stateP.x + 0, stateP.y - r),
-      ];
-      let currentP = stateP.clone();
-      let currentW = new THREE.Vector2(1, 0);
-      const startWorld = T.paramToWorld(stateP, currentW.clone().multiplyScalar(0.5));
-      arrowStart.userData.update(pLift, startWorld.clone(), startWorld.length());
-      const loopPts = [];
-      for (let i = 0; i <= corners.length; i++) {
-        const targ = corners[i % corners.length];
-        const v = T.logMap(currentP, targ);
-        const duv = T.worldToParam(currentP, v);
-        const seg = T.traceGeodesic(currentP, duv, 1, 24);
-        for (const pt of seg.points) loopPts.push(new THREE.Vector3(pt.x, pt.y + 0.006, pt.z));
-        const Wseries = T.parallelTransport(seg.path, seg.dt, currentW);
-        currentW.set(Wseries[Wseries.length - 1].Wu, Wseries[Wseries.length - 1].Wv);
-        currentP.set(targ.x, targ.y);
-      }
-      loop.userData.update(loopPts);
-      const endWorld = T.paramToWorld(stateP, currentW.clone().multiplyScalar(0.5));
-      arrowEnd.userData.update(pLift, endWorld.clone(), endWorld.length());
-      const sw = startWorld.clone().normalize(), ew = endWorld.clone().normalize();
-      const cosA = THREE.MathUtils.clamp(sw.dot(ew), -1, 1);
-      const sinA = new THREE.Vector3().crossVectors(sw, ew).dot(n);
-      const ang = Math.atan2(sinA, cosA);
-      lblHol.setText(`holonomie ≈ ${(ang * 180 / Math.PI).toFixed(1)}°`);
-      lblHol.update(pLift.clone().add(new THREE.Vector3(0.0, 0.42, 0.0)));
+      lblQ.update(qLift.clone().add(new THREE.Vector3(0.03, 0.08, 0)));
+      recompute();
+      const lifted = cachedPts.map(pp => new THREE.Vector3(pp.x, pp.y + 0.004, pp.z));
+      geo.userData.update(lifted);
+      const W0  = cachedW[0];
+      const W02 = cachedW2[0];
+      const w0World  = T.paramToWorld(stateP, new THREE.Vector2(W0.Wu,  W0.Wv));
+      const w02World = T.paramToWorld(stateP, new THREE.Vector2(W02.Wu, W02.Wv));
+      initialArrow.userData.update(pLift,  w0World.clone(),  w0World.length());
+      initialArrow2.userData.update(pLift, w02World.clone(), w02World.length());
+      lblW.update(pLift.clone().addScaledVector(w0World,  0.55).add(new THREE.Vector3( 0.03,  0.06, 0)));
+      lblW2.update(pLift.clone().addScaledVector(w02World, 0.55).add(new THREE.Vector3(-0.03, -0.06, 0)));
+      ghost.userData.update(qLift, w0World.clone(), w0World.length());
+      draw(t);
     }
-    refresh();
+
+    let animT = 0;
+    const TRAVEL = 3.8;
+    const HOLD = 0.9;
+    let phase = 'travel';
+    let phaseT = 0;
+
+    refresh(0);
+
     return {
-      onPick(uv) {
-        const padded = T.clampDomain(uv, 0.45);
-        stateP.copy(padded); ctx.p.copy(padded); refresh();
+      tick(time, dt) {
+        if (phase === 'travel') {
+          phaseT += dt;
+          animT = Math.min(1, phaseT / TRAVEL);
+          if (animT >= 1) { phase = 'hold'; phaseT = 0; }
+        } else {
+          phaseT += dt;
+          if (phaseT > HOLD) { phase = 'travel'; phaseT = 0; animT = 0; }
+        }
+        draw(animT);
       },
+      onPick(uv) { stateQ.copy(uv); ctx.q.copy(uv); refresh(animT); },
     };
   },
 };
 
-export const CHAPTERS = [ch1, ch2, ch3, ch4, ch5, ch6, ch7, ch8, ch9];
+export const CHAPTERS = [ch1, ch2, ch3, ch4, ch5, ch6, ch7, ch8];

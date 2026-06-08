@@ -189,20 +189,20 @@ title-fx canvas {
   margin: 0; text-wrap: balance;
 }
 .lede {
-  font-size: calc(38px * var(--type-scale, 1)); font-weight: 400;
+  font-size: calc(46px * var(--type-scale, 1)); font-weight: 400;
   line-height: 1.35; letter-spacing: -0.015em;
   color: var(--ink-2);
   text-wrap: pretty;
 }
-.body { font-size: calc(30px * var(--type-scale, 1)); line-height: 1.4; color: var(--ink-2); text-wrap: pretty; }
-.small { font-size: calc(24px * var(--type-scale, 1)); color: var(--ink-3); }
+.body { font-size: calc(36px * var(--type-scale, 1)); line-height: 1.4; color: var(--ink-2); text-wrap: pretty; }
+.small { font-size: calc(28px * var(--type-scale, 1)); color: var(--ink-3); }
 .label {
   font-family: var(--mono);
-  font-size: calc(24px * var(--type-scale, 1)); font-weight: 500;
+  font-size: calc(28px * var(--type-scale, 1)); font-weight: 500;
   letter-spacing: 0.04em; text-transform: uppercase;
   color: var(--ink-3);
 }
-.mono { font-family: var(--mono); font-size: calc(26px * var(--type-scale, 1)); }
+.mono { font-family: var(--mono); font-size: calc(30px * var(--type-scale, 1)); }
 
 /* ── Page chrome ─────────────────────────────────────────────*/
 .page-header {
@@ -229,7 +229,7 @@ title-fx canvas {
 }
 .theorem-tag::before { content: ''; display: inline-block; width: 18px; height: 18px; background: var(--accent); }
 .theorem-name { font-weight: 500; color: var(--ink); }
-.theorem-body { font-family: var(--serif); font-size: calc(34px * var(--type-scale, 1)); line-height: 1.4; color: var(--ink); }
+.theorem-body { font-family: var(--serif); font-size: calc(40px * var(--type-scale, 1)); line-height: 1.4; color: var(--ink); }
 
 /* ── Display math container ──────────────────────────────────*/
 .display-math { background: var(--bg-2); border: 1px solid var(--rule); padding: 36px 48px; position: relative; }
@@ -240,31 +240,31 @@ title-fx canvas {
 
 /* Math elements — pre-render look */
 .math, .math-display { font-family: var(--mono); color: var(--ink); }
-.math-display { display: block; text-align: center; font-size: calc(28px * var(--type-scale, 1)); }
+.math-display { display: block; text-align: center; font-size: calc(34px * var(--type-scale, 1)); }
 
 /* ── Algorithm ───────────────────────────────────────────────*/
 .algorithm { background: var(--bg-2); border: 1px solid var(--rule); }
 .algorithm-header {
   padding: 16px 24px; border-bottom: 1px solid var(--rule);
-  font-family: var(--mono); font-size: calc(24px * var(--type-scale, 1)); font-weight: 600;
+  font-family: var(--mono); font-size: calc(28px * var(--type-scale, 1)); font-weight: 600;
   letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink);
   display: flex; justify-content: space-between; align-items: center;
 }
 .algorithm-header::before { content: '▸'; color: var(--accent); margin-right: 12px; }
-.algorithm-body { padding: 28px 32px; font-family: var(--mono); font-size: calc(24px * var(--type-scale, 1)); line-height: 1.6; color: var(--ink); }
+.algorithm-body { padding: 28px 32px; font-family: var(--mono); font-size: calc(28px * var(--type-scale, 1)); line-height: 1.6; color: var(--ink); }
 .algorithm-body .ln { color: var(--ink-3); display: inline-block; width: 26px; }
 
 /* ── Tables ──────────────────────────────────────────────────*/
 table.results { width: 100%; border-collapse: collapse; font-family: var(--sans); font-feature-settings: "tnum"; }
 table.results th {
-  font-family: var(--mono); font-size: calc(24px * var(--type-scale, 1)); font-weight: 500;
+  font-family: var(--mono); font-size: calc(28px * var(--type-scale, 1)); font-weight: 500;
   letter-spacing: 0.04em; text-transform: uppercase;
   color: var(--ink-3); text-align: right;
   padding: 14px 18px; border-bottom: 2px solid var(--ink);
 }
 table.results th:first-child { text-align: left; }
 table.results td {
-  font-size: calc(28px * var(--type-scale, 1)); padding: 16px 18px; text-align: right;
+  font-size: calc(32px * var(--type-scale, 1)); padding: 16px 18px; text-align: right;
   border-bottom: 1px solid var(--rule-soft);
   color: var(--ink); font-variant-numeric: tabular-nums;
 }
@@ -272,7 +272,7 @@ table.results td:first-child { text-align: left; color: var(--ink-2); font-weigh
 table.results tr.best td { color: var(--accent); font-weight: 600; }
 
 /* ── Misc content components ─────────────────────────────────*/
-.figcaption { font-family: var(--mono); font-size: calc(24px * var(--type-scale, 1)); color: var(--ink-3); letter-spacing: 0.02em; margin-top: 18px; display: flex; gap: 14px; }
+.figcaption { font-family: var(--mono); font-size: calc(28px * var(--type-scale, 1)); color: var(--ink-3); letter-spacing: 0.02em; margin-top: 18px; display: flex; gap: 14px; }
 .figcaption .num { font-weight: 600; color: var(--accent); }
 
 .pullquote {
@@ -283,19 +283,19 @@ table.results tr.best td { color: var(--accent); font-weight: 600; }
 .pullquote::before { content: ''; display: block; width: 100px; height: 6px; background: var(--accent); margin-bottom: 36px; }
 
 .ref {
-  display: grid; grid-template-columns: 70px 1fr;
+  display: grid; grid-template-columns: auto 1fr;
   gap: 28px; padding: 18px 0;
   border-bottom: 1px solid var(--rule-soft);
-  font-family: var(--sans); font-size: calc(24px * var(--type-scale, 1)); line-height: 1.4; color: var(--ink);
+  font-family: var(--sans); font-size: calc(28px * var(--type-scale, 1)); line-height: 1.4; color: var(--ink);
 }
-.ref-num { font-family: var(--mono); font-size: calc(24px * var(--type-scale, 1)); font-weight: 500; color: var(--accent); }
+.ref-num { font-family: var(--mono); font-size: calc(28px * var(--type-scale, 1)); font-weight: 500; color: var(--accent); }
 .ref-authors { font-weight: 500; color: var(--ink); }
-.ref-venue { font-family: var(--mono); font-size: calc(24px * var(--type-scale, 1)); color: var(--ink-3); }
+.ref-venue { font-family: var(--mono); font-size: calc(28px * var(--type-scale, 1)); color: var(--ink-3); }
 
 .bullet-rail { display: flex; flex-direction: column; gap: 36px; }
 .bullet-rail > div { border-top: 1px solid var(--rule-soft); padding-top: 22px; }
 .bullet-rail .label { margin-bottom: 12px; }
-.bullet-rail .body { font-size: 26px; }
+.bullet-rail .body { font-size: calc(32px * var(--type-scale, 1)); }
 
 .toc-entry {
   display: grid; grid-template-columns: 120px 1fr 80px;
@@ -351,7 +351,7 @@ end-slide::before {
 .progress-seg-fg { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); transition: width 360ms cubic-bezier(.2,.8,.2,1); }
 .progress-seg-label {
   position: absolute; bottom: 7px; left: 0;
-  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  font-family: var(--mono); font-size: 13px; font-weight: 500;
   letter-spacing: 0.06em; text-transform: uppercase;
   color: var(--ink-3);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -394,47 +394,122 @@ end-slide::before {
 
 /* ── Inline citations ────────────────────────────────────────
    Usage: <cite-ref key="smith2024"></cite-ref>
-   References defined once in: <script id="deck-refs" type="application/json">{"smith2024":"..."}</script>
-   Numbers are global across the deck (first-appearance order). Full reference appears as footnote above page-footer.
+   Renders as inline [Author Year]. Click the book icon (bottom-left)
+   to view full references for the slide.
    Add <refs-slide> inside <deck-stage> for a full bibliography slide. */
 cite-ref {
   display: inline;
   font-family: var(--mono);
-  font-size: 0.62em;
-  vertical-align: super;
-  line-height: 0;
+  font-size: 0.72em;
+  vertical-align: baseline;
   color: var(--accent);
   font-weight: 600;
   cursor: default;
-  letter-spacing: 0;
+  letter-spacing: -0.01em;
 }
-.slide-citations {
+
+/* ── Citation book-icon button + popup ───────────────────────*/
+.cite-btn-wrap {
   position: absolute;
   left: var(--d-pad-x);
-  right: var(--d-pad-x);
-  bottom: 66px;
-  z-index: 20;
-  background: transparent;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 5px 10px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 4px;
-  opacity: 0.7;
+  bottom: 10px;
+  z-index: 25;
 }
-.cite-item {
+.cite-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid var(--rule-soft);
+  background: var(--bg-2);
+  color: var(--ink-3);
+  cursor: default;
+  transition: color 120ms, background 120ms, border-color 120ms;
+  padding: 0;
+}
+.cite-btn:hover,
+.cite-btn-wrap.cite-open .cite-btn {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--bg);
+}
+.cite-btn-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  pointer-events: none;
+}
+.cite-popup {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 0;
+  width: 560px;
+  max-height: 340px;
+  overflow-y: auto;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--bg-2);
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  padding: 20px 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.14);
+}
+.cite-btn-wrap.cite-open .cite-popup {
+  display: flex;
+}
+.cite-popup-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: baseline;
+}
+.cite-popup-num {
+  font-family: var(--mono);
+  font-size: calc(18px * var(--type-scale, 1));
+  color: var(--accent);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.cite-popup-text {
   font-family: var(--sans);
-  font-size: calc(14px * var(--type-scale, 1));
+  font-size: calc(18px * var(--type-scale, 1));
+  color: var(--ink-2);
+  line-height: 1.45;
+}
+
+/* refs-slide full bibliography rows */
+.cite-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: baseline;
+  font-family: var(--sans);
+  font-size: calc(20px * var(--type-scale, 1));
   color: var(--ink-3);
   line-height: 1.3;
 }
 .cite-item-num {
   font-family: var(--mono);
   color: var(--accent);
-  font-size: calc(13px * var(--type-scale, 1));
+  font-size: calc(19px * var(--type-scale, 1));
   font-weight: 600;
-  margin-right: 4px;
+  white-space: nowrap;
 }
 
 refs-slide {

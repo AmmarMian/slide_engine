@@ -39,7 +39,7 @@ function Cube({ x, y, w, h, depth, dx = 13, dy = 13, fill = 'var(--bg-2)', accen
       <rect x={x} y={y} width={w} height={h} fill={fill} stroke={s} strokeWidth={accent ? 2.4 : 1.4} />
       {depth != null && (
         <text x={x + w / 2} y={y + h / 2 + fs * 0.34} fontFamily="var(--mono)"
-          fontSize={fs} fontWeight={700} fill={s} textAnchor="middle">{depth}</text>
+          style={{ fontSize: `calc(${fs}px * var(--type-scale, 1))` }} fontWeight={700} fill={s} textAnchor="middle">{depth}</text>
       )}
     </g>
   );
@@ -52,10 +52,10 @@ function Box({ x, y, w, h, label, sub, marker, accent = false, fs = 22 }) {
       <rect x={x} y={y} width={w} height={h} rx={6}
         fill="var(--bg-2)" stroke={s} strokeWidth={accent ? 2.4 : 1.6} />
       <text x={x + w / 2} y={y + h / 2 + (sub ? -4 : fs * 0.34)} fontFamily="var(--sans)"
-        fontSize={fs} fontWeight={700} fill="var(--ink)" textAnchor="middle">{label}</text>
+        style={{ fontSize: `calc(${fs}px * var(--type-scale, 1))` }} fontWeight={700} fill="var(--ink)" textAnchor="middle">{label}</text>
       {sub && (
         <text x={x + w / 2} y={y + h / 2 + 22} fontFamily="var(--mono)"
-          fontSize={14} fill="var(--ink-3)" textAnchor="middle">{sub}</text>
+          style={{ fontSize: 'calc(14px * var(--type-scale, 1))' }} fill="var(--ink-3)" textAnchor="middle">{sub}</text>
       )}
     </g>
   );
@@ -111,9 +111,9 @@ function StageBand({ x, w, num, name, active }) {
       <circle cx={x + 30} cy={312} r={17}
         fill={active ? 'var(--accent)' : 'var(--bg-2)'}
         stroke={active ? 'var(--accent)' : 'var(--ink)'} strokeWidth={1.6} />
-      <text x={x + 30} y={318} fontFamily="var(--sans)" fontSize={18} fontWeight={800}
+      <text x={x + 30} y={318} fontFamily="var(--sans)" style={{ fontSize: 'calc(18px * var(--type-scale, 1))' }} fontWeight={800}
         fill={active ? 'var(--bg)' : 'var(--ink)'} textAnchor="middle">{num}</text>
-      <text x={x + 56} y={318} fontFamily="var(--sans)" fontSize={20} fontWeight={700}
+      <text x={x + 56} y={318} fontFamily="var(--sans)" style={{ fontSize: 'calc(20px * var(--type-scale, 1))' }} fontWeight={700}
         fill="var(--ink)">{name}</text>
     </g>
   );
@@ -134,9 +134,9 @@ function Pipeline({ state }) {
         <line key={i} x1={30} y1={FY - 40 + i * 22} x2={110} y2={FY - 40 + i * 22}
           stroke="var(--ink-3)" strokeWidth={0.7} opacity={0.6} />
       ))}
-      <text x={70} y={FY + 80} fontFamily="var(--sans)" fontSize={16}
+      <text x={70} y={FY + 80} fontFamily="var(--sans)" style={{ fontSize: 'calc(16px * var(--type-scale, 1))' }}
         fill="var(--ink-3)" textAnchor="middle">B-scan</text>
-      <text x={70} y={FY + 100} fontFamily="var(--mono)" fontSize={14}
+      <text x={70} y={FY + 100} fontFamily="var(--mono)" style={{ fontSize: 'calc(14px * var(--type-scale, 1))' }}
         fill="var(--ink-3)" textAnchor="middle">60×112</text>
 
       <Arrow x1={112} x2={170} y={FY} m="gpa" />
@@ -145,9 +145,9 @@ function Pipeline({ state }) {
       <Box x={172} y={FY - 58} w={210} h={116} label="ResNet-34" sub="34 couches" />
       <Arrow x1={384} x2={438} y={FY} m="gpa" />
       <Cube x={444} y={FY - 30} w={64} h={64} depth="d" fs={20} />
-      <text x={490} y={FY + 70} fontFamily="var(--mono)" fontSize={20}
+      <text x={490} y={FY + 70} fontFamily="var(--mono)" style={{ fontSize: 'calc(20px * var(--type-scale, 1))' }}
         fill="var(--ink)" textAnchor="middle">𝒯</text>
-      <text x={490} y={FY + 90} fontFamily="var(--mono)" fontSize={13}
+      <text x={490} y={FY + 90} fontFamily="var(--mono)" style={{ fontSize: 'calc(13px * var(--type-scale, 1))' }}
         fill="var(--ink-3)" textAnchor="middle">d×h×w</text>
 
       <Arrow x1={524} x2={598} y={FY} m="gpa" />
@@ -156,9 +156,9 @@ function Pipeline({ state }) {
       <Box x={600} y={FY - 58} w={206} h={116} label="CovPool" sub="C = T Ĩ Tᵀ" />
       <Arrow x1={808} x2={858} y={FY} m="gpa" />
       <CovGrid x={862} y={FY - 45} size={90} m="gpa" />
-      <text x={907} y={FY + 70} fontFamily="var(--mono)" fontSize={20}
+      <text x={907} y={FY + 70} fontFamily="var(--mono)" style={{ fontSize: 'calc(20px * var(--type-scale, 1))' }}
         fill="var(--ink)" textAnchor="middle">X₀</text>
-      <text x={907} y={FY + 90} fontFamily="var(--mono)" fontSize={13}
+      <text x={907} y={FY + 90} fontFamily="var(--mono)" style={{ fontSize: 'calc(13px * var(--type-scale, 1))' }}
         fill="var(--ink-3)" textAnchor="middle">d×d</text>
 
       <Arrow x1={954} x2={1000} y={FY} m="gpa" />
@@ -174,7 +174,7 @@ function Pipeline({ state }) {
           <rect x={sq.x} y={FY - sq.s / 2} width={sq.s} height={sq.s} rx={3}
             fill="var(--tint)" stroke="var(--ink)" strokeWidth={1.6} />
           <text x={sq.x + sq.s / 2} y={FY + sq.s / 2 + 26} fontFamily="var(--mono)"
-            fontSize={15} fill="var(--ink-3)" textAnchor="middle">{sq.d}</text>
+            style={{ fontSize: 'calc(15px * var(--type-scale, 1))' }} fill="var(--ink-3)" textAnchor="middle">{sq.d}</text>
           {i < arr.length - 1 && (
             <Arrow x1={sq.x + sq.s} x2={arr[i + 1].x} y={FY} m="gpa" sw={1.4} />
           )}
@@ -183,14 +183,14 @@ function Pipeline({ state }) {
       {/* repeat brace under SPD layers */}
       <path d={`M 1004 ${FY + 78} H 1396`} stroke="var(--ink-3)" strokeWidth={1}
         strokeDasharray="5 3" fill="none" />
-      <text x={1200} y={FY + 98} fontFamily="var(--mono)" fontSize={15}
+      <text x={1200} y={FY + 98} fontFamily="var(--mono)" style={{ fontSize: 'calc(15px * var(--type-scale, 1))' }}
         fill="var(--ink-3)" textAnchor="middle">BiMap + ReEig, empilés</text>
 
       <Arrow x1={1396} x2={1432} y={FY} m="gpa" />
 
       {/* LVD + FC + classes */}
       <Box x={1434} y={FY - 50} w={92} h={100} label="LVD" fs={20} />
-      <text x={1480} y={FY + 70} fontFamily="var(--mono)" fontSize={12}
+      <text x={1480} y={FY + 70} fontFamily="var(--mono)" style={{ fontSize: 'calc(12px * var(--type-scale, 1))' }}
         fill="var(--ink-3)" textAnchor="middle">LogEig·vec·drop</text>
       <Arrow x1={1526} x2={1560} y={FY} m="gpa" />
       <Box x={1562} y={FY - 50} w={84} h={100} label="FC" fs={20} />
@@ -200,12 +200,12 @@ function Pipeline({ state }) {
           fill={i === 0 ? 'var(--accent)' : 'var(--bg-2)'}
           stroke="var(--ink)" strokeWidth={1.3} opacity={i === 0 ? 0.85 : 1} />
       ))}
-      <text x={1712} y={FY + 72} fontFamily="var(--sans)" fontSize={15}
+      <text x={1712} y={FY + 72} fontFamily="var(--sans)" style={{ fontSize: 'calc(15px * var(--type-scale, 1))' }}
         fill="var(--ink-3)" textAnchor="middle">C classes</text>
 
       {/* hint */}
       {state === 0 && (
-        <text x={W / 2} y={H - 46} fontFamily="var(--mono)" fontSize={19}
+        <text x={W / 2} y={H - 46} fontFamily="var(--mono)" style={{ fontSize: 'calc(19px * var(--type-scale, 1))' }}
           fill="var(--ink-3)" textAnchor="middle">
           appuyer → pour détailler chaque étage
         </text>
@@ -226,13 +226,13 @@ function DiagResNet() {
       return (
         <g key={i}>
           {dm.gap && (
-            <text x={x - 38} y={y + 38} fontFamily="var(--mono)" fontSize={28}
+            <text x={x - 38} y={y + 38} fontFamily="var(--mono)" style={{ fontSize: 'calc(28px * var(--type-scale, 1))' }}
               fill="var(--ink-3)" textAnchor="middle">⋯</text>
           )}
           <Cube x={x} y={y} w={cw} h={cw} depth={depth} accent={acc} fs={18} />
-          <text x={x + cw / 2} y={y + cw + 26} fontFamily="var(--mono)" fontSize={15}
+          <text x={x + cw / 2} y={y + cw + 26} fontFamily="var(--mono)" style={{ fontSize: 'calc(15px * var(--type-scale, 1))' }}
             fill="var(--ink)" textAnchor="middle">{dm.t}</text>
-          <text x={x + cw / 2} y={y + cw + 46} fontFamily="var(--mono)" fontSize={13}
+          <text x={x + cw / 2} y={y + cw + 46} fontFamily="var(--mono)" style={{ fontSize: 'calc(13px * var(--type-scale, 1))' }}
             fill="var(--ink-3)" textAnchor="middle">{dm.d}</text>
           {i < dims.length - 1 && !dims[i + 1].gap && (
             <Arrow x1={x + cw + 13} x2={x + step} y={y + cw / 2} m="gpr1" sw={1.4} />
@@ -254,9 +254,9 @@ function DiagResNet() {
       <defs><ArrowMarker id="gpr1" size={5} /></defs>
 
       {/* ── RCNet row ── */}
-      <text x={20} y={70} fontFamily="var(--sans)" fontSize={24} fontWeight={800}
+      <text x={20} y={70} fontFamily="var(--sans)" style={{ fontSize: 'calc(24px * var(--type-scale, 1))' }} fontWeight={800}
         fill="var(--accent)">RCNet</text>
-      <text x={120} y={70} fontFamily="var(--mono)" fontSize={19}
+      <text x={120} y={70} fontFamily="var(--mono)" style={{ fontSize: 'calc(19px * var(--type-scale, 1))' }}
         fill="var(--ink-3)">d = 64 · dernière carte</text>
       <rect x={20} y={110} width={64} height={110} fill="var(--bg-2)"
         stroke="var(--ink)" strokeWidth={1.6} />
@@ -270,16 +270,16 @@ function DiagResNet() {
       {blocks('64', dimsRC, 320, 138, true)}
       <path d="M 320 250 H 1180" stroke="var(--ink-3)" strokeWidth={1}
         strokeDasharray="5 3" fill="none" />
-      <text x={750} y={272} fontFamily="var(--mono)" fontSize={16}
+      <text x={750} y={272} fontFamily="var(--mono)" style={{ fontSize: 'calc(16px * var(--type-scale, 1))' }}
         fill="var(--ink-3)" textAnchor="middle">l couches</text>
 
       {/* divider */}
       <line x1={20} y1={360} x2={1660} y2={360} stroke="var(--rule-soft)" strokeWidth={1} />
 
       {/* ── SRCNet row ── */}
-      <text x={20} y={430} fontFamily="var(--sans)" fontSize={24} fontWeight={800}
+      <text x={20} y={430} fontFamily="var(--sans)" style={{ fontSize: 'calc(24px * var(--type-scale, 1))' }} fontWeight={800}
         fill="var(--accent)">SRCNet</text>
-      <text x={140} y={430} fontFamily="var(--mono)" fontSize={19}
+      <text x={140} y={430} fontFamily="var(--mono)" style={{ fontSize: 'calc(19px * var(--type-scale, 1))' }}
         fill="var(--ink-3)">d = l × 32 · 32 canaux empilés</text>
       <rect x={20} y={470} width={64} height={110} fill="var(--bg-2)"
         stroke="var(--ink)" strokeWidth={1.6} />
@@ -291,7 +291,7 @@ function DiagResNet() {
       <Box x={134} y={490} w={130} h={70} label="ResNet-34" fs={18} />
       <Arrow x1={264} x2={310} y={525} m="gpr1" />
       {blocks('32', dimsSR, 320, 498, false)}
-      <text x={1080} y={478} fontFamily="var(--mono)" fontSize={15}
+      <text x={1080} y={478} fontFamily="var(--mono)" style={{ fontSize: 'calc(15px * var(--type-scale, 1))' }}
         fill="var(--ink-3)" textAnchor="middle">interp. bilinéaire → même taille</text>
 
       {/* ⇒ stacked block */}

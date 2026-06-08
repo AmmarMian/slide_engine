@@ -12,10 +12,10 @@ function BlockInternals({ blockNum }) {
       animation: 'zoomIn 280ms cubic-bezier(.2,.8,.2,1)',
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-        <div style={{ fontFamily: 'var(--sans)', fontSize: 44, fontWeight: 600, letterSpacing: '-0.02em' }}>
+        <div style={{ fontFamily: 'var(--sans)', fontSize: 'calc(44px * var(--type-scale, 1))', fontWeight: 600, letterSpacing: '-0.02em' }}>
           Encoder Block {blockNum}
         </div>
-        <div className="mono" style={{ color: 'var(--ink-3)', fontSize: 24 }}>↩ click to collapse</div>
+        <div className="mono" style={{ color: 'var(--ink-3)', fontSize: 'calc(24px * var(--type-scale, 1))' }}>↩ click to collapse</div>
       </div>
       <svg viewBox="0 0 1400 380" width="100%" height="380" style={{ display: 'block' }}>
         <defs>
@@ -23,27 +23,27 @@ function BlockInternals({ blockNum }) {
             <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--ink)" />
           </marker>
         </defs>
-        <text x={20} y={210} fontFamily="var(--mono)" fontSize={20} fill="var(--ink-3)">x ∈ ℝ^(d×L)</text>
+        <text x={20} y={210} fontFamily="var(--mono)" style={{ fontSize: 'calc(20px * var(--type-scale, 1))' }} fill="var(--ink-3)">x ∈ ℝ^(d×L)</text>
         <path d="M 160 200 H 240" stroke="var(--ink)" strokeWidth={1.6} markerEnd={`url(#ar${blockNum})`} />
         <g transform="translate(240, 150)">
           <rect width={130} height={100} fill="var(--bg-2)" stroke="var(--ink)" strokeWidth={1.4} />
-          <text x={65} y={48} fontFamily="var(--sans)" fontSize={20} fontWeight={600} fill="var(--ink)" textAnchor="middle">LayerNorm</text>
-          <text x={65} y={72} fontFamily="var(--mono)" fontSize={14} fill="var(--ink-3)" textAnchor="middle">γ, β</text>
+          <text x={65} y={48} fontFamily="var(--sans)" style={{ fontSize: 'calc(20px * var(--type-scale, 1))' }} fontWeight={600} fill="var(--ink)" textAnchor="middle">LayerNorm</text>
+          <text x={65} y={72} fontFamily="var(--mono)" style={{ fontSize: 'calc(14px * var(--type-scale, 1))' }} fill="var(--ink-3)" textAnchor="middle">γ, β</text>
         </g>
         <path d="M 370 200 H 430" stroke="var(--ink)" strokeWidth={1.4} markerEnd={`url(#ar${blockNum})`} />
         <g transform="translate(430, 80)">
           <rect width={260} height={240} fill="var(--bg-2)" stroke="var(--ink)" strokeWidth={2} />
-          <text x={130} y={32} fontFamily="var(--sans)" fontSize={22} fontWeight={600} fill="var(--ink)" textAnchor="middle">Multi-Head Attention</text>
-          <text x={130} y={56} fontFamily="var(--mono)" fontSize={14} fill="var(--ink-3)" textAnchor="middle" letterSpacing="0.04em">8 HEADS · d_k = 64</text>
+          <text x={130} y={32} fontFamily="var(--sans)" style={{ fontSize: 'calc(22px * var(--type-scale, 1))' }} fontWeight={600} fill="var(--ink)" textAnchor="middle">Multi-Head Attention</text>
+          <text x={130} y={56} fontFamily="var(--mono)" style={{ fontSize: 'calc(14px * var(--type-scale, 1))' }} fill="var(--ink-3)" textAnchor="middle" letterSpacing="0.04em">8 HEADS · d_k = 64</text>
           {['Q', 'K', 'V'].map((lbl, i) => (
             <g key={lbl} transform={`translate(${20 + i * 80}, 80)`}>
               <rect width={60} height={50} fill="var(--bg)" stroke="var(--ink)" strokeWidth={1.2} />
-              <text x={30} y={31} fontFamily="var(--mono)" fontSize={20} fontWeight={600} fill="var(--ink)" textAnchor="middle">{lbl}</text>
+              <text x={30} y={31} fontFamily="var(--mono)" style={{ fontSize: 'calc(20px * var(--type-scale, 1))' }} fontWeight={600} fill="var(--ink)" textAnchor="middle">{lbl}</text>
             </g>
           ))}
-          <text x={130} y={170} fontFamily="var(--mono)" fontSize={16} fill="var(--ink-3)" textAnchor="middle">softmax(QKᵀ/√d)V</text>
+          <text x={130} y={170} fontFamily="var(--mono)" style={{ fontSize: 'calc(16px * var(--type-scale, 1))' }} fill="var(--ink-3)" textAnchor="middle">softmax(QKᵀ/√d)V</text>
           <rect x={20} y={186} width={220} height={32} fill="var(--bg)" stroke="var(--ink)" strokeWidth={1.2} />
-          <text x={130} y={208} fontFamily="var(--sans)" fontSize={16} fill="var(--ink)" textAnchor="middle">concat + W_O</text>
+          <text x={130} y={208} fontFamily="var(--sans)" style={{ fontSize: 'calc(16px * var(--type-scale, 1))' }} fill="var(--ink)" textAnchor="middle">concat + W_O</text>
         </g>
         <path d="M 690 200 H 750" stroke="var(--ink)" strokeWidth={1.4} markerEnd={`url(#ar${blockNum})`} />
         <g transform="translate(750, 175)">
@@ -70,7 +70,7 @@ function BlockInternals({ blockNum }) {
         <path d="M 1210 200 H 1280" stroke="var(--ink)" strokeWidth={1.6} markerEnd={`url(#ar${blockNum})`} />
         <text x={1300} y={205} fontFamily="var(--mono)" fontSize={20} fill="var(--ink-3)">x'</text>
       </svg>
-      <div className="small" style={{ fontFamily: 'var(--mono)', color: 'var(--ink-3)', fontSize: 22, marginTop: 4 }}>
+      <div className="small" style={{ fontFamily: 'var(--mono)', color: 'var(--ink-3)', fontSize: 'calc(22px * var(--type-scale, 1))', marginTop: 4 }}>
         d_model = 512 · 8 heads · MLP ratio 4 · pre-norm · ~3.2M params per block
       </div>
     </div>
@@ -89,7 +89,7 @@ export function InteractiveArchContent({ slideNum, totalSlides }) {
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 24 }}>
         <h2 className="h1">Architecture — click a block.</h2>
-        <div className="small" style={{ fontSize: 22, color: 'var(--ink-3)' }}>
+        <div className="small" style={{ fontSize: 'calc(22px * var(--type-scale, 1))', color: 'var(--ink-3)' }}>
           {zoomed != null ? '↩ click to collapse' : 'interactive · click any encoder block'}
         </div>
       </div>
@@ -97,40 +97,40 @@ export function InteractiveArchContent({ slideNum, totalSlides }) {
         <div style={{ position: 'relative', width: '100%', height: 600 }}>
           <svg viewBox="0 0 1760 600" width="100%" height="100%" style={{ display: 'block', opacity: zoomed != null ? 0.16 : 1, transition: 'opacity 320ms ease' }}>
             <g transform="translate(40, 220)">
-              <text x={0} y={-24} fontFamily="var(--mono)" fontSize={20} fill="var(--ink-3)" letterSpacing="0.04em">INPUT · x_t</text>
+              <text x={0} y={-24} fontFamily="var(--mono)" style={{ fontSize: 'calc(20px * var(--type-scale, 1))' }} fill="var(--ink-3)" letterSpacing="0.04em">INPUT · x_t</text>
               {[0, 1, 2, 3, 4].map(i => (
                 <g key={i} transform={`translate(0, ${i * 32})`}>
                   <rect width={120} height={26} fill="var(--bg-2)" stroke="var(--ink)" strokeWidth={1.4} />
-                  <text x={60} y={18} fontFamily="var(--mono)" fontSize={16} fill="var(--ink)" textAnchor="middle">[MASK]</text>
+                  <text x={60} y={18} fontFamily="var(--mono)" style={{ fontSize: 'calc(16px * var(--type-scale, 1))' }} fill="var(--ink)" textAnchor="middle">[MASK]</text>
                 </g>
               ))}
             </g>
             <g transform="translate(220, 220)">
               <rect width={140} height={160} fill="var(--bg-2)" stroke="var(--ink)" strokeWidth={1.6} />
-              <text x={70} y={88} fontFamily="var(--sans)" fontSize={22} fontWeight={600} fill="var(--ink)" textAnchor="middle">Embed</text>
-              <text x={70} y={114} fontFamily="var(--mono)" fontSize={16} fill="var(--ink-3)" textAnchor="middle">+ time t</text>
+              <text x={70} y={88} fontFamily="var(--sans)" style={{ fontSize: 'calc(22px * var(--type-scale, 1))' }} fontWeight={600} fill="var(--ink)" textAnchor="middle">Embed</text>
+              <text x={70} y={114} fontFamily="var(--mono)" style={{ fontSize: 'calc(16px * var(--type-scale, 1))' }} fill="var(--ink-3)" textAnchor="middle">+ time t</text>
             </g>
             {blocks.map((b, i) => (
               <g key={b.id} transform={`translate(${420 + i * 200}, 200)`} style={{ cursor: 'pointer' }}
                 onClick={() => setZoomed(zoomed === b.id ? null : b.id)}>
                 <rect width={170} height={200} fill="var(--bg-2)" stroke="var(--ink)" strokeWidth={1.8} />
                 <rect width={170} height={6} y={-6} fill="var(--ink)" />
-                <text x={85} y={92} fontFamily="var(--sans)" fontSize={22} fontWeight={600} fill="var(--ink)" textAnchor="middle">Block {i + 1}</text>
-                <text x={85} y={118} fontFamily="var(--mono)" fontSize={14} fill="var(--ink-3)" textAnchor="middle">attention + mlp</text>
-                <text x={85} y={186} fontFamily="var(--mono)" fontSize={14} fill="var(--ink-3)" textAnchor="middle" letterSpacing="0.04em">↗ ZOOM</text>
+                <text x={85} y={92} fontFamily="var(--sans)" style={{ fontSize: 'calc(22px * var(--type-scale, 1))' }} fontWeight={600} fill="var(--ink)" textAnchor="middle">Block {i + 1}</text>
+                <text x={85} y={118} fontFamily="var(--mono)" style={{ fontSize: 'calc(14px * var(--type-scale, 1))' }} fill="var(--ink-3)" textAnchor="middle">attention + mlp</text>
+                <text x={85} y={186} fontFamily="var(--mono)" style={{ fontSize: 'calc(14px * var(--type-scale, 1))' }} fill="var(--ink-3)" textAnchor="middle" letterSpacing="0.04em">↗ ZOOM</text>
               </g>
             ))}
             <g transform="translate(1300, 130)">
-              <text x={0} y={-12} fontFamily="var(--mono)" fontSize={20} fill="var(--ink-3)" letterSpacing="0.04em">PER-COLUMN HEADS</text>
+              <text x={0} y={-12} fontFamily="var(--mono)" style={{ fontSize: 'calc(20px * var(--type-scale, 1))' }} fill="var(--ink-3)" letterSpacing="0.04em">PER-COLUMN HEADS</text>
               {[0, 1, 2, 3, 4].map(i => (
                 <g key={i} transform={`translate(0, ${i * 64})`}>
                   <rect width={200} height={48} fill="var(--bg-2)" stroke="var(--ink)" strokeWidth={1.4} />
-                  <text x={20} y={30} fontFamily="var(--mono)" fontSize={16} fill="var(--ink)">{`col_${i}: K${i}-way`}</text>
+                  <text x={20} y={30} fontFamily="var(--mono)" style={{ fontSize: 'calc(16px * var(--type-scale, 1))' }} fill="var(--ink)">{`col_${i}: K${i}-way`}</text>
                 </g>
               ))}
             </g>
             <g transform="translate(1560, 220)">
-              <text x={0} y={-24} fontFamily="var(--mono)" fontSize={20} fill="var(--ink-3)" letterSpacing="0.04em">OUTPUT · x̂_0</text>
+              <text x={0} y={-24} fontFamily="var(--mono)" style={{ fontSize: 'calc(20px * var(--type-scale, 1))' }} fill="var(--ink-3)" letterSpacing="0.04em">OUTPUT · x̂_0</text>
               {[0, 1, 2, 3, 4].map(i => (
                 <g key={i} transform={`translate(0, ${i * 32})`}>
                   <rect width={140} height={26} fill="var(--bg-2)" stroke="var(--accent)" strokeWidth={1.6} />
@@ -205,10 +205,10 @@ export function FilmstripContent({ slideNum, totalSlides }) {
           <div style={{
             display: 'grid', gridTemplateColumns: `repeat(${COLS.length}, 1fr)`, gap: 6,
             border: '1.5px solid var(--ink)', background: 'var(--ink)', padding: 1.5,
-            fontFamily: 'var(--mono)', fontSize: 28, fontWeight: 500,
+            fontFamily: 'var(--mono)', fontSize: 'calc(28px * var(--type-scale, 1))', fontWeight: 500,
           }}>
             {COLS.map((c, ci) => (
-              <div key={'h' + ci} style={{ background: 'var(--bg)', padding: '10px 14px', fontSize: 20, color: 'var(--ink-3)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>{c}</div>
+              <div key={'h' + ci} style={{ background: 'var(--bg)', padding: '10px 14px', fontSize: 'calc(20px * var(--type-scale, 1))', color: 'var(--ink-3)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>{c}</div>
             ))}
             {VALUES.flatMap((row, ri) => row.map((val, ci) => {
               const ut = unmaskTime(ri, ci);

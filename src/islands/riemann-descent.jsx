@@ -73,7 +73,7 @@ export function RiemannDescent() {
     if (!updateFormulaRef.current) return;
     try {
       katex.render(
-        String.raw`x_{k+1} = \operatorname{Retr}_{x_k}\!\bigl(-\,\alpha\operatorname{grad}_{x_k}\!f\bigr)`,
+        String.raw`\mathbf{x}_{k+1} = \operatorname{Retr}_{\mathbf{x}_k}\!\bigl(-\,\alpha\operatorname{grad}_{\mathbf{x}_k}\!f\bigr)`,
         updateFormulaRef.current,
         { throwOnError: false, displayMode: true },
       );
@@ -273,7 +273,7 @@ export function RiemannDescent() {
 
       live.xDot = buildDot({ position: state.x, color: palette.p, radius: 0.028 });
       runtimeGroup.add(live.xDot);
-      live.xLabel = makeLabel('x<sub>k</sub>', state.x.clone().multiplyScalar(1.10), { accent: true });
+      live.xLabel = makeLabel('<strong>x</strong><sub>k</sub>', state.x.clone().multiplyScalar(1.10), { accent: true });
 
       const arrowOpts = { origin: state.x, direction: new THREE.Vector3(0, 1, 0), length: 0, shaft: 0.010, head: 0.038, headLen: 0.08 };
       live.euclidArrow = buildArrow({ ...arrowOpts, color: palette.euclid });
@@ -313,7 +313,6 @@ export function RiemannDescent() {
       live.xDot.position.copy(x);
       live.plane.userData.update(x);
       live.xLabel.update(x.clone().multiplyScalar(1.10));
-
       const gE = evalEucGrad(x);
       const gR = evalRiemGrad(x);
       const v = gR.clone().multiplyScalar(-state.alpha);
@@ -386,13 +385,13 @@ export function RiemannDescent() {
       let costForm;
       if (state.cost === 'rayleigh') {
         if (costNameRef.current) costNameRef.current.textContent = 'Quotient de Rayleigh';
-        costForm = String.raw`f(x) = x^{\!\top}\! A\, x, \quad A = A^{\!\top}`;
+        costForm = String.raw`f(\mathbf{x}) = \mathbf{x}^{\!\top}\! \mathbf{A}\, \mathbf{x}, \quad \mathbf{A} = \mathbf{A}^{\!\top}`;
       } else if (state.cost === 'distance') {
         if (costNameRef.current) costNameRef.current.textContent = 'Distance² à la cible';
-        costForm = String.raw`f(x) = \tfrac{1}{2}\, d_{S^{2}}(x, t)^{2} = \tfrac{1}{2}\,\arccos\langle x, t\rangle^{2}`;
+        costForm = String.raw`f(\mathbf{x}) = \tfrac{1}{2}\, d_{S^{2}}(\mathbf{x}, \mathbf{t})^{2} = \tfrac{1}{2}\,\arccos\langle \mathbf{x}, \mathbf{t}\rangle^{2}`;
       } else {
         if (costNameRef.current) costNameRef.current.textContent = 'Moyenne de Fréchet';
-        costForm = String.raw`f(x) = \tfrac{1}{2N}\sum_{i=1}^{N} d_{S^{2}}(x, t_{i})^{2}`;
+        costForm = String.raw`f(\mathbf{x}) = \tfrac{1}{2N}\sum_{i=1}^{N} d_{S^{2}}(\mathbf{x}, \mathbf{t}_{i})^{2}`;
       }
       try {
         if (costExprRef.current) katex.render(costForm, costExprRef.current, { throwOnError: false, displayMode: true });

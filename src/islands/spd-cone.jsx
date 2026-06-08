@@ -11,8 +11,8 @@ import { renderMath } from '../math.js';
 // ── Showcase matrices: (a, b, c) = (Σ₁₁, Σ₁₂, Σ₂₂), all with det > 0 ──────
 const MATRICES = [
   { id: 'I', a: 1.0, b: 0.0, c: 1.0, tex: '\\mathbf{I} = \\begin{pmatrix}1&0\\\\0&1\\end{pmatrix}', colorKey: 'accent' },
-  { id: 'Σ₁', a: 1.8, b: 0.65, c: 0.55, tex: '\\boldsymbol{\\Sigma}_1 = \\begin{pmatrix}1.8&0.65\\\\0.65&0.55\\end{pmatrix}', colorKey: 'tangent' },
-  { id: 'Σ₂', a: 0.45, b: -0.35, c: 1.7, tex: '\\boldsymbol{\\Sigma}_2 = \\begin{pmatrix}0.45&{-}0.35\\\\{-}0.35&1.7\\end{pmatrix}', colorKey: 'retraction' },
+  { id: 'Σ₁', a: 1.8, b: 0.65, c: 0.55, tex: '\\Sigma_1 = \\begin{pmatrix}1.8&0.65\\\\0.65&0.55\\end{pmatrix}', colorKey: 'tangent' },
+  { id: 'Σ₂', a: 0.45, b: -0.35, c: 1.7, tex: '\\Sigma_2 = \\begin{pmatrix}0.45&{-}0.35\\\\{-}0.35&1.7\\end{pmatrix}', colorKey: 'retraction' },
 ];
 
 // ── Cone boundary mesh: ac = b², parametrised by (r,θ) ───────────────────────
@@ -260,10 +260,10 @@ export function SpdCone() {
         <div>
           <div className="eyebrow" style={{ color: 'var(--accent)', marginBottom: 10 }}>Géométrie du cône</div>
           <p className="body" style={{ lineHeight: 1.6 }}>
-            Pour <span className="math">{'d=2'}</span>, une matrice symétrique <span className="math">{'\\boldsymbol{\\Sigma}=\\begin{pmatrix}a&b\\\\b&c\\end{pmatrix}'}</span> est SPD si&nbsp;:
+            Pour <span className="math">{'d=2'}</span>, une matrice symétrique <span className="math">{'\\Sigma=\\begin{pmatrix}a&b\\\\b&c\\end{pmatrix}'}</span> est SPD si&nbsp;:
           </p>
           <div className="math-display" style={{ margin: '12px 0' }}>
-            {'a > 0 \\quad \\text{et} \\quad \\det\\boldsymbol{\\Sigma} = ac - b^2 > 0'}
+            {'a > 0 \\quad \\text{et} \\quad \\det\\Sigma = ac - b^2 > 0'}
           </div>
         </div>
 
@@ -271,7 +271,7 @@ export function SpdCone() {
           <div className="eyebrow" style={{ color: 'var(--accent)', marginBottom: 10 }}>Propriétés</div>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 9 }}>
             {[
-              ['Cône', <>si <span className="math">{'\\boldsymbol{\\Sigma}\\in\\mathcal{S}_{++}'}</span>, alors <span className="math">{'\\lambda\\boldsymbol{\\Sigma}\\in\\mathcal{S}_{++}'}</span> pour tout <span className="math">{'\\lambda>0'}</span></>],
+              ['Cône', <>si <span className="math">{'\\Sigma\\in\\mathcal{S}_{++}'}</span>, alors <span className="math">{'\\lambda\\Sigma\\in\\mathcal{S}_{++}'}</span> pour tout <span className="math">{'\\lambda>0'}</span></>],
               ['Convexe', <>le segment entre deux matrices SPD reste dans <span className="math">{'\\mathcal{S}_{++}'}</span></>],
               ['Ouvert', <>le bord <span className="math">{'\\partial\\mathcal{S}_{+}'}</span> (rang <span className="math">{'<d'}</span>, <span className="math">{'\\det=0'}</span>) est exclu</>],
               ['Non compact', 'le cône est illimité — il s\'étend à l\'infini le long de la diagonale'],

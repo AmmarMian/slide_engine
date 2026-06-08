@@ -14,7 +14,7 @@ const C = {
 const YEAR_ORDER = [2015, 2017, 2019, 2022, 2023, 2025];
 
 const NODES = [
-  { id: 'Ionescu', short: 'Ionescu\n2015', year: 2015, cluster: 'core', type: 'found', x: 160, y: 420, title: 'Matrix Backpropagation for Deep Networks with Structured Layers', venue: 'ICCV 2015', key: 'Gradients through eigendecompositions → end-to-end training' },
+  { id: 'Ionescu', short: 'Ionescu\n2015', year: 2015, cluster: 'core', type: 'found', x: 160, y: 480, title: 'Matrix Backpropagation for Deep Networks with Structured Layers', venue: 'ICCV 2015', key: 'Gradients through eigendecompositions → end-to-end training' },
   { id: 'SPDNet', short: 'SPDNet\n2017', year: 2017, cluster: 'core', type: 'found', x: 390, y: 420, title: 'A Riemannian Network for SPD Matrix Learning', venue: 'AAAI 2017', key: 'BiMap + ReEig + LogEig — the baseline architecture' },
   { id: 'MPN-Cov', short: 'MPN-Cov\n2017', year: 2017, cluster: 'cnn', type: 'layer', x: 390, y: 650, title: 'Is Second-order Information Helpful for Large-scale Visual Recognition?', venue: 'ICCV 2017', key: 'Matrix Power Normalized Covariance pooling in CNNs' },
   { id: 'SPDNet-BN', short: 'SPDNet-BN\n2019', year: 2019, cluster: 'bn', type: 'layer', x: 640, y: 270, title: 'Riemannian Batch Normalization for SPD Neural Networks', venue: 'NeurIPS 2019', key: 'Riemannian BN: Fréchet barycenter + parallel transport (mean only)' },
@@ -249,34 +249,34 @@ export function SpdPaperGraph() {
             onMouseLeave={() => setTooltip(null)} />
         ))}
 
-        {/* ── Legend panel (left side) ── */}
-        <rect x={8} y={38} width={188} height={342} rx={8}
-          fill="var(--bg)" fillOpacity={0.85} stroke="var(--rule-soft)" strokeWidth={1} />
+        {/* ── Legend panel (top left) ── */}
+        <rect x={8} y={38} width={360} height={360} rx={8}
+          fill="var(--bg)" fillOpacity={0.93} stroke="var(--rule-soft)" strokeWidth={1.5} />
 
-        <text x={18} y={58} fontFamily="var(--mono)" fontSize={10} fill="var(--ink-3)" fontWeight={600} opacity={0.7}>FORME</text>
+        <text x={18} y={61} fontFamily="var(--mono)" fontSize={15} fill="var(--ink-3)" fontWeight={700} opacity={0.85}>FORME</text>
         {[
           { type: 'found', label: 'Fondateur' },
-          { type: 'layer', label: 'Amélioration de couche' },
+          { type: 'layer', label: 'Amélioration couche' },
           { type: 'arch', label: 'Architecture' },
         ].map(({ type, label }, i) => {
-          const cx = 32, cy = 80 + i * 34;
+          const cx = 38, cy = 83 + i * 30;
           return (
-            <g key={type} opacity={0.75}>
-              {type === 'found' && <circle cx={cx} cy={cy} r={11} fill="var(--ink-3)" fillOpacity={0.25} stroke="var(--ink-3)" strokeWidth={1.4} />}
-              {type === 'layer' && <path d={diamondPath(cx, cy, 13)} fill="var(--ink-3)" fillOpacity={0.25} stroke="var(--ink-3)" strokeWidth={1.4} />}
-              {type === 'arch' && <rect x={cx - 17} y={cy - 11} width={34} height={22} rx={7} fill="var(--ink-3)" fillOpacity={0.25} stroke="var(--ink-3)" strokeWidth={1.4} />}
-              <text x={52} y={cy + 5} fontFamily="var(--mono)" fontSize={10.5} fill="var(--ink-3)">{label}</text>
+            <g key={type} opacity={0.85}>
+              {type === 'found' && <circle cx={cx} cy={cy} r={12} fill="var(--ink-3)" fillOpacity={0.3} stroke="var(--ink-3)" strokeWidth={1.6} />}
+              {type === 'layer' && <path d={diamondPath(cx, cy, 14)} fill="var(--ink-3)" fillOpacity={0.3} stroke="var(--ink-3)" strokeWidth={1.6} />}
+              {type === 'arch' && <rect x={cx - 18} y={cy - 12} width={36} height={24} rx={8} fill="var(--ink-3)" fillOpacity={0.3} stroke="var(--ink-3)" strokeWidth={1.6} />}
+              <text x={62} y={cy + 6} fontFamily="var(--mono)" fontSize={14} fill="var(--ink-3)">{label}</text>
             </g>
           );
         })}
 
-        <line x1={16} y1={188} x2={188} y2={188} stroke="var(--rule-soft)" strokeWidth={1} opacity={0.5} />
+        <line x1={16} y1={176} x2={352} y2={176} stroke="var(--rule-soft)" strokeWidth={1.5} opacity={0.4} />
 
-        <text x={18} y={204} fontFamily="var(--mono)" fontSize={10} fill="var(--ink-3)" fontWeight={600} opacity={0.7}>CLUSTER</text>
+        <text x={18} y={199} fontFamily="var(--mono)" fontSize={15} fill="var(--ink-3)" fontWeight={700} opacity={0.85}>CLUSTER</text>
         {Object.entries(CLUSTER_LABELS).map(([k, label], i) => (
           <g key={k} opacity={k === 'thiswork' ? 1 : 0.8}>
-            <circle cx={28} cy={222 + i * 22} r={6} fill={C[k]} />
-            <text x={42} y={227 + i * 22} fontFamily="var(--mono)" fontSize={10}
+            <circle cx={38} cy={217 + i * 20} r={7} fill={C[k]} />
+            <text x={54} y={223 + i * 20} fontFamily="var(--mono)" fontSize={13}
               fill={k === 'thiswork' ? C[k] : 'var(--ink-3)'}
               fontWeight={k === 'thiswork' ? 700 : 400}>{label}</text>
           </g>

@@ -80,17 +80,14 @@ export function GprScan() {
     ctx.globalAlpha = 1;
   }, [step]);
 
-  // Animation loop — advance one step every 110 ms
+  // Animation loop — advance one step every 110 ms, loop back to 0
   const tick = useCallback((ts) => {
     if (lastRef.current === null) lastRef.current = ts;
     accRef.current += ts - lastRef.current;
     lastRef.current = ts;
     if (accRef.current >= 110) {
       accRef.current = 0;
-      setStep(s => {
-        if (s >= N_STEPS - 1) { setPlaying(false); return N_STEPS - 1; }
-        return s + 1;
-      });
+      setStep(s => (s >= N_STEPS - 1 ? 0 : s + 1));
     }
     rafRef.current = requestAnimationFrame(tick);
   }, []);
@@ -101,6 +98,26 @@ export function GprScan() {
     rafRef.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafRef.current);
   }, [playing, tick]);
+
+  // Reset and start/stop when the slide becomes active/inactive
+  useEffect(() => {
+    const stage = document.querySelector('deck-stage');
+    if (!stage) return;
+    const host = canvasRef.current?.closest('gpr-scan');
+    const onSlideChange = (e) => {
+      const { slide, previousSlide } = e.detail;
+      if (host && slide?.contains(host)) {
+        setStep(0); setPlaying(true);
+      } else if (host && previousSlide?.contains(host)) {
+        setPlaying(false);
+      }
+    };
+    stage.addEventListener('slidechange', onSlideChange);
+    // Pause immediately — only play when slide is active
+    const active = stage.querySelector('[data-deck-active]');
+    if (!host || !active?.contains(host)) setPlaying(false);
+    return () => stage.removeEventListener('slidechange', onSlideChange);
+  }, []);
 
   const restart = () => { setStep(0); setPlaying(true); };
 

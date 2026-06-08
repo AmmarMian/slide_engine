@@ -22,8 +22,8 @@ const CLIENTS = [
   { id: 0, cx: 320, cy: 38,  lbl: 'Cl. 1', sup: '(1)', active: true  },
   { id: 1, cx: 56,  cy: 340, lbl: 'Cl. 2', sup: '(2)', active: true  },
   { id: 2, cx: 584, cy: 340, lbl: 'Cl. 3', sup: '(3)', active: true  },
-  { id: 3, cx: 32,  cy: 148, lbl: 'Cl. 4', sup: '(4)', active: false },
-  { id: 4, cx: 608, cy: 148, lbl: 'Cl. 5', sup: '(5)', active: false },
+  { id: 3, cx: 100, cy: 148, lbl: 'Cl. 4', sup: '(4)', active: false },
+  { id: 4, cx: 540, cy: 148, lbl: 'Cl. 5', sup: '(5)', active: false },
 ];
 
 // Private data dot positions per active client (decorative)
@@ -164,31 +164,31 @@ function FedPanel({ stepIdx }) {
     }}>
       {/* Eyebrow + counter */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-        <span style={{ fontFamily: 'var(--mono)', fontSize: '15px', fontWeight: 500, letterSpacing: '0.10em', textTransform: 'uppercase', color: 'var(--accent)' }}>
+        <span style={{ fontFamily: 'var(--mono)', fontSize: 'calc(18px * var(--type-scale, 1))', fontWeight: 500, letterSpacing: '0.10em', textTransform: 'uppercase', color: 'var(--accent)' }}>
           {s.eyebrow}
         </span>
-        <span style={{ fontFamily: 'var(--mono)', fontSize: '16px', letterSpacing: '0.10em' }}>
+        <span style={{ fontFamily: 'var(--mono)', fontSize: 'calc(18px * var(--type-scale, 1))', letterSpacing: '0.10em' }}>
           <span style={{ fontWeight: 600, color: 'var(--accent)' }}>{String(stepIdx + 1).padStart(2, '0')}</span>
           <span style={{ color: 'var(--ink-3)' }}>{' / ' + String(STEPS.length).padStart(2, '0')}</span>
         </span>
       </div>
 
       <h2 ref={titleRef} style={{
-        fontFamily: 'var(--sans)', fontSize: '40px', lineHeight: 1.0,
+        fontFamily: 'var(--sans)', fontSize: 'calc(40px * var(--type-scale, 1))', lineHeight: 1.0,
         letterSpacing: '-0.025em', fontWeight: 600, margin: 0, color: 'var(--ink)',
       }} />
 
       <hr style={{ height: '1px', background: 'var(--rule-soft)', border: 0, margin: 0 }} />
 
       <div ref={bodyRef} style={{
-        fontFamily: 'var(--sans)', fontSize: '22px', lineHeight: 1.55,
+        fontFamily: 'var(--sans)', fontSize: 'calc(26px * var(--type-scale, 1))', lineHeight: 1.55,
         color: 'var(--ink-2)', letterSpacing: '-0.005em',
       }} />
 
       {/* Formula box */}
       <div style={{
         background: 'var(--bg-2)', border: '1px solid var(--rule)',
-        borderLeft: '3px solid var(--accent)', padding: '18px 20px', color: 'var(--ink)',
+        borderLeft: '3px solid var(--accent)', padding: '18px 20px', color: 'var(--ink)', fontSize: 'calc(26px * var(--type-scale, 1))',
       }}>
         <div ref={formulaRef} />
       </div>
@@ -197,7 +197,7 @@ function FedPanel({ stepIdx }) {
       <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '14px' }}>
         <div style={{ display: 'flex', gap: '28px' }}>
           {[{ color: 'var(--accent)', label: 'param. global' }, { color: GOLD, label: 'param. local' }].map(({ color, label }) => (
-            <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontFamily: 'var(--mono)', fontSize: '14px', color: 'var(--ink-3)' }}>
+            <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontFamily: 'var(--mono)', fontSize: 'calc(18px * var(--type-scale, 1))', color: 'var(--ink-3)' }}>
               <svg width="34" height="10" style={{ flexShrink: 0 }}>
                 <line x1="0" y1="5" x2="34" y2="5" stroke={color} strokeWidth="2.5" strokeDasharray="8 5" />
               </svg>
@@ -207,7 +207,7 @@ function FedPanel({ stepIdx }) {
         </div>
         <div style={{ display: 'flex', gap: '28px' }}>
           {[{ dash: undefined, label: 'sélectionné' }, { dash: '7 5', label: 'inactif' }].map(({ dash, label }) => (
-            <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontFamily: 'var(--mono)', fontSize: '14px', color: 'var(--ink-3)' }}>
+            <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontFamily: 'var(--mono)', fontSize: 'calc(18px * var(--type-scale, 1))', color: 'var(--ink-3)' }}>
               <svg width="22" height="22" style={{ flexShrink: 0 }}>
                 <circle cx="11" cy="11" r="8" fill="none" stroke="var(--ink-3)" strokeWidth="2" strokeDasharray={dash} />
               </svg>
@@ -227,6 +227,7 @@ function FedDiagram({ phase }) {
   const isUpload    = phase === 'upload';
   const isTrain     = phase === 'train';
   const isAggregate = phase === 'aggregate';
+  const isOverview  = phase === 'overview';
 
   // Arc path for spinning "computing" indicator inside client
   const arcR   = R - 12;
@@ -251,7 +252,7 @@ function FedDiagram({ phase }) {
       </defs>
 
       {/* Static background lines */}
-      {CONNS.map(c => (
+      {!isOverview && CONNS.map(c => (
         <line key={c.id}
           x1={c.spx} y1={c.spy} x2={c.epx} y2={c.epy}
           stroke="rgba(10,10,10,0.10)" strokeWidth="1.5"
@@ -325,12 +326,12 @@ function FedDiagram({ phase }) {
 
           {/* Circle body */}
           <circle r={R}
-            strokeWidth={c.active ? 3 : 1.5}
-            strokeDasharray={c.active ? undefined : '8 5'}
+            strokeWidth={(c.active || isOverview) ? 3 : 1.5}
+            strokeDasharray={(c.active || isOverview) ? undefined : '8 5'}
             style={{
               fill: 'var(--bg-2)',
-              stroke: c.active ? 'var(--accent)' : 'rgba(10,10,10,0.25)',
-              opacity: c.active ? 1 : 0.4,
+              stroke: (c.active || isOverview) ? 'var(--accent)' : 'rgba(10,10,10,0.25)',
+              opacity: (c.active || isOverview) ? 1 : 0.4,
               transition: 'opacity 0.5s',
             }}
           />
@@ -360,14 +361,14 @@ function FedDiagram({ phase }) {
           {/* Client label */}
           <text textAnchor="middle" dy="-8"
             style={{
-              fontFamily: 'var(--sans)', fontWeight: 700, fontSize: '20px',
+              fontFamily: 'var(--sans)', fontWeight: 700, fontSize: 'calc(20px * var(--type-scale, 1))',
               fill: c.active ? 'var(--ink)' : 'rgba(10,10,10,0.30)',
             }}>
             {c.lbl}
           </text>
           <text textAnchor="middle" dy="16"
             style={{
-              fontFamily: 'var(--serif)', fontStyle: 'italic', fontSize: '17px',
+              fontFamily: 'var(--serif)', fontStyle: 'italic', fontSize: 'calc(17px * var(--type-scale, 1))',
               fill: c.active ? 'var(--ink-2)' : 'rgba(10,10,10,0.20)',
             }}>
             {'𝒟' + c.sup}
@@ -400,11 +401,11 @@ function FedDiagram({ phase }) {
           }}
         />
         <text x={SX} y={SY - 7} textAnchor="middle"
-          style={{ fontFamily: 'var(--sans)', fontWeight: 700, fontSize: '22px', fill: 'var(--ink)' }}>
+          style={{ fontFamily: 'var(--sans)', fontWeight: 700, fontSize: 'calc(22px * var(--type-scale, 1))', fill: 'var(--ink)' }}>
           Serveur
         </text>
         <text x={SX} y={SY + 18} textAnchor="middle"
-          style={{ fontFamily: 'var(--mono)', fontSize: '15px', fill: 'var(--accent)', letterSpacing: '0.06em' }}>
+          style={{ fontFamily: 'var(--mono)', fontSize: 'calc(15px * var(--type-scale, 1))', fill: 'var(--accent)', letterSpacing: '0.06em' }}>
           {isAggregate ? 'FedAvg ↻' : 'agrégation'}
         </text>
 
@@ -437,34 +438,10 @@ function FedDiagram({ phase }) {
 
       {/* Round indicator */}
       <text x={18} y={420}
-        style={{ fontFamily: 'var(--mono)', fontSize: '16px', fill: 'var(--ink-4)', letterSpacing: '0.04em' }}>
+        style={{ fontFamily: 'var(--mono)', fontSize: 'calc(16px * var(--type-scale, 1))', fill: 'var(--ink-4)', letterSpacing: '0.04em' }}>
         {isAggregate ? 'Round  t  →  t + 1' : 'Round  t'}
       </text>
 
-      {/* Convergence sparkline during aggregate */}
-      {isAggregate && (
-        <g style={{ animation: 'fl-fadein 0.7s ease' }}>
-          <text x={SX} y={SY + SH / 2 + 32} textAnchor="middle"
-            style={{ fontFamily: 'var(--mono)', fontSize: '13px', fill: 'var(--ink-4)', letterSpacing: '0.04em' }}>
-            {'F(θ)'}
-          </text>
-          <path
-            d={`M ${SX - 100} ${SY + SH / 2 + 58} C ${SX - 60} ${SY + SH / 2 + 52}, ${SX - 20} ${SY + SH / 2 + 44}, ${SX + 20} ${SY + SH / 2 + 36} C ${SX + 55} ${SY + SH / 2 + 30}, ${SX + 85} ${SY + SH / 2 + 28}, ${SX + 100} ${SY + SH / 2 + 27}`}
-            fill="none" strokeWidth="2.5" strokeLinecap="round"
-            style={{ stroke: GOLD }}
-          />
-          <line
-            x1={SX - 104} y1={SY + SH / 2 + 28}
-            x2={SX - 104} y2={SY + SH / 2 + 62}
-            stroke="rgba(10,10,10,0.18)" strokeWidth="1.5"
-          />
-          <line
-            x1={SX - 104} y1={SY + SH / 2 + 62}
-            x2={SX + 104} y2={SY + SH / 2 + 62}
-            stroke="rgba(10,10,10,0.18)" strokeWidth="1.5"
-          />
-        </g>
-      )}
     </svg>
     </div>
   );

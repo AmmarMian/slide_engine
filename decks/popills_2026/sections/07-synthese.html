@@ -1,72 +1,165 @@
   <section-divider
     label="Synthèse"
-    kicker="Ce que la géométrie apporte"
+    kicker="Bilan &amp; perspectives"
     blurb="">
   </section-divider>
 
-  <!-- §6.1 · Synthesis -->
+  <!-- §6.1 · Bilan narratif -->
   <section>
-    <slide-note>Synthèse : la structure géométrique des données SPD induit des problèmes d'optimisation non-triviaux à toutes les échelles — de la rétropropagation dans le réseau jusqu'à l'agrégation distribuée. Et à chaque échelle, la même idée : remplacer les opérations coûteuses (Fréchet, exp/log) par des projections / rétractions peu chères.</slide-note>
-    <slide-header title="Une même idée à toutes les échelles"></slide-header>
-    <div class="slide-body">
-      <div style="display:flex;flex-direction:column;gap:18px;max-width:1500px;margin-top:24px;">
+    <slide-note>Bilan narratif : covariances partout → variété riemannienne → SPDNet + backprop → BatchNorm ARMAGNAC → fédéré RFedProj/RFedRL. Le fil conducteur est que chaque étape a nécessité de repenser les opérations classiques pour respecter la géométrie à moindre coût.</slide-note>
+    <slide-header title="Ce que nous avons présenté"></slide-header>
+    <div class="slide-body" style="gap:28px;justify-content:center;">
 
-        <div data-step style="display:flex;gap:24px;align-items:baseline;padding:18px 24px;border-left:3px solid var(--accent);background:var(--bg-2);">
-          <div style="flex-shrink:0;width:160px;font-family:var(--mono);font-size:15px;letter-spacing:0.05em;text-transform:uppercase;color:var(--accent);">Échelle locale</div>
-          <div style="flex:1;font-size:20px;color:var(--ink-2);">
-            <strong>Rétropropagation matricielle</strong> + projection / rétraction sur Stiefel — coût quasi linéaire en <span class="math">d</span>.
+      <!-- Phase labels -->
+      <div style="display:flex;width:100%;flex-shrink:0;">
+        <div style="flex:2;text-align:center;">
+          <span style="font-family:var(--mono);font-size:14px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-3);">Contexte &amp; outils</span>
+        </div>
+        <div style="flex:0 0 1px;"></div>
+        <div style="flex:3;text-align:center;">
+          <span style="font-family:var(--mono);font-size:14px;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);">Contributions</span>
+        </div>
+      </div>
+
+      <!-- Narrative flow -->
+      <div style="display:flex;align-items:flex-start;width:100%;gap:0;flex:1;min-height:0;">
+
+        <!-- Step 1 -->
+        <div data-step style="flex:2;display:flex;flex-direction:column;align-items:center;gap:18px;padding:0 24px;text-align:center;">
+          <div style="font-family:var(--mono);font-size:80px;font-weight:700;line-height:1;color:var(--rule);flex-shrink:0;">1</div>
+          <div>
+            <div style="font-size:24px;font-weight:700;color:var(--ink);margin-bottom:10px;">Covariances partout</div>
+            <p style="font-size:20px;color:var(--ink-3);line-height:1.6;">EEG · SAR · HSI — les matrices de covariance portent la structure du signal et vivent sur <span class="math">\mathcal{S}_{++}^d</span>, un cône ouvert non-euclidien.</p>
           </div>
         </div>
 
-        <div data-step style="display:flex;gap:24px;align-items:baseline;padding:18px 24px;border-left:3px solid var(--accent);background:var(--bg-2);">
-          <div style="flex-shrink:0;width:160px;font-family:var(--mono);font-size:15px;letter-spacing:0.05em;text-transform:uppercase;color:var(--accent);">BatchNorm</div>
-          <div style="flex:1;font-size:20px;color:var(--ink-2);">
-            <strong>Moyennes alternatives</strong> + paramètre appris (ARMAGNAC) en lieu et place de la moyenne de Fréchet itérative.
+        <!-- Arrow -->
+        <div style="flex:0 0 36px;display:flex;align-items:flex-start;padding-top:42px;color:var(--rule-soft);font-size:32px;justify-content:center;">→</div>
+
+        <!-- Step 2 -->
+        <div data-step style="flex:2;display:flex;flex-direction:column;align-items:center;gap:18px;padding:0 24px;text-align:center;">
+          <div style="font-family:var(--mono);font-size:80px;font-weight:700;line-height:1;color:var(--rule);flex-shrink:0;">2</div>
+          <div>
+            <div style="font-size:24px;font-weight:700;color:var(--ink);margin-bottom:10px;">Variété Riemannienne</div>
+            <p style="font-size:20px;color:var(--ink-3);line-height:1.6;">Géodésiques, exp/log, transport parallèle, rétraction — les outils pour <em>travailler intrinsèquement</em> sur ce cône.</p>
           </div>
         </div>
 
-        <div data-step style="display:flex;gap:24px;align-items:baseline;padding:18px 24px;border-left:3px solid var(--accent);background:var(--bg-2);">
-          <div style="flex-shrink:0;width:160px;font-family:var(--mono);font-size:15px;letter-spacing:0.05em;text-transform:uppercase;color:var(--accent);">Distribué</div>
-          <div style="flex:1;font-size:20px;color:var(--ink-2);">
-            <strong>Agrégation projetée</strong> (RFedProj / RFedRL) en lieu et place de Karcher fédéré.
+        <!-- Divider contributions -->
+        <div style="flex:0 0 2px;align-self:stretch;background:var(--rule-soft);margin:0 12px;flex-shrink:0;"></div>
+
+        <!-- Step 3 -->
+        <div data-step style="flex:2;display:flex;flex-direction:column;align-items:center;gap:18px;padding:0 24px;text-align:center;">
+          <div style="font-family:var(--mono);font-size:80px;font-weight:700;line-height:1;color:color-mix(in srgb,var(--accent) 25%,var(--bg));flex-shrink:0;">3</div>
+          <div>
+            <div style="font-size:24px;font-weight:700;color:var(--ink);margin-bottom:10px;">SPDNet</div>
+            <p style="font-size:20px;color:var(--ink-3);line-height:1.6;">Réseau profond géométrique (BiMap · ReEig · LogEig) + <strong>rétropropagation analytique</strong> sur Stiefel, sans autograd.</p>
           </div>
         </div>
 
-        <div data-step class="theorem" style="margin-top:16px;">
-          <div class="theorem-tag">Message principal</div>
-          <div class="theorem-body" style="font-size:21px;">
-            La structure géométrique <em>n'est pas un obstacle</em> à l'optimisation — à chaque échelle on peut la respecter en n'utilisant que des projections / rétractions <strong>peu coûteuses</strong>. La performance et la robustesse suivent.
+        <!-- Arrow -->
+        <div style="flex:0 0 36px;display:flex;align-items:flex-start;padding-top:42px;color:var(--rule-soft);font-size:32px;justify-content:center;">→</div>
+
+        <!-- Step 4 -->
+        <div data-step style="flex:2;display:flex;flex-direction:column;align-items:center;gap:18px;padding:0 24px;text-align:center;">
+          <div style="font-family:var(--mono);font-size:80px;font-weight:700;line-height:1;color:color-mix(in srgb,var(--accent) 35%,var(--bg));flex-shrink:0;">4</div>
+          <div>
+            <div style="font-size:24px;font-weight:700;color:var(--ink);margin-bottom:10px;">BatchNorm ARMAGNAC</div>
+            <p style="font-size:20px;color:var(--ink-3);line-height:1.6;">Moyennes à forme close (A · H · GAH) + paramètre appris. Remplace la <strong>moyenne de Fréchet itérative</strong> — ×10 plus rapide.</p>
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <div style="flex:0 0 36px;display:flex;align-items:flex-start;padding-top:42px;color:var(--rule-soft);font-size:32px;justify-content:center;">→</div>
+
+        <!-- Step 5 -->
+        <div data-step style="flex:2;display:flex;flex-direction:column;align-items:center;gap:18px;padding:0 24px;text-align:center;">
+          <div style="font-family:var(--mono);font-size:80px;font-weight:700;line-height:1;color:var(--accent);flex-shrink:0;">5</div>
+          <div>
+            <div style="font-size:24px;font-weight:700;color:var(--ink);margin-bottom:10px;">Apprentissage fédéré</div>
+            <p style="font-size:20px;color:var(--ink-3);line-height:1.6;">RFedProj / RFedRL — agrégation projetée sur Stiefel. <strong>Données EEG sensibles</strong> sans jamais quitter les sites de soin.</p>
           </div>
         </div>
 
       </div>
+
     </div>
     <slide-footer></slide-footer>
   </section>
 
-  <!-- §6.2 · Outlook -->
+  <!-- §6.2 · Perspectives -->
   <section>
-    <slide-note>Perspectives : extension non compacte (variété SPD elle-même), confidentialité différentielle dans le cadre fédéré (DP-RFedProj), optimiseurs adaptatifs (Adam riemannien), applications hyperspectral / radar avec géométrie en grande dimension.</slide-note>
+    <slide-note>Trois directions ouvertes : Transformers géométriques sur SPD (attention riemannienne, têtes multi-vues), adaptation de domaine inter-sujets et inter-sites (transport optimal, personnalisation fédérée), autres géométries — matrices de rang faible, grassmannienne, extension des agrégateurs RFedProj aux variétés non compactes.</slide-note>
     <slide-header title="Perspectives"></slide-header>
-    <div class="slide-body">
-      <div class="cols cols-2" style="gap:48px;margin-top:24px;">
-        <div data-step>
-          <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Théorie</div>
-          <ul style="font-size:20px;color:var(--ink-2);line-height:1.8;padding-left:18px;">
-            <li>Variétés <strong>non compactes</strong> — la variété SPD elle-même</li>
-            <li>Optimiseurs <strong>adaptatifs</strong> (Adam riemannien) avec garanties</li>
-            <li>Différentialité de la moyenne <strong>ARMAGNAC</strong> en limite</li>
-          </ul>
+    <div class="slide-body" style="gap:32px;">
+
+      <div class="cols cols-3" style="gap:40px;align-items:stretch;flex:1;min-height:0;">
+
+        <!-- Transformers -->
+        <div data-step style="background:var(--bg-2);border:1px solid var(--rule);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;">
+          <div style="padding:22px 28px 16px;border-bottom:1px solid var(--rule);">
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Transformers sur SPD</div>
+            <div style="font-size:24px;font-weight:600;color:var(--ink);">Attention riemannienne</div>
+          </div>
+          <div style="padding:20px 28px;flex:1;display:flex;flex-direction:column;gap:14px;">
+            <p style="font-size:21px;color:var(--ink-2);line-height:1.6;">
+              Les Transformers manipulent des séquences de vecteurs — mais les matrices SPD ne vivent pas dans un espace vectoriel. Définir un mécanisme d'attention intrinsèque nécessite :
+            </p>
+            <ul style="font-size:20px;color:var(--ink-3);line-height:1.7;padding-left:18px;margin:0;">
+              <li>un <strong>produit scalaire riemannien</strong> comme score d'attention</li>
+              <li>une <strong>agrégation géodésique</strong> (moyenne de Fréchet pondérée) à la place du softmax euclidien</li>
+              <li>compatibilité avec les couches SPDNet existantes</li>
+            </ul>
+            <div style="margin-top:auto;padding-top:14px;border-top:1px solid var(--rule-soft);font-family:var(--mono);font-size:17px;color:var(--ink-3);">
+              EEG · séries temporelles SAR · vision SPD
+            </div>
+          </div>
         </div>
-        <div data-step>
-          <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Pratique</div>
-          <ul style="font-size:20px;color:var(--ink-2);line-height:1.8;padding-left:18px;">
-            <li>Extension à la <strong>confidentialité différentielle</strong> (DP-RFedProj)</li>
-            <li>Déploiement multi-sites <strong>BCI</strong> / clinique</li>
-            <li>Imagerie <strong>hyperspectrale</strong> et radar en très grande dimension</li>
-          </ul>
+
+        <!-- Domain adaptation -->
+        <div data-step style="background:var(--bg-2);border:1px solid var(--rule);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;">
+          <div style="padding:22px 28px 16px;border-bottom:1px solid var(--rule);">
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Adaptation de domaine</div>
+            <div style="font-size:24px;font-weight:600;color:var(--ink);">Transfert inter-sujets &amp; inter-sites</div>
+          </div>
+          <div style="padding:20px 28px;flex:1;display:flex;flex-direction:column;gap:14px;">
+            <p style="font-size:21px;color:var(--ink-2);line-height:1.6;">
+              En EEG, chaque sujet est un domaine différent — les covariances ne sont pas directement comparables. L'adaptation de domaine géométrique propose :
+            </p>
+            <ul style="font-size:20px;color:var(--ink-3);line-height:1.7;padding-left:18px;margin:0;">
+              <li><strong>alignement sur la variété</strong> par transport optimal riemannien</li>
+              <li><strong>personnalisation fédérée</strong> — modèles locaux + noyau global</li>
+              <li>robustesse aux sessions et aux électrodes manquantes</li>
+            </ul>
+            <div style="margin-top:auto;padding-top:14px;border-top:1px solid var(--rule-soft);font-family:var(--mono);font-size:17px;color:var(--ink-3);">
+              BCI clinique · non-stationnarité · transfer
+            </div>
+          </div>
         </div>
+
+        <!-- Other geometries -->
+        <div data-step style="background:var(--bg-2);border:1px solid var(--rule);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;">
+          <div style="padding:22px 28px 16px;border-bottom:1px solid var(--rule);">
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Autres géométries</div>
+            <div style="font-size:24px;font-weight:600;color:var(--ink);">Au-delà de <span class="math">\mathcal{S}_{++}^d</span></div>
+          </div>
+          <div style="padding:20px 28px;flex:1;display:flex;flex-direction:column;gap:14px;">
+            <p style="font-size:21px;color:var(--ink-2);line-height:1.6;">
+              Les mêmes idées s'appliquent à d'autres espaces structurés, souvent plus adaptés aux grandes dimensions :
+            </p>
+            <ul style="font-size:20px;color:var(--ink-3);line-height:1.7;padding-left:18px;margin:0;">
+              <li><strong>Matrices de rang faible</strong> — variété de rang <span class="math">r \ll d</span>, représentation parcimonieuse des capteurs haute résolution</li>
+              <li><strong>Grassmannienne</strong> <span class="math">\mathrm{Gr}(r,d)</span> — sous-espaces sans métrique de biais de norme</li>
+              <li>Extension de RFedProj aux variétés <strong>non compactes</strong></li>
+            </ul>
+            <div style="margin-top:auto;padding-top:14px;border-top:1px solid var(--rule-soft);font-family:var(--mono);font-size:17px;color:var(--ink-3);">
+              rang faible · Grassmann · HSI grande dimension
+            </div>
+          </div>
+        </div>
+
       </div>
+
     </div>
     <slide-footer></slide-footer>
   </section>

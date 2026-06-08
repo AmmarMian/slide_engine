@@ -4,6 +4,46 @@
     blurb="Agrégation projetée sur Stiefel — RFedProj / RFedRL">
   </section-divider>
 
+  <!-- §5.0b · EEG privacy motivation -->
+  <section>
+    <slide-note>L'EEG est extrêmement sensible : données biométriques + médicales + neurocinétiques. Partager centralement expose les patients à des risques de réidentification, de vol identitaire, ou d'utilisation secondaire non consentie. L'apprentissage fédéré permet d'entraîner des modèles d'IA clinique sans jamais centraliser les données brutes.</slide-note>
+    <slide-header title="EEG — données ultra-sensibles"></slide-header>
+    <div class="slide-body" style="gap:32px;">
+      <p class="lede" style="max-width:1500px;">
+        L'EEG révèle l'activité cérébrale : données <strong>biométriques</strong>, <strong>médicales</strong>, et <strong>profondément personnelles</strong>. Centraliser ces données expose les patients à des risques de réidentification et d'utilisation secondaire.
+      </p>
+
+      <div class="cols cols-3" style="gap:40px;align-items:start;">
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Biométrique</div>
+          <p class="body" style="font-size:22px;color:var(--ink-2);">
+            Signature neurale unique — impossible à revenir, impossible à changer.
+          </p>
+        </div>
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Médicale</div>
+          <p class="body" style="font-size:22px;color:var(--ink-2);">
+            Diagnostic, sujets sains vs patients — consentement limité à l'usage initial.
+          </p>
+        </div>
+        <div data-step>
+          <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Neurocinétique</div>
+          <p class="body" style="font-size:22px;color:var(--ink-2);">
+            État mental, intérêts, intentions — révèle ce que la personne ignore d'elle-même.
+          </p>
+        </div>
+      </div>
+
+      <div data-step class="theorem" style="margin-top:24px;">
+        <div class="theorem-tag">Solution : apprentissage distribué</div>
+        <div class="theorem-body" style="font-size:24px;">
+          Entraîner des modèles cliniques sans centraliser les données brutes. Les données ne quittent jamais les sites de soin ; seules les mises à jour de modèle circulent.
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
   <!-- §5.1 · FL motivation + animation -->
   <section>
     <slide-note>L'apprentissage fédéré entraîne un modèle partagé sans jamais partager les données. Motivations : confidentialité, contraintes réglementaires, données disséminées. L'animation détaille un round FedAvg : sélection des clients, diffusion du modèle global, entraînement local, remontée des mises à jour, agrégation.</slide-note>
@@ -26,9 +66,9 @@
       <div class="cols cols-2" style="gap:48px;align-items:start;">
         <div data-step>
           <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Approches existantes</div>
-          <div style="display:flex;flex-direction:column;gap:14px;font-size:18px;color:var(--ink-2);">
+          <div style="display:flex;flex-direction:column;gap:14px;font-size:22px;color:var(--ink-2);">
             <div style="padding:14px 16px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
-              <strong>Karcher / Fréchet</strong><cite-ref key="karcher1977"></cite-ref> — log → moyenne tangente → exp. Sur Stiefel le log est itératif, l'exp instable.
+              <strong>Karcher / Fréchet</strong><cite-ref key="karcher1977"></cite-ref> — n'existe pas sur Stiefel en forme close.
             </div>
             <div style="padding:14px 16px;background:var(--bg-2);border:1px solid var(--rule-soft);border-radius:4px;">
               <strong>Projection + correction de dérive</strong> — <cite-ref key="zhang2024"></cite-ref> : requiert la participation totale.
@@ -42,7 +82,7 @@
           <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Le trou à combler</div>
           <div class="theorem" style="margin-top:0;">
             <div class="theorem-tag">Objectif</div>
-            <div class="theorem-body" style="font-size:19px;">
+            <div class="theorem-body" style="font-size:24px;">
               Une agrégation qui combine :
               <ul style="margin-top:10px;padding-left:18px;line-height:1.7;">
                 <li>projections + rétractions <strong>seulement</strong></li>
@@ -52,6 +92,14 @@
               </ul>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div data-step style="display:flex;align-items:center;gap:20px;padding:16px 28px;background:color-mix(in srgb,var(--accent) 8%,var(--bg));border:2px solid var(--accent);border-radius:8px;flex-shrink:0;">
+        <div style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;flex-shrink:0;">Notre travail</div>
+        <div style="width:1px;height:32px;background:var(--accent);opacity:0.35;flex-shrink:0;"></div>
+        <div style="font-size:22px;color:var(--ink-2);">
+          Pautrel et al., <em>« FedSPDnet: geometry-aware federated deep learning with SPDnet »</em> — EuSIPCO 2026 (accepté).<cite-ref key="pautrel2026"></cite-ref>
         </div>
       </div>
     </div>
@@ -81,9 +129,9 @@
             <div class="small" style="color:var(--ink-3);">le plus simple — pas besoin de mémoriser l'itéré global précédent</div>
           </div>
           <div class="math-display" style="margin:8px 0 4px;">
-            x_{t+1} \;=\; P_{\mathcal{M}}\!\left(\tfrac{1}{k}\sum_{i \in S_t} x^{(i)}_{t,\tau}\right)
+            \theta_{t+1} \;=\; P_{\mathcal{M}}\!\left(\tfrac{1}{k}\sum_{i \in S_t} \theta^{(i)}_{t,\tau}\right)
           </div>
-          <p class="small" style="font-size:16px;color:var(--ink-3);margin-top:6px;">
+          <p class="small" style="font-size:20px;color:var(--ink-3);margin-top:6px;">
             On moyenne arithmétiquement les sorties locales des <span class="math">k</span> clients participants, puis on projette sur <span class="math">\mathcal{M}</span>.
           </p>
         </div>
@@ -94,17 +142,17 @@
             <div class="small" style="color:var(--ink-3);">retracted-lifted — relève les déplacements au tangent, moyenne, rétracte</div>
           </div>
           <div class="math-display" style="margin:8px 0 4px;">
-            x_{t+1} \;=\; P_{\mathcal{M}}\!\left(x_t \;+\; \tfrac{1}{k}\sum_{i \in S_t} P_{x_t}\!\left(x^{(i)}_{t,\tau} - x_t\right)\right)
+            \theta_{t+1} \;=\; P_{\mathcal{M}}\!\left(\theta_t \;+\; \tfrac{1}{k}\sum_{i \in S_t} P_{\theta_t}\!\left(\theta^{(i)}_{t,\tau} - \theta_t\right)\right)
           </div>
-          <p class="small" style="font-size:16px;color:var(--ink-3);margin-top:6px;">
-            Variante géométriquement « plus propre » — équivalente en taux, requiert de stocker <span class="math">x_t</span>.
+          <p class="small" style="font-size:20px;color:var(--ink-3);margin-top:6px;">
+            Variante géométriquement « plus propre » — équivalente en taux, requiert de stocker <span class="math">\theta_t</span>. Ici <span class="math">P_{\theta_t}</span> est la projection sur l'espace tangent en <span class="math">\theta_t</span>.
           </p>
         </div>
 
         <div data-step class="theorem">
           <div class="theorem-tag">Sur Stiefel</div>
-          <div class="theorem-body" style="font-size:19px;">
-            La projection <span class="math">P_{\mathcal{M}}</span> est le <strong>facteur polaire</strong> <span class="math">\mathrm{uf}(A) = A(A^\top A)^{-1/2}</span> — une SVD réduite suffit. Aucun exp, aucun log.
+          <div class="theorem-body" style="font-size:24px;">
+            La projection <span class="math">P_{\mathcal{M}}</span> est le <strong>facteur polaire</strong> <span class="math">\mathrm{uf}(A) = A(A^\top A)^{-1/2}</span>. Aucun exp, aucun log.
           </div>
         </div>
 
@@ -113,69 +161,146 @@
     <slide-footer></slide-footer>
   </section>
 
-  <!-- §5.4 · Theorem -->
+  <!-- §5.5a · EEG federated — data & protocol -->
   <section>
-    <slide-note>Théorème 4.6 : sous lissité Lipschitz des objectifs clients et lissité proximale de la variété, les deux algorithmes convergent en O(1/√T) sous participation partielle, avec un facteur (n-k)/((n-1)k) qui mesure l'effet de la participation. Le résultat est l'analogue strict des garanties FedAvg classiques.</slide-note>
-    <slide-header title="Garantie de convergence"></slide-header>
-    <div class="slide-body">
-      <div class="theorem" data-step style="margin-top:18px;">
-        <div class="theorem-tag">Théorème <span class="theorem-name">RFedProj &amp; RFedRL (sous-mvts compacts)</span></div>
-        <div class="theorem-body" style="font-size:19px;">
-          Sous lissité Lipschitz des objectifs clients et lissité proximale de <span class="math">\mathcal{M}</span> :
-          <div class="math-display" style="margin:14px 0;">
-            \tfrac{1}{T}\sum_{t=1}^T \mathbb{E}\|\mathrm{grad}\,F(x_t)\|^2 \;=\; \mathcal{O}\!\left(\tfrac{1}{\sqrt{T}}\right) + \mathcal{O}\!\left(\tfrac{1}{k\sqrt{T}}\Big(\tfrac{n-k}{n-1}\sigma^2 + \tfrac{\sigma^2_{sg}}{B}\Big)\right)
+    <slide-note>Deux jeux de données MOABB motor-imagery. Chaque sujet est un client — protocole non-IID par sujet. 150 rounds, 2 époques locales, participation complète ou partielle (50%). Baseline centralisée : pooling de tous les sujets (300 epochs, patience 75). Métrique : F1-macro, 10 seeds.</slide-note>
+    <slide-header title="Expériences EEG fédérées — données &amp; protocole"></slide-header>
+    <div class="slide-body" style="gap:36px;">
+
+      <div class="cols cols-2" style="gap:40px;align-items:stretch;">
+
+        <div style="background:var(--bg-2);border:1px solid var(--rule);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;">
+          <div style="padding:18px 26px 14px;border-bottom:1px solid var(--rule);">
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:4px;">Weibo2014<cite-ref key="jayaram2018"></cite-ref></div>
+            <div style="font-size:26px;font-weight:600;color:var(--ink);">Motor Imagery — 7 classes</div>
+            <div style="font-family:var(--mono);font-size:15px;color:var(--ink-3);margin-top:4px;">Mouvements de main · pieds · repos</div>
           </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border-bottom:1px solid var(--rule);">
+            <div style="padding:16px 12px;border-right:1px solid var(--rule);text-align:center;">
+              <div style="font-family:var(--mono);font-size:32px;font-weight:700;color:var(--ink);line-height:1;">10</div>
+              <div style="font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:3px;">sujets</div>
+            </div>
+            <div style="padding:16px 12px;border-right:1px solid var(--rule);text-align:center;">
+              <div style="font-family:var(--mono);font-size:32px;font-weight:700;color:var(--ink);line-height:1;">60</div>
+              <div style="font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:3px;">canaux EEG</div>
+            </div>
+            <div style="padding:16px 12px;border-right:1px solid var(--rule);text-align:center;">
+              <div style="font-family:var(--mono);font-size:32px;font-weight:700;color:var(--ink);line-height:1;">7</div>
+              <div style="font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:3px;">classes</div>
+            </div>
+            <div style="padding:16px 12px;text-align:center;">
+              <div style="font-family:var(--mono);font-size:32px;font-weight:700;color:var(--accent);line-height:1;">5</div>
+              <div style="font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:3px;">clients FL</div>
+            </div>
+          </div>
+          <div style="padding:14px 26px;flex:1;font-family:var(--mono);font-size:17px;color:var(--ink-3);">
+            Matrices SPD 60×60 &nbsp;·&nbsp; split 75 / 10 / 15 %
+          </div>
+        </div>
+
+        <div style="background:var(--bg-2);border:1px solid var(--rule);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;">
+          <div style="padding:18px 26px 14px;border-bottom:1px solid var(--rule);">
+            <div class="eyebrow" style="color:var(--accent);margin-bottom:4px;">PhysionetMI<cite-ref key="jayaram2018"></cite-ref></div>
+            <div style="font-size:26px;font-weight:600;color:var(--ink);">Motor Imagery — 4 classes</div>
+            <div style="font-family:var(--mono);font-size:15px;color:var(--ink-3);margin-top:4px;">Poing gauche · droit · pieds · repos</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border-bottom:1px solid var(--rule);">
+            <div style="padding:16px 12px;border-right:1px solid var(--rule);text-align:center;">
+              <div style="font-family:var(--mono);font-size:32px;font-weight:700;color:var(--ink);line-height:1;">103</div>
+              <div style="font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:3px;">sujets</div>
+            </div>
+            <div style="padding:16px 12px;border-right:1px solid var(--rule);text-align:center;">
+              <div style="font-family:var(--mono);font-size:32px;font-weight:700;color:var(--ink);line-height:1;">64</div>
+              <div style="font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:3px;">canaux EEG</div>
+            </div>
+            <div style="padding:16px 12px;border-right:1px solid var(--rule);text-align:center;">
+              <div style="font-family:var(--mono);font-size:32px;font-weight:700;color:var(--ink);line-height:1;">4</div>
+              <div style="font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:3px;">classes</div>
+            </div>
+            <div style="padding:16px 12px;text-align:center;">
+              <div style="font-family:var(--mono);font-size:32px;font-weight:700;color:var(--accent);line-height:1;">53</div>
+              <div style="font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:3px;">clients FL</div>
+            </div>
+          </div>
+          <div style="padding:14px 26px;flex:1;font-family:var(--mono);font-size:17px;color:var(--ink-3);">
+            Matrices SPD 64×64 &nbsp;·&nbsp; split 75 / 10 / 15 %
+          </div>
+        </div>
+
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);background:var(--bg-2);border:1px solid var(--rule);border-radius:10px;overflow:hidden;">
+        <div style="padding:20px 26px;border-right:1px solid var(--rule);">
+          <div class="eyebrow" style="margin-bottom:8px;color:var(--accent);">Partitionnement</div>
+          <div style="font-size:22px;color:var(--ink-2);line-height:1.5;">1 sujet = 1 client<br>non-IID par sujet</div>
+        </div>
+        <div style="padding:20px 26px;border-right:1px solid var(--rule);">
+          <div class="eyebrow" style="margin-bottom:8px;color:var(--accent);">Rounds / Epochs</div>
+          <div style="font-family:var(--mono);font-size:22px;color:var(--ink-2);line-height:1.5;">T = 150 rounds<br>τ = 2 local epochs</div>
+        </div>
+        <div style="padding:20px 26px;border-right:1px solid var(--rule);">
+          <div class="eyebrow" style="margin-bottom:8px;color:var(--accent);">Participation</div>
+          <div style="font-family:var(--mono);font-size:22px;color:var(--ink-2);line-height:1.5;">ρ = 100 % (complet)<br>ρ = 50 % (partiel)</div>
+        </div>
+        <div style="padding:20px 26px;">
+          <div class="eyebrow" style="margin-bottom:8px;color:var(--accent);">Modèles</div>
+          <div style="font-size:22px;color:var(--ink-2);line-height:1.5;">FedSPDnet (nôtre)<br>FedEEGNet<cite-ref key="lawhern2018"></cite-ref> (réf.)</div>
         </div>
       </div>
 
-      <div class="cols cols-2" style="gap:40px;margin-top:28px;">
-        <div data-step>
-          <div class="eyebrow" style="margin-bottom:10px;">Lecture du facteur de participation</div>
-          <div style="font-family:var(--mono);font-size:18px;color:var(--ink-2);line-height:1.9;">
-            <div><span class="math">k = n</span> &nbsp;→&nbsp; le facteur s'annule</div>
-            <div><span class="math">k = 1</span> &nbsp;→&nbsp; le facteur vaut 1</div>
-            <div><span class="math">k \ll n</span> &nbsp;→&nbsp; comportement en <span class="math">1/k</span></div>
-          </div>
-        </div>
-        <div data-step>
-          <div class="eyebrow" style="margin-bottom:10px;">Lecture</div>
-          <p class="body" style="font-size:19px;color:var(--ink-2);">
-            <strong>Même borne</strong> que FedAvg euclidien — la contrainte géométrique n'ajoute pas de coût asymptotique. Les deux algorithmes ne diffèrent qu'aux termes de courbure d'ordre supérieur, donc <strong>indistinguables en pratique</strong>.
-          </p>
-        </div>
-      </div>
     </div>
     <slide-footer></slide-footer>
   </section>
 
-  <!-- §5.5 · Federated experiments -->
+  <!-- §5.5b · EEG federated — F1 bar charts -->
   <section>
-    <slide-note>Expériences EEG motor imagery — 3 datasets MOABB. SPDNet fédéré (BiMap agrégés par RFedProj, classifieur par FedAvg) vs EEGNet+FedAvg. Mesure : F1 macro, dégradation par rapport au centralisé. Placeholder pour la figure dégradation.</slide-note>
-    <slide-header title="Expériences EEG fédérées"></slide-header>
-    <div class="slide-body">
-      <div class="cols cols-2" style="gap:48px;margin-top:18px;align-items:start;">
-        <div data-step>
-          <div class="eyebrow" style="margin-bottom:14px;">Protocole</div>
-          <div style="display:flex;flex-direction:column;gap:8px;font-family:var(--mono);font-size:17px;color:var(--ink-2);">
-            <div><span style="color:var(--ink-3);">Tâche</span> &nbsp;&nbsp; Motor-imagery classification</div>
-            <div><span style="color:var(--ink-3);">Datasets</span> &nbsp;&nbsp; Weibo2014, Schirrmeister2017, PhysionetMI<cite-ref key="jayaram2018"></cite-ref></div>
-            <div><span style="color:var(--ink-3);">Modèles</span> &nbsp;&nbsp; FedSPDNet vs FedEEGNet</div>
-            <div><span style="color:var(--ink-3);">Participation</span> &nbsp;&nbsp; ρ = k/n ∈ {1, 0.8, 0.5, 0.2}</div>
-            <div><span style="color:var(--ink-3);">Rounds</span> &nbsp;&nbsp; T = 150 &nbsp; · &nbsp; τ = 2 époques locales</div>
-            <div><span style="color:var(--ink-3);">Métrique</span> &nbsp;&nbsp; F1 macro · IID + non-IID (par sujet)</div>
+    <slide-note>Résultats F1-macro (%, 10 seeds). Weibo : FedSPDnet gagne dans tous les scénarios (+3,4 pts complet, +4,8 pts partiel) avec variance 5× moindre. PhysionetMI : FedSPDnet compétitif partout (+1,2 pts fédéré). Centralisé = upper bound de référence.</slide-note>
+    <slide-header title="Résultats — F1 score motor imagery"></slide-header>
+    <div class="slide-body" style="gap:20px;">
+
+      <div style="font-family:var(--mono);font-size:17px;color:var(--ink-3);">F1 score (%), moyenne ± écart-type · 10 seeds &nbsp;·&nbsp; bleu = FedSPDnet, gris = FedEEGNet</div>
+
+      <div class="cols cols-2" style="gap:40px;flex:1;min-height:0;">
+
+        <div style="display:flex;flex-direction:column;min-height:0;gap:6px;">
+          <div class="eyebrow">Weibo2014 &nbsp;<span style="font-family:var(--mono);font-size:13px;font-weight:400;color:var(--ink-3);">5 clients · 7 classes</span></div>
+          <div style="flex:1;min-height:0;">
+            <bar-chart
+              ylabel="F1 (%)" ymin="30" ymax="56"
+              width="860" height="580"
+              data='[{"label":"EEGNet\nCentr.","value":50.7,"err":1.5},{"label":"SPDnet\nCentr.","value":51.7,"err":0.8,"emphasis":true},{"label":"EEGNet\n100%","value":39.9,"err":2.4},{"label":"SPDnet\n100%","value":43.3,"err":1.0,"emphasis":true},{"label":"EEGNet\n50%","value":36.4,"err":4.1},{"label":"SPDnet\n50%","value":41.2,"err":0.8,"emphasis":true}]'
+            ></bar-chart>
           </div>
         </div>
-        <div data-step>
-          <div class="eyebrow" style="margin-bottom:14px;">Dégradation vs centralisé — à venir</div>
-          <div style="aspect-ratio:16/10;background:var(--bg-2);border:2px dashed var(--rule-soft);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--ink-3);font-family:var(--mono);font-size:14px;letter-spacing:0.05em;text-transform:uppercase;">
-            graphique — à venir
+
+        <div style="display:flex;flex-direction:column;min-height:0;gap:6px;">
+          <div class="eyebrow">PhysionetMI &nbsp;<span style="font-family:var(--mono);font-size:13px;font-weight:400;color:var(--ink-3);">53 clients · 4 classes</span></div>
+          <div style="flex:1;min-height:0;">
+            <bar-chart
+              ylabel="F1 (%)" ymin="30" ymax="56"
+              width="860" height="580"
+              data='[{"label":"EEGNet\nCentr.","value":50.8,"err":0.7,"emphasis":false,"color":"ink"},{"label":"SPDnet\nCentr.","value":43.1,"err":0.5},{"label":"EEGNet\n100%","value":38.3,"err":1.8},{"label":"SPDnet\n100%","value":39.5,"err":0.6,"emphasis":true},{"label":"EEGNet\n50%","value":38.0,"err":2.7},{"label":"SPDnet\n50%","value":39.5,"err":0.9,"emphasis":true}]'
+            ></bar-chart>
           </div>
         </div>
+
       </div>
 
-      <div data-step style="margin-top:28px;padding:20px 24px;background:var(--tint);border-left:3px solid var(--accent);font-size:19px;color:var(--ink-2);">
-        <strong>Attendus :</strong> RFedProj ≡ RFedRL à &lt; 0,2 % près. FedSPDNet dégrade <em>moins</em> que FedEEGNet quand la participation chute — interprétation : la géométrie joue un rôle <strong>régularisant</strong> contre la dérive client.
-      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- §5.5c · EEG federated — convergence -->
+  <section>
+    <slide-note>Courbes de convergence sur Weibo2014 (5 clients). FedSPDnet converge plus haut et plus vite que FedEEGNet dans les deux scénarios de participation. À participation partielle (50%), l'avantage est encore plus marqué et la variance moindre. ProjAvg ≈ RLAvg — moins de 0,2 % d'écart.</slide-note>
+    <slide-header title="Convergence — Weibo2014"></slide-header>
+    <div class="slide-body" style="padding:0;overflow:hidden;">
+      <line-chart
+        xlabel="Round"
+        ylabel="F1 test (%)"
+        width="1860" height="820"
+        series='[{"name":"FedEEGNet 100%","color":"#E69F00","values":[[1,10.2],[13,26.4],[25,31.8],[37,33.8],[49,34.5],[61,36.1],[73,37.3],[86,36.7],[98,38.8],[110,38.6],[122,39.5],[137,39.6],[150,39.9]]},{"name":"FedEEGNet 50%","color":"#E69F00","dash":"6 4","values":[[1,8.5],[13,23.6],[25,29.3],[37,27.8],[49,32.9],[61,33.0],[73,33.0],[86,34.7],[98,31.1],[110,35.5],[122,31.6],[137,34.4],[150,36.4]]},{"name":"FedSPDnet 100%","color":"#0072B2","values":[[1,16.2],[12,29.9],[24,33.9],[36,37.1],[48,39.4],[60,40.7],[72,41.8],[85,42.2],[97,42.6],[109,43.2],[121,42.9],[133,43.4],[149,43.3]]},{"name":"FedSPDnet 50%","color":"#0072B2","dash":"6 4","values":[[1,13.2],[12,29.1],[24,33.1],[36,35.8],[48,37.5],[60,38.7],[72,39.4],[85,40.9],[97,40.5],[109,41.3],[121,41.4],[133,42.1],[149,41.2]]}]'
+      ></line-chart>
     </div>
     <slide-footer></slide-footer>
   </section>

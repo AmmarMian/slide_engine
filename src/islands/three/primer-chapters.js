@@ -75,9 +75,9 @@ function makeLabel(ctx, text, position, opts = {}) {
 const ch1 = {
   id: 'manifold',
   eyebrow: 'Variété',
-  title: 'La 2-sphère',
+  title: 'La sphère de dimension 2',
   body: `La sphère unité <span class="mono">S²</span> s'inscrit dans ℝ³ comme l'ensemble de niveau de la norme au carré. C'est une variété riemannienne lisse, compacte, de dimension deux — le cadre le plus simple pour l'optimisation sous contrainte de norme unitaire, et le terrain d'expérimentation des concepts qui suivent.`,
-  formula: String.raw`S^{2} \;=\; \bigl\{\, x \in \mathbb{R}^{3} : \|x\| = 1 \,\bigr\}, \quad \dim S^{2} = 2`,
+  formula: String.raw`S^{2} \;=\; \bigl\{\, x \in \mathbb{R}^{3} : \|x\| = 1 \,\bigr\}, \, \dim S^{2} = 2`,
   camera: { pos: [0, 0.55, 3.4], target: [0, 0, 0] },
   enter(ctx) {
     // a faint axis triad helps situate the viewer
@@ -111,7 +111,7 @@ const ch2 = {
   eyebrow: 'Espace tangent',
   title: 'Tₚ S²',
   body: `En chaque <em>p ∈ S²</em>, l'espace tangent est le 2-plan passant par l'origine <em>orthogonal à la direction radiale</em>. Les vecteurs tangents sont les vitesses instantanées des courbes lisses sur <span class="mono">S²</span> passant par p ; c'est là que vivent les gradients, directions de descente et moments.`,
-  formula: String.raw`T_{p}S^{2} \;=\; \bigl\{\, v \in \mathbb{R}^{3} : \langle v,\, p\rangle = 0 \,\bigr\}`,
+  formula: String.raw`T_{\mathbf{p}}S^{2} \;=\; \bigl\{\, \mathbf{v} \in \mathbb{R}^{3} : \langle \mathbf{v},\, \mathbf{p}\rangle = 0 \,\bigr\}`,
   camera: { pos: [1.55, 1.05, 2.30], target: [0.30, 0.15, 0.10] },
   pickable: true,
   enter(ctx) {
@@ -171,7 +171,7 @@ const ch3 = {
   eyebrow: 'Métrique',
   title: 'Produit intérieur sur Tₚ',
   body: `<span class="mono">S²</span> hérite de sa métrique riemannienne du produit scalaire euclidien ambiant : longueurs et angles des vecteurs tangents sont simplement ceux de ℝ³, restreints à chaque plan tangent. C'est ce qui permet de parler de <em>gradient</em>, d'<em>orthogonalité</em> et de <em>norme</em> de façon intrinsèque.`,
-  formula: String.raw`\langle u,\, v\rangle_{p} \;=\; u\!\cdot\! v, \qquad \|v\|_{p} = \sqrt{\langle v,v\rangle_{p}}`,
+  formula: String.raw`\langle \mathbf{u},\, \mathbf{v}\rangle_{\mathbf{p}} \;=\; \mathbf{u}\!\cdot\! \mathbf{v}, \qquad \|\mathbf{v}\|_{\mathbf{p}} = \sqrt{\langle \mathbf{v},\mathbf{v}\rangle_{\mathbf{p}}}`,
   camera: { pos: [1.55, 1.05, 2.30], target: [0.30, 0.15, 0.10] },
   enter(ctx) {
     const p = ctx.p.clone();
@@ -230,7 +230,7 @@ const ch4 = {
   eyebrow: 'Géodésiques',
   title: 'Grands cercles',
   body: `Une <em>géodésique</em> est une courbe qui minimise localement la longueur. Sur <span class="mono">S²</span>, les géodésiques sont des arcs de grands cercles — intersections de la sphère avec des plans passant par l'origine. La géodésique partant de p avec vitesse initiale v trace γ(t) par rotation trigonométrique dans le plan <span class="mono">span(p, v̂)</span>.`,
-  formula: String.raw`\gamma_{p,v}(t) \;=\; \cos(t)\, p \;+\; \sin(t)\, \hat{v}, \\ \hat{v} = v / \|v\|`,
+  formula: String.raw`\gamma_{\mathbf{p},\mathbf{v}}(t) \;=\; \cos(t)\, \mathbf{p} \;+\; \sin(t)\, \hat{\mathbf{v}}, \\ \hat{\mathbf{v}} = \mathbf{v} / \|\mathbf{v}\|`,
   camera: { pos: [0.4, 0.8, 3.0], target: [0, 0.05, 0.25] },
   pickable: true,
   enter(ctx) {
@@ -287,7 +287,7 @@ const ch5 = {
   eyebrow: 'Exp',
   title: 'expₚ : TₚS² → S²',
   body: `L'application exponentielle envoie un vecteur tangent v ∈ T<sub>p</sub>S² vers l'extrémité de la géodésique de longueur ‖v‖ partant de p dans la direction v̂. Intuitivement, elle <em>enroule la droite p + tv sur la sphère</em> le long de l'unique géodésique dans cette direction. Difféomorphisme pour ‖v‖ &lt; π.`,
-  formula: String.raw`\exp_{p}(v) \;=\; \cos(\|v\|)\, p \;+\; \sin(\|v\|)\, \tfrac{v}{\|v\|}`,
+  formula: String.raw`\exp_{\mathbf{p}}(\mathbf{v}) \;=\; \cos(\|\mathbf{v}\|)\, \mathbf{p} \;+\; \sin(\|\mathbf{v}\|)\, \tfrac{\mathbf{v}}{\|\mathbf{v}\|}`,
   camera: { pos: [1.55, 1.10, 2.20], target: [0.30, 0.18, 0.10] },
   controlSchema: { vMag: { min: 0.05, max: Math.PI * 0.95, step: 0.01, value: 1.1, label: '‖v‖' } },
   enter(ctx) {
@@ -371,7 +371,7 @@ const ch6 = {
   eyebrow: 'Log',
   title: 'logₚ : S² → TₚS²',
   body: `Sur l'hémisphère ouvert centré en p, l'application exponentielle est inversible. Son inverse, le <em>logarithme</em>, envoie q ↦ log<sub>p</sub>(q) : l'unique vecteur tangent en p dont la direction pointe vers q le long de la géodésique, de module égal à la distance géodésique <span class="mono">d(p,q) = arccos⟨p,q⟩</span>.`,
-  formula: String.raw`\log_{p}(q) \;=\; \theta\, \frac{q - \langle p,q\rangle\, p}{\|q - \langle p,q\rangle\, p\|}, \\ \theta = \arccos\langle p,q\rangle`,
+  formula: String.raw`\log_{\mathbf{p}}(\mathbf{q}) \;=\; \theta\, \frac{\mathbf{q} - \langle \mathbf{p},\mathbf{q}\rangle\, \mathbf{p}}{\|\mathbf{q} - \langle \mathbf{p},\mathbf{q}\rangle\, \mathbf{p}\|}, \\ \theta = \arccos\langle \mathbf{p},\mathbf{q}\rangle`,
   camera: { pos: [0.85, 0.95, 2.55], target: [0.20, 0.12, 0.20] },
   pickable: 'q',
   enter(ctx) {
@@ -537,7 +537,7 @@ const ch8 = {
     ctx.group.add(arc);
 
     // trail groups for ghost arrows
-    const trailGroup  = new THREE.Group();
+    const trailGroup = new THREE.Group();
     const trailGroup2 = new THREE.Group();
     ctx.group.add(trailGroup);
     ctx.group.add(trailGroup2);
@@ -591,9 +591,9 @@ const ch8 = {
 
     makeLabel(ctx, 'p', p.clone().multiplyScalar(1.06), { accent: true });
     makeLabel(ctx, 'q', q.clone().multiplyScalar(1.06), { q: true });
-    const wLabel  = makeLabel(ctx, 'w₁', p.clone().add(w.clone().multiplyScalar(1.28)),  { transport: true });
+    const wLabel = makeLabel(ctx, 'w₁', p.clone().add(w.clone().multiplyScalar(1.28)), { transport: true });
     const w2Label = makeLabel(ctx, 'w₂', p.clone().add(w2.clone().multiplyScalar(1.28)), { q: true });
-    const PwLabel  = makeLabel(ctx, 'P(w₁)', q.clone(), { transport: true });
+    const PwLabel = makeLabel(ctx, 'P(w₁)', q.clone(), { transport: true });
     const Pw2Label = makeLabel(ctx, 'P(w₂)', q.clone(), { q: true });
 
     let t = 0;
@@ -601,7 +601,7 @@ const ch8 = {
     const hold = 0.7;     // hold at destination before reset
     let phase = 'travel';
     let phaseT = 0;
-    let trailPts  = [];
+    let trailPts = [];
     let trailPts2 = [];
 
     return {
@@ -614,17 +614,17 @@ const ch8 = {
           phaseT += dt;
           if (phaseT > hold) {
             phase = 'travel'; phaseT = 0;
-            for (const c of trailPts)  trailGroup.remove(c);
+            for (const c of trailPts) trailGroup.remove(c);
             for (const c of trailPts2) trailGroup2.remove(c);
             trailPts = []; trailPts2 = [];
           }
         }
-        const dot   = THREE.MathUtils.clamp(p.dot(q), -1, 1);
+        const dot = THREE.MathUtils.clamp(p.dot(q), -1, 1);
         const theta = Math.acos(dot);
-        const u     = q.clone().addScaledVector(p, -dot).normalize();
-        const cur   = M.geodesicPoint(p, u, t * theta);
-        const wt    = M.parallelTransport(p, cur, w);
-        const w2t   = M.parallelTransport(p, cur, w2);
+        const u = q.clone().addScaledVector(p, -dot).normalize();
+        const cur = M.geodesicPoint(p, u, t * theta);
+        const wt = M.parallelTransport(p, cur, w);
+        const w2t = M.parallelTransport(p, cur, w2);
 
         arrowMoving.userData.update(cur, wt, wt.length());
         arrowMoving2.userData.update(cur, w2t, w2t.length());

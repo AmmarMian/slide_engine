@@ -96,6 +96,43 @@ function TweakRadio({ label, value, options, onChange }) {
   );
 }
 
+// ── Continuous slider ──────────────────────────────────────────────────────
+function TweakSlider({ label, value, min, max, step, format, onChange }) {
+  const pct = ((value - min) / (max - min)) * 100;
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+      {label && (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+          <span style={{ fontFamily: D.mono, fontSize: 9, fontWeight: 600, letterSpacing: '0.07em', textTransform: 'uppercase', color: D.sect }}>{label}</span>
+          <span style={{ fontFamily: D.mono, fontSize: 11, color: D.text }}>{format ? format(value) : value}</span>
+        </div>
+      )}
+      <div style={{ position: 'relative', height: 20, display: 'flex', alignItems: 'center' }}>
+        <div style={{
+          position: 'absolute', left: 0, right: 0, height: 4, borderRadius: 2,
+          background: D.track, overflow: 'hidden',
+        }}>
+          <div style={{ width: `${pct}%`, height: '100%', background: D.accent }} />
+        </div>
+        <input type="range" min={min} max={max} step={step} value={value}
+          onChange={e => onChange(parseFloat(e.target.value))}
+          style={{
+            position: 'absolute', left: 0, right: 0, width: '100%',
+            opacity: 0, height: 20, cursor: 'default', margin: 0,
+          }}
+        />
+        <div style={{
+          position: 'absolute',
+          left: `calc(${pct}% - 8px)`,
+          width: 16, height: 16, borderRadius: '50%',
+          background: D.thumb, boxShadow: '0 1px 4px rgba(0,0,0,.5)',
+          pointerEvents: 'none',
+        }} />
+      </div>
+    </div>
+  );
+}
+
 // ── Select ─────────────────────────────────────────────────────────────────
 function TweakSelect({ label, value, options, onChange }) {
   return (
@@ -331,13 +368,11 @@ export function TweaksPanel() {
               {/* Right column */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
                 <TweakRadio label="Density" value={t.density} options={densityOptions} onChange={v => setTweak('density', v)} />
-                <TweakRadio label="Type scale"
-                  value={String(t.typeScale ?? 1)}
-                  options={[
-                    { value: '0.75', label: '75%' }, { value: '0.85', label: '85%' },
-                    { value: '1', label: '100%' },   { value: '1.1', label: '110%' },
-                  ]}
-                  onChange={v => setTweak('typeScale', parseFloat(v))}
+                <TweakSlider label="Type scale"
+                  value={t.typeScale ?? 1}
+                  min={0.5} max={3} step={0.05}
+                  format={v => `${Math.round(v * 100)}%`}
+                  onChange={v => setTweak('typeScale', v)}
                 />
                 <TweakRadio label="Footer"
                   value={t.hideFooter ? 'hidden' : 'visible'}

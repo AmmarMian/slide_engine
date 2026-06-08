@@ -7,14 +7,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { renderMath } from '../math.js';
 
 const ACCENT = 'var(--accent)';
-const INK    = 'var(--ink)';
-const INK2   = 'var(--ink-2)';
-const INK3   = 'var(--ink-3)';
+const INK = 'var(--ink)';
+const INK2 = 'var(--ink-2)';
+const INK3 = 'var(--ink-3)';
 const RULE_S = 'var(--rule-soft)';
-const BG2    = 'var(--bg-2)';
-const COL_A  = '#2a6fb0'; // arithmétique  (blue)
-const COL_H  = '#b03a3a'; // harmonique    (red)
-const COL_P  = 'var(--accent)'; // Φ      (accent)
+const BG2 = 'var(--bg-2)';
+const COL_A = '#2a6fb0'; // arithmétique  (blue)
+const COL_H = '#b03a3a'; // harmonique    (red)
+const COL_P = 'var(--accent)'; // Φ      (accent)
 
 // ── 2×2 SPD math ──────────────────────────────────────────────────────────
 // Matrix stored as [a, b, c] meaning [[a,b],[b,c]].
@@ -34,7 +34,7 @@ function eig2(m) {
   } else {
     // Diagonal-ish — pick canonical eigenvector
     if (a >= c) { v1x = 1; v1y = 0; }
-    else        { v1x = 0; v1y = 1; }
+    else { v1x = 0; v1y = 1; }
   }
   const n1 = Math.hypot(v1x, v1y) || 1;
   v1x /= n1; v1y /= n1;
@@ -74,10 +74,10 @@ function symmetrize(m) {
 
 function geodesicMean(H, A, t) {
   // Φ = H^(1/2) * (H^(-1/2) A H^(-1/2))^t * H^(1/2)
-  const Hhalf  = matpow(H, 0.5);
+  const Hhalf = matpow(H, 0.5);
   const Hmhalf = matpow(H, -0.5);
-  const Q   = matmul(Hmhalf, matmul(A, Hmhalf));
-  const Qt  = matpow(Q, t);
+  const Q = matmul(Hmhalf, matmul(A, Hmhalf));
+  const Qt = matpow(Q, t);
   return symmetrize(matmul(Hhalf, matmul(Qt, Hhalf)));
 }
 
@@ -93,13 +93,13 @@ function Ellipse({ M, cx, cy, scale, color, fillOpacity = 0.18, strokeOpacity = 
   return (
     <g transform={`translate(${cx} ${cy}) rotate(${angle})`}>
       <ellipse rx={rx} ry={ry} fill={color} fillOpacity={fillOpacity}
-               stroke={color} strokeWidth={strokeWidth} strokeOpacity={strokeOpacity}
-               strokeDasharray={dashed ? '6 4' : 'none'} />
+        stroke={color} strokeWidth={strokeWidth} strokeOpacity={strokeOpacity}
+        strokeDasharray={dashed ? '6 4' : 'none'} />
       {/* Axis ticks (semi-major) */}
       <line x1={-rx} y1="0" x2={rx} y2="0"
-            stroke={color} strokeWidth="1" strokeOpacity="0.35" />
+        stroke={color} strokeWidth="1" strokeOpacity="0.35" />
       <line x1="0" y1={-ry} x2="0" y2={ry}
-            stroke={color} strokeWidth="1" strokeOpacity="0.35" />
+        stroke={color} strokeWidth="1" strokeOpacity="0.35" />
     </g>
   );
 }
@@ -131,10 +131,10 @@ function useTLoop(playing) {
     }
     // Phases: hold0 (1s @ t=0) → ramp01 (3s) → hold1 (1s @ t=1) → ramp10 (3s) → loop
     const PHASES = [
-      { name: 'hold0',  dur: 1000, start: 0,  end: 0  },
-      { name: 'ramp01', dur: 3000, start: 0,  end: 1  },
-      { name: 'hold1',  dur: 1000, start: 1,  end: 1  },
-      { name: 'ramp10', dur: 3000, start: 1,  end: 0  },
+      { name: 'hold0', dur: 1000, start: 0, end: 0 },
+      { name: 'ramp01', dur: 3000, start: 0, end: 1 },
+      { name: 'hold1', dur: 1000, start: 1, end: 1 },
+      { name: 'ramp10', dur: 3000, start: 1, end: 0 },
     ];
     let phaseIdx = 0;
     let phaseStart = performance.now();
@@ -218,9 +218,9 @@ export function ArmagnacT() {
   // Determine which "key value" we're nearest to
   const labelKey =
     t < 0.05 ? 'harmonique (H)' :
-    Math.abs(t - 0.5) < 0.04 ? 'GAH = H ½ A' :
-    t > 0.95 ? 'arithmétique (A)' :
-    null;
+      Math.abs(t - 0.5) < 0.04 ? 'GAH = H ½ A' :
+        t > 0.95 ? 'arithmétique (A)' :
+          null;
 
   return (
     <div ref={containerRef} style={{
@@ -240,7 +240,7 @@ export function ArmagnacT() {
           {/* Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 18 }}>
             <div className="eyebrow" style={{ color: ACCENT }}>Géodésique entre H et A</div>
-            <div style={{ display: 'flex', gap: 22, fontFamily: 'var(--mono)', fontSize: 14, color: INK3 }}>
+            <div style={{ display: 'flex', gap: 22, fontFamily: 'var(--mono)', fontSize: 'calc(14px * var(--type-scale, 1))', color: INK3 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span style={{ width: 14, height: 14, background: COL_H, borderRadius: 3, opacity: 0.7 }} /> H
               </div>
@@ -282,10 +282,10 @@ export function ArmagnacT() {
           {/* t slider */}
           <div style={{ marginTop: 18 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
-              <div style={{ fontFamily: 'var(--mono)', fontSize: 14, color: INK3, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+              <div style={{ fontFamily: 'var(--mono)', fontSize: 'calc(14px * var(--type-scale, 1))', color: INK3, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
                 t ∈ [0, 1]
               </div>
-              <div style={{ fontFamily: 'var(--mono)', fontSize: 32, fontWeight: 600, color: ACCENT, lineHeight: 1 }}>
+              <div style={{ fontFamily: 'var(--mono)', fontSize: 'calc(32px * var(--type-scale, 1))', fontWeight: 600, color: ACCENT, lineHeight: 1 }}>
                 {t.toFixed(2)}
               </div>
             </div>
@@ -298,9 +298,9 @@ export function ArmagnacT() {
               <div style={{ position: 'absolute', left: 0, top: 16, height: 4, background: ACCENT, borderRadius: 2, width: `${t * 100}%`, transition: 'width 60ms linear' }} />
               {/* key markers */}
               {[
-                { val: 0,    label: 'H',    color: COL_H },
-                { val: 0.5,  label: 'GAH',  color: INK },
-                { val: 1,    label: 'A',    color: COL_A },
+                { val: 0, label: 'H', color: COL_H },
+                { val: 0.5, label: 'GAH', color: INK },
+                { val: 1, label: 'A', color: COL_A },
               ].map(m => (
                 <div key={m.val} style={{
                   position: 'absolute', left: `calc(${m.val * 100}% - 1px)`, top: 8,
@@ -308,7 +308,7 @@ export function ArmagnacT() {
                 }}>
                   <div style={{
                     position: 'absolute', left: '50%', transform: 'translateX(-50%)',
-                    top: 26, fontFamily: 'var(--mono)', fontSize: 12, color: m.color,
+                    top: 26, fontFamily: 'var(--mono)', fontSize: 'calc(12px * var(--type-scale, 1))', color: m.color,
                     whiteSpace: 'nowrap',
                   }}>{m.label}</div>
                 </div>
@@ -326,7 +326,7 @@ export function ArmagnacT() {
             {labelKey && (
               <div style={{
                 marginTop: 26, textAlign: 'center',
-                fontFamily: 'var(--mono)', fontSize: 16, letterSpacing: '0.04em', color: ACCENT,
+                fontFamily: 'var(--mono)', fontSize: 'calc(16px * var(--type-scale, 1))', letterSpacing: '0.04em', color: ACCENT,
               }}>
                 Φ = {labelKey}
               </div>
@@ -342,15 +342,15 @@ export function ArmagnacT() {
           overflow: 'hidden',
         }}>
           <div>
-            <div className="eyebrow" style={{ color: ACCENT, marginBottom: 8 }}>Le mean paramétrique</div>
-            <h2 style={{ margin: 0, fontSize: 30, fontFamily: 'var(--sans)', fontWeight: 600, letterSpacing: '-0.02em', color: INK }}>
+            <div className="eyebrow" style={{ color: ACCENT, marginBottom: 8 }}>La moyenne paramétrique</div>
+            <h2 style={{ margin: 0, fontSize: 'calc(30px * var(--type-scale, 1))', fontFamily: 'var(--sans)', fontWeight: 600, letterSpacing: '-0.02em', color: INK }}>
               Φ(t) glisse entre H et A
             </h2>
           </div>
 
-          <MathBlock display tex={'\\Phi(t) = H^{1/2} \\big(H^{-1/2} A H^{-1/2}\\big)^t H^{1/2}'} style={{ fontSize: 22 }} />
+          <MathBlock display tex={'\\Phi(t) = H^{1/2} \\big(H^{-1/2} A H^{-1/2}\\big)^t H^{1/2}'} style={{ fontSize: 'calc(22px * var(--type-scale, 1))' }} />
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: 18, color: INK2 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: 'calc(18px * var(--type-scale, 1))', color: INK2 }}>
             <div style={{ display: 'flex', gap: 12, alignItems: 'baseline' }}>
               <span style={{ width: 95, flexShrink: 0, fontFamily: 'var(--mono)', color: INK3, whiteSpace: 'nowrap' }}>t = 0</span>
               <span>Φ = H — moyenne harmonique pure</span>
@@ -372,14 +372,14 @@ export function ArmagnacT() {
             border: `1px solid ${RULE_S}`,
             borderLeft: `3px solid ${ACCENT}`,
             borderRadius: '0 6px 6px 0',
-            fontSize: 17, color: INK2, lineHeight: 1.55,
+            fontSize: 'calc(17px * var(--type-scale, 1))', color: INK2, lineHeight: 1.55,
           }}>
             <strong>t est appris par descente de gradient</strong> — la passe arrière fournit
             <MathBlock tex={'\\partial \\ell / \\partial t'} style={{ display: 'inline-block', margin: '0 4px' }} />
             via une formule explicite (Daleckiĭ–Kreĭn). Aucune itération supplémentaire ; le réseau découvre <em>où</em> placer Φ entre H et A sur chaque couche.
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontFamily: 'var(--mono)', fontSize: 12, color: INK3, letterSpacing: '0.05em' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontFamily: 'var(--mono)', fontSize: 'calc(12px * var(--type-scale, 1))', color: INK3, letterSpacing: '0.05em' }}>
             <span>{playing ? '▶ lecture' : '⏸ pause'} — touche P pour basculer</span>
           </div>
         </div>

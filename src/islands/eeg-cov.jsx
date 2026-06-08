@@ -7,12 +7,12 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { renderMath } from '../math.js';
 
 const ACCENT = 'var(--accent)';
-const INK    = 'var(--ink)';
-const INK2   = 'var(--ink-2)';
-const INK3   = 'var(--ink-3)';
+const INK = 'var(--ink)';
+const INK2 = 'var(--ink-2)';
+const INK3 = 'var(--ink-3)';
 const RULE_S = 'var(--rule-soft)';
-const BG2    = 'var(--bg-2)';
-const BG     = 'var(--bg)';
+const BG2 = 'var(--bg-2)';
+const BG = 'var(--bg)';
 
 // ── PRNG ─────────────────────────────────────────────────────────────────
 function rng(seed) {
@@ -30,13 +30,13 @@ function rng(seed) {
 // Coords in head-space (unit circle, head outline radius 1).
 const CHANNEL_LAYOUT = [
   { name: 'Fp1', x: -0.30, y: -0.78 },
-  { name: 'Fp2', x:  0.30, y: -0.78 },
-  { name: 'C3',  x: -0.50, y: -0.05 },
-  { name: 'Cz',  x:  0.00, y:  0.00 },
-  { name: 'C4',  x:  0.50, y: -0.05 },
-  { name: 'P3',  x: -0.50, y:  0.55 },
-  { name: 'P4',  x:  0.50, y:  0.55 },
-  { name: 'Oz',  x:  0.00, y:  0.80 },
+  { name: 'Fp2', x: 0.30, y: -0.78 },
+  { name: 'C3', x: -0.50, y: -0.05 },
+  { name: 'Cz', x: 0.00, y: 0.00 },
+  { name: 'C4', x: 0.50, y: -0.05 },
+  { name: 'P3', x: -0.50, y: 0.55 },
+  { name: 'P4', x: 0.50, y: 0.55 },
+  { name: 'Oz', x: 0.00, y: 0.80 },
 ];
 const D = CHANNEL_LAYOUT.length;
 
@@ -48,14 +48,14 @@ function generateEeg(T = 240, seed = 11) {
   const a2 = Array.from({ length: T }, (_, t) => Math.sin(2 * Math.PI * 0.16 * t - 1.2) * 0.7);
   // Spatial mixing — front vs back vs lateralised
   const mix = [
-    [ 0.9,  0.3], //  Fp1
-    [ 0.9, -0.3], //  Fp2
-    [-0.2,  0.8], //  C3
-    [ 0.0,  1.0], //  Cz
+    [0.9, 0.3], //  Fp1
+    [0.9, -0.3], //  Fp2
+    [-0.2, 0.8], //  C3
+    [0.0, 1.0], //  Cz
     [-0.2, -0.8], //  C4
-    [ 0.6, -0.5], //  P3
-    [-0.6,  0.5], //  P4
-    [ 0.3,  0.0], //  Oz
+    [0.6, -0.5], //  P3
+    [-0.6, 0.5], //  P4
+    [0.3, 0.0], //  Oz
   ];
   const signal = [];
   for (let c = 0; c < D; c++) {
@@ -95,29 +95,29 @@ function spatialCov(signal) {
 const STEP_HTML = [
   // 0 — Intro
   `<div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Étape 0 / 4</div>
-   <h2 style="margin:0 0 14px;font-size:30px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">D canaux, T instants</h2>
-   <p style="margin:0;font-size:18px;color:var(--ink-2);line-height:1.55;">
+   <h2 style="margin:0 0 14px;font-size:40px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">D canaux, T instants</h2>
+   <p style="margin:0;font-size:24px;color:var(--ink-2);line-height:1.55;">
      L'EEG fournit D = ${D} signaux corrélés. La covariance <strong>spatiale</strong> capture comment chaque paire de canaux co-varie au cours du temps.
    </p>`,
   // 1 — Center
   `<div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Étape 1 / 4</div>
-   <h2 style="margin:0 0 14px;font-size:30px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Centrer chaque canal</h2>
-   <div class="math-display" style="margin:0 0 12px;font-size:22px;">\\tilde{x}_i(t) = x_i(t) - \\bar{x}_i, \\quad \\bar{x}_i = \\tfrac{1}{T} \\sum_t x_i(t)</div>
-   <p style="margin:0;font-size:17px;color:var(--ink-3);">Une ligne de référence pour chaque canal — son niveau moyen.</p>`,
+   <h2 style="margin:0 0 14px;font-size:40px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Centrer chaque canal</h2>
+   <div class="math-display" style="margin:0 0 12px;font-size:28px;">\\tilde{x}_i(t) = x_i(t) - \\bar{x}_i, \\quad \\bar{x}_i = \\tfrac{1}{T} \\sum_t x_i(t)</div>
+   `,
   // 2 — Pair products
   `<div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Étape 2 / 4</div>
-   <h2 style="margin:0 0 14px;font-size:30px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Co-variation par paire</h2>
-   <div class="math-display" style="margin:0 0 12px;font-size:22px;">\\hat{\\Sigma}_{ij} \\;=\\; \\tfrac{1}{T-1} \\sum_{t=1}^T \\tilde{x}_i(t)\\, \\tilde{x}_j(t)</div>
-   <p style="margin:0;font-size:17px;color:var(--ink-3);">Pour chaque paire (i, j), on intègre le produit des écarts — l'animation accumule un point à la fois.</p>`,
+   <h2 style="margin:0 0 14px;font-size:40px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Co-variation par paire</h2>
+   <div class="math-display" style="margin:0 0 12px;font-size:28px;">\\hat{\\Sigma}_{ij} \\;=\\; \\tfrac{1}{T-1} \\sum_{t=1}^T \\tilde{x}_i(t)\\, \\tilde{x}_j(t)</div>
+   <p style="margin:0;font-size:22px;color:var(--ink-3);">Pour chaque paire (i, j), on intègre le produit des écarts — l'animation accumule un point à la fois.</p>`,
   // 3 — Full SPD matrix
   `<div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Étape 3 / 4</div>
-   <h2 style="margin:0 0 14px;font-size:30px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">La matrice complète</h2>
-   <div class="math-display" style="margin:0 0 12px;font-size:22px;">\\hat{\\boldsymbol{\\Sigma}} = \\tfrac{1}{T-1} \\tilde{X}\\tilde{X}^{\\!\\top} \\;\\in\\; \\mathcal{S}^{++}_D</div>
-   <p style="margin:0;font-size:17px;color:var(--ink-3);">Symétrique, définie positive — l'entrée canonique d'un SPDNet pour BCI.</p>`,
+   <h2 style="margin:0 0 14px;font-size:40px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">La matrice complète</h2>
+   <div class="math-display" style="margin:0 0 12px;font-size:28px;">\\hat{\\Sigma} = \\tfrac{1}{T-1} \\tilde{X}\\tilde{X}^{\\!\\top} \\;\\in\\; \\mathcal{S}^{++}_D</div>
+   <p style="margin:0;font-size:22px;color:var(--ink-3);">Symétrique, définie positive — l'entrée canonique d'un SPDNet pour BCI.</p>`,
   // 4 — Spatial topography
   `<div class="eyebrow" style="color:var(--accent);margin-bottom:6px;">Étape 4 / 4</div>
-   <h2 style="margin:0 0 14px;font-size:30px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Géométrie des connexions</h2>
-   <p style="margin:0;font-size:18px;color:var(--ink-2);line-height:1.55;">
+   <h2 style="margin:0 0 14px;font-size:40px;font-family:var(--sans);font-weight:600;letter-spacing:-0.02em;">Géométrie des connexions</h2>
+   <p style="margin:0;font-size:24px;color:var(--ink-2);line-height:1.55;">
      Chaque entrée <span class="math">\\hat{\\Sigma}_{ij}</span> = une connexion topographique entre électrodes. La matrice porte la structure spatiale qu'un SPDNet apprend à exploiter.
    </p>`,
 ];
@@ -157,24 +157,24 @@ function SignalView({ signal, centered, highlightI, highlightJ, timeCursor }) {
       {/* Track separators */}
       {signal.map((_, c) => (
         <line key={`sep-${c}`}
-              x1={pad.l} y1={pad.t + c * trackH}
-              x2={W - pad.r} y2={pad.t + c * trackH}
-              stroke={RULE_S} strokeWidth="0.5" />
+          x1={pad.l} y1={pad.t + c * trackH}
+          x2={W - pad.r} y2={pad.t + c * trackH}
+          stroke={RULE_S} strokeWidth="0.5" />
       ))}
       {/* Channel labels */}
       {CHANNEL_LAYOUT.map((ch, c) => {
         const isHl = c === highlightI || c === highlightJ;
         return (
           <text key={`lbl-${c}`} x={pad.l - 10} y={pad.t + c * trackH + trackH / 2 + 4}
-                textAnchor="end" fontFamily="var(--mono)" fontSize="14"
-                fill={isHl ? ACCENT : INK2} fontWeight={isHl ? 700 : 500}>{ch.name}</text>
+            textAnchor="end" fontFamily="var(--mono)" style={{ fontSize: 'calc(18px * var(--type-scale, 1))' }}
+            fill={isHl ? ACCENT : INK2} fontWeight={isHl ? 700 : 500}>{ch.name}</text>
         );
       })}
       {/* Mean lines (only when centering shown) */}
       {centered && signal.map((row, c) => {
         const y = pad.t + c * trackH + trackH / 2;
         return <line key={`mean-${c}`} x1={pad.l} y1={y} x2={W - pad.r} y2={y}
-                     stroke={ACCENT} strokeWidth="0.8" strokeDasharray="2 4" opacity="0.4" />;
+          stroke={ACCENT} strokeWidth="0.8" strokeDasharray="2 4" opacity="0.4" />;
       })}
       {/* Channel signals */}
       {signal.map((row, c) => {
@@ -195,19 +195,19 @@ function SignalView({ signal, centered, highlightI, highlightJ, timeCursor }) {
         const isHl = c === highlightI || c === highlightJ;
         return (
           <path key={`sig-${c}`} d={path}
-                stroke={isHl ? ACCENT : INK2} strokeWidth={isHl ? 1.8 : 1}
-                fill="none" opacity={isHl ? 1 : (highlightI != null ? 0.25 : 0.7)}
-                style={{ transition: 'opacity 280ms, stroke 280ms, stroke-width 280ms' }} />
+            stroke={isHl ? ACCENT : INK2} strokeWidth={isHl ? 1.8 : 1}
+            fill="none" opacity={isHl ? 1 : (highlightI != null ? 0.25 : 0.7)}
+            style={{ transition: 'opacity 280ms, stroke 280ms, stroke-width 280ms' }} />
         );
       })}
       {/* Time cursor */}
       {timeCursor != null && (
         <line x1={pad.l + (timeCursor / (T - 1)) * iw} y1={pad.t}
-              x2={pad.l + (timeCursor / (T - 1)) * iw} y2={pad.t + ih}
-              stroke={ACCENT} strokeWidth="2" opacity="0.5" />
+          x2={pad.l + (timeCursor / (T - 1)) * iw} y2={pad.t + ih}
+          stroke={ACCENT} strokeWidth="2" opacity="0.5" />
       )}
       <text x={pad.l + iw / 2} y={H - 6} textAnchor="middle"
-            fontFamily="var(--mono)" fontSize="11" fill={INK3}>temps · T = {T} échantillons</text>
+        fontFamily="var(--mono)" style={{ fontSize: 'calc(15px * var(--type-scale, 1))' }} fill={INK3}>temps · T = {T} échantillons</text>
     </svg>
   );
 }
@@ -224,7 +224,7 @@ function HeadDiagram({ highlightI, highlightJ, sigmaIJ, absMax }) {
       <circle cx={cx} cy={cy} r={radius} fill={BG} stroke={INK2} strokeWidth="2" />
       {/* Nose */}
       <path d={`M ${cx - 14} ${cy - radius + 4} L ${cx} ${cy - radius - 14} L ${cx + 14} ${cy - radius + 4} Z`}
-            fill={BG} stroke={INK2} strokeWidth="2" />
+        fill={BG} stroke={INK2} strokeWidth="2" />
       {/* Ears */}
       <ellipse cx={cx - radius - 4} cy={cy} rx="8" ry="14" fill={BG} stroke={INK2} strokeWidth="2" />
       <ellipse cx={cx + radius + 4} cy={cy} rx="8" ry="14" fill={BG} stroke={INK2} strokeWidth="2" />
@@ -248,14 +248,14 @@ function HeadDiagram({ highlightI, highlightJ, sigmaIJ, absMax }) {
         return (
           <g key={ch.name}>
             <circle cx={px} cy={py} r={isHl ? 16 : 12}
-                    fill={isHl ? ACCENT : BG2}
-                    stroke={isHl ? ACCENT : INK2}
-                    strokeWidth={isHl ? 2.5 : 1.5}
-                    style={{ transition: 'r 200ms, fill 200ms, stroke 200ms' }} />
+              fill={isHl ? ACCENT : BG2}
+              stroke={isHl ? ACCENT : INK2}
+              strokeWidth={isHl ? 2.5 : 1.5}
+              style={{ transition: 'r 200ms, fill 200ms, stroke 200ms' }} />
             <text x={px} y={py + 4} textAnchor="middle"
-                  fontFamily="var(--mono)" fontSize="9"
-                  fontWeight={isHl ? 700 : 500}
-                  fill={isHl ? BG : INK2}>{ch.name}</text>
+              fontFamily="var(--mono)" style={{ fontSize: 'calc(13px * var(--type-scale, 1))' }}
+              fontWeight={isHl ? 700 : 500}
+              fill={isHl ? BG : INK2}>{ch.name}</text>
           </g>
         );
       })}
@@ -275,16 +275,16 @@ function CovHeatmap({ M, highlightI, highlightJ, absMax }) {
       {/* Column labels */}
       {CHANNEL_LAYOUT.map((ch, j) => (
         <text key={`cj-${j}`} x={labelPad + j * cell + cell / 2} y={labelPad - 8}
-              textAnchor="middle" fontFamily="var(--mono)" fontSize="10"
-              fill={j === highlightJ ? ACCENT : INK3}
-              fontWeight={j === highlightJ ? 700 : 500}>{ch.name}</text>
+          textAnchor="middle" fontFamily="var(--mono)" style={{ fontSize: 'calc(14px * var(--type-scale, 1))' }}
+          fill={j === highlightJ ? ACCENT : INK3}
+          fontWeight={j === highlightJ ? 700 : 500}>{ch.name}</text>
       ))}
       {/* Row labels */}
       {CHANNEL_LAYOUT.map((ch, i) => (
         <text key={`ri-${i}`} x={labelPad - 8} y={labelPad + i * cell + cell / 2 + 4}
-              textAnchor="end" fontFamily="var(--mono)" fontSize="10"
-              fill={i === highlightI ? ACCENT : INK3}
-              fontWeight={i === highlightI ? 700 : 500}>{ch.name}</text>
+          textAnchor="end" fontFamily="var(--mono)" style={{ fontSize: 'calc(14px * var(--type-scale, 1))' }}
+          fill={i === highlightI ? ACCENT : INK3}
+          fontWeight={i === highlightI ? 700 : 500}>{ch.name}</text>
       ))}
       {/* Cells */}
       {M.flatMap((row, i) => row.map((v, j) => {
@@ -294,16 +294,16 @@ function CovHeatmap({ M, highlightI, highlightJ, absMax }) {
         const isHl = (i === highlightI && j === highlightJ) || (i === highlightJ && j === highlightI);
         return (
           <rect key={`${i}-${j}`}
-                x={labelPad + j * cell} y={labelPad + i * cell}
-                width={cell - 1.5} height={cell - 1.5}
-                fill={fill} opacity={op}
-                stroke={isHl ? ACCENT : 'none'}
-                strokeWidth={isHl ? 2.5 : 0}
-                style={{ transition: 'opacity 200ms' }} />
+            x={labelPad + j * cell} y={labelPad + i * cell}
+            width={cell - 1.5} height={cell - 1.5}
+            fill={fill} opacity={op}
+            stroke={isHl ? ACCENT : 'none'}
+            strokeWidth={isHl ? 2.5 : 0}
+            style={{ transition: 'opacity 200ms' }} />
         );
       }))}
       <rect x={labelPad} y={labelPad} width={D * cell} height={D * cell}
-            fill="none" stroke={INK3} strokeWidth="1" opacity="0.4" />
+        fill="none" stroke={INK3} strokeWidth="1" opacity="0.4" />
     </svg>
   );
 }
@@ -336,19 +336,20 @@ export function EegCov() {
     return M;
   }, [step, pairIdx, fullCov]);
 
-  const hlI = step >= 2 && step < 3 ? Math.floor(pairIdx / D) : null;
-  const hlJ = step >= 2 && step < 3 ? pairIdx % D : null;
+  // hlI/hlJ are null at boundaries (pairIdx=0 or =D*D) to avoid OOB access
+  const hlI = step === 2 && pairIdx > 0 && pairIdx < D * D ? Math.floor(pairIdx / D) : null;
+  const hlJ = step === 2 && pairIdx > 0 && pairIdx < D * D ? pairIdx % D : null;
   const hlSigma = hlI != null && hlJ != null ? fullCov[hlI][hlJ] : null;
 
-  // Sweep through (i,j) pairs during step 2
+  // Sweep through (i,j) pairs during step 2, looping continuously
   useEffect(() => {
     if (step !== 2) return;
     setPairIdx(0);
     let k = 0;
     const interval = setInterval(() => {
       k++;
+      if (k > D * D) k = 0;  // loop: brief full-matrix display then reset
       setPairIdx(k);
-      if (k >= D * D) clearInterval(interval);
     }, 120);
     return () => clearInterval(interval);
   }, [step]);
@@ -439,7 +440,7 @@ export function EegCov() {
           </div>
           <div style={{ flex: 1, minHeight: 0, background: BG, borderRadius: 6, border: `1px solid ${RULE_S}`, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 10 }}>
             {showCov ? <CovHeatmap M={partial} highlightI={hlI} highlightJ={hlJ} absMax={absMax} /> : (
-              <span style={{ fontFamily: 'var(--mono)', fontSize: 13, color: INK3 }}>à venir</span>
+              <span style={{ fontFamily: 'var(--mono)', fontSize: 18, color: INK3 }}>à venir</span>
             )}
           </div>
         </div>

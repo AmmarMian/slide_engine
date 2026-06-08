@@ -48,12 +48,12 @@ function Pipeline({ activeIdx }) {
   return (
     <g transform={`translate(0,${DY})`}>
       <text x={W / 2} y={46}
-        fontFamily="var(--sans)" fontSize={44} fontWeight={700}
+        fontFamily="var(--sans)" style={{ fontSize: 'calc(44px * var(--type-scale, 1))' }} fontWeight={700}
         fill="var(--ink)" textAnchor="middle" letterSpacing="-0.02em">
         SPDNet
       </text>
       <text x={W / 2} y={84}
-        fontFamily="var(--mono)" fontSize={20} fill="var(--ink-3)" textAnchor="middle">
+        fontFamily="var(--mono)" style={{ fontSize: 'calc(20px * var(--type-scale, 1))' }} fill="var(--ink-3)" textAnchor="middle">
         Huang, Makur &amp; Van Gool (2017)  ·  Brooks et al. (2019)
       </text>
 
@@ -65,9 +65,9 @@ function Pipeline({ activeIdx }) {
           fill="var(--bg-2)" stroke="var(--ink)" strokeWidth={1.5} />
       ))}
       <text x={88} y={BY + 16}
-        fontFamily="var(--mono)" fontSize={16} fill="var(--ink-3)" textAnchor="middle">Input</text>
+        fontFamily="var(--mono)" style={{ fontSize: 'calc(16px * var(--type-scale, 1))' }} fill="var(--ink-3)" textAnchor="middle">Input</text>
       <text x={88} y={BY + BH + 32}
-        fontFamily="var(--mono)" fontSize={16} fill="var(--ink-3)" textAnchor="middle">X ∈ Sym⁺</text>
+        fontFamily="var(--mono)" style={{ fontSize: 'calc(16px * var(--type-scale, 1))' }} fill="var(--ink-3)" textAnchor="middle">X ∈ Sym⁺</text>
 
       {/* Input → BiMap */}
       <path d={`M 158 ${ay} H ${BX[0]}`}
@@ -83,10 +83,10 @@ function Pipeline({ activeIdx }) {
             fill="var(--bg-2)" stroke="var(--ink)"
             strokeWidth={activeIdx === i + 1 ? 2.5 : 1.6} />
           <text x={BW / 2} y={BH / 2 + 2}
-            fontFamily="var(--sans)" fontSize={26} fontWeight={700}
+            fontFamily="var(--sans)" style={{ fontSize: 'calc(26px * var(--type-scale, 1))' }} fontWeight={700}
             fill="var(--ink)" textAnchor="middle">{b.label}</text>
           <text x={BW / 2} y={BH / 2 + 34}
-            fontFamily="var(--mono)" fontSize={12.5}
+            fontFamily="var(--mono)" style={{ fontSize: 'calc(12.5px * var(--type-scale, 1))' }}
             fill="var(--ink-3)" textAnchor="middle">{b.eq}</text>
         </g>
       ))}
@@ -102,7 +102,7 @@ function Pipeline({ activeIdx }) {
       <path d={`M ${BX[0] - 6} ${BY + BH + 46} H ${BX[1] + BW + 6}`}
         stroke="var(--ink-3)" strokeWidth={1} strokeDasharray="5 3" fill="none" />
       <text x={(BX[0] + BX[1] + BW) / 2} y={BY + BH + 70}
-        fontFamily="var(--mono)" fontSize={18} fill="var(--ink-3)" textAnchor="middle">× k</text>
+        fontFamily="var(--mono)" style={{ fontSize: 'calc(18px * var(--type-scale, 1))' }} fill="var(--ink-3)" textAnchor="middle">× k</text>
 
       {/* LogEig → vec → FC → Softmax → ŷ */}
       <path d={`M ${BX[2] + BW} ${ay} H ${1388}`}
@@ -111,10 +111,10 @@ function Pipeline({ activeIdx }) {
       <circle cx={1415} cy={ay} r={34}
         fill="var(--bg-2)" stroke="var(--ink)" strokeWidth={1.6} />
       <text x={1415} y={ay - 4}
-        fontFamily="var(--sans)" fontSize={15} fontWeight={600}
+        fontFamily="var(--sans)" style={{ fontSize: 'calc(15px * var(--type-scale, 1))' }} fontWeight={600}
         fill="var(--ink)" textAnchor="middle">vec</text>
       <text x={1415} y={ay + 14}
-        fontFamily="var(--mono)" fontSize={12} fill="var(--ink-3)" textAnchor="middle">▲</text>
+        fontFamily="var(--mono)" style={{ fontSize: 'calc(12px * var(--type-scale, 1))' }} fill="var(--ink-3)" textAnchor="middle">▲</text>
 
       <path d={`M 1449 ${ay} H 1470`}
         stroke="var(--ink)" strokeWidth={1.8} fill="none" markerEnd="url(#spa)" />
@@ -124,17 +124,17 @@ function Pipeline({ activeIdx }) {
           <rect x={b.x} y={ay - 40} width={b.w} height={80} rx={3}
             fill="var(--bg-2)" stroke="var(--ink)" strokeWidth={1.6} />
           <text x={b.x + b.w / 2} y={ay + 8}
-            fontFamily="var(--sans)" fontSize={19} fontWeight={600}
+            fontFamily="var(--sans)" style={{ fontSize: 'calc(19px * var(--type-scale, 1))' }} fontWeight={600}
             fill="var(--ink)" textAnchor="middle">{b.label}</text>
           <path d={`M ${b.x + b.w} ${ay} H ${b.x + b.w + 20}`}
             stroke="var(--ink)" strokeWidth={1.8} fill="none" markerEnd="url(#spa)" />
         </React.Fragment>
       ))}
       <text x={1760} y={ay + 10}
-        fontFamily="var(--mono)" fontSize={36} fill="var(--ink)">ŷ</text>
+        fontFamily="var(--mono)" style={{ fontSize: 'calc(36px * var(--type-scale, 1))' }} fill="var(--ink)">ŷ</text>
 
       <text x={W / 2} y={H - 52}
-        fontFamily="var(--mono)" fontSize={19} fill="var(--ink-3)" textAnchor="middle">
+        fontFamily="var(--mono)" style={{ fontSize: 'calc(19px * var(--type-scale, 1))' }} fill="var(--ink-3)" textAnchor="middle">
         {activeIdx === 0 ? 'appuyer → pour explorer chaque couche' : ''}
       </text>
     </g>
@@ -173,13 +173,13 @@ function DiagramBiMap() {
           ))}
         </React.Fragment>
       ))}
-      <text x={86} y={200} fontFamily="var(--mono)" fontSize={13}
+      <text x={86} y={200} fontFamily="var(--mono)" style={{ fontSize: 'calc(13px * var(--type-scale, 1))' }}
         fill="var(--ink-3)" textAnchor="middle">d₀ × d₀</text>
 
       {/* W label + arrows: input → W → output */}
       <rect x={168} y={88} width={60} height={36} rx={3}
         fill="var(--bg-2)" stroke="var(--ink)" strokeWidth={1.4} />
-      <text x={198} y={112} fontFamily="var(--mono)" fontSize={15} fontWeight={700}
+      <text x={198} y={112} fontFamily="var(--mono)" style={{ fontSize: 'calc(15px * var(--type-scale, 1))' }} fontWeight={700}
         fill="var(--ink)" textAnchor="middle">Wₖ</text>
       <path d="M 122 110 H 162" stroke="var(--ink)" strokeWidth={1.4}
         fill="none" markerEnd="url(#sbm)" />
@@ -203,7 +203,7 @@ function DiagramBiMap() {
           ))}
         </React.Fragment>
       ))}
-      <text x={328} y={200} fontFamily="var(--mono)" fontSize={13}
+      <text x={328} y={200} fontFamily="var(--mono)" style={{ fontSize: 'calc(13px * var(--type-scale, 1))' }}
         fill="var(--ink-3)" textAnchor="middle">d₁ × d₁</text>
 
       <text x={200} y={240} fontFamily="var(--sans)" fontSize={13}
@@ -238,7 +238,7 @@ function DiagramReEig() {
               stroke="var(--ink)" strokeWidth={1.4} rx={2}
               opacity={isTiny ? 0.35 : 0.9} />
             <text x={bx + bw / 2} y={base + 16}
-              fontFamily="var(--mono)" fontSize={12}
+              fontFamily="var(--mono)" style={{ fontSize: 'calc(12px * var(--type-scale, 1))' }}
               fill="var(--ink-3)" textAnchor="middle">λ{i + 1}</text>
           </g>
         );
@@ -252,10 +252,10 @@ function DiagramReEig() {
       <line x1={ox - 6} y1={epY} x2={ox + totalW + 6} y2={epY}
         stroke="var(--ink)" strokeWidth={1.4} strokeDasharray="6 3" />
       <text x={ox + totalW + 12} y={epY + 4}
-        fontFamily="var(--mono)" fontSize={13} fontWeight={700} fill="var(--ink)">ε</text>
+        fontFamily="var(--mono)" style={{ fontSize: 'calc(13px * var(--type-scale, 1))' }} fontWeight={700} fill="var(--ink)">ε</text>
 
       {/* Callout for tiny bars */}
-      <text x={200} y={265} fontFamily="var(--sans)" fontSize={13}
+      <text x={200} y={265} fontFamily="var(--sans)" style={{ fontSize: 'calc(13px * var(--type-scale, 1))' }}
         fill="var(--ink-3)" textAnchor="middle">
         λ₄, λ₅ raised to ε by max(ε, λᵢ)  —  matrix stays well-conditioned
       </text>
@@ -272,13 +272,13 @@ function DiagramReEig() {
 export function BnDiagram() {
   // from/to track the two phases being interpolated; t is linear 0→1.
   const [from, setFrom] = useState(0);
-  const [to,   setTo]   = useState(0);
-  const [t,    setT]    = useState(1);
-  const toRef  = useRef(0);
+  const [to, setTo] = useState(0);
+  const [t, setT] = useState(1);
+  const toRef = useRef(0);
   const rafRef = useRef(null);
 
-  function ease(x) { return x < 0.5 ? 2*x*x : -1+(4-2*x)*x; }
-  function lerpE(a, b, x) { const e = ease(x); return a.map((v,i) => v+(b[i]-v)*e); }
+  function ease(x) { return x < 0.5 ? 2 * x * x : -1 + (4 - 2 * x) * x; }
+  function lerpE(a, b, x) { const e = ease(x); return a.map((v, i) => v + (b[i] - v) * e); }
 
   // [cx, cy, rx, ry, deg]
   // Phase 0 & 1: same raw scatter — mean appears as a separate overlay in phase 1
@@ -286,18 +286,18 @@ export function BnDiagram() {
   //          Avg rx≈16, avg ry≈16  →  geometric mean ≈ I (circle)
   // Phase 3: rebiased.  Avg position ≈ (228,172) = Γ centre.
   //          Avg rx≈11, avg ry≈24, avg deg≈32  →  geometric mean ≈ Γ
-  const RAW = [[138,175,33,16,28],[188,145,20,13,-18],[255,158,28,19,46],[162,202,17,11,5],[235,195,24,15,-30],[290,170,19,15,12]];
+  const RAW = [[138, 175, 33, 16, 28], [188, 145, 20, 13, -18], [255, 158, 28, 19, 46], [162, 202, 17, 11, 5], [235, 195, 24, 15, -30], [290, 170, 19, 15, 12]];
   const CFGS = [
     RAW, // phase 0: raw batch
     RAW, // phase 1: same positions; mean overlay appears separately
     // phase 2: whitened — avg cx≈230, cy≈175, rx≈16, ry≈16  →  geom. mean ≈ I
-    [[185,160,22,12,15],[225,148,13,22,-8],[265,163,20,15,42],[192,192,11,20,2],[244,196,18,11,-28],[270,175,10,16,8]],
+    [[185, 160, 22, 12, 15], [225, 148, 13, 22, -8], [265, 163, 20, 15, 42], [192, 192, 11, 20, 2], [244, 196, 18, 11, -28], [270, 175, 10, 16, 8]],
     // phase 3: rebiased — avg cx≈228, cy≈172, rx≈11, ry≈24, deg≈32  →  geom. mean ≈ Γ
-    [[188,158,16,30,28],[225,145,9,25,30],[262,160,13,22,42],[195,192,7,26,24],[242,196,11,20,38],[268,172,9,21,32]],
+    [[188, 158, 16, 30, 28], [225, 145, 9, 25, 30], [262, 160, 13, 22, 42], [195, 192, 7, 26, 24], [242, 196, 11, 20, 38], [268, 172, 9, 21, 32]],
   ];
 
-  const MEAN  = [211, 176, 24, 15,  7]; // approx geometric mean of raw batch
-  const IDENT = [230, 175, 16, 16,  0]; // identity = circle
+  const MEAN = [211, 176, 24, 15, 7]; // approx geometric mean of raw batch
+  const IDENT = [230, 175, 16, 16, 0]; // identity = circle
   const GAMMA = [228, 172, 11, 24, 34]; // learned Γ
 
   function startTransition(curr, next) {
@@ -322,7 +322,7 @@ export function BnDiagram() {
       if (!svgRef.current?.closest('[data-deck-active]')) return;
       const curr = toRef.current;
       const fwd = e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown';
-      const bwd = e.key === 'ArrowLeft'  || e.key === 'PageUp';
+      const bwd = e.key === 'ArrowLeft' || e.key === 'PageUp';
       if (fwd && curr < 3) { e.stopPropagation(); startTransition(curr, curr + 1); }
       if (bwd && curr > 0) { e.stopPropagation(); startTransition(curr, curr - 1); }
     }
@@ -345,16 +345,16 @@ export function BnDiagram() {
     if (from === target && from !== to) return 1 - ease(t); // fading out
     return 0;
   }
-  const meanOp  = markerOp(1);
+  const meanOp = markerOp(1);
   const identOp = markerOp(2);
   const gammaOp = markerOp(3);
-  const geodOp  = meanOp;
+  const geodOp = meanOp;
 
   const STEPS = [
-    { label: 'Batch',       sub: 'Σᵢ brut'    },
-    { label: 'Moy. géom.',  sub: 'M_B'         },
-    { label: 'Blanchiment', sub: 'M⁻½ΣᵢM⁻½'   },
-    { label: 'Re-biais',    sub: 'Γ½Σ̂ᵢΓ½'      },
+    { label: 'Batch', sub: 'Σᵢ brut' },
+    { label: 'Moy. géom.', sub: 'M_B' },
+    { label: 'Blanchiment', sub: 'M⁻½ΣᵢM⁻½' },
+    { label: 'Re-biais', sub: 'Γ½Σ̂ᵢΓ½' },
   ];
   const BW = 96, GAP = 22, X0 = 10;
   const boxX = STEPS.map((_, i) => X0 + i * (BW + GAP));
@@ -368,7 +368,7 @@ export function BnDiagram() {
 
   return (
     <svg ref={svgRef} viewBox="0 0 480 308" width="100%" height="100%"
-      style={{ display:'block', cursor: to < 3 ? 'pointer' : 'default' }}
+      style={{ display: 'block', cursor: to < 3 ? 'pointer' : 'default' }}
       onClick={handleClick}>
       <defs>
         <marker id="bnarr0" viewBox="0 0 8 8" refX={7} refY={4}
@@ -383,13 +383,13 @@ export function BnDiagram() {
 
       {/* ── Flowchart ── */}
       {STEPS.map((s, i) => {
-        const x     = boxX[i];
+        const x = boxX[i];
         const active = i === to;
-        const done   = i < to;
+        const done = i < to;
         return (
           <React.Fragment key={i}>
             {i > 0 && (
-              <line x1={boxX[i-1]+BW} y1={30} x2={x-1} y2={30}
+              <line x1={boxX[i - 1] + BW} y1={30} x2={x - 1} y2={30}
                 stroke={done ? 'var(--accent)' : 'var(--rule)'}
                 strokeWidth={1.5}
                 markerEnd={`url(#${done ? 'bnarr1' : 'bnarr0'})`} />
@@ -398,12 +398,12 @@ export function BnDiagram() {
               fill={active ? 'var(--accent)' : 'var(--bg-2)'}
               stroke={active ? 'none' : done ? 'var(--accent)' : 'var(--rule)'}
               strokeWidth={1} />
-            <text x={x+BW/2} y={27}
-              fontFamily="var(--sans)" fontSize={11} fontWeight={active ? 700 : 500}
+            <text x={x + BW / 2} y={27}
+              fontFamily="var(--sans)" style={{ fontSize: 'calc(11px * var(--type-scale, 1))' }} fontWeight={active ? 700 : 500}
               fill={active ? 'var(--bg)' : done ? 'var(--accent)' : 'var(--ink)'}
               textAnchor="middle">{s.label}</text>
-            <text x={x+BW/2} y={41}
-              fontFamily="var(--mono)" fontSize={9}
+            <text x={x + BW / 2} y={41}
+              fontFamily="var(--mono)" style={{ fontSize: 'calc(9px * var(--type-scale, 1))' }}
               fill={active ? 'rgba(255,255,255,0.72)' : 'var(--ink-3)'}
               textAnchor="middle">{s.sub}</text>
           </React.Fragment>
@@ -415,18 +415,18 @@ export function BnDiagram() {
         fill="var(--bg-2)" stroke="none" opacity={0.5} />
       <path d="M 32 240 Q 240 195 448 236"
         fill="none" stroke="var(--rule-soft)" strokeWidth={1} />
-      <text x={240} y={262} fontFamily="var(--mono)" fontSize={9}
+      <text x={240} y={262} fontFamily="var(--mono)" style={{ fontSize: 'calc(9px * var(--type-scale, 1))' }}
         fill="var(--ink-3)" textAnchor="middle" opacity={0.55}>𝒮₊ᵈ</text>
 
       {/* ── Geodesic lines → M_B (visible in phase 1) ── */}
-      {geodOp > 0.01 && ellipses.map(([cx,cy], i) => (
+      {geodOp > 0.01 && ellipses.map(([cx, cy], i) => (
         <line key={i} x1={cx} y1={cy} x2={MEAN[0]} y2={MEAN[1]}
           stroke="var(--accent)" strokeWidth={0.9} strokeDasharray="4 3"
           opacity={geodOp * 0.55} />
       ))}
 
       {/* ── Ellipses ── */}
-      {ellipses.map(([cx,cy,rx,ry,deg], i) => (
+      {ellipses.map(([cx, cy, rx, ry, deg], i) => (
         <ellipse key={i} cx={cx} cy={cy} rx={rx} ry={ry}
           transform={`rotate(${deg},${cx},${cy})`}
           fill="var(--bg)" stroke="var(--ink)" strokeWidth={1.7} />
@@ -440,8 +440,8 @@ export function BnDiagram() {
         <ellipse cx={MEAN[0]} cy={MEAN[1]} rx={MEAN[2]} ry={MEAN[3]}
           transform={`rotate(${MEAN[4]},${MEAN[0]},${MEAN[1]})`}
           fill="none" stroke="var(--accent)" strokeWidth={2.2} opacity={meanOp} />
-        <text x={MEAN[0]+MEAN[2]+7} y={MEAN[1]+4}
-          fontFamily="var(--mono)" fontSize={11} fill="var(--accent)"
+        <text x={MEAN[0] + MEAN[2] + 7} y={MEAN[1] + 4}
+          fontFamily="var(--mono)" style={{ fontSize: 'calc(11px * var(--type-scale, 1))' }} fill="var(--accent)"
           opacity={meanOp}>M_B</text>
       </>}
 
@@ -450,8 +450,8 @@ export function BnDiagram() {
         <circle cx={IDENT[0]} cy={IDENT[1]} r={IDENT[2]}
           fill="none" stroke="var(--ink-2)" strokeWidth={2}
           strokeDasharray="5 3" opacity={identOp} />
-        <text x={IDENT[0]+IDENT[2]+7} y={IDENT[1]+4}
-          fontFamily="var(--mono)" fontSize={11} fill="var(--ink-2)"
+        <text x={IDENT[0] + IDENT[2] + 7} y={IDENT[1] + 4}
+          fontFamily="var(--mono)" style={{ fontSize: 'calc(11px * var(--type-scale, 1))' }} fill="var(--ink-2)"
           opacity={identOp}>I</text>
       </>}
 
@@ -464,13 +464,13 @@ export function BnDiagram() {
           transform={`rotate(${GAMMA[4]},${GAMMA[0]},${GAMMA[1]})`}
           fill="none" stroke="var(--accent)" strokeWidth={2.2}
           strokeDasharray="6 3" opacity={gammaOp} />
-        <text x={GAMMA[0]+GAMMA[3]+7} y={GAMMA[1]+4}
-          fontFamily="var(--mono)" fontSize={11} fill="var(--accent)"
+        <text x={GAMMA[0] + GAMMA[3] + 7} y={GAMMA[1] + 4}
+          fontFamily="var(--mono)" style={{ fontSize: 'calc(11px * var(--type-scale, 1))' }} fill="var(--accent)"
           opacity={gammaOp}>Γ</text>
       </>}
 
       {/* ── Caption ── */}
-      <text x={228} y={299} fontFamily="var(--mono)" fontSize={9.5}
+      <text x={228} y={299} fontFamily="var(--mono)" style={{ fontSize: 'calc(9.5px * var(--type-scale, 1))' }}
         fill="var(--ink-3)" textAnchor="middle">{CAPTIONS[to]}</text>
 
       {/* ── Key hint ── */}
@@ -546,11 +546,11 @@ function DiagramLogEig() {
           stroke="var(--ink-3)" strokeWidth={0.5} />;
       })}
       <text x={308} y={90}
-        fontFamily="var(--mono)" fontSize={10} fill="var(--ink-3)" textAnchor="middle">
+        fontFamily="var(--mono)" style={{ fontSize: 'calc(10px * var(--type-scale, 1))' }} fill="var(--ink-3)" textAnchor="middle">
         T_I Sym⁺
       </text>
       <text x={308} y={101}
-        fontFamily="var(--mono)" fontSize={10} fill="var(--ink-3)" textAnchor="middle">
+        fontFamily="var(--mono)" style={{ fontSize: 'calc(10px * var(--type-scale, 1))' }} fill="var(--ink-3)" textAnchor="middle">
         ≅ Sym_d
       </text>
 
@@ -601,9 +601,9 @@ function DiagramLogEig() {
 
       {/* Manifold label */}
       <text x={308} y={168}
-        fontFamily="var(--mono)" fontSize={10} fill="var(--ink-3)" textAnchor="middle">Sym⁺_d</text>
+        fontFamily="var(--mono)" style={{ fontSize: 'calc(10px * var(--type-scale, 1))' }} fill="var(--ink-3)" textAnchor="middle">Sym⁺_d</text>
       <text x={308} y={179}
-        fontFamily="var(--mono)" fontSize={10} fill="var(--ink-3)" textAnchor="middle">(variété)</text>
+        fontFamily="var(--mono)" style={{ fontSize: 'calc(10px * var(--type-scale, 1))' }} fill="var(--ink-3)" textAnchor="middle">(variété)</text>
 
       {/* Point X on cone */}
       <circle cx={Xx} cy={Xy} r={8} fill="var(--ink)" />
@@ -625,7 +625,7 @@ function CiteLabel({ refKey }) {
   return (
     <div style={{ fontFamily: 'var(--sans)', fontSize: '18px', color: 'var(--ink-3)', marginTop: '8px' }}>
       <sup style={{ fontFamily: 'var(--mono)', color: 'var(--accent)', fontWeight: 700, fontSize: '14px' }}>{num}</sup>
-      {' '}Huang, Makur &amp; Van Gool (AAAI 2017)
+      {' '}
     </div>
   );
 }
