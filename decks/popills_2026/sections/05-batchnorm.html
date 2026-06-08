@@ -579,11 +579,11 @@
     <slide-header title="HDM05 — Reconnaissance d'actions"></slide-header>
     <div class="slide-body" style="gap:10px;">
       <div style="font-family:var(--mono);font-size:18px;color:var(--ink-3);flex-shrink:0;">2 086 matrices · SPD 93×93 · 117 classes · cond. number ~10⁵</div>
-      <div style="flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:32px;min-height:0;">
+      <div style="flex:1;display:grid;grid-template-columns:repeat(2,1fr);gap:32px;min-height:0;">
         <div style="display:flex;flex-direction:column;min-height:0;">
           <div class="eyebrow" style="margin-bottom:5px;">F1 Score (%) ↑</div>
           <div style="flex:1;min-height:0;">
-            <bar-chart ylabel="F1 (%)" ymin="30" ymax="72"
+            <bar-chart labelfontsize="42" ylabel="F1 (%)" ymin="30" ymax="72"
               data='[{"label":"sans BN","value":61.8,"err":1.1,"muted":true},{"label":"Arith.","value":58.5,"err":3.4},{"label":"Harm.","value":66.3,"err":0.6},{"label":"Géom.","value":66.6,"err":1.6},{"label":"Log Euc.","value":64.4,"err":4.3},{"label":"GAH","value":66.9,"err":1.7,"color":"accent"}]'>
             </bar-chart>
           </div>
@@ -591,16 +591,8 @@
         <div style="display:flex;flex-direction:column;min-height:0;">
           <div class="eyebrow" style="margin-bottom:5px;">Temps (min) ↓</div>
           <div style="flex:1;min-height:0;">
-            <bar-chart ylabel="Temps (min)" ymin="0" ymax="390"
+            <bar-chart labelfontsize="42" ylabel="Temps (min)" ymin="0" ymax="390"
               data='[{"label":"sans BN","value":58.2,"err":5.7,"muted":true},{"label":"Arith.","value":147.7,"err":33.6},{"label":"Harm.","value":75.7,"err":24.1},{"label":"Géom.","value":326.3,"err":52.1},{"label":"Log Euc.","value":117.9,"err":50.2},{"label":"GAH","value":122.3,"err":34.8,"color":"accent"}]'>
-            </bar-chart>
-          </div>
-        </div>
-        <div style="display:flex;flex-direction:column;min-height:0;">
-          <div class="eyebrow" style="margin-bottom:5px;">Nb epochs ↓</div>
-          <div style="flex:1;min-height:0;">
-            <bar-chart ylabel="Epochs" ymin="55" ymax="105"
-              data='[{"label":"sans BN","value":68.8,"err":3.1,"muted":true},{"label":"Arith.","value":89.2,"err":10.8},{"label":"Harm.","value":65.6,"err":6.9},{"label":"Géom.","value":71.2,"err":6.2},{"label":"Log Euc.","value":65.4,"err":8.3},{"label":"GAH","value":80.6,"err":11.7,"color":"accent"}]'>
             </bar-chart>
           </div>
         </div>
@@ -615,11 +607,11 @@
     <slide-header title="HyperLeaf — Feuilles de blé"></slide-header>
     <div class="slide-body" style="gap:10px;">
       <div style="font-family:var(--mono);font-size:18px;color:var(--ink-3);flex-shrink:0;">2 410 images · SPD 204×204 · 4 variétés de blé · cond. number ~10⁶</div>
-      <div style="flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:32px;min-height:0;">
+      <div style="flex:1;display:grid;grid-template-columns:repeat(2,1fr);gap:32px;min-height:0;">
         <div style="display:flex;flex-direction:column;min-height:0;">
           <div class="eyebrow" style="margin-bottom:5px;">F1 Score (%) ↑</div>
           <div style="flex:1;min-height:0;">
-            <bar-chart ylabel="F1 (%)" ymin="30" ymax="97"
+            <bar-chart labelfontsize="42" ylabel="F1 (%)" ymin="30" ymax="97"
               data='[{"label":"sans BN","value":82.9,"err":2.5,"muted":true},{"label":"Arith.","value":93.5,"err":2.0},{"label":"Harm.","value":93.6,"err":3.7},{"label":"Géom.","value":88.4,"err":3.4},{"label":"Log Euc.","value":89.9,"err":3.2},{"label":"GAH","value":92.9,"err":1.4,"color":"accent"}]'>
             </bar-chart>
           </div>
@@ -627,16 +619,8 @@
         <div style="display:flex;flex-direction:column;min-height:0;">
           <div class="eyebrow" style="margin-bottom:5px;">Temps (min) ↓</div>
           <div style="flex:1;min-height:0;">
-            <bar-chart ylabel="Temps (min)" ymin="0" ymax="630"
+            <bar-chart labelfontsize="42" ylabel="Temps (min)" ymin="0" ymax="630"
               data='[{"label":"sans BN","value":133.6,"err":47.2,"muted":true},{"label":"Arith.","value":92.8,"err":15.0},{"label":"Harm.","value":93.3,"err":24.0},{"label":"Géom.","value":489.1,"err":134.5},{"label":"Log Euc.","value":175.5,"err":45.9},{"label":"GAH","value":144.8,"err":30.5,"color":"accent"}]'>
-            </bar-chart>
-          </div>
-        </div>
-        <div style="display:flex;flex-direction:column;min-height:0;">
-          <div class="eyebrow" style="margin-bottom:5px;">Nb epochs ↓</div>
-          <div style="flex:1;min-height:0;">
-            <bar-chart ylabel="Epochs" ymin="60" ymax="100"
-              data='[{"label":"sans BN","value":69.0,"err":9.1,"muted":true},{"label":"Arith.","value":87.4,"err":5.7},{"label":"Harm.","value":83.8,"err":10.4},{"label":"Géom.","value":71.6,"err":6.0},{"label":"Log Euc.","value":77.0,"err":6.4},{"label":"GAH","value":83.0,"err":4.1,"color":"accent"}]'>
             </bar-chart>
           </div>
         </div>
@@ -651,11 +635,11 @@
     <slide-header title="Rices90 — Graines de riz"></slide-header>
     <div class="slide-body" style="gap:10px;">
       <div style="font-family:var(--mono);font-size:18px;color:var(--ink-3);flex-shrink:0;">8 640 graines · SPD 256×256 · 10 classes · cond. number ~10⁷</div>
-      <div style="flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:32px;min-height:0;">
+      <div style="flex:1;display:grid;grid-template-columns:repeat(2,1fr);gap:32px;min-height:0;">
         <div style="display:flex;flex-direction:column;min-height:0;">
           <div class="eyebrow" style="margin-bottom:5px;">F1 Score (%) ↑</div>
           <div style="flex:1;min-height:0;">
-            <bar-chart ylabel="F1 (%)" ymin="30" ymax="90"
+            <bar-chart labelfontsize="42" ylabel="F1 (%)" ymin="30" ymax="90"
               data='[{"label":"sans BN","value":69.2,"err":3.5,"muted":true},{"label":"Arith.","value":76.8,"err":5.0},{"label":"Harm.","value":81.7,"err":4.6},{"label":"Géom.","value":82.9,"err":4.3},{"label":"Log Euc.","value":84.2,"err":2.9},{"label":"GAH","value":81.1,"err":3.5,"color":"accent"}]'>
             </bar-chart>
           </div>
@@ -663,16 +647,8 @@
         <div style="display:flex;flex-direction:column;min-height:0;">
           <div class="eyebrow" style="margin-bottom:5px;">Temps (min) ↓</div>
           <div style="flex:1;min-height:0;">
-            <bar-chart ylabel="Temps (min)" ymin="0" ymax="370"
+            <bar-chart labelfontsize="42" ylabel="Temps (min)" ymin="0" ymax="370"
               data='[{"label":"sans BN","value":123.2,"err":6.5,"muted":true},{"label":"Arith.","value":78.2,"err":15.4},{"label":"Harm.","value":90.8,"err":18.9},{"label":"Géom.","value":304.2,"err":53.3},{"label":"Log Euc.","value":124.3,"err":21.3},{"label":"GAH","value":84.3,"err":15.2,"color":"accent"}]'>
-            </bar-chart>
-          </div>
-        </div>
-        <div style="display:flex;flex-direction:column;min-height:0;">
-          <div class="eyebrow" style="margin-bottom:5px;">Nb epochs ↓</div>
-          <div style="flex:1;min-height:0;">
-            <bar-chart ylabel="Epochs" ymin="88" ymax="118"
-              data='[{"label":"sans BN","value":107.0,"err":7.6,"muted":true},{"label":"Arith.","value":97.8,"err":8.4},{"label":"Harm.","value":110.4,"err":5.9},{"label":"Géom.","value":100.6,"err":4.0},{"label":"Log Euc.","value":101.6,"err":3.9},{"label":"GAH","value":93.6,"err":4.4,"color":"accent"}]'>
             </bar-chart>
           </div>
         </div>
@@ -922,6 +898,7 @@
             ylabel="HyperLeaf F1 (%) ↑"
             ymin="30" ymax="86"
             width="700" height="680"
+            labelfontsize="28"
             data='[
               {"label":"ARMAGNAC","value":80.6,"err":4.2,"emphasis":true},
               {"label":"Arithm.","value":78.8,"err":4.2},

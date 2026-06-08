@@ -136,16 +136,17 @@ defineReactElement('scatter-flow', null, {
 });
 
 defineReactElement('bar-chart', null, {
-  observed: ['title', 'xlabel', 'ylabel', 'data', 'ymin', 'ymax', 'width', 'height'],
+  observed: ['title', 'xlabel', 'ylabel', 'data', 'ymin', 'ymax', 'width', 'height', 'labelfontsize'],
   props: el => ({
-    title:  readStr(el, 'title',  ''),
-    xlabel: readStr(el, 'xlabel', ''),
-    ylabel: readStr(el, 'ylabel', ''),
-    data:   readJSON(el, 'data', []),
-    ymin:   el.getAttribute('ymin'),
-    ymax:   el.getAttribute('ymax'),
-    width:  readInt(el, 'width',  760),
-    height: readInt(el, 'height', 660),
+    title:         readStr(el, 'title',  ''),
+    xlabel:        readStr(el, 'xlabel', ''),
+    ylabel:        readStr(el, 'ylabel', ''),
+    data:          readJSON(el, 'data', []),
+    ymin:          el.getAttribute('ymin'),
+    ymax:          el.getAttribute('ymax'),
+    width:         readInt(el, 'width',  760),
+    height:        readInt(el, 'height', 660),
+    labelFontSize: readInt(el, 'labelfontsize', 68),
   }),
   lazy: () => import('./d3/bar-chart.jsx').then(m => m.BarChart),
 });

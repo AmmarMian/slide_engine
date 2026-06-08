@@ -8,35 +8,35 @@
   <section>
     <slide-note>L'EEG est extrêmement sensible : données biométriques + médicales + neurocinétiques. Partager centralement expose les patients à des risques de réidentification, de vol identitaire, ou d'utilisation secondaire non consentie. L'apprentissage fédéré permet d'entraîner des modèles d'IA clinique sans jamais centraliser les données brutes.</slide-note>
     <slide-header title="EEG — données ultra-sensibles"></slide-header>
-    <div class="slide-body" style="gap:32px;">
-      <p class="lede" style="max-width:1500px;">
+    <div class="slide-body" style="gap:40px;">
+      <p class="lede" style="max-width:1500px;font-size:28px;">
         L'EEG révèle l'activité cérébrale : données <strong>biométriques</strong>, <strong>médicales</strong>, et <strong>profondément personnelles</strong>. Centraliser ces données expose les patients à des risques de réidentification et d'utilisation secondaire.
       </p>
 
-      <div class="cols cols-3" style="gap:40px;align-items:start;">
+      <div class="cols cols-3" style="gap:48px;align-items:start;">
         <div data-step>
-          <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Biométrique</div>
-          <p class="body" style="font-size:22px;color:var(--ink-2);">
+          <div class="eyebrow" style="margin-bottom:16px;color:var(--accent);font-size:18px;">Biométrique</div>
+          <p class="body" style="font-size:26px;color:var(--ink-2);line-height:1.6;">
             Signature neurale unique — impossible à revenir, impossible à changer.
           </p>
         </div>
         <div data-step>
-          <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Médicale</div>
-          <p class="body" style="font-size:22px;color:var(--ink-2);">
+          <div class="eyebrow" style="margin-bottom:16px;color:var(--accent);font-size:18px;">Médicale</div>
+          <p class="body" style="font-size:26px;color:var(--ink-2);line-height:1.6;">
             Diagnostic, sujets sains vs patients — consentement limité à l'usage initial.
           </p>
         </div>
         <div data-step>
-          <div class="eyebrow" style="margin-bottom:12px;color:var(--accent);">Neurocinétique</div>
-          <p class="body" style="font-size:22px;color:var(--ink-2);">
+          <div class="eyebrow" style="margin-bottom:16px;color:var(--accent);font-size:18px;">Neurocinétique</div>
+          <p class="body" style="font-size:26px;color:var(--ink-2);line-height:1.6;">
             État mental, intérêts, intentions — révèle ce que la personne ignore d'elle-même.
           </p>
         </div>
       </div>
 
-      <div data-step class="theorem" style="margin-top:24px;">
+      <div data-step class="theorem">
         <div class="theorem-tag">Solution : apprentissage distribué</div>
-        <div class="theorem-body" style="font-size:24px;">
+        <div class="theorem-body" style="font-size:26px;">
           Entraîner des modèles cliniques sans centraliser les données brutes. Les données ne quittent jamais les sites de soin ; seules les mises à jour de modèle circulent.
         </div>
       </div>
@@ -268,7 +268,8 @@
             <bar-chart
               ylabel="F1 (%)" ymin="30" ymax="56"
               width="860" height="580"
-              data='[{"label":"EEGNet\nCentr.","value":50.7,"err":1.5},{"label":"SPDnet\nCentr.","value":51.7,"err":0.8,"emphasis":true},{"label":"EEGNet\n100%","value":39.9,"err":2.4},{"label":"SPDnet\n100%","value":43.3,"err":1.0,"emphasis":true},{"label":"EEGNet\n50%","value":36.4,"err":4.1},{"label":"SPDnet\n50%","value":41.2,"err":0.8,"emphasis":true}]'
+              labelfontsize="26"
+              data='[{"label":"EEGNet Centr.","value":50.7,"err":1.5},{"label":"SPDnet Centr.","value":51.7,"err":0.8,"emphasis":true},{"label":"EEGNet 100%","value":39.9,"err":2.4},{"label":"SPDnet 100%","value":43.3,"err":1.0,"emphasis":true},{"label":"EEGNet 50%","value":36.4,"err":4.1},{"label":"SPDnet 50%","value":41.2,"err":0.8,"emphasis":true}]'
             ></bar-chart>
           </div>
         </div>
@@ -279,7 +280,8 @@
             <bar-chart
               ylabel="F1 (%)" ymin="30" ymax="56"
               width="860" height="580"
-              data='[{"label":"EEGNet\nCentr.","value":50.8,"err":0.7,"emphasis":false,"color":"ink"},{"label":"SPDnet\nCentr.","value":43.1,"err":0.5},{"label":"EEGNet\n100%","value":38.3,"err":1.8},{"label":"SPDnet\n100%","value":39.5,"err":0.6,"emphasis":true},{"label":"EEGNet\n50%","value":38.0,"err":2.7},{"label":"SPDnet\n50%","value":39.5,"err":0.9,"emphasis":true}]'
+              labelfontsize="26"
+              data='[{"label":"EEGNet Centr.","value":50.8,"err":0.7,"emphasis":false,"color":"ink"},{"label":"SPDnet Centr.","value":43.1,"err":0.5},{"label":"EEGNet 100%","value":38.3,"err":1.8},{"label":"SPDnet 100%","value":39.5,"err":0.6,"emphasis":true},{"label":"EEGNet 50%","value":38.0,"err":2.7},{"label":"SPDnet 50%","value":39.5,"err":0.9,"emphasis":true}]'
             ></bar-chart>
           </div>
         </div>

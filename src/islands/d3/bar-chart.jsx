@@ -23,14 +23,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 
 export function BarChart({
-  title  = '',
-  xlabel = '',
-  ylabel = '',
-  data   = [],
-  ymin   = null,
-  ymax   = null,
-  width  = 760,
-  height = 660,
+  title         = '',
+  xlabel        = '',
+  ylabel        = '',
+  data          = [],
+  ymin          = null,
+  ymax          = null,
+  width         = 760,
+  height        = 660,
+  labelFontSize = 68,
 }) {
   const svgRef = useRef(null);
   const [themeTick, setThemeTick] = useState(0);
@@ -43,7 +44,7 @@ export function BarChart({
   }, []);
 
   useEffect(() => {
-    const PAD = { t: title ? 50 : 24, r: 26, b: 64, l: 78 };
+    const PAD = { t: title ? 50 : 24, r: 26, b: 280, l: 78 };
     const W = width, H = height;
     const iW = W - PAD.l - PAD.r;
     const iH = H - PAD.t - PAD.b;
@@ -117,13 +118,15 @@ export function BarChart({
     svg.append('line').attr('x1', PAD.l).attr('x2', PAD.l + iW)
       .attr('y1', y(lo)).attr('y2', y(lo)).attr('stroke', ink()).attr('stroke-width', 1.4);
 
-    // category labels
+    // category labels — rotated 45° so longer names fit at large font size
     svg.append('g').selectAll('text').data(data).join('text')
-      .attr('x', d => x(d.label) + x.bandwidth() / 2).attr('y', PAD.t + iH + 28)
-      .attr('text-anchor', 'middle')
-      .attr('font-family', mono()).attr('font-size', 17)
+      .attr('x', d => x(d.label) + x.bandwidth() / 2)
+      .attr('y', PAD.t + iH + 36)
+      .attr('text-anchor', 'end')
+      .attr('font-family', mono()).attr('font-size', labelFontSize)
       .attr('fill', d => d.emphasis ? accent() : ink2())
       .attr('font-weight', d => d.emphasis ? 700 : 400)
+      .attr('transform', d => `rotate(-45,${x(d.label) + x.bandwidth() / 2},${PAD.t + iH + 36})`)
       .text(d => d.label);
 
     if (xlabel) svg.append('text')
@@ -238,7 +241,7 @@ export function BarChart({
     };
     stage.addEventListener('slidechange', onSlideChange);
     return () => stage.removeEventListener('slidechange', onSlideChange);
-  }, [title, xlabel, ylabel, data, ymin, ymax, width, height, themeTick]);
+  }, [title, xlabel, ylabel, data, ymin, ymax, width, height, labelFontSize, themeTick]);
 
   return (
     <svg ref={svgRef} viewBox={`0 0 ${width} ${height}`} width="100%" height="100%" style={{ display: 'block' }} />
