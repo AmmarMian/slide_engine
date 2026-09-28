@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>AI? · Inddigo innovation day</title>
+  <meta name="deck-title-fr" content="IA ? · Journée innovation Inddigo">
+  <meta name="deck-lang" content="fr">
+  <meta name="deck-theme" content="palette=paper;font=swiss-sans;accent=#d23b1c;density=comfortable;titleFx=dust">
+  <meta name="deck-date" content="Inddigo innovation day · Savoie Technolac · 29.09.2026" content-fr="Journée innovation Inddigo · Savoie Technolac · 29.09.2026">
+  <script id="deck-refs" type="application/json">{}</script>
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+  <!-- ═════ Opening ═════ -->
+  <section data-label="Title">
+    <title-fx></title-fx>
+    <div class="particle-scrim"></div>
+    <div style="position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:space-between;">
+      <div class="label" data-fr="Journée innovation Inddigo · Savoie Technolac · 29 septembre 2026">Inddigo innovation day · Savoie Technolac · 29 September 2026</div>
+      <div>
+        <div class="eyebrow" style="margin-bottom:32px;" data-fr="Généraliste ou spécialisé · Génératif ou non">General vs specific · Generative vs not</div>
+        <h1 class="title" data-fr="IA&nbsp;?">AI?</h1>
+      </div>
+      <div class="body" style="font-size:28px;">Ammar Mian · LISTIC, Université Savoie Mont Blanc</div>
+    </div>
+  </section>
+
+  <section data-label="Question">
+    <slide-note data-fr="Question à la salle : quand vous entendez « IA », à quoi pensez-vous ? Noter 2–3 réponses ; on les place sur la grille à la fin.">Ask the room: when you hear "AI", what comes to mind? Note 2–3 answers; we place them on the grid at the end.</slide-note>
+    <div class="slide-body" style="justify-content:center;gap:64px;">
+      <div class="eyebrow" data-fr="Quand vous entendez le mot">When you hear the word</div>
+      <word-morph from="AI" to="LEARNING" from-fr="IA" to-fr="APPRENTISSAGE" cell="130" cell-fr="100"></word-morph>
+      <div class="lede" style="max-width:1300px;" data-step data-fr="À quoi pensez-vous&nbsp;?">What comes to mind?</div>
+    </div>
+  </section>
+
+  <section data-label="Contents">
+    <toc-slide></toc-slide>
+  </section>
+
+  <!-- ═════ 1 · What is AI ═════ -->
+  <section-divider label="What is AI?" label-fr="C’est quoi, l’IA ?" kicker="Part 01" kicker-fr="Partie 01" blurb="Learning from data instead of writing rules" blurb-fr="Apprendre à partir des données plutôt qu’écrire des règles"></section-divider>
+
+  <section data-label="Rules vs learning">
+    <slide-note data-fr="Logiciel classique : un humain écrit les règles. Apprentissage automatique : on montre des exemples, le modèle trouve les règles.">Classic software: a human writes the rules. Machine learning: we show examples and the model finds the rules.</slide-note>
+    <slide-header title="From writing rules to learning them" title-fr="Des règles écrites aux règles apprises"></slide-header>
+    <div class="slide-body" style="justify-content:center;gap:80px;">
+      <div style="display:grid;grid-template-columns:360px 1fr;gap:48px;align-items:center;">
+        <div class="label" data-fr="Logiciel classique">Classic software</div>
+        <div style="display:flex;align-items:center;gap:28px;font-size:36px;">
+          <div style="padding:22px 32px;border:2px solid var(--ink);" data-fr="Données">Data</div><div style="color:var(--ink-3);">+</div>
+          <div style="padding:22px 32px;border:2px solid var(--ink);" data-fr="Règles écrites par un humain">Rules written by a human</div><div style="color:var(--ink-3);">→</div>
+          <div style="padding:22px 32px;background:var(--bg-2);" data-fr="Réponse">Answer</div>
+        </div>
+      </div>
+      <div data-step style="display:grid;grid-template-columns:360px 1fr;gap:48px;align-items:center;">
+        <div class="label" style="color:var(--accent);" data-fr="Apprentissage automatique">Machine learning</div>
+        <div style="display:flex;align-items:center;gap:28px;font-size:36px;">
+          <div style="padding:22px 32px;border:2px solid var(--ink);" data-fr="Données">Data</div><div style="color:var(--ink-3);">+</div>
+          <div style="padding:22px 32px;border:2px solid var(--ink);" data-fr="Réponses (exemples)">Answers (examples)</div><div style="color:var(--ink-3);">→</div>
+          <div style="padding:22px 32px;background:var(--accent);color:#fff;" data-fr="Règles apprises">Rules, learned</div>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <section data-label="Scale">
+    <slide-note data-fr="Même principe, tailles très différentes. Un grand modèle de langage essaie de tout couvrir ; un modèle spécialisé couvre un seul problème.">Same principle, very different sizes. A large language model tries to cover everything; a specific model covers one problem.</slide-note>
+    <slide-header title="One principle, two scales" title-fr="Un principe, deux échelles"></slide-header>
+    <div class="slide-body" style="display:grid;grid-template-columns:1.25fr 1fr;gap:72px;align-items:center;">
+      <model-zoom width="1000" height="620"></model-zoom>
+      <div class="bullet-rail">
+        <div><div class="label" data-fr="Modèle généraliste">General model</div><div class="body" data-fr="Des milliards de paramètres, entraîné sur une grande partie du web public. Répond un peu à tout.">Billions of parameters, trained on a large share of the public web. Answers a bit of everything.</div></div>
+        <div data-step><div class="label" style="color:var(--accent);" data-fr="Modèle spécialisé">Specific model</div><div class="body" data-fr="Un modèle bien plus petit, entraîné sur les mesures d’un seul problème. Tourne sur un ordinateur portable ou un système embarqué.">A much smaller model, trained on the measurements of one problem. Runs on a laptop or an embedded device.</div></div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- ═════ 2 · Two axes ═════ -->
+  <section-divider label="Two axes" label-fr="Deux axes" kicker="Part 02" kicker-fr="Partie 02" blurb="General or specific · generative or not" blurb-fr="Généraliste ou spécialisé · génératif ou non"></section-divider>
+
+  <section data-label="The grid">
+    <slide-note data-fr="Remplir la grille case par case. Finir en bas à droite : c’est là que se situe mon travail.">Fill the grid one cell at a time. End on the bottom-right: this is where my work sits.</slide-note>
+    <slide-header title="Four families of AI" title-fr="Quatre familles d’IA"></slide-header>
+    <div class="slide-body" style="display:grid;grid-template-columns:80px 1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:16px;padding-top:10px;">
+      <div></div>
+      <div class="label" style="text-align:center;" data-fr="Généraliste">General</div>
+      <div class="label" style="text-align:center;" data-fr="Spécialisé">Specific</div>
+
+      <div class="label" style="writing-mode:vertical-rl;transform:rotate(180deg);text-align:center;" data-fr="Génératif">Generative</div>
+      <div style="border:2px solid var(--ink);padding:36px 44px;display:flex;flex-direction:column;gap:18px;">
+        <div data-step style="display:flex;flex-direction:column;gap:18px;">
+          <div class="h2" style="font-size:44px;" data-fr="Produire du contenu, sur n’importe quel sujet">Produce content, on any topic</div>
+          <div class="body" style="font-size:30px;" data-fr="ChatGPT, Mistral, Claude : texte, code, images, synthèses.">ChatGPT, Mistral, Claude: text, code, images, summaries.</div>
+        </div>
+      </div>
+      <div style="border:2px solid var(--ink);padding:36px 44px;display:flex;flex-direction:column;gap:18px;">
+        <div data-step style="display:flex;flex-direction:column;gap:18px;">
+          <div class="h2" style="font-size:44px;" data-fr="Produire des données, pour un domaine">Produce data, for one domain</div>
+          <div class="body" style="font-size:30px;" data-fr="Signaux de capteurs synthétiques, scènes simulées, données pour entraîner d’autres modèles.">Synthetic sensor signals, simulated scenes, data to train other models.</div>
+        </div>
+      </div>
+
+      <div class="label" style="writing-mode:vertical-rl;transform:rotate(180deg);text-align:center;" data-fr="Non génératif">Non-generative</div>
+      <div style="border:2px solid var(--ink);padding:36px 44px;display:flex;flex-direction:column;gap:18px;">
+        <div data-step style="display:flex;flex-direction:column;gap:18px;">
+          <div class="h2" style="font-size:44px;" data-fr="Reconnaître, sur tout">Recognise, on anything</div>
+          <div class="body" style="font-size:30px;" data-fr="Reconnaissance d’images prête à l’emploi, détection d’objets, recommandation.">Off-the-shelf image recognition, object detection, recommendation.</div>
+        </div>
+      </div>
+      <div style="border:2px solid var(--accent);background:var(--bg-2);padding:36px 44px;display:flex;flex-direction:column;gap:18px;">
+        <div data-step style="display:flex;flex-direction:column;gap:18px;">
+          <div class="h2" style="font-size:44px;color:var(--accent);" data-fr="Mesurer, détecter, prédire">Measure, detect, predict</div>
+          <div class="body" style="font-size:30px;" data-fr="Un capteur, une question : objets enfouis dans le radar, changements dans les images satellite, signaux cérébraux.">One sensor, one question: buried objects in radar, changes in satellite images, brain signals.</div>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <section data-label="What changes">
+    <slide-note data-fr="Les quatre familles n’ont pas le même coût, n’ont pas besoin des mêmes données et ne se trompent pas de la même façon.">The four families do not cost the same, do not need the same data, and do not fail in the same way.</slide-note>
+    <slide-header title="What changes from one cell to another" title-fr="Ce qui change d’une case à l’autre"></slide-header>
+    <div class="slide-body" style="justify-content:center;">
+      <div style="display:grid;grid-template-columns:360px 1fr 1fr;font-size:34px;line-height:1.35;">
+        <div></div>
+        <div class="label" style="padding:0 0 22px 32px;" data-fr="Généraliste · génératif">General · generative</div>
+        <div class="label" style="padding:0 0 22px 32px;color:var(--accent);" data-fr="Spécialisé · non génératif">Specific · non-generative</div>
+
+        <div class="label" style="padding:28px 0;border-top:2px solid var(--ink);" data-fr="Données">Data</div>
+        <div style="padding:28px 32px;border-top:2px solid var(--ink);" data-fr="Énormes, publiques, déjà utilisées">Huge, public, already used</div>
+        <div data-step style="padding:28px 32px;border-top:2px solid var(--ink);" data-fr="Vos propres mesures">Your own measurements</div>
+
+        <div class="label" style="padding:28px 0;border-top:1px solid var(--rule);" data-fr="Erreur typique">Typical error</div>
+        <div style="padding:28px 32px;border-top:1px solid var(--rule);" data-fr="Réponses fausses mais assurées">Confident but wrong answers</div>
+        <div data-step style="padding:28px 32px;border-top:1px solid var(--rule);" data-fr="Oublis ou fausses alarmes, que l’on peut compter">Misses or false alarms, which can be counted</div>
+
+        <div class="label" style="padding:28px 0;border-top:1px solid var(--rule);" data-fr="Validation">Validation</div>
+        <div style="padding:28px 32px;border-top:1px solid var(--rule);" data-fr="Difficile à tester systématiquement">Hard to test systematically</div>
+        <div data-step style="padding:28px 32px;border-top:1px solid var(--rule);" data-fr="Testé sur des données mises de côté">Tested on held-out data</div>
+
+        <div class="label" style="padding:28px 0;border-top:1px solid var(--rule);border-bottom:2px solid var(--ink);" data-fr="Où il tourne">Where it runs</div>
+        <div style="padding:28px 32px;border-top:1px solid var(--rule);border-bottom:2px solid var(--ink);" data-fr="Data centers, via une API">Data centres, via an API</div>
+        <div data-step style="padding:28px 32px;border-top:1px solid var(--rule);border-bottom:2px solid var(--ink);" data-fr="Un ordinateur portable, un système embarqué">A laptop, an embedded device</div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- ═════ 3 · A general case: the lab's information system ═════ -->
+  <section-divider label="A general case: the lab's IT system" label-fr="Un cas généraliste : le SI du labo" kicker="Part 03" kicker-fr="Partie 03" blurb="Building LISTIC's internal platform with a general AI assistant" blurb-fr="Développer la plateforme interne du LISTIC avec un assistant IA généraliste"></section-divider>
+
+  <section data-label="SI portal">
+    <slide-note data-fr="La plateforme de gestion du labo : réservations, inventaire, achats, annuaire, procédures… développée avec l’aide de Claude, un assistant généraliste.">The lab management platform: bookings, inventory, purchases, directory, procedures… built with the help of Claude, a general assistant.</slide-note>
+    <slide-header title="LISTIC SI: the lab's management platform" title-fr="LISTIC SI : la plateforme de gestion du labo"></slide-header>
+    <div class="slide-body" style="display:grid;grid-template-columns:1.45fr 1fr;gap:72px;align-items:center;">
+      <div style="border:1px solid var(--rule);box-shadow:0 24px 60px rgba(0,0,0,0.18);">
+        <img src="assets/si-labo.png" alt="LISTIC SI portal" style="display:block;width:100%;height:auto;">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:48px;">
+        <ai-quadrant-mini here="tl"></ai-quadrant-mini>
+        <div class="bullet-rail">
+          <div><div class="label" data-fr="Le besoin">The need</div><div class="body" data-fr="Un seul outil pour la vie du labo : réservations, machines, achats, inventaire, annuaire, procédures.">One tool for lab life: bookings, machines, purchases, inventory, directory, procedures.</div></div>
+          <div data-step><div class="label" style="color:var(--accent);" data-fr="L’outil">The tool</div><div class="body" data-fr="Développé avec Claude, un assistant IA généraliste, sans équipe de développement dédiée.">Built with Claude, a general AI assistant, without a dedicated development team.</div></div>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <section data-label="Who does what">
+    <slide-note data-fr="L’assistant écrit vite, mais c’est l’humain qui sait ce qu’il faut construire et qui vérifie.">The assistant writes fast, but the human knows what to build and checks it.</slide-note>
+    <slide-header title="Who does what" title-fr="Qui fait quoi"></slide-header>
+    <div class="slide-body" style="display:grid;grid-template-columns:1fr 1fr;gap:96px;align-content:center;">
+      <div class="bullet-rail">
+        <div class="label" style="color:var(--accent);" data-fr="L’assistant">The assistant</div>
+        <div class="body" data-fr="Écrit le code des écrans et de la base de données">Writes the code for screens and database</div>
+        <div class="body" data-fr="Propose des interfaces, corrige les erreurs">Proposes interfaces, fixes errors</div>
+        <div class="body" data-fr="Rédige la documentation">Drafts the documentation</div>
+      </div>
+      <div data-step class="bullet-rail">
+        <div class="label" data-fr="L’humain">The human</div>
+        <div class="body" data-fr="Connaît les besoins du labo">Knows what the lab needs</div>
+        <div class="body" data-fr="Relit, teste, décide">Reviews, tests, decides</div>
+        <div class="body" data-fr="Reste responsable des données et de la sécurité">Stays responsible for data and security</div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- ═════ 4 · A specific case: GPR ═════ -->
+  <section-divider label="A specific case: GPR" label-fr="Un cas spécialisé : le GPR" kicker="Part 04" kicker-fr="Partie 04" blurb="Finding buried objects with ground-penetrating radar" blurb-fr="Détecter des objets enfouis avec un radar de sol"></section-divider>
+
+  <section data-label="GPR 3D">
+    <slide-note data-fr="On déplace un radar à la surface. L’écho de la canalisation revient plus tard quand l’antenne s’éloigne : cela dessine une hyperbole.">A radar is moved along the surface. Each echo from the buried pipe arrives later when the antenna is further away, which draws a hyperbola.</slide-note>
+    <slide-header title="Seeing under the ground" title-fr="Voir sous le sol"></slide-header>
+    <div class="slide-body" style="position:relative;padding:0;">
+      <gpr-3d style="display:block;width:100%;height:100%;"></gpr-3d>
+      <div style="position:absolute;right:0;top:0;"><ai-quadrant-mini here="br"></ai-quadrant-mini></div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <section data-label="Pipeline">
+    <slide-note data-fr="Le modèle est entraîné sur des images radar annotées. Il répond à une seule question, et on peut mesurer à quelle fréquence il a raison.">The model is trained on labelled radar images. It answers one question, and we can measure how often it is right.</slide-note>
+    <slide-header title="What the model does" title-fr="Ce que fait le modèle"></slide-header>
+    <div class="slide-body" style="justify-content:center;">
+      <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:36px;align-items:stretch;">
+        <div style="border:2px solid var(--ink);padding:40px;display:flex;flex-direction:column;gap:20px;">
+          <div class="label" data-fr="01 · Entrée">01 · Input</div><div class="h2" style="font-size:48px;" data-fr="Image radar">Radar image</div>
+          <div class="body" style="font-size:30px;" data-fr="Un B-scan, directement issu du capteur.">A B-scan, straight from the sensor.</div>
+        </div>
+        <div data-step style="align-self:center;font-size:56px;color:var(--ink-3);">→</div>
+        <div data-step style="border:2px solid var(--ink);padding:40px;display:flex;flex-direction:column;gap:20px;">
+          <div class="label" data-fr="02 · Modèle">02 · Model</div><div class="h2" style="font-size:48px;" data-fr="Signature apprise">Learned signature</div>
+          <div class="body" style="font-size:30px;" data-fr="Entraîné sur des exemples annotés pour reconnaître à quoi ressemble un objet dans le signal.">Trained on labelled examples to recognise what an object looks like in the signal.</div>
+        </div>
+        <div data-step style="align-self:center;font-size:56px;color:var(--ink-3);">→</div>
+        <div data-step style="border:2px solid var(--accent);background:var(--bg-2);padding:40px;display:flex;flex-direction:column;gap:20px;">
+          <div class="label" style="color:var(--accent);" data-fr="03 · Sortie">03 · Output</div><div class="h2" style="font-size:48px;" data-fr="Décision">Decision</div>
+          <div class="body" style="font-size:30px;" data-fr="Objet ou pas, et où.">Object or no object, and where.</div>
+        </div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <section data-label="Why not an LLM">
+    <slide-note data-fr="Pourquoi un chatbot n’est pas le bon outil ici.">Why a chatbot is not the right tool here.</slide-note>
+    <slide-header title="Why not ask a chatbot?" title-fr="Pourquoi pas un chatbot ?"></slide-header>
+    <div class="slide-body" style="display:grid;grid-template-columns:repeat(3,1fr);gap:56px;align-content:center;">
+      <div data-step class="bullet-rail"><div><div class="label" data-fr="L’entrée">The input</div><div class="body" data-fr="Un signal physique, pas du texte. Un modèle de langage n’a jamais été entraîné dessus.">A physical signal, not text. A language model was never trained on it.</div></div></div>
+      <div data-step class="bullet-rail"><div><div class="label" data-fr="Fiabilité">Reliability</div><div class="body" data-fr="Il faut un taux d’erreur mesurable, pas une réponse plausible.">We need an error rate we can measure, not a plausible answer.</div></div></div>
+      <div data-step class="bullet-rail"><div><div class="label" data-fr="Explication">Explanation</div><div class="body" data-fr="La réponse doit désigner un endroit dans le sol, pour pouvoir être vérifiée.">The answer must point to a place in the ground, so it can be checked.</div></div></div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- Other sensors: one slide each, 3D left, text right -->
+  <section data-label="SAR">
+    <slide-note data-fr="Un satellite radar repasse au-dessus de la même zone. On compare les deux dates pour détecter ce qui a changé, ici un nouveau bâtiment.">A radar satellite passes over the same area again. Comparing the two dates reveals what changed, here a new building.</slide-note>
+    <slide-header title="Same approach · satellite radar (SAR)" title-fr="Même démarche · radar satellite (SAR)"></slide-header>
+    <div class="slide-body" style="display:grid;grid-template-columns:1.6fr 1fr;gap:64px;align-items:center;">
+      <sar-3d style="display:block;width:100%;height:100%;"></sar-3d>
+      <div class="bullet-rail">
+        <div><div class="label" data-fr="Le capteur">The sensor</div><div class="body" data-fr="Un radar embarqué sur satellite, qui voit de jour comme de nuit et à travers les nuages.">A radar on a satellite. It works day and night, and through clouds.</div></div>
+        <div data-step><div class="label" style="color:var(--accent);" data-fr="La question">The question</div><div class="body" data-fr="Qu’est-ce qui a changé au sol entre deux passages&nbsp;?">What changed on the ground between two passes?</div></div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <section data-label="Hyperspectral">
+    <slide-note data-fr="Une image hyperspectrale est un cube : une image par longueur d’onde. Chaque pixel devient une courbe, qui dépend du matériau.">A hyperspectral image is a cube: one image per wavelength. Each pixel becomes a curve, which depends on the material.</slide-note>
+    <slide-header title="Same approach · hyperspectral imaging" title-fr="Même démarche · imagerie hyperspectrale"></slide-header>
+    <div class="slide-body" style="display:grid;grid-template-columns:1.6fr 1fr;gap:64px;align-items:center;">
+      <hsi-3d style="display:block;width:100%;height:100%;"></hsi-3d>
+      <div class="bullet-rail">
+        <div><div class="label" data-fr="Le capteur">The sensor</div><div class="body" data-fr="Une caméra qui mesure des dizaines de couleurs, au-delà de ce que l’œil voit.">A camera that measures dozens of colours, beyond what the eye can see.</div></div>
+        <div data-step><div class="label" style="color:var(--accent);" data-fr="La question">The question</div><div class="body" data-fr="De quel matériau est fait chaque pixel&nbsp;?">What material is each pixel made of?</div></div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <section data-label="EEG">
+    <slide-note data-fr="Des électrodes sur le cuir chevelu enregistrent l’activité électrique du cerveau. Quand une zone s’active, les signaux proches changent.">Electrodes on the scalp record the brain’s electrical activity. When one area becomes active, the nearby signals change.</slide-note>
+    <slide-header title="Same approach · brain signals (EEG)" title-fr="Même démarche · signaux cérébraux (EEG)"></slide-header>
+    <div class="slide-body" style="display:grid;grid-template-columns:1.6fr 1fr;gap:64px;align-items:center;">
+      <eeg-3d style="display:block;width:100%;height:100%;"></eeg-3d>
+      <div class="bullet-rail">
+        <div><div class="label" data-fr="Le capteur">The sensor</div><div class="body" data-fr="Des électrodes posées sur le cuir chevelu, qui enregistrent l’activité électrique du cerveau.">Electrodes on the scalp that record the brain’s electrical activity.</div></div>
+        <div data-step><div class="label" style="color:var(--accent);" data-fr="La question">The question</div><div class="body" data-fr="Dans quel état est la personne, ou quel mouvement imagine-t-elle&nbsp;?">What state is the person in, or which movement are they imagining?</div></div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <!-- ═════ 5 · Takeaways ═════ -->
+  <section-divider label="Takeaways" label-fr="À retenir" kicker="Part 05" kicker-fr="Partie 05" blurb="Two questions to ask first" blurb-fr="Deux questions à se poser d’abord"></section-divider>
+
+  <section data-label="Takeaways">
+    <slide-note data-fr="Retour aux réponses du début : on les place ensemble sur la grille.">Back to the answers from the start: place them on the grid together.</slide-note>
+    <slide-header title="Two questions before choosing" title-fr="Deux questions avant de choisir"></slide-header>
+    <div class="slide-body" style="display:grid;grid-template-columns:1fr 1fr;gap:96px;align-items:center;">
+      <div style="display:flex;flex-direction:column;gap:56px;">
+        <div class="pullquote" style="font-size:64px;" data-fr="Généraliste ou spécialisé&nbsp;?">General or specific?</div>
+        <div data-step class="pullquote" style="font-size:64px;" data-fr="Générer, ou mesurer&nbsp;?">Generate, or measure?</div>
+      </div>
+      <div data-step class="bullet-rail">
+        <div><div class="label" data-fr="Données">Data</div><div class="body" data-fr="Les données dont on dispose décident souvent de la case possible.">The data you have often decides which cell is possible.</div></div>
+        <div><div class="label" data-fr="Confiance">Trust</div><div class="body" data-fr="Un modèle spécialisé peut être testé sur vos propres données avant d’être utilisé.">A specific model can be tested on your own data before it is used.</div></div>
+      </div>
+    </div>
+    <slide-footer></slide-footer>
+  </section>
+
+  <end-slide heading="THANK YOU" heading-fr="MERCI" kicker="Questions?" kicker-fr="Questions ?" contact="ammar.mian@univ-smb.fr"></end-slide>
+
+</deck-stage>
+
+<div id="tweaks-root"></div>
+<progress-bar></progress-bar>
+
+</body>
+</html>

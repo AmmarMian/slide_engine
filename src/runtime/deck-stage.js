@@ -595,7 +595,8 @@
     }
 
     _openNotes() {
-      const url = new URL('/notes.html', window.location.href).href;
+      const base = (import.meta.env && import.meta.env.BASE_URL) || '/';
+      const url = new URL(base + 'notes.html', window.location.href).href;
       window.open(url, 'deck-notes', 'width=840,height=620,resizable=yes');
     }
 

@@ -46,7 +46,13 @@ function buildBscan() {
 const BSCAN = buildBscan();
 
 // ── Component ──────────────────────────────────────────────────────────────────
-export function GprScan() {
+const T = {
+  fr: { surface: 'surface du sol', depth: 'profondeur', obj: 'objet', ant: 'antenne', sub: 'assemblage des A-scans successifs', time: 'temps (ns)', pos: 'position antenne →', hyp: 'hyperbole', replay: '↺ rejouer', positions: 'positions' },
+  en: { surface: 'ground surface', depth: 'depth', obj: 'object', ant: 'antenna', sub: 'successive A-scans side by side', time: 'time (ns)', pos: 'antenna position →', hyp: 'hyperbola', replay: '↺ replay', positions: 'positions' },
+};
+
+export function GprScan({ lang = 'fr' }) {
+  const L = T[lang] || T.fr;
   const [step, setStep]   = useState(0);
   const [playing, setPlaying] = useState(true);
   const canvasRef = useRef(null);
@@ -153,14 +159,14 @@ export function GprScan() {
           <line x1={0} y1={SURFACE_Y} x2={SVG_W} y2={SURFACE_Y}
             stroke="var(--ink-2)" strokeWidth={2.5} />
           <text x={12} y={SURFACE_Y - 12} fontFamily="var(--mono)" fontSize={13}
-            fill="var(--ink-3)">surface du sol</text>
+            fill="var(--ink-3)">{L.surface}</text>
 
           {/* Depth axis */}
           <line x1={18} y1={SURFACE_Y} x2={18} y2={SVG_H - 20}
             stroke="var(--rule)" strokeWidth={1.2} />
           <text x={11} y={SURFACE_Y + (SVG_H - SURFACE_Y) / 2}
             fontFamily="var(--mono)" fontSize={12} fill="var(--ink-3)" textAnchor="middle"
-            transform={`rotate(-90,11,${SURFACE_Y + (SVG_H - SURFACE_Y) / 2})`}>profondeur</text>
+            transform={`rotate(-90,11,${SURFACE_Y + (SVG_H - SURFACE_Y) / 2})`}>{L.depth}</text>
 
           {/* Past position ticks */}
           {Array.from({ length: step }, (_, i) => (
@@ -197,7 +203,7 @@ export function GprScan() {
           <circle cx={OBJ_X} cy={OBJ_Y} r={OBJ_R}
             fill="var(--bg-2)" stroke="var(--accent)" strokeWidth={2.2} />
           <text x={OBJ_X} y={OBJ_Y + 4} fontFamily="var(--mono)" fontSize={11}
-            fontWeight={700} fill="var(--accent)" textAnchor="middle">objet</text>
+            fontWeight={700} fill="var(--accent)" textAnchor="middle">{L.obj}</text>
 
           {/* Antenna body */}
           <rect x={ax - 20} y={SURFACE_Y - 58} width={40} height={26}
@@ -209,7 +215,7 @@ export function GprScan() {
           <line x1={ax} y1={SURFACE_Y - 32} x2={ax} y2={SURFACE_Y}
             stroke="var(--ink-2)" strokeWidth={1.8} />
           <text x={ax} y={SURFACE_Y - 66} fontFamily="var(--mono)" fontSize={13}
-            fontWeight={700} fill="var(--ink-2)" textAnchor="middle">antenne</text>
+            fontWeight={700} fill="var(--ink-2)" textAnchor="middle">{L.ant}</text>
           {/* Motion arrow */}
           <text x={ax + 30} y={SURFACE_Y - 44}
             fontFamily="var(--sans)" fontSize={22} fill="var(--ink-2)">→</text>
@@ -233,7 +239,7 @@ export function GprScan() {
           <div style={{ fontFamily: 'var(--sans)', fontSize: 24, fontWeight: 600,
             color: 'var(--ink)', marginBottom: 4 }}>B-scan</div>
           <div style={{ fontFamily: 'var(--mono)', fontSize: 14, color: 'var(--ink-3)' }}>
-            assemblage des A-scans successifs
+            {L.sub}
           </div>
         </div>
 
@@ -247,9 +253,9 @@ export function GprScan() {
             {/* X axis */}
             <line x1={28} y1="80%" x2="100%" y2="80%" stroke="var(--rule)" strokeWidth={1.2} />
             <text x={14} y="40%" fontFamily="var(--mono)" fontSize={11} fill="var(--ink-3)"
-              textAnchor="middle" transform="rotate(-90,14,40%)">temps (ns)</text>
+              textAnchor="middle" transform="rotate(-90,14,40%)">{L.time}</text>
             <text x="60%" y="95%" fontFamily="var(--mono)" fontSize={11} fill="var(--ink-3)"
-              textAnchor="middle">position antenne →</text>
+              textAnchor="middle">{L.pos}</text>
           </svg>
 
           {/* Canvas positioned inside the axis frame */}
@@ -274,7 +280,7 @@ export function GprScan() {
                   strokeDasharray="6 3" opacity={0.85} />
                 <text x="50%" y={`${(tt(Math.floor(N_STEPS / 2)) / BS_H) * 100 - 3}%`}
                   fontFamily="var(--mono)" fontSize={12} fill="white"
-                  textAnchor="middle" fontWeight={700}>hyperbole</text>
+                  textAnchor="middle" fontWeight={700}>{L.hyp}</text>
               </svg>
             )}
           </div>
@@ -286,10 +292,10 @@ export function GprScan() {
             style={{ fontFamily: 'var(--mono)', fontSize: 13, padding: '6px 16px',
               background: 'var(--bg-2)', border: '1px solid var(--rule)',
               borderRadius: 6, color: 'var(--ink-2)', cursor: 'pointer' }}>
-            ↺ rejouer
+            {L.replay}
           </button>
           <div style={{ fontFamily: 'var(--mono)', fontSize: 13, color: 'var(--ink-3)' }}>
-            {step + 1} / {N_STEPS} positions
+            {step + 1} / {N_STEPS} {L.positions}
           </div>
         </div>
       </div>

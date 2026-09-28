@@ -99,7 +99,7 @@ export function TocSlideContent() {
   return (
     <>
       <div ref={ref} className="page-header">
-        <div className="label">Outline</div>
+        <div className="label">{document.documentElement.lang === 'fr' ? 'Sommaire' : 'Outline'}</div>
         <div className="label">{fmt(pos.idx)} / {fmt(pos.total)}</div>
       </div>
       <h2 className="h1" style={{ marginBottom: 52 }}>Contenu.</h2>
@@ -162,7 +162,7 @@ export function SectionDividerContent({ num, label, kicker }) {
         )}
         <div>
           <div className="label" style={{ color: 'var(--inv-ink-3)', marginBottom: 18, fontSize: 28 }}>
-            Part {String(num).padStart(2, '0')}
+            {document.documentElement.lang === 'fr' ? 'Partie' : 'Part'} {String(num).padStart(2, '0')}
           </div>
           <div style={{ fontFamily: 'var(--sans)', fontSize: 132, fontWeight: 600, lineHeight: 0.95, letterSpacing: '-0.04em', color: 'var(--inv-ink)' }}>
             {label}

@@ -244,8 +244,10 @@ defineReactElement('hsi-cov', null, {
   lazy: () => import('./hsi-cov.jsx').then(m => m.HsiCov),
 });
 
-// GPR A-scan / B-scan formation animation.
+// GPR A-scan / B-scan formation animation. lang="en" for English labels (default fr).
 defineReactElement('gpr-scan', null, {
+  observed: ['lang'],
+  props: el => ({ lang: readStr(el, 'lang', 'fr') }),
   lazy: () => import('./gpr-scan.jsx').then(m => m.GprScan),
 });
 
@@ -276,3 +278,26 @@ defineReactElement('riemann-terrain', null, {
 });
 
 defineReactElement('federated-learning', FederatedLearning);
+
+// AI talk islands (general vs specific / generative vs not).
+defineReactElement('word-morph', null, {
+  observed: ['from', 'to', 'cell'],
+  props: el => ({ from: readStr(el, 'from', 'AI'), to: readStr(el, 'to', 'LEARNING'), cell: readInt(el, 'cell', 96) }),
+  lazy: () => import('./ai-talk.jsx').then(m => m.WordMorph),
+});
+defineReactElement('model-zoom', null, {
+  observed: ['width', 'height'],
+  props: el => ({ width: readInt(el, 'width', 1100), height: readInt(el, 'height', 640) }),
+  lazy: () => import('./ai-talk.jsx').then(m => m.ModelZoom),
+});
+defineReactElement('ai-quadrant-mini', null, {
+  observed: ['here'],
+  props: el => ({ here: readStr(el, 'here', 'br') }),
+  lazy: () => import('./ai-talk.jsx').then(m => m.AiQuadrantMini),
+});
+defineReactElement('gpr-3d', null, {
+  lazy: () => import('./ai-talk.jsx').then(m => m.Gpr3d),
+});
+defineReactElement('sar-3d', null, { lazy: () => import('./sensors-3d.jsx').then(m => m.Sar3d) });
+defineReactElement('hsi-3d', null, { lazy: () => import('./sensors-3d.jsx').then(m => m.Hsi3d) });
+defineReactElement('eeg-3d', null, { lazy: () => import('./sensors-3d.jsx').then(m => m.Eeg3d) });

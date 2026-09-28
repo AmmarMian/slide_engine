@@ -4,7 +4,10 @@ import { viteSingleFile } from 'vite-plugin-singlefile';
 import { glob } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { readFile } from 'node:fs/promises';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
+
+// Public base path. "/" locally; "/<repo>/" on GitHub Pages (set by the workflow via BASE).
+const BASE = (process.env.BASE || '/').replace(/\/*$/, '/').replace(/^\/*/, '/');
 
 // ── HTML partials: <!--#include file="./sections/foo.html"--> ─────────────
 function htmlIncludePlugin() {
@@ -136,14 +139,14 @@ function deckIndexPlugin(allInputs, singleFile) {
     const decks = await Promise.all(
       Object.entries(allInputs).map(async ([name, filePath]) => {
         const src = await readFile(filePath, 'utf8');
-        const title   = src.match(/<title>([^<]*)<\/title>/)?.[1]?.trim() || name;
+        const title   = src.match(/name="deck-title-fr"\s+content="([^"]*)"/)?.[1]?.trim()
+                     || src.match(/<title>([^<]*)<\/title>/)?.[1]?.trim() || name;
         const theme   = src.match(/name="deck-theme"\s+content="([^"]*)"/)?.[1] || '';
         const palette = theme.match(/palette=([a-z]+)/)?.[1] || 'paper';
         const accent  = theme.match(/accent=(#[0-9a-fA-F]{3,8})/)?.[1] || '#d23b1c';
-        return { name, title, palette, accent, href: `/decks/${name}/` };
+        return { name, title, palette, accent, href: `${BASE}decks/${name}/` };
       })
     );
-    // Sort alphabetically for stable output
     decks.sort((a, b) => a.name.localeCompare(b.name));
     return generateIndexHtml(decks);
   }
@@ -154,7 +157,7 @@ function deckIndexPlugin(allInputs, singleFile) {
     configureServer(server) {
       server.middlewares.use(async (req, res, next) => {
         const url = req.url?.split('?')[0];
-        if (url !== '/' && url !== '/index.html') return next();
+        if (url !== BASE && url !== `${BASE}index.html`) return next();
         try {
           const html = await buildHtml();
           res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -177,14 +180,18 @@ export default defineConfig(async () => {
   const singleFile = !!process.env.SINGLEFILE;
 
   // Single-file mode requires exactly one Rollup entry; pick the requested deck or the first one.
-  let input = allInputs;
+  let input = { ...allInputs };
   if (singleFile) {
     const deckName = process.env.DECK || Object.keys(allInputs)[0];
     if (!allInputs[deckName]) throw new Error(`build:single — deck "${deckName}" not found. Available: ${Object.keys(allInputs).join(', ')}`);
     input = { [deckName]: allInputs[deckName] };
+  } else if (existsSync('notes.html')) {
+    // Speaker-notes window (opened with N) must ship with the site.
+    input.notes = resolve(process.cwd(), 'notes.html');
   }
 
   return {
+    base: BASE,
     server: { port: 5174 },
     plugins: [
       htmlIncludePlugin(),

@@ -30,6 +30,9 @@ import '@fontsource/eb-garamond/500.css';
 // ── Design system CSS ─────────────────────────────────────────────────────
 import './theme/theme.css';
 
+// ── Language (EN/FR) — must run before the islands register ───────────────
+import './runtime/i18n.js';
+
 // ── Runtime (deck-stage web component) ───────────────────────────────────
 import './runtime/deck-stage.js';
 
